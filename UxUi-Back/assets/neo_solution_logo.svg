@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 80" width="100%" height="100%">
+  <defs>
+    <!-- Blue Sphere Gradient -->
+    <radialGradient id="blueSphere" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#5b8bf7"/>
+      <stop offset="40%" stop-color="#1d3b8a"/>
+      <stop offset="85%" stop-color="#0e1e4a"/>
+      <stop offset="100%" stop-color="#08102b"/>
+    </radialGradient>
+    
+    <!-- Green Sphere Gradient -->
+    <radialGradient id="greenSphere" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="40%" stop-color="#15803d"/>
+      <stop offset="85%" stop-color="#0f5128"/>
+      <stop offset="100%" stop-color="#093118"/>
+    </radialGradient>
+
+    <!-- NEO Text Gradient -->
+    <linearGradient id="neoGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a4ba0"/>
+      <stop offset="35%" stop-color="#172b68"/>
+      <stop offset="70%" stop-color="#101c45"/>
+      <stop offset="100%" stop-color="#091029"/>
+    </linearGradient>
+
+    <!-- Soft Drop Shadow for spheres -->
+    <filter id="sphereShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- 4-Sphere Symbol (Left) -->
+  <g transform="translate(4, 2)" filter="url(#sphereShadow)">
+    <!-- Top Left (Blue) -->
+    <circle cx="22" cy="22" r="14" fill="url(#blueSphere)"/>
+    <!-- Top Right (Green) -->
+    <circle cx="48" cy="30" r="13" fill="url(#greenSphere)"/>
+    <!-- Bottom Left (Green) -->
+    <circle cx="23" cy="48" r="13" fill="url(#greenSphere)"/>
+    <!-- Bottom Right (Blue) -->
+    <circle cx="48" cy="56" r="14" fill="url(#blueSphere)"/>
+  </g>
+
+  <!-- Brand Typography (Right) -->
+  <!-- "NEO" -->
+  <text x="80" y="47" 
+        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Impact, Arial Black, sans-serif" 
+        font-size="46" 
+        font-weight="900" 
+        letter-spacing="2"
+        fill="url(#neoGrad)">NEO</text>
+  
+  <!-- "Solution" -->
+  <text x="105" y="68" 
+        font-family="'Playfair Display', Georgia, 'Times New Roman', serif" 
+        font-size="21" 
+        font-style="italic" 
+        font-weight="600"
+        letter-spacing="0.5" 
+        fill="#1e293b">Solution</text>
+</svg>
