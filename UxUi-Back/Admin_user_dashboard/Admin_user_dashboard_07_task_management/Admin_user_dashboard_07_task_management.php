@@ -354,52 +354,81 @@
       }
 
       .toggle-menu {
-        display: block;
-      }
-
-      .topbar {
-        padding: 10px 16px;
-      }
-
-      .profile-pill span {
         display: none;
       }
 
-      .content {
-        padding: 16px;
-        gap: 14px;
+      #Admin_user_dashboard_07_task_management {
+        padding: 0 12px 80px !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .main-wrapper,
+      #Admin_user_dashboard_07_task_management .content {
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
       }
 
       .header-row {
         flex-direction: column;
-        gap: 12px;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .header-title {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
       }
 
       .btn-create {
         width: 100%;
         justify-content: center;
-        padding: 12px;
+        padding: 10px 16px;
       }
 
       .controls-row {
         flex-direction: column;
         align-items: stretch;
+        gap: 10px;
       }
 
       .search-box {
-        width: 100%;
+        width: 100% !important;
+      }
+
+      .search-box input {
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
 
       .filter-group {
-        overflow-x: auto;
-      .table-container {
-        width: 100%;
+        display: flex;
+        gap: 6px;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        width: 100%;
       }
+
+      .filter-pill {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .table-container {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+
       .task-table {
         min-width: 650px;
+        width: 100%;
       }
+
       .task-table th, .task-table td {
         padding: 10px 12px;
       }
@@ -435,25 +464,24 @@
     <!-- Backdrop Overlay for Mobile -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
 
-
     <!-- Main Section -->
     <div class="main-wrapper">
       
       <!-- Top Header Bar -->
       <header class="topbar">
         <div class="topbar-left">
-          <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="typeof openAdminSidebar === 'function' ? openAdminSidebar() : null">
+          <button class="menu-btn" id="menuBtn_07" aria-label="Open menu" onclick="typeof openAdminSidebar === 'function' ? openAdminSidebar() : null">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
           <h2 class="page-title">Task Management</h2>
         </div>
         <div class="topbar-right">
-          <button class="icon-btn-notif" aria-label="Notifications" onclick="Admin_user_dashboard_09_OPEN();">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            <span class="notif-badge"></span>
-          </button>
-          <div class="profile-pill">
-            <div class="avatar-sm">AU</div>
+          <div class="icon-btn" onclick="Admin_user_dashboard_09_OPEN();" title="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="dot"></span>
+          </div>
+          <div class="admin-pill">
+            <div class="avatar">AU</div>
             <span>Admin</span>
           </div>
         </div>
@@ -464,7 +492,7 @@
         
         <div class="header-row">
           <div class="header-title">
-            <p id="taskCount">6 total tasks</p>
+            <p id="taskCount">0 total tasks</p>
           </div>
           <button class="btn-create" id="openCreateTaskBtn" type="button">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
