@@ -335,14 +335,16 @@ error_reporting(E_ALL);
 
         /* Mobile & Tablet View (<= 768px) */
         @media (max-width: 768px) {
+            [id^="Employee_user_dashboard_"],
+            [id^="Employee_user_dashboard_"].emp-main,
+            .emp-main,
             .main,
             .main-wrapper,
-            .content-wrapper,
-            .emp-main {
+            .content-wrapper {
                 margin-left: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
-                padding: 12px 12px 60px !important;
+                padding: 0 14px 80px !important;
             }
 
             .menu-btn, .toggle-menu {
@@ -352,11 +354,11 @@ error_reporting(E_ALL);
                 width: 38px !important;
                 height: 38px !important;
                 border-radius: 8px !important;
-                background: var(--blue-lighter) !important;
-                border: none !important;
+                background: #eef2ff !important;
+                border: 1px solid #e0edff !important;
                 cursor: pointer !important;
-                color: var(--navy) !important;
-                margin-right: 8px !important;
+                color: #14204d !important;
+                margin-right: 6px !important;
             }
 
             .menu-btn svg {
@@ -364,56 +366,36 @@ error_reporting(E_ALL);
                 height: 20px !important;
             }
 
-            .topbar {
+            .topbar, 
+            header.topbar,
+            [id^="Employee_user_dashboard_"] .topbar {
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
-                padding: 12px 16px !important;
-                margin: -12px -12px 16px -12px !important;
-                width: calc(100% + 24px) !important;
-                border-radius: 0 !important;
-                background: #ffffff !important;
-                border-bottom: 1px solid var(--border) !important;
+                padding: 0 14px !important;
+                margin: 0 -14px 16px -14px !important;
+                width: calc(100% + 28px) !important;
+                height: 58px !important;
+                min-height: 58px !important;
+                max-height: 58px !important;
             }
 
             .topbar-left {
                 display: flex !important;
                 align-items: center !important;
-                gap: 4px !important;
+                gap: 6px !important;
             }
 
             .topbar h2, .topbar-left h2, .page-title h1 {
-                font-size: 20px !important;
-                font-weight: 800 !important;
-                color: var(--navy) !important;
-                margin: 0 !important;
+                font-size: 18px !important;
             }
 
-            .topbar-right {
-                display: flex !important;
-                align-items: center !important;
-                gap: 10px !important;
-            }
-
-            .admin-pill span {
+            .admin-pill span, .user-pill span {
                 display: none !important;
             }
 
-            .admin-pill {
+            .admin-pill, .user-pill {
                 padding: 4px !important;
-                border-radius: 50% !important;
-                background: var(--blue-lighter) !important;
-            }
-
-            .admin-pill .avatar {
-                width: 32px !important;
-                height: 32px !important;
-                font-size: 12px !important;
-            }
-
-            .icon-btn {
-                width: 38px !important;
-                height: 38px !important;
             }
 
             .stats, .stats-grid {
@@ -421,7 +403,7 @@ error_reporting(E_ALL);
                 gap: 10px !important;
             }
 
-            .charts-row, .bottom-row, .dept-grid, .grid-roles {
+            .charts-row, .bottom-row, .dept-grid, .grid-roles, .docs-grid {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
             }
