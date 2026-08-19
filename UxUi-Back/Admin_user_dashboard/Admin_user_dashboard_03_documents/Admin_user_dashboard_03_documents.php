@@ -652,33 +652,75 @@
   /* Phone & Mobile Media Queries */
   @media (max-width: 768px) {
     #Admin_user_dashboard_03_documents {
-      height: 100vh !important;
-      max-height: 100vh !important;
+      min-height: 100vh !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      padding: 0 12px 80px !important;
     }
     #Admin_user_dashboard_03_documents .main {
       margin-left: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
-      padding: 10px 12px 60px !important;
+      padding: 0 !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
     }
     .menu-btn { display: inline-flex !important; }
-    .topbar h2 { font-size: 17px !important; }
+    .topbar h2 { font-size: 18px !important; }
     
+    .doc-main-card {
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      max-height: none !important;
+    }
+
     .doc-toolbar {
       flex-direction: column;
       align-items: stretch;
-      gap: 8px;
-      padding: 10px 12px;
+      gap: 10px;
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 12px;
     }
     .doc-toolbar-left {
       max-width: 100%;
+      width: 100%;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .doc-search-box {
+      width: 100% !important;
+    }
+    .doc-search-input {
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .doc-select {
+      width: 100% !important;
+      box-sizing: border-box !important;
     }
     .doc-toolbar-right {
       justify-content: space-between;
+      width: 100%;
+      gap: 10px;
     }
 
     .doc-table-wrap { display: none !important; }
-    .mobile-doc-cards { display: flex !important; }
+    .mobile-doc-cards { 
+      display: flex !important; 
+      padding: 0 !important; 
+      background: transparent !important;
+      gap: 12px;
+    }
   }
 
   @media (max-width: 640px) {
