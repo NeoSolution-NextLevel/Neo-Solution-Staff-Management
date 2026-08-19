@@ -588,11 +588,14 @@
 
   /* Mobile Responsive Breakpoints */
   @media (max-width: 768px) {
+    #Admin_user_dashboard_02_employees {
+      padding: 0 12px 80px !important;
+    }
     .main, .w3-main-content {
       margin-left: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
-      padding: 12px 12px 80px !important;
+      padding: 0 !important;
     }
 
     .menu-btn { display: inline-flex !important; }
