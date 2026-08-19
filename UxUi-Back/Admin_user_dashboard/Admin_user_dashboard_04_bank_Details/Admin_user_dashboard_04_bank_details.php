@@ -398,18 +398,23 @@
 
   /* Mobile Responsive Breakpoints */
   @media (max-width: 768px){
+    #Admin_user_dashboard_04_bank_details {
+      padding: 0 12px 80px !important;
+    }
     .main{
       margin-left: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
-      padding: 12px 12px 80px !important;
+      padding: 0 !important;
     }
 
     .menu-btn{ display: inline-flex !important; }
     .topbar h2{ font-size: 18px !important; }
     .page-head h1{ font-size: 19px !important; }
-    .head-actions { width: 100%; justify-content: space-between; }
-    .search-input { width: 100%; }
+    .head-actions { width: 100%; flex-direction: column; gap: 8px; }
+    .search-input-wrap { width: 100%; }
+    .search-input { width: 100% !important; }
+    .add-btn { width: 100%; justify-content: center; }
 
     .table-card { display: none !important; }
     .mobile-bank-cards { display: flex !important; }
