@@ -58,7 +58,7 @@ error_reporting(E_ALL);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Container Sections & Layout for All Admin Tabs */
+        /* Desktop Layout */
         [id^="Admin_user_dashboard_"] {
             margin-left: 250px !important;
             width: calc(100% - 250px) !important;
@@ -229,7 +229,7 @@ error_reporting(E_ALL);
             display: none !important;
         }
 
-        /* full screen */
+        /* Full width cards and containers */
         [id^="Admin_user_dashboard_"] .table-card,
         [id^="Admin_user_dashboard_"] .table-responsive,
         [id^="Admin_user_dashboard_"] .table-wrap,
@@ -245,29 +245,6 @@ error_reporting(E_ALL);
             border-radius: 14px !important;
             border: 1px solid #e8eaf0 !important;
             box-shadow: 0 2px 8px rgba(20,25,60,.04) !important;
-        }
-
-        [id^="Admin_user_dashboard_"] .banner {
-            padding: 18px 22px !important;
-            margin-bottom: 16px !important;
-            border-radius: 14px !important;
-        }
-
-        [id^="Admin_user_dashboard_"] .stat-card {
-            padding: 14px 16px !important;
-        }
-
-        [id^="Admin_user_dashboard_"] .card,
-        [id^="Admin_user_dashboard_"] .settings-card {
-            padding: 16px 18px !important;
-        }
-
-        [id^="Admin_user_dashboard_"] .table-card,
-        [id^="Admin_user_dashboard_"] .table-responsive,
-        [id^="Admin_user_dashboard_"] .table-wrap,
-        [id^="Admin_user_dashboard_"] .table-container {
-            padding: 0 !important;
-            overflow: hidden !important;
         }
 
         [id^="Admin_user_dashboard_"] .dept-grid {
@@ -307,15 +284,17 @@ error_reporting(E_ALL);
             font-size: 13.5px !important;
         }
 
-        /* Mobile & Tablet View  */
+        /* Mobile & Tablet View (<= 768px) */
         @media (max-width: 768px) {
+            [id^="Admin_user_dashboard_"],
+            [id^="Admin_user_dashboard_"].w3-container,
             .main,
             .main-wrapper,
             .content-wrapper {
                 margin-left: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
-                padding: 12px 12px 60px !important;
+                padding: 0 14px 80px !important;
             }
 
             .menu-btn, .toggle-menu {
@@ -325,27 +304,48 @@ error_reporting(E_ALL);
                 width: 38px !important;
                 height: 38px !important;
                 border-radius: 8px !important;
-                background: var(--blue-lighter) !important;
-                border: none !important;
+                background: #eef2ff !important;
+                border: 1px solid #e0edff !important;
                 cursor: pointer !important;
-                color: var(--navy) !important;
-                margin-right: 8px !important;
+                color: #14204d !important;
+                margin-right: 6px !important;
             }
 
-            .topbar {
+            .menu-btn svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+
+            .topbar, 
+            header.topbar,
+            [id^="Admin_user_dashboard_"] .topbar {
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
-                padding: 12px 16px !important;
-                margin: -12px -12px 16px -12px !important;
-                width: calc(100% + 24px) !important;
-                border-radius: 0 !important;
-                background: #ffffff !important;
-                border-bottom: 1px solid var(--border) !important;
+                padding: 0 14px !important;
+                margin: 0 -14px 16px -14px !important;
+                width: calc(100% + 28px) !important;
+                height: 58px !important;
+                min-height: 58px !important;
+                max-height: 58px !important;
+            }
+
+            .topbar-left {
+                display: flex !important;
+                align-items: center !important;
+                gap: 6px !important;
             }
 
             .topbar h2, .page-title h1 {
                 font-size: 18px !important;
+            }
+
+            .admin-pill span {
+                display: none !important;
+            }
+
+            .admin-pill {
+                padding: 4px !important;
             }
 
             .stats, .stats-grid {
