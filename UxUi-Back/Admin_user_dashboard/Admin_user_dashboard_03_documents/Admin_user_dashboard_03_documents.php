@@ -40,18 +40,17 @@
   }
 
   #Admin_user_dashboard_03_documents .main {
-    margin-left: 250px !important;
-    width: calc(100% - 250px) !important;
-    max-width: calc(100% - 250px) !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     height: 100% !important;
     max-height: 100% !important;
     min-height: 0 !important;
-    padding: 16px 24px 16px !important;
+    padding: 0 !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
-    transition: margin-left 0.3s ease, width 0.3s ease;
   }
 
   /* Topbar */
@@ -60,17 +59,19 @@
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    margin-bottom: 14px !important;
+    margin: 0 -24px 18px -24px !important;
     background: #ffffff !important;
-    height: 60px !important;
-    min-height: 60px !important;
-    max-height: 60px !important;
-    padding: 0 20px !important;
-    border-radius: 12px !important;
-    border: 1px solid var(--border) !important;
-    box-shadow: var(--shadow-sm) !important;
-    margin-top: 0 !important;
-    width: 100% !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    padding: 0 24px !important;
+    border-radius: 0 !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.03) !important;
+    width: calc(100% + 48px) !important;
   }
   .topbar-left {
     display: flex;

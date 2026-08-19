@@ -344,8 +344,49 @@
 </div>
 
 <script>
+  function populateBankFormFields(d) {
+    if (!d) return;
+    var holderInput = document.getElementById('bankAccountHolderName');
+    var selectBank = document.getElementById('bankSelectName');
+    var branchInput = document.getElementById('bankBranchName');
+    var accInput = document.getElementById('bankAccountNumber');
+    var icon = document.getElementById('accEyeIcon');
+    var statusText = document.getElementById('bankAccountStatusText');
+
+    if (holderInput && (d.account_holder_name || d.holder_name)) {
+      holderInput.value = d.account_holder_name || d.holder_name || '';
+    }
+    if (selectBank && d.bank_name) {
+      selectBank.value = d.bank_name;
+    }
+    if (branchInput && d.branch) {
+      branchInput.value = d.branch;
+    }
+    if (accInput && (d.account_number || d.bank_account_number)) {
+      var accNum = d.account_number || d.bank_account_number || '';
+      accInput.value = accNum;
+      accInput.type = 'password';
+      accInput.style.letterSpacing = '1px';
+      if (icon) icon.className = 'fa-solid fa-eye-slash';
+
+      var masked = accNum.length > 4 ? accNum.slice(-4).padStart(accNum.length, '•') : accNum;
+      if (statusText) {
+        statusText.innerHTML = '<span style="color: #12b76a; font-weight: 700;">Account linked:</span> ' + (d.bank_name || 'Bank') + ' (' + masked + ')';
+      }
+    }
+  }
+
   // Load Bank Details from Backend on initialization
   document.addEventListener("DOMContentLoaded", function() {
+    // 1. Instant recovery from local cache so form is NEVER cleared on refresh
+    try {
+      var cached = localStorage.getItem('neo_employee_bank_details');
+      if (cached) {
+        populateBankFormFields(JSON.parse(cached));
+      }
+    } catch(e) {}
+
+    // 2. Fetch authoritative data from Database
     loadEmployeeBankDetails();
   });
 
@@ -365,44 +406,56 @@
   };
 
   function loadEmployeeBankDetails() {
-    var pth = "<?php echo isset($pth) ? $pth : '../'; ?>";
+    var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
+    var empId = window.currentEmployeeId || "EMP-001";
+    var userId = window.currentUserId || 1;
+
     $.ajax({
       url: pth + "View-List/Bank_details/Fetch_Bank_Details.php",
       type: "GET",
-      data: { employee_id: "EMP-002", user_id: 1 },
+      data: { employee_id: empId, user_id: userId },
       dataType: "json",
       success: function(response) {
         var statusText = document.getElementById('bankAccountStatusText');
-        var accInput = document.getElementById('bankAccountNumber');
-        var icon = document.getElementById('accEyeIcon');
-        if (response && response.status === 'success' && response.data) {
-          var d = response.data;
-          document.getElementById('bankAccountHolderName').value = d.account_holder_name || '';
-          document.getElementById('bankSelectName').value = d.bank_name || '';
-          document.getElementById('bankBranchName').value = d.branch || '';
-          
-          if (accInput) {
-            accInput.value = d.account_number || '';
-            accInput.type = 'password';
-            accInput.style.letterSpacing = '1px';
-          }
-          if (icon) {
-            icon.className = 'fa-solid fa-eye-slash';
-          }
+        var holderInput = document.getElementById('bankAccountHolderName');
 
-          var accNum = d.account_number || '';
-          var masked = accNum ? (accNum.length > 4 ? accNum.slice(-4).padStart(accNum.length, '•') : accNum) : '';
-          if (statusText) {
-            statusText.innerHTML = '<span style="color: #12b76a; font-weight: 700;">Account linked:</span> ' + (d.bank_name || 'Bank') + ' (' + masked + ')';
-          }
+        var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
+        var isSuccess = (resObj.error === "0" || resObj.status === "success");
+
+        if (isSuccess && resObj.data) {
+          var d = resObj.data;
+          populateBankFormFields(d);
+          try {
+            localStorage.setItem('neo_employee_bank_details', JSON.stringify(d));
+          } catch(e) {}
         } else {
+          // If no bank record yet in DB, check cache or profile name
+          try {
+            var cached = localStorage.getItem('neo_employee_bank_details');
+            if (cached) {
+              populateBankFormFields(JSON.parse(cached));
+              return;
+            }
+          } catch(e) {}
+
           if (statusText) {
             statusText.innerText = 'No bank account added yet';
+          }
+          if (holderInput && !holderInput.value && window.currentEmployeeName) {
+            holderInput.value = window.currentEmployeeName;
           }
         }
       },
       error: function() {
         var statusText = document.getElementById('bankAccountStatusText');
+        try {
+          var cached = localStorage.getItem('neo_employee_bank_details');
+          if (cached) {
+            populateBankFormFields(JSON.parse(cached));
+            return;
+          }
+        } catch(e) {}
+
         if (statusText) {
           statusText.innerText = 'No bank account added yet';
         }
@@ -415,6 +468,8 @@
     var bank = document.getElementById('bankSelectName').value;
     var branch = document.getElementById('bankBranchName').value.trim();
     var accNum = document.getElementById('bankAccountNumber').value.trim();
+    var empId = window.currentEmployeeId || "EMP-001";
+    var userId = window.currentUserId || 1;
 
     if (!holder || !bank || !branch || !accNum) {
       alert('Please fill in all bank details.');
@@ -428,51 +483,47 @@
       btn.disabled = true;
     }
 
-    var pth = "<?php echo isset($pth) ? $pth : '../'; ?>";
+    // Save locally right away
+    var payload = {
+      account_holder_name: holder,
+      holder_name: holder,
+      bank_name: bank,
+      branch: branch,
+      account_number: accNum,
+      bank_account_number: accNum,
+      employee_id: empId,
+      user_id: userId
+    };
+    try {
+      localStorage.setItem('neo_employee_bank_details', JSON.stringify(payload));
+    } catch(e) {}
+
+    var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
     $.ajax({
       url: pth + "View-List/Bank_details/Save_Bank_Details.php",
       type: "POST",
-      data: {
-        account_holder_name: holder,
-        bank_name: bank,
-        branch: branch,
-        account_number: accNum,
-        employee_id: "EMP-002",
-        user_id: 1
-      },
+      data: payload,
       dataType: "json",
       success: function(response) {
         if (btn) {
           btn.disabled = false;
         }
-        if (response && response.status === 'success') {
-          // Hide / Mask the account number input field after saving
-          var accInput = document.getElementById('bankAccountNumber');
-          var icon = document.getElementById('accEyeIcon');
-          if (accInput) {
-            accInput.type = 'password';
-            accInput.style.letterSpacing = '1px';
-          }
-          if (icon) {
-            icon.className = 'fa-solid fa-eye-slash';
-          }
+        var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
+        var isSuccess = (resObj.error === "0" || resObj.status === "success");
+
+        if (isSuccess) {
+          populateBankFormFields(payload);
 
           if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Bank Details Saved (Masked)';
+            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Bank Details Saved & Protected';
             btn.style.background = '#12b76a';
             setTimeout(function() {
               btn.innerHTML = originalText;
               btn.style.background = '#14204d';
             }, 2500);
           }
-
-          var statusText = document.getElementById('bankAccountStatusText');
-          if (statusText) {
-            var masked = accNum.length > 4 ? accNum.slice(-4).padStart(accNum.length, '•') : accNum;
-            statusText.innerHTML = '<span style="color: #12b76a; font-weight: 700;">Account linked:</span> ' + bank + ' (' + masked + ')';
-          }
         } else {
-          alert('Error: ' + (response.message || 'Could not save bank details.'));
+          alert('Error: ' + (resObj.message || 'Could not save bank details.'));
           if (btn) {
             btn.innerHTML = originalText;
           }

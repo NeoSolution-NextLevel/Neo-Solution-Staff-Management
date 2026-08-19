@@ -21,7 +21,11 @@
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
   }
 
-  *{ box-sizing:border-box; margin:0; padding:0; }
+  *{ 
+    box-sizing:border-box; 
+    margin:0; 
+    padding:0; 
+  }
 
   body{
     background: var(--bg);
