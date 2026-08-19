@@ -58,33 +58,32 @@ error_reporting(E_ALL);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Container Sections */
+        /* Container Sections & Layout for All Admin Tabs */
         [id^="Admin_user_dashboard_"] {
-            width: 100% !important;
-            max-width: 100% !important;
-            min-height: 100vh;
-            display: block;
-        }
-
-        .app-layout {
-            display: block !important;
-            width: 100% !important;
-            min-height: 100vh;
-        }
-
-        /* Desktop Layout */
-        .main,
-        .main-wrapper,
-        .content-wrapper {
             margin-left: 250px !important;
             width: calc(100% - 250px) !important;
             max-width: calc(100% - 250px) !important;
-            min-height: calc(100vh - 60px) !important;
+            min-height: 100vh !important;
             height: auto !important;
             overflow: visible !important;
-            padding: 16px 20px 80px !important;
+            padding: 0 24px 80px !important;
             box-sizing: border-box !important;
             transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        /* Prevent nested inner containers from duplicating margin or shrinking width */
+        [id^="Admin_user_dashboard_"] .main,
+        [id^="Admin_user_dashboard_"] .main-wrapper,
+        [id^="Admin_user_dashboard_"] .content-wrapper,
+        [id^="Admin_user_dashboard_"] .content,
+        [id^="Admin_user_dashboard_"] .table-wrap,
+        [id^="Admin_user_dashboard_"] .table-card,
+        [id^="Admin_user_dashboard_"] .docs-container {
+            margin-left: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
         }
 
         .content {
@@ -96,8 +95,10 @@ error_reporting(E_ALL);
             overflow: visible !important;
         }
 
-        /* Topbar Header Bar (Flat rectangular bar without rounded corners) */
-        .topbar, header.topbar {
+        /* Topbar Header Bar - Full Width Clean SaaS Navbar */
+        .topbar, 
+        header.topbar,
+        [id^="Admin_user_dashboard_"] .topbar {
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
@@ -110,22 +111,26 @@ error_reporting(E_ALL);
             border-top: none !important;
             border-left: none !important;
             border-right: none !important;
-            border-bottom: 1px solid var(--border) !important;
-            box-shadow: 0 1px 2px rgba(20,25,60,.03) !important;
-            margin: -16px -20px 20px -20px !important;
-            width: calc(100% + 40px) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px rgba(20,25,60,.03) !important;
+            margin: 0 -24px 22px -24px !important;
+            width: calc(100% + 48px) !important;
             box-sizing: border-box !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 99 !important;
         }
 
-        /* Nav bar header */
+        /* Nav bar header elements */
         .topbar h2,
         .topbar .page-breadcrumb,
         .topbar .page-title,
         .topbar-left h2,
         .topbar-left .page-breadcrumb,
         .topbar-left .page-title,
-        .page-breadcrumb {
-            font-size: 22px !important;
+        .page-breadcrumb,
+        [id^="Admin_user_dashboard_"] .topbar h2 {
+            font-size: 20px !important;
             font-weight: 800 !important;
             color: #14204d !important;
             letter-spacing: -0.3px !important;
@@ -134,32 +139,90 @@ error_reporting(E_ALL);
             display: inline-block !important;
         }
 
-        .page-title h1,
-        .header-title h1,
-        .content-header h1,
-        .page-head h1,
-        .header-row h1,
-        [id^="Admin_user_dashboard_"] h1 {
-            font-size: 22px !important;
-            font-weight: 800 !important;
-            color: #14204d !important;
-            letter-spacing: -0.3px !important;
-            margin: 0 0 4px 0 !important;
-            line-height: 1.2 !important;
+        .topbar-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
         }
 
-        .page-title p,
-        .header-title p,
-        .content-header p,
-        .page-head p,
-        .header-row p,
-        [id^="Admin_user_dashboard_"] .page-head p,
-        [id^="Admin_user_dashboard_"] .header-title p,
-        [id^="Admin_user_dashboard_"] .content-header p {
+        .topbar-right {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+        }
+
+        .topbar .icon-btn,
+        [id^="Admin_user_dashboard_"] .topbar .icon-btn {
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 50% !important;
+            background: #eef2ff !important;
+            border: 1px solid #e0edff !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            color: #14204d !important;
+        }
+
+        .topbar .icon-btn:hover,
+        [id^="Admin_user_dashboard_"] .topbar .icon-btn:hover {
+            background: #e0e7ff !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .topbar .dot,
+        [id^="Admin_user_dashboard_"] .topbar .dot {
+            position: absolute !important;
+            top: 7px !important;
+            right: 8px !important;
+            width: 7px !important;
+            height: 7px !important;
+            border-radius: 50% !important;
+            background: #ef4444 !important;
+            border: 2px solid #ffffff !important;
+        }
+
+        .topbar .admin-pill,
+        [id^="Admin_user_dashboard_"] .topbar .admin-pill {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            padding: 4px 14px 4px 5px !important;
+            border-radius: 999px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .topbar .admin-pill:hover,
+        [id^="Admin_user_dashboard_"] .topbar .admin-pill:hover {
+            background: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        .topbar .admin-pill .avatar,
+        [id^="Admin_user_dashboard_"] .topbar .admin-pill .avatar {
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 11px !important;
+            background: #14204d !important;
+            color: #ffffff !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: 800 !important;
+        }
+
+        .topbar .admin-pill span,
+        [id^="Admin_user_dashboard_"] .topbar .admin-pill span {
             font-size: 13px !important;
-            color: #64748b !important;
-            margin: 0 !important;
-            font-weight: 500 !important;
+            font-weight: 700 !important;
+            color: #14204d !important;
         }
 
         .menu-btn, .toggle-menu {

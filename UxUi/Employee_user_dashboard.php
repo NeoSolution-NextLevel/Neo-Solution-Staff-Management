@@ -57,34 +57,35 @@ error_reporting(E_ALL);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Container Sections */
+        /* Container Sections & Layout for All Employee Tabs */
         [id^="Employee_user_dashboard_"] {
-            width: 100% !important;
-            max-width: 100% !important;
-            min-height: 100vh;
-            display: block;
-        }
-
-        .app-layout {
-            display: block !important;
-            width: 100% !important;
-            min-height: 100vh;
-        }
-
-        /* Desktop Layout */
-        .main,
-        .main-wrapper,
-        .content-wrapper,
-        .emp-main {
             margin-left: 250px !important;
             width: calc(100% - 250px) !important;
             max-width: calc(100% - 250px) !important;
-            min-height: calc(100vh - 60px) !important;
+            min-height: 100vh !important;
             height: auto !important;
             overflow: visible !important;
-            padding: 16px 20px 80px !important;
+            padding: 0 24px 80px !important;
             box-sizing: border-box !important;
             transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        /* Prevent nested inner containers from duplicating margin or shrinking width */
+        [id^="Employee_user_dashboard_"] .main,
+        [id^="Employee_user_dashboard_"] .emp-main,
+        [id^="Employee_user_dashboard_"] .main-wrapper,
+        [id^="Employee_user_dashboard_"] .content-wrapper,
+        [id^="Employee_user_dashboard_"] .content,
+        [id^="Employee_user_dashboard_"] .docs-container,
+        [id^="Employee_user_dashboard_"] .docs-wrapper,
+        [id^="Employee_user_dashboard_"] .settings-container,
+        [id^="Employee_user_dashboard_"] .profile-wrapper,
+        [id^="Employee_user_dashboard_"] .personal-details-wrapper {
+            margin-left: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
         }
 
         .content {
@@ -96,8 +97,10 @@ error_reporting(E_ALL);
             overflow: visible !important;
         }
 
-        /* Topbar Header Bar (Flat rectangular bar without rounded corners) */
-        .topbar, header.topbar {
+        /* Topbar Header Bar - Full Width Clean SaaS Navbar */
+        .topbar, 
+        header.topbar,
+        [id^="Employee_user_dashboard_"] .topbar {
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
@@ -110,22 +113,26 @@ error_reporting(E_ALL);
             border-top: none !important;
             border-left: none !important;
             border-right: none !important;
-            border-bottom: 1px solid var(--border) !important;
-            box-shadow: 0 1px 2px rgba(20,25,60,.03) !important;
-            margin: -16px -20px 20px -20px !important;
-            width: calc(100% + 40px) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px rgba(20,25,60,.03) !important;
+            margin: 0 -24px 22px -24px !important;
+            width: calc(100% + 48px) !important;
             box-sizing: border-box !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 99 !important;
         }
 
-        /* Nav bar header */
+        /* Nav bar header elements */
         .topbar h2,
         .topbar .page-breadcrumb,
         .topbar .page-title,
         .topbar-left h2,
         .topbar-left .page-breadcrumb,
         .topbar-left .page-title,
-        .page-breadcrumb {
-            font-size: 22px !important;
+        .page-breadcrumb,
+        [id^="Employee_user_dashboard_"] .topbar h2 {
+            font-size: 20px !important;
             font-weight: 800 !important;
             color: #14204d !important;
             letter-spacing: -0.3px !important;
@@ -163,9 +170,9 @@ error_reporting(E_ALL);
         }
 
         .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
         }
 
         .topbar-right {
