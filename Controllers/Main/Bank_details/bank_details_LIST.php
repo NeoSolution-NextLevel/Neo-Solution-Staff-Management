@@ -7,6 +7,8 @@ if (!class_exists('DataBase')) {
     }
 }
 
+include_once __DIR__ . '/Bank_Security.php';
+
 class bank_details_LIST
 {
     private $sql_search_data = "";
@@ -65,13 +67,17 @@ class bank_details_LIST
     public function getAllBankDetails()
     {
         $db = new DataBase();
-        $query = "SELECT * FROM bank_details WHERE (ast='1' OR ast IS NULL OR ast='') ORDER BY id DESC";
+        $query = "SELECT * FROM bank_details WHERE (ast='1' OR ast IS NULL OR ast='' OR ast='Active') ORDER BY id DESC";
         $res = $db->get_result($query);
 
         $list = [];
         if ($res && $res->num_rows > 0) {
             while ($row = $res->fetch_assoc()) {
                 $empName = !empty($row['employee_name']) ? $row['employee_name'] : (!empty($row['holder_name']) ? $row['holder_name'] : 'Employee');
+                $rawStored = !empty($row['bank_account_number']) ? $row['bank_account_number'] : (!empty($row['account_number']) ? $row['account_number'] : '-');
+                $decrypted = ($rawStored !== '-') ? Bank_Security::decrypt($rawStored) : '-';
+                $masked = ($decrypted !== '-') ? Bank_Security::mask($decrypted) : '-';
+
                 $list[] = [
                     'id' => (int)$row['id'],
                     'user_id' => isset($row['user_id']) ? (int)$row['user_id'] : 1,
@@ -81,8 +87,9 @@ class bank_details_LIST
                     'account_holder_name' => !empty($row['holder_name']) ? $row['holder_name'] : $empName,
                     'bank_name' => !empty($row['bank_name']) ? $row['bank_name'] : '-',
                     'branch' => !empty($row['branch']) ? $row['branch'] : '-',
-                    'bank_account_number' => !empty($row['bank_account_number']) ? $row['bank_account_number'] : (!empty($row['account_number']) ? $row['account_number'] : '-'),
-                    'account_number' => !empty($row['bank_account_number']) ? $row['bank_account_number'] : (!empty($row['account_number']) ? $row['account_number'] : '-'),
+                    'bank_account_number' => $decrypted,
+                    'account_number' => $decrypted,
+                    'masked_account_number' => $masked,
                     'status' => !empty($row['status']) ? $row['status'] : 'Active',
                     'sdt' => !empty($row['sdt']) ? $row['sdt'] : date('Y-m-d H:i:s')
                 ];
