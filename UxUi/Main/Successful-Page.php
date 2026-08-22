@@ -10,12 +10,13 @@ include_once '../../imports/need/session_setup.php';
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
     <title>ERP Admin Portal | Success</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../UxUi-Back/assets/css/erp-theme.css">
     <style>
         /* ===== GLOBAL COLOR SYSTEM ===== */
         :root {
             /* Primary ERP Brand Colors - Updated to Green Theme */
-            --erp-primary: #2d8556;
-            --erp-primary-dark: #1e5b37;
+            --erp-primary: #38a169;
+            --erp-primary-dark: #276749;
             --erp-primary-light: #48bb78;
             --erp-primary-subtle: #f0fff4;
 
@@ -28,10 +29,10 @@ include_once '../../imports/need/session_setup.php';
 
             /* Neutral Colors */
             --erp-surface: #ffffff;
-            --erp-surface-alt: #f7fafc;
+            --erp-surface-alt: #f8fafc;
             --erp-border: #e2e8f0;
-            --erp-border-dark: #cbd5e0;
-            --erp-text-primary: #2d3748;
+            --erp-border-dark: #cbd5e1;
+            --erp-text-primary: #1e293b;
             --erp-text-secondary: #4a5568;
             --erp-text-tertiary: #718096;
 
