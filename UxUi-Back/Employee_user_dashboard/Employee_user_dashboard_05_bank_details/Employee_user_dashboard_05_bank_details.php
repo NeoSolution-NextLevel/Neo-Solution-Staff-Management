@@ -353,40 +353,33 @@
     var icon = document.getElementById('accEyeIcon');
     var statusText = document.getElementById('bankAccountStatusText');
 
-    if (holderInput && (d.account_holder_name || d.holder_name)) {
-      holderInput.value = d.account_holder_name || d.holder_name || '';
-    }
-    if (selectBank && d.bank_name) {
-      selectBank.value = d.bank_name;
-    }
-    if (branchInput && d.branch) {
-      branchInput.value = d.branch;
-    }
-    if (accInput && (d.account_number || d.bank_account_number)) {
-      var accNum = d.account_number || d.bank_account_number || '';
-      accInput.value = accNum;
-      accInput.type = 'password';
-      accInput.style.letterSpacing = '1px';
-      if (icon) icon.className = 'fa-solid fa-eye-slash';
+    var accNum = d.account_number || d.bank_account_number || '';
+    var bankName = d.bank_name || '';
 
-      var masked = accNum.length > 4 ? accNum.slice(-4).padStart(accNum.length, '•') : accNum;
-      if (statusText) {
-        statusText.innerHTML = '<span style="color: #12b76a; font-weight: 700;">Account linked:</span> ' + (d.bank_name || 'Bank') + ' (' + masked + ')';
+    // Update ONLY the Linked Banner badge at the top
+    if (statusText) {
+      if (accNum || bankName) {
+        var last4 = accNum.length > 4 ? accNum.slice(-4) : accNum;
+        var masked = last4 ? ('••••' + last4) : '••••';
+        statusText.innerHTML = '<span style="color: #12b76a; font-weight: 700;">Account linked:</span> ' + (bankName || 'Bank') + ' (' + masked + ')';
+      } else {
+        statusText.innerText = 'No bank account added yet';
       }
+    }
+
+    // Keep all form input fields completely empty / clear (No pre-filling)
+    if (holderInput) holderInput.value = '';
+    if (selectBank) selectBank.selectedIndex = 0;
+    if (branchInput) branchInput.value = '';
+    if (accInput) {
+      accInput.value = '';
+      accInput.type = 'password';
+      if (icon) icon.className = 'fa-solid fa-eye-slash';
     }
   }
 
-  // Load Bank Details from Backend on initialization
+  // Load Bank Details strictly from Database on page load
   document.addEventListener("DOMContentLoaded", function() {
-    // 1. Instant recovery from local cache so form is NEVER cleared on refresh
-    try {
-      var cached = localStorage.getItem('neo_employee_bank_details');
-      if (cached) {
-        populateBankFormFields(JSON.parse(cached));
-      }
-    } catch(e) {}
-
-    // 2. Fetch authoritative data from Database
     loadEmployeeBankDetails();
   });
 
@@ -411,54 +404,43 @@
     var userId = window.currentUserId || 1;
 
     $.ajax({
-      url: pth + "View-List/Bank_details/Fetch_Bank_Details.php",
+      url: pth + "UxUi-Back/Bank_Details/account_number.php",
       type: "GET",
       data: { employee_id: empId, user_id: userId },
       dataType: "json",
       success: function(response) {
         var statusText = document.getElementById('bankAccountStatusText');
-        var holderInput = document.getElementById('bankAccountHolderName');
-
         var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
-        var isSuccess = (resObj.error === "0" || resObj.status === "success");
 
-        if (isSuccess && resObj.data) {
-          var d = resObj.data;
-          populateBankFormFields(d);
-          try {
-            localStorage.setItem('neo_employee_bank_details', JSON.stringify(d));
-          } catch(e) {}
+        if (resObj.status === "success" && resObj.data) {
+          populateBankFormFields(resObj.data);
         } else {
-          // If no bank record yet in DB, check cache or profile name
-          try {
-            var cached = localStorage.getItem('neo_employee_bank_details');
-            if (cached) {
-              populateBankFormFields(JSON.parse(cached));
-              return;
-            }
-          } catch(e) {}
-
+          // No record in DB: keep clean empty form
           if (statusText) {
             statusText.innerText = 'No bank account added yet';
-          }
-          if (holderInput && !holderInput.value && window.currentEmployeeName) {
-            holderInput.value = window.currentEmployeeName;
           }
         }
       },
       error: function() {
-        var statusText = document.getElementById('bankAccountStatusText');
-        try {
-          var cached = localStorage.getItem('neo_employee_bank_details');
-          if (cached) {
-            populateBankFormFields(JSON.parse(cached));
-            return;
+        $.ajax({
+          url: pth + "View-List/Bank_details/Fetch_Bank_Details.php",
+          type: "GET",
+          data: { employee_id: empId, user_id: userId },
+          dataType: "json",
+          success: function(response2) {
+            var statusText = document.getElementById('bankAccountStatusText');
+            var resObj2 = Array.isArray(response2) ? (response2[0] || {}) : (response2 || {});
+            if (resObj2.status === "success" && resObj2.data) {
+              populateBankFormFields(resObj2.data);
+            } else {
+              if (statusText) statusText.innerText = 'No bank account added yet';
+            }
+          },
+          error: function() {
+            var statusText = document.getElementById('bankAccountStatusText');
+            if (statusText) statusText.innerText = 'No bank account added yet';
           }
-        } catch(e) {}
-
-        if (statusText) {
-          statusText.innerText = 'No bank account added yet';
-        }
+        });
       }
     });
   }
@@ -483,7 +465,6 @@
       btn.disabled = true;
     }
 
-    // Save locally right away
     var payload = {
       account_holder_name: holder,
       holder_name: holder,
@@ -492,15 +473,13 @@
       account_number: accNum,
       bank_account_number: accNum,
       employee_id: empId,
+      employee_name: window.currentEmployeeName || holder,
       user_id: userId
     };
-    try {
-      localStorage.setItem('neo_employee_bank_details', JSON.stringify(payload));
-    } catch(e) {}
 
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
     $.ajax({
-      url: pth + "View-List/Bank_details/Save_Bank_Details.php",
+      url: pth + "UxUi-Back/Bank_Details/account_number.php",
       type: "POST",
       data: payload,
       dataType: "json",
@@ -515,7 +494,7 @@
           populateBankFormFields(payload);
 
           if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Bank Details Saved & Protected';
+            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Bank Details Saved';
             btn.style.background = '#12b76a';
             setTimeout(function() {
               btn.innerHTML = originalText;
@@ -523,18 +502,48 @@
             }, 2500);
           }
         } else {
-          alert('Error: ' + (resObj.message || 'Could not save bank details.'));
+          alert('Error: ' + (resObj.message || resObj.error || 'Could not save bank details.'));
           if (btn) {
             btn.innerHTML = originalText;
           }
         }
       },
-      error: function(xhr, status, error) {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = originalText;
-        }
-        alert('Failed to connect to the server. Please check your database connection.');
+      error: function() {
+        // Fallback to View-List endpoint
+        $.ajax({
+          url: pth + "View-List/Bank_details/Save_Bank_Details.php",
+          type: "POST",
+          data: payload,
+          dataType: "json",
+          success: function(response2) {
+            if (btn) {
+              btn.disabled = false;
+            }
+            var resObj2 = Array.isArray(response2) ? (response2[0] || {}) : (response2 || {});
+            var isSuccess2 = (resObj2.error === "0" || resObj2.status === "success");
+            if (isSuccess2) {
+              populateBankFormFields(payload);
+              if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Bank Details Saved';
+                btn.style.background = '#12b76a';
+                setTimeout(function() {
+                  btn.innerHTML = originalText;
+                  btn.style.background = '#14204d';
+                }, 2500);
+              }
+            } else {
+              alert('Error: ' + (resObj2.message || resObj2.error || 'Could not save bank details.'));
+              if (btn) btn.innerHTML = originalText;
+            }
+          },
+          error: function(xhr2) {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = originalText;
+            }
+            alert('Failed to connect to the server. Please check your database connection.');
+          }
+        });
       }
     });
   }
