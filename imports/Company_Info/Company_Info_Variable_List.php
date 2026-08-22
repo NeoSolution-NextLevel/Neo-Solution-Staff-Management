@@ -6,15 +6,15 @@ class Company_Info_Variable_List
 {
 
     //-----------------------------------------------------------------------------------------------------------
-    private $company_logo_icon = "https://www.NEO LOGINdutyfree.lk/assets/images/logo.png";
-    private $company_logo_url = "https://www.NEO LOGINdutyfree.lk/assets/images/logo.png";
-    private $footer_txt = "NEO LOGIN International Duty Free (Pvt) Ltd | www.NEO LOGINdutyfree.lk | 0112263355 | info@NEO LOGINdutyfree.lk";
-    private $company_name = "NEO LOGIN International Duty Free (Pvt) Ltd ";
-    private $company_web = "NEO LOGINdutyfree.lk";
+    private $company_logo_icon = "/UxUi-Back/assets/neo_icon.svg";
+    private $company_logo_url = "/UxUi-Back/assets/neo_solution_logo.svg";
+    private $footer_txt = "NEO Solution (Pvt) Ltd | www.neosolution.lk | 0112263355 | info@neosolution.lk";
+    private $company_name = "NEO Solution (Pvt) Ltd";
+    private $company_web = "neosolution.lk";
     private $full_company_web = "http://localhost:3000/";
-    private $default_sending_email = "info@NEO LOGINdutyfree.lk";
-    private $system_problem_sending_email = "info@NEO LOGINdutyfree.lk";
-    private $company_short_name = "NEO LOGIN";
+    private $default_sending_email = "info@neosolution.lk";
+    private $system_problem_sending_email = "info@neosolution.lk";
+    private $company_short_name = "NEO Solution";
     //-----------------------------------------------------------------------------------------------------------   
     private $company_whatup_number = "94773401876";
     private $whatusp_url_to_revice_message = "";
