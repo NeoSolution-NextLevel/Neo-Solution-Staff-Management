@@ -101,6 +101,11 @@ class bank_details_SINGLE_DATA
             $this->ast                 = $row['ast'];
             $this->sdt                 = $row['sdt'];
 
+include_once __DIR__ . '/Bank_Security.php';
+
+            $decrypted = Bank_Security::decrypt($this->bank_account_number);
+            $masked = Bank_Security::mask($decrypted);
+
             return [
                 'status' => 'success',
                 'data' => [
@@ -112,8 +117,9 @@ class bank_details_SINGLE_DATA
                     'account_holder_name' => $this->holder_name,
                     'bank_name' => $this->bank_name,
                     'branch' => $this->branch,
-                    'account_number' => $this->bank_account_number,
-                    'bank_account_number' => $this->bank_account_number,
+                    'account_number' => $decrypted,
+                    'bank_account_number' => $decrypted,
+                    'masked_account_number' => $masked,
                     'status' => $this->status,
                     'sdt' => $this->sdt
                 ]
