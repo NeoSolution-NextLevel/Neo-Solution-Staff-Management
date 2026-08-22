@@ -302,26 +302,7 @@ $company_obj = new Company_Info_Variable_List();
     }
 
     /* Logo Styles */
-    #logo {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100px;
-        height: auto;
-    }
-
-    /* Animation */
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
+    
     .w3-notification-badge {
         position: absolute;
         top: -5px;
