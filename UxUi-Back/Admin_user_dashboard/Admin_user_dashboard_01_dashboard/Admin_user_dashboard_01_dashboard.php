@@ -595,7 +595,7 @@
           </svg>
           <span class="dot"></span>
         </div>
-        <div class="admin-pill" onclick="Admin_user_dashboard_05_OPEN();" title="Departments">
+        <div class="admin-pill" onclick="Admin_user_dashboard_10_OPEN();" title="Settings">
           <div class="avatar">AU</div>
           <span>Admin</span>
         </div>
