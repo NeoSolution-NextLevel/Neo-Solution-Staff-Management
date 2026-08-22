@@ -22,56 +22,32 @@
     --border: #e8eaf0;
     --bg: #f5f6fa;
     --card: #ffffff;
-    --radius: 14px;
-    --shadow-sm: 0 1px 3px rgba(20, 25, 60, 0.04);
-    --shadow-md: 0 4px 16px rgba(20, 25, 60, 0.06);
-    --shadow-lg: 0 12px 32px rgba(20, 25, 60, 0.08);
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   #Admin_user_dashboard_03_documents {
     width: 100%;
-    height: calc(100vh - 42px);
-    max-height: calc(100vh - 42px);
-    overflow: hidden !important;
+    min-height; 100vh;
+  }
+
+  .main {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    max-width: calc(100% - 250px);
+    min-heigth: 100vh;
+    padding: 16px 20px 24px;
+    box-sizing: border-box;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+  }
+
+  .topbar {
     display: flex;
-    flex-direction: column;
-  }
-
-  #Admin_user_dashboard_03_documents .main {
-    margin-left: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-  }
-
-  /* Topbar */
-  #Admin_user_dashboard_03_documents .topbar {
-    flex-shrink: 0;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    margin: 0 -24px 18px -24px !important;
-    background: #ffffff !important;
-    height: 64px !important;
-    min-height: 64px !important;
-    max-height: 64px !important;
-    padding: 0 24px !important;
-    border-radius: 0 !important;
-    border-top: none !important;
-    border-left: none !important;
-    border-right: none !important;
-    border-bottom: 1px solid var(--border) !important;
-    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.03) !important;
-    width: calc(100% + 48px) !important;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
   }
   .topbar-left {
     display: flex;
@@ -79,21 +55,20 @@
     gap: 10px;
   }
   .topbar h2 {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 800;
     color: var(--navy);
     letter-spacing: -0.3px;
-    margin: 0;
   }
 
   .topbar-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
   }
   .icon-btn {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: var(--blue-lighter);
     display: flex;
@@ -101,15 +76,17 @@
     justify-content: center;
     position: relative;
     cursor: pointer;
-    border: none;
-    transition: background 0.15s ease;
   }
-  .icon-btn:hover { background: #e0e7ff; }
-  .icon-btn svg { width: 18px; height: 18px; color: var(--navy); }
+  
+  .icon-btn svg { 
+  width: 18px; 
+  height: 18px; 
+  color: var(--navy); 
+  }
   .dot {
     position: absolute;
-    top: 7px;
-    right: 8px;
+    top: 8px;
+    right: 9px;
     width: 7px;
     height: 7px;
     border-radius: 50%;
@@ -122,16 +99,16 @@
     align-items: center;
     gap: 8px;
     background: var(--blue-lighter);
-    padding: 4px 12px 4px 4px;
+    padding: 5px 14px 5px 5px;
     border-radius: 999px;
     cursor: pointer;
   }
   .admin-pill .avatar {
-    width: 28px;
-    height: 28px;
-    font-size: 11px;
+    width: 30px;
+    height: 30px;
+    font-size: 11.5px;
     background: var(--navy);
-    color: #ffffff;
+    color: #fff;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -139,7 +116,7 @@
     font-weight: 700;
   }
   .admin-pill span {
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     color: var(--navy);
   }
@@ -148,17 +125,18 @@
     display: none;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 8px;
     background: var(--blue-lighter);
     border: none;
     cursor: pointer;
     color: var(--navy);
+    margin-right: 6px;
   }
-  .menu-btn svg { width: 18px; height: 18px; }
+  .menu-btn svg { width: 20px; height: 20px; }
 
-  /* Main Card Layout (Flex 1 to fit viewport exactly) */
+  /* Main Card Layout) */
   .doc-main-card {
     flex: 1;
     min-height: 0;
