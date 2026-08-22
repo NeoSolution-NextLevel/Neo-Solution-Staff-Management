@@ -2,6 +2,8 @@
 <?php if (!isset($header_included)): ?>
     <?php $header_included = true; ?>
 
+    <link rel="stylesheet" href="<?php echo isset($pth) ? $pth : '../'; ?>UxUi-Back/assets/css/erp-theme.css">
+
     <style>
         /* =========================================================
        ERP HEADER
@@ -148,7 +150,31 @@
     <!-- ================= TOP BAR ================= -->
     <header class="erp-header">
 
-        <div class="erp-header__title">NEO Solution • Office Staff Management System</div>
+        <div class="erp-header__title" style="display: flex; align-items: center; gap: 10px;">
+            <svg viewBox="0 0 94 94" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="hdrBlueSphere" cx="32%" cy="30%" r="68%">
+                        <stop offset="0%" stop-color="#7399f7"/>
+                        <stop offset="25%" stop-color="#2b4db3"/>
+                        <stop offset="60%" stop-color="#142668"/>
+                        <stop offset="90%" stop-color="#091338"/>
+                        <stop offset="100%" stop-color="#04091c"/>
+                    </radialGradient>
+                    <radialGradient id="hdrGreenSphere" cx="32%" cy="30%" r="68%">
+                        <stop offset="0%" stop-color="#5ec95e"/>
+                        <stop offset="25%" stop-color="#238029"/>
+                        <stop offset="60%" stop-color="#125219"/>
+                        <stop offset="90%" stop-color="#0a3310"/>
+                        <stop offset="100%" stop-color="#041a08"/>
+                    </radialGradient>
+                </defs>
+                <circle cx="28" cy="28" r="17" fill="url(#hdrBlueSphere)"/>
+                <circle cx="62" cy="38" r="16" fill="url(#hdrGreenSphere)"/>
+                <circle cx="30" cy="62" r="16" fill="url(#hdrGreenSphere)"/>
+                <circle cx="62" cy="72" r="17" fill="url(#hdrBlueSphere)"/>
+            </svg>
+            <span>NEO Solution • Office Staff Management System</span>
+        </div>
         <div class="erp-header__icons">
             <span class="erp-header__icon" title="Notifications" onclick="Admin_user_dashboard_09_OPEN();">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
