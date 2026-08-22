@@ -1,8 +1,13 @@
 <?php
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
 
 include_once __DIR__ . '/../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../imports/need/DB.php';
 include_once __DIR__ . '/../../Controllers/Main/Bank_Details/bank_details_LIST.php';
+
+header('Content-Type: application/json; charset=utf-8');
 
 $json = array();
 
@@ -22,5 +27,7 @@ if ($res['status'] === 'success') {
     $json[] = $state;
 }
 
+ob_clean();
 echo json_encode($json);
+exit;
 ?>
