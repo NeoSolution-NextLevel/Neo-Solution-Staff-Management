@@ -73,25 +73,25 @@
           return `
             <tr data-id="${t.id}">
               <td class="col-task">
-                <div class="task-title" style="font-weight:700; color:#1e293b;">${t.title}</div>
-                <div class="task-dept" style="font-size:12px; color:#64748b;">${t.dept || t.department || 'General'}</div>
+                <div class="task-title-text">${t.title}</div>
+                <div class="task-dept-text">${t.dept || t.department || 'General'}</div>
               </td>
               <td class="col-employee" style="font-weight:600; color:#14204d;">${t.employee || t.assigned_to || 'Staff'}</td>
-              <td class="col-mode"><span class="pill ${modeClass}">${t.mode || 'Online'}</span></td>
+              <td class="col-mode"><span class="task-pill ${modeClass}">${t.mode || 'Online'}</span></td>
               <td class="col-deadline">${t.deadline || '—'}</td>
-              <td class="col-priority"><span class="pill ${priorityClass}">${t.priority || 'Medium'}</span></td>
-              <td class="col-status"><span class="pill ${statusClass}">${t.status || 'Pending'}</span></td>
-              <td class="col-actions">
-                <div class="action-group">
-                  <button class="action-btn btn-edit" aria-label="Edit Task" title="Edit Task" onclick="editTask(${t.id})">${iconEdit}</button>
-                  <button class="action-btn btn-delete" aria-label="Delete Task" title="Delete Task" onclick="deleteTask(${t.id})">${iconDelete}</button>
+              <td class="col-priority"><span class="task-pill ${priorityClass}">${t.priority || 'Medium'}</span></td>
+              <td class="col-status"><span class="task-pill ${statusClass}">${t.status || 'Pending'}</span></td>
+              <td class="col-actions" style="text-align: center;">
+                <div class="task-action-group">
+                  <button class="task-action-btn task-btn-edit" aria-label="Edit Task" title="Edit Task" onclick="editTask(${t.id})">${iconEdit}</button>
+                  <button class="task-action-btn task-btn-delete" aria-label="Delete Task" title="Delete Task" onclick="deleteTask(${t.id})">${iconDelete}</button>
                 </div>
               </td>
             </tr>
           `;
         }).join('');
       } else {
-        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px 20px; color:#64748b;">No tasks found in database.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px 20px; color:#64748b; font-weight: 500;">No tasks found in database.</td></tr>';
       }
 
       if (taskCount) {
