@@ -19,9 +19,12 @@ error_reporting(E_ALL);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../UxUi-Back/assets/css/erp-theme.css">
     <title>Admin Dashboard System</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" > </script>
+</head>
+
+
     <style>
         :root {
             --navy: #14204d;
@@ -368,7 +371,7 @@ error_reporting(E_ALL);
             }
         }
     </style>
-</head>
+
 
 <body>
 
