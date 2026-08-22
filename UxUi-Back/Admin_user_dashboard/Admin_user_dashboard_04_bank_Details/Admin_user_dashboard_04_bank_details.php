@@ -476,12 +476,11 @@
               <th>Bank Name</th>
               <th>Branch</th>
               <th>Account No.</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="bankTableBody">
             <tr>
-              <td colspan="6" style="text-align:center; padding: 30px 20px; color: #6b7280;">Loading bank details...</td>
+              <td colspan="5" style="text-align:center; padding: 30px 20px; color: #6b7280;">Loading bank details...</td>
             </tr>
           </tbody>
         </table>
@@ -498,7 +497,7 @@
   </main>
 </div>
 
-<!-- ================= Admin Add/Edit Bank Modal ================= -->
+<!-- ================= Admin Add Bank Modal ================= -->
 <div class="bank-modal-overlay" id="adminBankModalOverlay" onclick="if(event.target===this) closeAdminBankModal();">
   <div class="bank-modal-card">
     <div class="bank-modal-head">
@@ -582,49 +581,22 @@
       success: function(response) {
         var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
         var isSuccess = (resObj.error === "0" || resObj.status === "success");
-        var list = resObj.data || [];
+        var list = Array.isArray(resObj.data) ? resObj.data : [];
 
-        if (isSuccess && Array.isArray(list) && list.length > 0) {
+        if (isSuccess && list.length > 0) {
           window.adminBankDataCache = list;
-          try {
-            localStorage.setItem('neo_admin_bank_list', JSON.stringify(list));
-          } catch(e) {}
           renderAdminBankRows(window.adminBankDataCache);
         } else {
-          // If response is empty, check cache
-          try {
-            var cached = localStorage.getItem('neo_admin_bank_list');
-            if (cached) {
-              var parsed = JSON.parse(cached);
-              if (Array.isArray(parsed) && parsed.length > 0) {
-                window.adminBankDataCache = parsed;
-                renderAdminBankRows(parsed);
-                return;
-              }
-            }
-          } catch(e) {}
-
           window.adminBankDataCache = [];
           renderAdminBankRows([]);
         }
       },
       error: function() {
-        try {
-          var cached = localStorage.getItem('neo_admin_bank_list');
-          if (cached) {
-            var parsed = JSON.parse(cached);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              window.adminBankDataCache = parsed;
-              renderAdminBankRows(parsed);
-              return;
-            }
-          }
-        } catch(e) {}
-
+        window.adminBankDataCache = [];
         var tbody = document.getElementById('bankTableBody');
         var mobileContainer = document.getElementById('mobileBankCardsContainer');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 30px 20px; color: #6b7280;">No bank records found in database.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div style="text-align:center; padding: 30px 16px; color: #6b7280; background:#fff; border-radius:12px;">No bank records found in database.</div>';
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px 20px; color: #6b7280;">No bank records found.</td></tr>';
+        if (mobileContainer) mobileContainer.innerHTML = '<div style="text-align:center; padding: 30px 16px; color: #6b7280; background:#fff; border-radius:12px;">No bank records found.</div>';
       }
     });
   };
@@ -634,7 +606,7 @@
     var mobileContainer = document.getElementById('mobileBankCardsContainer');
 
     if (!list || list.length === 0) {
-      if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 30px 20px; color: #6b7280;">No bank records found.</td></tr>';
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px 20px; color: #6b7280;">No bank records found.</td></tr>';
       if (mobileContainer) mobileContainer.innerHTML = '<div style="text-align:center; padding: 30px 16px; color: #6b7280; background:#fff; border-radius:12px;">No bank records found.</div>';
       return;
     }
@@ -654,7 +626,7 @@
 
       var rowId = 'acc_row_' + Math.random().toString(36).substr(2, 9);
 
-      // Desktop Table Row
+      // Desktop Table Row (Secure Read-Only View)
       if (tbody) {
         var tr = document.createElement('tr');
         tr.innerHTML = '<td>' +
@@ -674,16 +646,11 @@
             '<span class="acc-chip" id="' + rowId + '_desk" data-raw="' + accRaw + '" data-masked="' + accMasked + '">' + accMasked + '</span>' +
             (accRaw !== '-' ? '<button type="button" onclick="toggleAdminAccView(\'' + rowId + '_desk\', this)" style="background:none; border:none; cursor:pointer; color:#64748b; font-size:14px; padding:2px 4px;" title="Show/Hide"><i class="fa-solid fa-eye-slash"></i></button>' : '') +
           '</div>' +
-        '</td>' +
-        '<td>' +
-          '<button type="button" class="action-btn-sm" onclick=\'openAdminBankModal(' + JSON.stringify(row) + ')\' title="Edit">' +
-            '<i class="fa-solid fa-pen-to-square"></i> Edit' +
-          '</button>' +
         '</td>';
         tbody.appendChild(tr);
       }
 
-      // Mobile Card Item
+      // Mobile Card Item (Secure Read-Only View)
       if (mobileContainer) {
         var card = document.createElement('div');
         card.className = 'mobile-bank-card';
@@ -713,11 +680,6 @@
             '<span class="mobile-bank-label">Account Holder:</span>' +
             '<span class="mobile-bank-val">' + holderName + '</span>' +
           '</div>' +
-        '</div>' +
-        '<div style="display:flex; justify-content:flex-end;">' +
-          '<button type="button" class="action-btn-sm" onclick=\'openAdminBankModal(' + JSON.stringify(row) + ')\'>' +
-            '<i class="fa-solid fa-pen-to-square"></i> Edit Details' +
-          '</button>' +
         '</div>';
         mobileContainer.appendChild(card);
       }
@@ -795,17 +757,21 @@
     }
 
     var pth = "<?php echo isset($pth) ? $pth : '../'; ?>";
+    var payload = {
+      employee_id: empId,
+      account_holder_name: holder,
+      holder_name: holder,
+      bank_name: bank,
+      branch: branch,
+      account_number: accNum,
+      bank_account_number: accNum,
+      user_id: 1
+    };
+
     $.ajax({
-      url: pth + "View-List/Bank_details/Save_Bank_Details.php",
+      url: pth + "UxUi-Back/Bank_Details/account_number.php",
       type: "POST",
-      data: {
-        employee_id: empId,
-        account_holder_name: holder,
-        bank_name: bank,
-        branch: branch,
-        account_number: accNum,
-        user_id: 1
-      },
+      data: payload,
       dataType: "json",
       success: function(res) {
         if (btn) {
@@ -819,15 +785,37 @@
           closeAdminBankModal();
           window.loadAdminBankDetails();
         } else {
-          alert('Error: ' + (resObj.message || 'Could not save bank details.'));
+          alert('Error: ' + (resObj.message || resObj.error || 'Could not save bank details.'));
         }
       },
       error: function() {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = origHtml;
-        }
-        alert('Failed to connect to the database.');
+        $.ajax({
+          url: pth + "View-List/Bank_details/Save_Bank_Details.php",
+          type: "POST",
+          data: payload,
+          dataType: "json",
+          success: function(res2) {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = origHtml;
+            }
+            var resObj2 = Array.isArray(res2) ? (res2[0] || {}) : (res2 || {});
+            var isSuccess2 = (resObj2.error === "0" || resObj2.status === "success");
+            if (isSuccess2) {
+              closeAdminBankModal();
+              window.loadAdminBankDetails();
+            } else {
+              alert('Error: ' + (resObj2.message || resObj2.error || 'Could not save bank details.'));
+            }
+          },
+          error: function() {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = origHtml;
+            }
+            alert('Failed to connect to the database.');
+          }
+        });
       }
     });
   };
