@@ -2,19 +2,19 @@
   :root{
     --navy: #14204d;
     --navy-2: #1c2b63;
-    --blue: #3b5bdb;
-    --blue-light: #dbe4ff;
-    --blue-lighter: #eef2ff;
-    --green: #12b76a;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --blue-lighter: #f0f7ff;
+    --green: #38a169;
     --green-bg: #e3f9ee;
-    --amber: #f5a623;
+    --amber: #dd6b20;
     --amber-bg: #fdf1dc;
-    --red: #f0576a;
+    --red: #e53e3e;
     --red-bg: #fde8ec;
-    --ink: #1a1f36;
-    --muted: #6b7280;
-    --border: #e8eaf0;
-    --bg: #f5f6fa;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
     --card: #ffffff;
     --radius: 16px;
     --shadow: 0 1px 2px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
@@ -45,33 +45,69 @@
     justify-content:space-between;
     margin-bottom: 16px;
   }
-  .topbar h2{ font-size: 22px; font-weight:800; color: var(--navy); letter-spacing:-.3px; }
+  .topbar h2{ 
+    font-size: 22px; 
+    font-weight:800; 
+    color: var(--navy); 
+    letter-spacing:-.3px; 
+  }
 
-  .topbar-right{ display:flex; align-items:center; gap:14px; }
+  .topbar-right{ 
+    display:flex; 
+    align-items:center; 
+    gap:14px; 
+  }
+
   .icon-btn{
     width:40px; height:40px;
     border-radius:50%;
     background: var(--blue-lighter);
-    display:flex; align-items:center; justify-content:center;
+    display:flex; 
+    align-items:center; 
+    justify-content:center;
     position:relative;
     cursor:pointer;
   }
-  .icon-btn svg{ width:18px; height:18px; color: var(--navy); }
+  .icon-btn svg{ 
+    width:18px; 
+    height:18px; 
+    color: var(--navy); }
   .dot{
-    position:absolute; top:8px; right:9px;
-    width:7px; height:7px; border-radius:50%;
+    position:absolute; 
+    top:8px; 
+    right:9px;
+    width:7px; 
+    height:7px; 
+    border-radius:50%;
     background: var(--red);
     border: 2px solid var(--card);
   }
   .admin-pill{
-    display:flex; align-items:center; gap:8px;
+    display:flex; 
+    align-items:center; 
+    gap:8px;
     background: var(--blue-lighter);
     padding: 5px 14px 5px 5px;
     border-radius: 999px;
     cursor:pointer;
   }
-  .admin-pill .avatar{ width:30px; height:30px; font-size:11.5px; background:var(--navy); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; }
-  .admin-pill span{ font-size:13.5px; font-weight:700; color:var(--navy); }
+  .admin-pill .avatar{ 
+    width:30px; 
+    height:30px; 
+    font-size:11.5px; 
+    background:var(--navy); 
+    color:#fff; 
+    border-radius:50%; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    font-weight:700;
+   }
+  .admin-pill span{ 
+    font-size:13.5px;
+    font-weight:700; 
+    color:var(--navy); 
+    }
 
   .menu-btn{
     display:none;
