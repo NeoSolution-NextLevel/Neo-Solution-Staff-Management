@@ -27,6 +27,7 @@ $company_obj = new Company_Info_Variable_List();
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-vivid.css">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="<?php echo $pth; ?>imports/lib/w3css_color.css">
+<link rel="stylesheet" href="<?php echo $pth; ?>UxUi-Back/assets/css/erp-theme.css">
 
 <!-- others  -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
