@@ -23,7 +23,11 @@
     --shadow: 0 1px 2px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: 
+        border-box; 
+        margin: 0; 
+        padding: 0; 
+    }
 
   #Admin_user_dashboard_02_employees {
     width: 100%;
@@ -228,7 +232,10 @@
     color: #ffffff;
     border-color: var(--navy);
   }
-  .w3-pill:not(.active):hover { background-color: var(--blue-lighter); color: var(--blue); }
+  .w3-pill:not(.active):hover { 
+    background-color: var(--blue-lighter); 
+    color: var(--blue); 
+  }
 
   /* Desktop Table Layout */
   .w3-table-card {
