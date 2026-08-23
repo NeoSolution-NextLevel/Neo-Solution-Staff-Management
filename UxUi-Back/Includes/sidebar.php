@@ -214,10 +214,25 @@ $current_page = basename($_SERVER['PHP_SELF']);
         .admin-sidebar {
             transform: translateX(-100%);
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            z-index: 999999;
         }
 
         .admin-sidebar.mobile-open {
             transform: translateX(0);
+        }
+
+        .sidebar-menu {
+            justify-content: flex-start !important;
+            gap: 2px !important;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto !important;
+        }
+
+        .sidebar-overlay {
+            z-index: 999998;
         }
 
         .sidebar-overlay.active {
