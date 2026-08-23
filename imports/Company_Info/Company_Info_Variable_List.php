@@ -60,11 +60,11 @@ class Company_Info_Variable_List
     private $sales_email = " sales@NEO LOGINdutyjhfree.lk";
     private $support_email = "support@NEO LOGINdhkjutjyfree.lk";
 
-    private $google_authentication_client_id = "77492483276-jjdfdq48iil8gu6of5d05ulhglgdntn965.apps.googleusercontent.com";
-    private $google_authentication_clent_secret_id = "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9d";
+    private $google_authentication_client_id = "77492483276-dfdq48iil8gu6of5d05ulhglgdntn965.apps.googleusercontent.com";
+    private $google_authentication_clent_secret_id = "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";
 
-    private $microsoft_login_client_id = "ebd9ecc2-4fed-405jje-9j82c-270564df56f0";
-    private $microsoft_login_client_secret_id = "5G18Q~8jjNwmaEh9bregS6T1qqYV0fMgYozYWAtccB";
+    private $microsoft_login_client_id = "ebd9ecc2-4fed-405e-982c-270564df56f0";
+    private $microsoft_login_client_secret_id = "5G18Q~8NwmaEh9bregS6T1qqYV0fMgYozYWAtccB";
 
 
 
