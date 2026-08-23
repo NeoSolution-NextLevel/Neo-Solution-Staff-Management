@@ -6,6 +6,12 @@
         <div class="erp-profile-card">
             <!-- Header Section: Displays page title -->
             <div class="erp-profile-card__header">
+                <div class="erp-profile-card__brand" style="display: flex; justify-content: center; margin-bottom: 16px;">
+                    <img src="../../UxUi-Back/assets/neo_solution_official.png" 
+                         onerror="this.src='/UxUi-Back/assets/neo_solution_official.png'; this.onerror=function(){this.src='../../imports/img/logo.png';}" 
+                         alt="NEO Solution" 
+                         style="height: 52px; width: auto; max-width: 220px; object-fit: contain; display: block; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));">
+                </div>
                 <h1 class="erp-profile-card__title">User Profile</h1>
                 <p class="erp-profile-card__subtitle">Manage your account settings and preferences</p>
             </div>

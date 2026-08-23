@@ -5,19 +5,19 @@
   :root {
     --navy: #14204d;
     --navy-2: #1c2b63;
-    --blue: #3b5bdb;
-    --blue-light: #dbe4ff;
-    --blue-lighter: #eef2ff;
-    --green: #12b76a;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --blue-lighter: #f0f7ff;
+    --green: #38a169;
     --green-bg: #e3f9ee;
-    --amber: #f5a623;
+    --amber: #dd6b20;
     --amber-bg: #fdf1dc;
-    --red: #f0576a;
+    --red: #e53e3e;
     --red-bg: #fde8ec;
-    --ink: #1a1f36;
-    --muted: #6b7280;
-    --border: #e8eaf0;
-    --bg: #f5f6fa;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
     --card: #ffffff;
     --radius: 16px;
     --shadow: 0 1px 2px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
@@ -241,7 +241,7 @@
 
   .leave-submit-btn {
     width: 100%;
-    background: var(--blue);
+    background: #14204d;
     color: #ffffff;
     font-weight: 700;
     font-size: 14px;
@@ -254,11 +254,11 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 14px rgba(59, 91, 219, 0.25);
+    box-shadow: 0 2px 6px rgba(20, 32, 77, 0.2);
   }
 
   .leave-submit-btn:hover {
-    background: #2f4ec7;
+    background: #1c2b63;
     transform: translateY(-1px);
   }
 

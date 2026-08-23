@@ -5,25 +5,29 @@
   :root {
     --navy: #14204d;
     --navy-2: #1c2b63;
-    --blue: #3b5bdb;
-    --blue-light: #dbe4ff;
-    --blue-lighter: #eef2ff;
-    --green: #12b76a;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --blue-lighter: #f0f7ff;
+    --green: #38a169;
     --green-bg: #e3f9ee;
-    --amber: #f5a623;
+    --amber: #dd6b20;
     --amber-bg: #fdf1dc;
-    --red: #f0576a;
+    --red: #e53e3e;
     --red-bg: #fde8ec;
-    --ink: #1a1f36;
-    --muted: #6b7280;
-    --border: #e8eaf0;
-    --bg: #f5f6fa;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
     --card: #ffffff;
     --radius: 16px;
     --shadow: 0 1px 2px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: 
+        border-box; 
+        margin: 0; 
+        padding: 0; 
+    }
 
   #Admin_user_dashboard_02_employees {
     width: 100%;
@@ -228,7 +232,10 @@
     color: #ffffff;
     border-color: var(--navy);
   }
-  .w3-pill:not(.active):hover { background-color: var(--blue-lighter); color: var(--blue); }
+  .w3-pill:not(.active):hover { 
+    background-color: var(--blue-lighter); 
+    color: var(--blue); 
+  }
 
   /* Desktop Table Layout */
   .w3-table-card {
@@ -588,11 +595,14 @@
 
   /* Mobile Responsive Breakpoints */
   @media (max-width: 768px) {
+    #Admin_user_dashboard_02_employees {
+      padding: 0 12px 80px !important;
+    }
     .main, .w3-main-content {
       margin-left: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
-      padding: 12px 12px 80px !important;
+      padding: 0 !important;
     }
 
     .menu-btn { display: inline-flex !important; }

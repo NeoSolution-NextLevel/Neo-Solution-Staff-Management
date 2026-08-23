@@ -1,14 +1,5 @@
 <?php 
-// include_once '../imports/need/session_setup.php';
-// include_once '../imports/need/DB.php';
-// include_once '../Controller/Main/Cook_Managment/Cook_Managing.php';
-// include_once '../../UxUI-Back/Includes/sidebar.php';
-?>
-
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+include_once '../imports/need/session_setup.php';
 ?>
 
 <!DOCTYPE html>
@@ -20,6 +11,7 @@ error_reporting(E_ALL);
     <title>Employee Portal | NEO Solution</title>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../UxUi-Back/assets/css/erp-theme.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         :root {
@@ -57,75 +49,84 @@ error_reporting(E_ALL);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Container Sections */
+        /* Base container reset */
         [id^="Employee_user_dashboard_"] {
-            width: 100% !important;
-            max-width: 100% !important;
-            min-height: 100vh;
-            display: block;
-        }
-
-        .app-layout {
-            display: block !important;
-            width: 100% !important;
-            min-height: 100vh;
-        }
-
-        /* Desktop Layout */
-        .main,
-        .main-wrapper,
-        .content-wrapper,
-        .emp-main {
-            margin-left: 250px !important;
-            width: calc(100% - 250px) !important;
-            max-width: calc(100% - 250px) !important;
-            min-height: calc(100vh - 60px) !important;
+            min-height: 100vh !important;
             height: auto !important;
-            overflow: visible !important;
-            padding: 16px 20px 80px !important;
             box-sizing: border-box !important;
-            transition: margin-left 0.3s ease, width 0.3s ease;
         }
 
-        .content {
-            padding: 0 0 20px 0 !important;
+        /* Prevent nested inner containers from duplicating margin or shrinking width */
+        [id^="Employee_user_dashboard_"] .main,
+        [id^="Employee_user_dashboard_"] .emp-main,
+        [id^="Employee_user_dashboard_"] .main-wrapper,
+        [id^="Employee_user_dashboard_"] .content-wrapper,
+        [id^="Employee_user_dashboard_"] .content,
+        [id^="Employee_user_dashboard_"] .app-layout,
+        [id^="Employee_user_dashboard_"] .docs-container,
+        [id^="Employee_user_dashboard_"] .docs-wrapper,
+        [id^="Employee_user_dashboard_"] .settings-container,
+        [id^="Employee_user_dashboard_"] .profile-wrapper,
+        [id^="Employee_user_dashboard_"] .personal-details-wrapper {
+            margin-left: 0 !important;
             width: 100% !important;
             max-width: 100% !important;
-            margin: 0 !important;
-            height: auto !important;
-            overflow: visible !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
         }
 
-        /* Topbar Header Bar (Flat rectangular bar without rounded corners) */
-        .topbar, header.topbar {
+        /* Topbar Header Bar Base */
+        .topbar, 
+        header.topbar,
+        [id^="Employee_user_dashboard_"] .topbar {
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
             background: #ffffff !important;
-            height: 64px !important;
-            min-height: 64px !important;
-            max-height: 64px !important;
-            padding: 0 24px !important;
             border-radius: 0 !important;
             border-top: none !important;
             border-left: none !important;
             border-right: none !important;
-            border-bottom: 1px solid var(--border) !important;
-            box-shadow: 0 1px 2px rgba(20,25,60,.03) !important;
-            margin: -16px -20px 20px -20px !important;
-            width: calc(100% + 40px) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px rgba(20,25,60,.03) !important;
             box-sizing: border-box !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 99 !important;
         }
 
-        /* Nav bar header */
+        /* Desktop Layout (>= 769px) */
+        @media (min-width: 769px) {
+            [id^="Employee_user_dashboard_"] {
+                margin-left: 250px !important;
+                width: calc(100% - 250px) !important;
+                max-width: calc(100% - 250px) !important;
+                padding: 0 24px 80px !important;
+                transition: margin-left 0.3s ease, width 0.3s ease;
+            }
+
+            .topbar, 
+            header.topbar,
+            [id^="Employee_user_dashboard_"] .topbar {
+                height: 64px !important;
+                min-height: 64px !important;
+                max-height: 64px !important;
+                padding: 0 24px !important;
+                margin: 0 -24px 22px -24px !important;
+                width: calc(100% + 48px) !important;
+            }
+        }
+
+        /* Nav bar header elements */
         .topbar h2,
         .topbar .page-breadcrumb,
         .topbar .page-title,
         .topbar-left h2,
         .topbar-left .page-breadcrumb,
         .topbar-left .page-title,
-        .page-breadcrumb {
-            font-size: 22px !important;
+        .page-breadcrumb,
+        [id^="Employee_user_dashboard_"] .topbar h2 {
+            font-size: 20px !important;
             font-weight: 800 !important;
             color: #14204d !important;
             letter-spacing: -0.3px !important;
@@ -163,9 +164,9 @@ error_reporting(E_ALL);
         }
 
         .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
         }
 
         .topbar-right {
@@ -300,42 +301,48 @@ error_reporting(E_ALL);
             box-shadow: none !important;
         }
 
-        /* Compact Table Width & Cell Padding for all pages */
-        [id^="Employee_user_dashboard_"] table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-        }
+        @media (min-width: 769px) {
+            /* Compact Table Width & Cell Padding for all pages */
+            [id^="Employee_user_dashboard_"] table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
 
-        [id^="Employee_user_dashboard_"] table th {
-            background: #fafbfd !important;
-            color: #6b7280 !important;
-            font-size: 12px !important;
-            text-transform: uppercase !important;
-            letter-spacing: .04em !important;
-            font-weight: 700 !important;
-            padding: 10px 14px !important;
-            border-bottom: 1px solid #e8eaf0 !important;
-            text-align: left !important;
-        }
+            [id^="Employee_user_dashboard_"] table th {
+                background: #fafbfd !important;
+                color: #6b7280 !important;
+                font-size: 12px !important;
+                text-transform: uppercase !important;
+                letter-spacing: .04em !important;
+                font-weight: 700 !important;
+                padding: 10px 14px !important;
+                border-bottom: 1px solid #e8eaf0 !important;
+                text-align: left !important;
+            }
 
-        [id^="Employee_user_dashboard_"] table td {
-            padding: 10px 14px !important;
-            border-bottom: 1px solid #e8eaf0 !important;
-            vertical-align: middle !important;
-            color: #3a3f55 !important;
-            font-size: 13.5px !important;
+            [id^="Employee_user_dashboard_"] table td {
+                padding: 10px 14px !important;
+                border-bottom: 1px solid #e8eaf0 !important;
+                vertical-align: middle !important;
+                color: #3a3f55 !important;
+                font-size: 13.5px !important;
+            }
         }
 
         /* Mobile & Tablet View (<= 768px) */
         @media (max-width: 768px) {
+            [id^="Employee_user_dashboard_"],
+            [id^="Employee_user_dashboard_"].emp-main,
+            .emp-main,
             .main,
             .main-wrapper,
-            .content-wrapper,
-            .emp-main {
+            .content-wrapper {
                 margin-left: 0 !important;
                 width: 100% !important;
-                max-width: 100% !important;
-                padding: 12px 12px 60px !important;
+                max-width: 100vw !important;
+                padding: 0 12px 80px !important;
+                box-sizing: border-box !important;
+                overflow-x: hidden !important;
             }
 
             .menu-btn, .toggle-menu {
@@ -345,11 +352,11 @@ error_reporting(E_ALL);
                 width: 38px !important;
                 height: 38px !important;
                 border-radius: 8px !important;
-                background: var(--blue-lighter) !important;
-                border: none !important;
+                background: #eef2ff !important;
+                border: 1px solid #e0edff !important;
                 cursor: pointer !important;
-                color: var(--navy) !important;
-                margin-right: 8px !important;
+                color: #14204d !important;
+                margin-right: 6px !important;
             }
 
             .menu-btn svg {
@@ -357,56 +364,37 @@ error_reporting(E_ALL);
                 height: 20px !important;
             }
 
-            .topbar {
+            .topbar, 
+            header.topbar,
+            [id^="Employee_user_dashboard_"] .topbar {
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
-                padding: 12px 16px !important;
-                margin: -12px -12px 16px -12px !important;
+                padding: 0 12px !important;
+                margin: 0 -12px 16px -12px !important;
                 width: calc(100% + 24px) !important;
-                border-radius: 0 !important;
-                background: #ffffff !important;
-                border-bottom: 1px solid var(--border) !important;
+                height: 58px !important;
+                min-height: 58px !important;
+                max-height: 58px !important;
+                box-sizing: border-box !important;
             }
 
             .topbar-left {
                 display: flex !important;
                 align-items: center !important;
-                gap: 4px !important;
+                gap: 6px !important;
             }
 
             .topbar h2, .topbar-left h2, .page-title h1 {
-                font-size: 20px !important;
-                font-weight: 800 !important;
-                color: var(--navy) !important;
-                margin: 0 !important;
+                font-size: 18px !important;
             }
 
-            .topbar-right {
-                display: flex !important;
-                align-items: center !important;
-                gap: 10px !important;
-            }
-
-            .admin-pill span {
+            .admin-pill span, .user-pill span {
                 display: none !important;
             }
 
-            .admin-pill {
+            .admin-pill, .user-pill {
                 padding: 4px !important;
-                border-radius: 50% !important;
-                background: var(--blue-lighter) !important;
-            }
-
-            .admin-pill .avatar {
-                width: 32px !important;
-                height: 32px !important;
-                font-size: 12px !important;
-            }
-
-            .icon-btn {
-                width: 38px !important;
-                height: 38px !important;
             }
 
             .stats, .stats-grid {
@@ -414,18 +402,20 @@ error_reporting(E_ALL);
                 gap: 10px !important;
             }
 
-            .charts-row, .bottom-row, .dept-grid, .grid-roles {
+            .charts-row, .bottom-row, .dept-grid, .grid-roles, .docs-grid {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
             }
 
             .table-wrap, .table-card, .table-responsive, .table-container {
+                width: 100% !important;
+                max-width: 100% !important;
                 overflow-x: auto !important;
                 -webkit-overflow-scrolling: touch !important;
             }
 
             [id^="Employee_user_dashboard_"] table {
-                min-width: 600px !important;
+                min-width: 550px !important;
             }
         }
     </style>

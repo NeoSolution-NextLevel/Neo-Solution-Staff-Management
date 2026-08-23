@@ -189,10 +189,25 @@ $current_page = basename($_SERVER['PHP_SELF']);
         .admin-sidebar {
             transform: translateX(-100%);
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            z-index: 999999;
         }
 
         .admin-sidebar.mobile-open {
             transform: translateX(0);
+        }
+
+        .sidebar-menu {
+            justify-content: flex-start !important;
+            gap: 2px !important;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto !important;
+        }
+
+        .sidebar-overlay {
+            z-index: 999998;
         }
 
         .sidebar-overlay.active {
@@ -215,38 +230,50 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Brand Logo -->
     <div class="sidebar-brand">
         <div class="brand-logo-wrap">
-            <svg class="brand-logo-img" viewBox="0 0 260 80" width="140" height="44" xmlns="http://www.w3.org/2000/svg">
+            <svg class="brand-logo-img" viewBox="0 0 280 100" width="140" height="50" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <radialGradient id="empBlueSphere" cx="35%" cy="35%" r="65%">
-                        <stop offset="0%" stop-color="#5b8bf7"/>
-                        <stop offset="40%" stop-color="#1d3b8a"/>
-                        <stop offset="85%" stop-color="#0e1e4a"/>
-                        <stop offset="100%" stop-color="#08102b"/>
+                    <radialGradient id="empBlueSphere" cx="32%" cy="30%" r="68%">
+                        <stop offset="0%" stop-color="#7399f7"/>
+                        <stop offset="25%" stop-color="#2b4db3"/>
+                        <stop offset="60%" stop-color="#142668"/>
+                        <stop offset="90%" stop-color="#091338"/>
+                        <stop offset="100%" stop-color="#04091c"/>
                     </radialGradient>
-                    <radialGradient id="empGreenSphere" cx="35%" cy="35%" r="65%">
-                        <stop offset="0%" stop-color="#34d399"/>
-                        <stop offset="40%" stop-color="#15803d"/>
-                        <stop offset="85%" stop-color="#0f5128"/>
-                        <stop offset="100%" stop-color="#093118"/>
+                    <radialGradient id="empGreenSphere" cx="32%" cy="30%" r="68%">
+                        <stop offset="0%" stop-color="#5ec95e"/>
+                        <stop offset="25%" stop-color="#238029"/>
+                        <stop offset="60%" stop-color="#125219"/>
+                        <stop offset="90%" stop-color="#0a3310"/>
+                        <stop offset="100%" stop-color="#041a08"/>
                     </radialGradient>
                     <linearGradient id="empNeoGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#2a4ba0"/>
-                        <stop offset="35%" stop-color="#172b68"/>
-                        <stop offset="70%" stop-color="#101c45"/>
-                        <stop offset="100%" stop-color="#091029"/>
+                        <stop offset="0%" stop-color="#3b62c4"/>
+                        <stop offset="18%" stop-color="#24459c"/>
+                        <stop offset="50%" stop-color="#142b6e"/>
+                        <stop offset="80%" stop-color="#0a1945"/>
+                        <stop offset="100%" stop-color="#050e29"/>
+                    </linearGradient>
+                    <linearGradient id="empSpecularGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
+                        <stop offset="40%" stop-color="#ffffff" stop-opacity="0.1"/>
+                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
                     </linearGradient>
                     <filter id="empSphereShadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-opacity="0.25"/>
+                        <feDropShadow dx="1.5" dy="2.5" stdDeviation="2" flood-color="#0a1535" flood-opacity="0.28"/>
                     </filter>
                 </defs>
-                <g transform="translate(4, 2)" filter="url(#empSphereShadow)">
-                    <circle cx="22" cy="22" r="14" fill="url(#empBlueSphere)"/>
-                    <circle cx="48" cy="30" r="13" fill="url(#empGreenSphere)"/>
-                    <circle cx="23" cy="48" r="13" fill="url(#empGreenSphere)"/>
-                    <circle cx="48" cy="56" r="14" fill="url(#empBlueSphere)"/>
+                <g transform="translate(6, 4)" filter="url(#empSphereShadow)">
+                    <circle cx="28" cy="28" r="17" fill="url(#empBlueSphere)"/>
+                    <ellipse cx="23" cy="23" rx="7" ry="4" fill="url(#empSpecularGlow)" transform="rotate(-30 23 23)"/>
+                    <circle cx="62" cy="38" r="16" fill="url(#empGreenSphere)"/>
+                    <ellipse cx="57" cy="33" rx="6" ry="3.5" fill="url(#empSpecularGlow)" transform="rotate(-30 57 33)"/>
+                    <circle cx="30" cy="62" r="16" fill="url(#empGreenSphere)"/>
+                    <ellipse cx="25" cy="57" rx="6" ry="3.5" fill="url(#empSpecularGlow)" transform="rotate(-30 25 57)"/>
+                    <circle cx="62" cy="72" r="17" fill="url(#empBlueSphere)"/>
+                    <ellipse cx="57" cy="67" rx="7" ry="4" fill="url(#empSpecularGlow)" transform="rotate(-30 57 67)"/>
                 </g>
-                <text x="80" y="47" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Impact, Arial Black, sans-serif" font-size="46" font-weight="900" letter-spacing="2" fill="url(#empNeoGrad)">NEO</text>
-                <text x="105" y="68" font-family="'Playfair Display', Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" font-weight="600" letter-spacing="0.5" fill="#1e293b">Solution</text>
+                <text x="96" y="58" font-family="'Impact', 'Arial Black', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="58" font-weight="900" letter-spacing="2.5" fill="url(#empNeoGrad)">NEO</text>
+                <text x="130" y="84" font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" font-size="28" font-style="italic" font-weight="600" letter-spacing="0.5" fill="#0f2252">Solution</text>
             </svg>
         </div>
     </div>

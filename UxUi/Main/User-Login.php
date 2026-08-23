@@ -11,9 +11,8 @@
         <title>Admin Portal | Login</title>
         <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="../../UxUi-Back/assets/css/erp-theme.css">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
-
-
 
         <style>
             /* ===== GLOBAL COLOR SYSTEM ===== */
@@ -21,43 +20,43 @@
                 /* Website Theme Colors */
                 --navy: #14204d;
                 --navy-2: #1c2b63;
-                --blue: #3b5bdb;
-                --blue-light: #dbe4ff;
-                --blue-lighter: #eef2ff;
-                --green: #12b76a;
+                --blue: #2563eb;
+                --blue-light: #eff6ff;
+                --blue-lighter: #f0f7ff;
+                --green: #38a169;
                 --green-bg: #e3f9ee;
-                --amber: #f5a623;
+                --amber: #dd6b20;
                 --amber-bg: #fdf1dc;
-                --red: #f0576a;
+                --red: #e53e3e;
                 --red-bg: #fde8ec;
-                --ink: #1a1f36;
-                --muted: #6b7280;
-                --border: #e8eaf0;
-                --bg: #f5f6fa;
+                --ink: #1e293b;
+                --muted: #64748b;
+                --border: #e2e8f0;
+                --bg: #f8fafc;
                 --card: #ffffff;
                 --radius: 16px;
                 --shadow: 0 1px 3px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.06);
 
                 /* Primary ERP Brand Colors */
-                --erp-primary: var(--blue);
-                --erp-primary-dark: var(--navy);
-                --erp-primary-light: var(--blue-light);
-                --erp-primary-subtle: var(--blue-lighter);
+                --erp-primary: #2563eb;
+                --erp-primary-dark: #1d4ed8;
+                --erp-primary-light: #eff6ff;
+                --erp-primary-subtle: #f0f7ff;
 
                 /* Neutral Colors */
                 --erp-surface: #ffffff;
-                --erp-surface-alt: #fafbfd;
-                --erp-border: #e8eaf0;
+                --erp-surface-alt: #f8fafc;
+                --erp-border: #e2e8f0;
                 --erp-border-dark: #cbd5e1;
-                --erp-text-primary: #1a1f36;
+                --erp-text-primary: #1e293b;
                 --erp-text-secondary: #4a5568;
-                --erp-text-tertiary: #6b7280;
+                --erp-text-tertiary: #718096;
 
                 /* Accent Colors */
-                --erp-accent-success: #12b76a;
-                --erp-accent-warning: #f5a623;
-                --erp-accent-error: #f0576a;
-                --erp-accent-info: #3b5bdb;
+                --erp-accent-success: #38a169;
+                --erp-accent-warning: #dd6b20;
+                --erp-accent-error: #e53e3e;
+                --erp-accent-info: #2563eb;
 
                 /* Social Brand Colors */
                 --erp-google: #ea4335;

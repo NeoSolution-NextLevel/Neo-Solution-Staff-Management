@@ -9,7 +9,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ERP Admin Portal | Change Password</title>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"defer></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -353,7 +353,7 @@
     </head>
 
     <body>
-        
+        <?php include_once '../../UxUI-Back/Common/header.php'; ?>
 
         <?php
         include_once '../../UxUI-Back/Main/Change-Password/change_password.php';
@@ -361,6 +361,7 @@
         ?>
 
 
+        <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
     </body>
 
     </html>

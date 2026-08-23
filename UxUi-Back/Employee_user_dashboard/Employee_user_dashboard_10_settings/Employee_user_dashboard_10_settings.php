@@ -156,7 +156,7 @@
 
   .settings-save-btn {
     width: 100%;
-    background: #1e3a8a;
+    background: #14204d;
     color: #ffffff;
     font-weight: 700;
     font-size: 14.5px;
@@ -169,13 +169,13 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.18);
+    box-shadow: 0 2px 6px rgba(20, 32, 77, 0.18);
   }
 
   .settings-save-btn:hover {
-    background: #172554;
+    background: #1c2b63;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+    box-shadow: 0 4px 12px rgba(20, 32, 77, 0.25);
   }
 
   .settings-save-btn:active {

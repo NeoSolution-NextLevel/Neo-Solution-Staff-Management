@@ -145,7 +145,9 @@
     cursor: pointer;
     transition: all 0.15s ease;
   }
-  .emp-mark-read-btn:hover { background: #e2e8f0; color: #1e293b; }
+  .emp-mark-read-btn:hover { 
+    background: #e2e8f0; 
+    color: #1e293b; }
 
   .emp-notif-item {
     display: flex;
@@ -159,8 +161,14 @@
     transition: all 0.15s ease;
     cursor: pointer;
   }
-  .emp-notif-item.unread { background: #f8fafc; border-color: #cbd5e1; }
-  .emp-notif-item:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+  .emp-notif-item.unread { 
+    background: #f8fafc; 
+    border-color: #cbd5e1; 
+  }
+  .emp-notif-item:hover { 
+    transform: translateY(-1px); 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04); 
+  }
 
   .emp-notif-icon {
     width: 38px;

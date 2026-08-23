@@ -5,39 +5,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP Admin Portal | Two-Step Verification</title>
+    <title>Two-Step Verification | NEO Solution</title>
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../UxUi-Back/assets/css/erp-theme.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 
     <style>
         /* ===== GLOBAL COLOR SYSTEM ===== ---------------------------------------------------colors and spacing*/
         :root {
             /* Primary ERP Brand Colors */
-            --erp-primary: #2c5282;
-            --erp-primary-dark: #1a365d;
-            --erp-primary-light: #4299e1;
-            --erp-primary-subtle: #ebf8ff;
+            --erp-primary: #2563eb;
+            --erp-primary-dark: #1d4ed8;
+            --erp-primary-light: #eff6ff;
+            --erp-primary-subtle: #f0f7ff;
 
             /* Neutral Colors */
             --erp-surface: #ffffff;
-            --erp-surface-alt: #f7fafc;
+            --erp-surface-alt: #f8fafc;
             --erp-border: #e2e8f0;
-            --erp-border-dark: #cbd5e0;
-            --erp-text-primary: #2d3748;
+            --erp-border-dark: #cbd5e1;
+            --erp-text-primary: #1e293b;
             --erp-text-secondary: #4a5568;
             --erp-text-tertiary: #718096;
 
             /* Error Colors */
             --erp-error: #e53e3e;
             --erp-error-dark: #c53030;
-            --erp-error-light: #fed7d7;
+            --erp-error-light: #fde8ec;
 
             /* Accent Colors */
             --erp-accent-success: #38a169;
-            --erp-accent-warning: #d69e2e;
+            --erp-accent-warning: #dd6b20;
             --erp-accent-error: #e53e3e;
-            --erp-accent-info: #3182ce;
+            --erp-accent-info: #2563eb;
 
             /* Shadows */
             --erp-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -393,6 +394,12 @@
         <div class="erp-login-card">
             <!-- Header Section: Displays company branding and 2FA title -->
             <div class="erp-login-card__header">
+                <div class="erp-login-card__brand" style="display: flex; justify-content: center; margin-bottom: 16px;">
+                    <img src="../../UxUi-Back/assets/neo_solution_official.png" 
+                         onerror="this.src='/UxUi-Back/assets/neo_solution_official.png'; this.onerror=function(){this.src='../../imports/img/logo.png';}" 
+                         alt="NEO Solution" 
+                         style="height: 52px; width: auto; max-width: 220px; object-fit: contain; display: block; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));">
+                </div>
                 <h1 class="erp-login-card__title">Two-Step Verification</h1>
                 <p class="erp-login-card__subtitle">Enter the 6-digit code sent to your device</p>
             </div>

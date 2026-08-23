@@ -17,39 +17,124 @@ class bank_details_SINGLE_DATA
     private $bank_name;
     private $branch;
     private $bank_account_number;
+    private $account_number;
     private $status;
-    private $ast = "1";
+    private $ast;
     private $sdt;
 
     private $state_of_data = false;
 
-    public function __construct($id)
+    public function __construct($id = 0)
     {
-        $this->id = (int)$id;
+        if (!empty($id)) {
+            $this->id = $id;
+            $data_base_obj = new DataBase();
+            $get_sql_query = "SELECT * FROM bank_details WHERE id = '" . $this->id . "'";
+            $result = $data_base_obj->get_result($get_sql_query);
 
-        $data_base_obj = new DataBase();
-        $get_sql_query = "SELECT * FROM bank_details WHERE id = '" . $this->id . "'";
-        $result = $data_base_obj->get_result($get_sql_query);
-
-        if (!$result || $result->num_rows == 0) {
-            $this->state_of_data = false;
-        } else {
-            $this->state_of_data = true;
-            if ($row = $result->fetch_assoc()) {
-                $this->id                  = $row['id'];
-                $this->user_id             = isset($row['user_id']) ? $row['user_id'] : 1;
-                $this->employee_id         = isset($row['employee_id']) ? $row['employee_id'] : '';
-                $this->employee_name       = isset($row['employee_name']) ? $row['employee_name'] : '';
-                $this->holder_name         = isset($row['holder_name']) ? $row['holder_name'] : '';
-                $this->bank_name           = isset($row['bank_name']) ? $row['bank_name'] : '';
-                $this->branch              = isset($row['branch']) ? $row['branch'] : '';
-                $this->bank_account_number = isset($row['bank_account_number']) ? $row['bank_account_number'] : (isset($row['account_number']) ? $row['account_number'] : '');
-                $this->status              = isset($row['status']) ? $row['status'] : 'Active';
-                $this->ast                 = isset($row['ast']) ? $row['ast'] : '1';
-                $this->sdt                 = isset($row['sdt']) ? $row['sdt'] : date('Y-m-d H:i:s');
+            if (!$result || $result->num_rows == 0) {
+                $this->state_of_data = false;
+            } else {
+                $this->state_of_data = true;
+                while ($result && $row = $result->fetch_assoc()) {
+                    $this->id                  = $row['id'];
+                    $this->user_id             = $row['user_id'];
+                    $this->employee_id         = $row['employee_id'];
+                    $this->employee_name       = $row['employee_name'];
+                    $this->holder_name         = $row['holder_name'];
+                    $this->bank_name           = $row['bank_name'];
+                    $this->branch              = $row['branch'];
+                    $this->bank_account_number = $row['bank_account_number'];
+                    $this->account_number      = $row['account_number'];
+                    $this->status              = $row['status'];
+                    $this->ast                 = $row['ast'];
+                    $this->sdt                 = $row['sdt'];
+                }
             }
         }
     }
+
+    public function getBankDetailsByEmployee($employeeId = '', $userId = 1)
+    {
+        $data_base_obj = new DataBase();
+        $safeEmpId = !empty($employeeId) ? addslashes(trim($employeeId)) : '';
+        $safeUserId = (int)$userId > 0 ? (int)$userId : 1;
+
+        $row = null;
+
+        if (!empty($safeEmpId)) {
+            $sql1 = "SELECT * FROM bank_details WHERE (ast='1' OR ast IS NULL OR ast='') AND employee_id = '{$safeEmpId}' ORDER BY id DESC LIMIT 1";
+            $res1 = $data_base_obj->get_result($sql1);
+            if ($res1 && $res1->num_rows > 0) {
+                $row = $res1->fetch_assoc();
+            }
+        }
+
+        if (!$row && $safeUserId > 0) {
+            $sql2 = "SELECT * FROM bank_details WHERE (ast='1' OR ast IS NULL OR ast='') AND user_id = '{$safeUserId}' ORDER BY id DESC LIMIT 1";
+            $res2 = $data_base_obj->get_result($sql2);
+            if ($res2 && $res2->num_rows > 0) {
+                $row = $res2->fetch_assoc();
+            }
+        }
+
+        if (!$row) {
+            $sql3 = "SELECT * FROM bank_details WHERE (ast='1' OR ast IS NULL OR ast='') ORDER BY id DESC LIMIT 1";
+            $res3 = $data_base_obj->get_result($sql3);
+            if ($res3 && $res3->num_rows > 0) {
+                $row = $res3->fetch_assoc();
+            }
+        }
+
+        if ($row) {
+            $this->state_of_data       = true;
+            $this->id                  = $row['id'];
+            $this->user_id             = $row['user_id'];
+            $this->employee_id         = $row['employee_id'];
+            $this->employee_name       = $row['employee_name'];
+            $this->holder_name         = $row['holder_name'];
+            $this->bank_name           = $row['bank_name'];
+            $this->branch              = $row['branch'];
+            $this->bank_account_number = $row['bank_account_number'];
+            $this->account_number      = $row['account_number'];
+            $this->status              = $row['status'];
+            $this->ast                 = $row['ast'];
+            $this->sdt                 = $row['sdt'];
+
+include_once __DIR__ . '/Bank_Security.php';
+
+            $decrypted = Bank_Security::decrypt($this->bank_account_number);
+            $masked = Bank_Security::mask($decrypted);
+
+            return [
+                'status' => 'success',
+                'data' => [
+                    'id' => $this->id,
+                    'user_id' => $this->user_id,
+                    'employee_id' => $this->employee_id,
+                    'employee_name' => $this->employee_name,
+                    'holder_name' => $this->holder_name,
+                    'account_holder_name' => $this->holder_name,
+                    'bank_name' => $this->bank_name,
+                    'branch' => $this->branch,
+                    'account_number' => $decrypted,
+                    'bank_account_number' => $decrypted,
+                    'masked_account_number' => $masked,
+                    'status' => $this->status,
+                    'sdt' => $this->sdt
+                ]
+            ];
+        } else {
+            $this->state_of_data = false;
+            return [
+                'status' => 'error',
+                'message' => 'No bank details found.',
+                'data' => null
+            ];
+        }
+    }
+
+    // --- Getter functions ---
 
     public function get_state()
     {
@@ -99,6 +184,11 @@ class bank_details_SINGLE_DATA
     public function get_bank_account_number()
     {
         return $this->bank_account_number;
+    }
+
+    public function get_account_number()
+    {
+        return $this->account_number;
     }
 
     public function get_status()

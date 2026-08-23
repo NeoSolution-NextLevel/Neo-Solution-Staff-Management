@@ -46,6 +46,10 @@ class DataBase
 
     public function get_data_base_connction()
     {
+        if ($this->db_connction instanceof mysqli && !$this->db_connction->connect_errno) {
+            return $this->db_connction;
+        }
+
         $this->db_connction = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
         if ($this->db_connction->connect_error) {
             die("Connection failed: " . $this->db_connction->connect_error);

@@ -26,8 +26,10 @@
 
     .app-layout {
       display: flex;
-      width: 100vw;
+      width: 100%;
+      max-width: 100%;
       min-height: 100vh;
+      box-sizing: border-box;
     }
 
     /* Mobile Drawer Overlay */
@@ -156,19 +158,22 @@
 
     /* Content Layout */
     .content {
-      padding: 16px 20px;
+      padding: 24px 28px 48px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 18px;
       max-width: 100%;
       width: 100%;
       margin: 0;
+      box-sizing: border-box;
     }
 
     .content-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      padding: 0 4px 6px 4px;
+      margin-bottom: 4px;
     }
 
     .header-title h1 {
@@ -178,65 +183,76 @@
     }
 
     .header-title p {
-      font-size: 13px;
+      font-size: 13.5px;
       color: var(--text-muted);
       margin-top: 3px;
+      font-weight: 500;
     }
 
     .mark-read-btn {
-      background: transparent;
-      border: none;
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
       color: var(--accent-blue);
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: background 0.2s;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
     }
 
     .mark-read-btn:hover {
-      background: #eff6ff;
+      background: #dbeafe;
+      color: #1d4ed8;
     }
 
     /* Notifications List & Cards */
     .notifications-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 14px;
       width: 100%;
       max-width: 100%;
+      box-sizing: border-box;
     }
 
     .notif-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 12px 16px;
+      padding: 16px 20px;
       display: flex;
       align-items: flex-start;
       gap: 14px;
       position: relative;
       width: 100%;
       max-width: 100%;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
       transition: transform 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+    }
+
+    .notif-card.unread {
+      background: #f8fafc;
     }
 
     .notif-card:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .notif-icon-wrap {
+      flex-shrink: 0;
     }
 
     .notif-icon {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .icon-blue, .icon-rocket {
@@ -271,27 +287,50 @@
 
     .notif-body {
       flex: 1;
-      padding-right: 20px;
+      min-width: 0;
+      padding-right: 14px;
     }
 
-    .notif-body h4 {
+    .notif-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+
+    .notif-title {
       font-size: 14px;
       font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 4px;
-    }
-
-    .notif-body p {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.4;
-      margin-bottom: 8px;
+      color: #1e293b;
+      margin: 0;
+      line-height: 1.3;
     }
 
     .notif-time {
-      font-size: 11px;
+      font-size: 11.5px;
       color: #94a3b8;
       font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .notif-msg {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.45;
+      margin: 0 0 6px 0;
+      word-break: break-word;
+    }
+
+    .notif-link {
+      font-size: 12px;
+      color: #2563eb;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .unread-indicator {
@@ -300,8 +339,9 @@
       background: var(--accent-blue);
       border-radius: 50%;
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: 16px;
+      right: 16px;
+      flex-shrink: 0;
     }
 
     /* Mobile Responsive Breakpoints */
@@ -330,7 +370,7 @@
       }
 
       .topbar {
-        padding: 12px 16px;
+        padding: 10px 14px;
       }
 
       .profile-pill span {
@@ -343,11 +383,45 @@
       }
 
       .content {
-        padding: 16px 14px 80px;
+        padding: 12px 10px 70px !important;
       }
 
       .content-header {
-        align-items: flex-start;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .header-title h1 {
+        font-size: 19px;
+      }
+
+      .notif-card {
+        padding: 12px 14px;
+        gap: 10px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+      }
+
+      .notif-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .notif-icon svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .notif-body {
+        padding-right: 8px;
+      }
+
+      .unread-indicator {
+        top: 12px;
+        right: 12px;
+        width: 7px;
+        height: 7px;
       }
     }
   </style>

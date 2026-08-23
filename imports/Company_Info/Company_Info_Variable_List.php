@@ -6,15 +6,15 @@ class Company_Info_Variable_List
 {
 
     //-----------------------------------------------------------------------------------------------------------
-    private $company_logo_icon = "https://www.NEO LOGINdutyfree.lk/assets/images/logo.png";
-    private $company_logo_url = "https://www.NEO LOGINdutyfree.lk/assets/images/logo.png";
-    private $footer_txt = "NEO LOGIN International Duty Free (Pvt) Ltd | www.NEO LOGINdutyfree.lk | 0112263355 | info@NEO LOGINdutyfree.lk";
-    private $company_name = "NEO LOGIN International Duty Free (Pvt) Ltd ";
-    private $company_web = "NEO LOGINdutyfree.lk";
+    private $company_logo_icon = "/UxUi-Back/assets/neo_icon.svg";
+    private $company_logo_url = "/UxUi-Back/assets/neo_solution_logo.svg";
+    private $footer_txt = "NEO Solution (Pvt) Ltd | www.neosolution.lk | 0112263355 | info@neosolution.lk";
+    private $company_name = "NEO Solution (Pvt) Ltd";
+    private $company_web = "neosolution.lk";
     private $full_company_web = "http://localhost:3000/";
-    private $default_sending_email = "info@NEO LOGINdutyfree.lk";
-    private $system_problem_sending_email = "info@NEO LOGINdutyfree.lk";
-    private $company_short_name = "NEO LOGIN";
+    private $default_sending_email = "info@neosolution.lk";
+    private $system_problem_sending_email = "info@neosolution.lk";
+    private $company_short_name = "NEO Solution";
     //-----------------------------------------------------------------------------------------------------------   
     private $company_whatup_number = "94773401876";
     private $whatusp_url_to_revice_message = "";
@@ -60,11 +60,11 @@ class Company_Info_Variable_List
     private $sales_email = " sales@NEO LOGINdutyjhfree.lk";
     private $support_email = "support@NEO LOGINdhkjutjyfree.lk";
 
-    private $google_authentication_client_id = "77492483276-jjdfdq48iil8gu6of5d05ulhglgdntn965.apps.googleusercontent.com";
-    private $google_authentication_clent_secret_id = "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9d";
+    private $google_authentication_client_id = "77492483276-dfdq48iil8gu6of5d05ulhglgdntn965.apps.googleusercontent.com";
+    private $google_authentication_clent_secret_id = "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";
 
-    private $microsoft_login_client_id = "ebd9ecc2-4fed-405jje-9j82c-270564df56f0";
-    private $microsoft_login_client_secret_id = "5G18Q~8jjNwmaEh9bregS6T1qqYV0fMgYozYWAtccB";
+    private $microsoft_login_client_id = "ebd9ecc2-4fed-405e-982c-270564df56f0";
+    private $microsoft_login_client_secret_id = "5G18Q~8NwmaEh9bregS6T1qqYV0fMgYozYWAtccB";
 
 
 

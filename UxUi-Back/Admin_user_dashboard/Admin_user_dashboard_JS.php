@@ -51,12 +51,13 @@ function Admin_user_dashboard_02_OPEN() {
   }
 
 function Admin_user_dashboard_04_OPEN() {
-Admin_user_dashboard_close_all();
-document.getElementById("Admin_user_dashboard_04_bank_details").style.display = "";
- setSidebarActive('bank_details');
-if (typeof Member_body_01_01_A_01_Memeber_Details_Display === 'function') {
- Member_body_01_01_A_01_Memeber_Details_Display();
-}
+  Admin_user_dashboard_close_all();
+  var el = document.getElementById("Admin_user_dashboard_04_bank_details");
+  if (el) el.style.display = "";
+  setSidebarActive('bank_details');
+  if (typeof window.loadAdminBankDetails === 'function') {
+    window.loadAdminBankDetails();
+  }
 }
 
 function Admin_user_dashboard_05_OPEN() {
