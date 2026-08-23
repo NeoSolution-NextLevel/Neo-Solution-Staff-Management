@@ -52,57 +52,59 @@
 
       container.innerHTML = notifications.map(n => {
         let iconHtml = `
-          <div class="notif-icon icon-blue">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div class="notif-icon icon-blue" style="width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#eff6ff; color:#2563eb;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
         `;
 
         const type = (n.type || '').toLowerCase();
         if (type.includes('leave_request') || type.includes('leave')) {
           iconHtml = `
-            <div class="notif-icon icon-amber" style="background:#fef3c7; color:#d97706;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div class="notif-icon icon-amber" style="width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#fef3c7; color:#d97706;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             </div>
           `;
         } else if (type.includes('approved') || type.includes('complete') || type.includes('success')) {
           iconHtml = `
-            <div class="notif-icon icon-green" style="background:#ecfdf5; color:#059669;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <div class="notif-icon icon-green" style="width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#ecfdf5; color:#059669;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
           `;
         } else if (type.includes('doc') || type.includes('upload')) {
           iconHtml = `
-            <div class="notif-icon icon-blue" style="background:#eff6ff; color:#2563eb;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div class="notif-icon icon-blue" style="width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#eff6ff; color:#2563eb;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
           `;
         } else if (type.includes('department') || type.includes('role') || type.includes('employee')) {
           iconHtml = `
-            <div class="notif-icon" style="background:#f5f3ff; color:#7c3aed;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <div class="notif-icon" style="width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#f5f3ff; color:#7c3aed;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
           `;
         } else if (type.includes('reject') || type.includes('error') || type.includes('alert')) {
           iconHtml = `
-            <div class="notif-icon icon-red" style="background:#fef2f2; color:#dc2626;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div class="notif-icon icon-red" style="width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#fef2f2; color:#dc2626;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
           `;
         }
 
-        const unreadDot = n.unread ? '<div class="unread-indicator" style="width:8px; height:8px; border-radius:50%; background:#2563eb; flex-shrink:0;"></div>' : '';
+        const unreadDot = n.unread ? '<div class="unread-indicator" style="width:10px; height:10px; border-radius:50%; background:#2563eb; flex-shrink:0; margin-top:4px;"></div>' : '';
         const cardBg = n.unread ? '#f8fafc' : '#ffffff';
 
         return `
-          <div class="notif-card" data-id="${n.id}" onclick="handleAdminNotifClick(${n.id}, '${n.type}')" style="cursor:pointer; background:${cardBg}; display:flex; align-items:flex-start; gap:14px; padding:16px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:10px; transition:all 0.15s ease;" title="Click to view details">
-            ${iconHtml}
-            <div class="notif-body" style="flex:1;">
-              <div style="display:flex; align-items:center; justify-content:space-between;">
-                <h4 style="margin:0 0 4px; font-size:14px; font-weight:700; color:#1e293b;">${n.title}</h4>
-                <span style="font-size:12px; color:#94a3b8; font-weight:500;">${formatTimeAgo(n.time)}</span>
+          <div class="notif-card ${n.unread ? 'unread' : ''}" data-id="${n.id}" onclick="handleAdminNotifClick(${n.id}, '${n.type}')" title="Click to view details">
+            <div class="notif-icon-wrap">
+              ${iconHtml}
+            </div>
+            <div class="notif-body">
+              <div class="notif-title-row">
+                <h4 class="notif-title">${n.title}</h4>
+                <span class="notif-time">${formatTimeAgo(n.time)}</span>
               </div>
-              <p style="margin:0; font-size:13px; color:#475569; line-height:1.4;">${n.message}</p>
-              <span style="font-size:11.5px; color:#2563eb; font-weight:600; margin-top:4px; display:inline-block;">View Page →</span>
+              <p class="notif-msg">${n.message}</p>
+              <span class="notif-link">View Page →</span>
             </div>
             ${unreadDot}
           </div>
