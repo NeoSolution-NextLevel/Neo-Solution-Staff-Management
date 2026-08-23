@@ -107,22 +107,28 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
     gap: 12px;
+    width: 100%;
+  }
+
+  .header-title {
+    text-align: left;
   }
 
   .header-title p {
     font-size: 14px;
     color: #64748b;
     margin: 0;
-    font-weight: 500;
+    font-weight: 600;
+    text-align: left;
   }
 
   .filter-tabs {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     background: #ffffff;
     padding: 4px;
     border-radius: 8px;
@@ -132,7 +138,7 @@
   .filter-btn {
     border: none;
     background: transparent;
-    padding: 6px 14px;
+    padding: 7px 14px;
     border-radius: 6px;
     font-size: 13px;
     font-weight: 600;
@@ -275,12 +281,39 @@
       margin-left: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
-      padding: 12px 12px 60px !important;
+      padding: 0 0 70px 0 !important;
+    }
+    .header-row {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 10px !important;
+      margin-bottom: 14px !important;
+    }
+    .header-title {
+      width: 100% !important;
+      text-align: left !important;
+    }
+    .filter-tabs {
+      width: 100% !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      box-sizing: border-box !important;
+    }
+    .filter-btn {
+      flex: 1 !important;
+      text-align: center !important;
+      padding: 8px 4px !important;
+      font-size: 12px !important;
     }
     .menu-btn { display: inline-flex !important; }
     .topbar h2 { font-size: 18px !important; }
-    .table-card { overflow-x: auto !important; }
-    table.leave-table { min-width: 650px !important; }
+    .table-card {
+      width: 100% !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      border-radius: 12px !important;
+    }
+    table.leave-table { min-width: 620px !important; }
   }
 </style>
 
