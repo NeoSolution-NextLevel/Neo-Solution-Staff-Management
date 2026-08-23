@@ -1,7 +1,7 @@
 <?php
 
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
-    $timeout_duration = 3600 * 24; // 24 hours
+    $timeout_duration = 3600 * 24; 
     @ini_set('session.gc_maxlifetime', $timeout_duration);
     @session_start();
 }
