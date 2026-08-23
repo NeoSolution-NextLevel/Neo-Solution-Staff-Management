@@ -123,7 +123,8 @@ CREATE TABLE `main_user_account_access_level_list` (
 --
 
 INSERT INTO `main_user_account_access_level_list` (`id`, `type_of_access`, `ast`, `sdt`, `url_home`, `dis`, `company_id`, `job_role`) VALUES
-(1, 'admin', 1, '2026-08-06 05:18:39', NULL, NULL, 1, 'ADMIN');
+(1, 'Admin', 1, '2026-08-06 05:18:39', 'UxUi/Admin_user_dashboard.php', 'Administrator', 1, 'ADMIN'),
+(2, 'Employee', 1, '2026-08-06 05:18:39', 'UxUi/Employee_user_dashboard.php', 'Employee', 1, 'EMPLOYEE');
 
 -- --------------------------------------------------------
 
@@ -192,6 +193,28 @@ CREATE TABLE `main_user_login_device` (
   `session_token` varchar(4500) DEFAULT NULL,
   `location` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bank_details`
+--
+
+CREATE TABLE `bank_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ast` varchar(10) DEFAULT '1',
+  `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `user_id` int(11) DEFAULT 1,
+  `employee_id` varchar(50) DEFAULT 'EMP-001',
+  `employee_name` varchar(255) DEFAULT '',
+  `holder_name` varchar(255) DEFAULT '',
+  `bank_name` varchar(255) DEFAULT '',
+  `branch` varchar(255) DEFAULT '',
+  `bank_account_number` varchar(100) DEFAULT '',
+  `account_number` varchar(100) DEFAULT '',
+  `status` varchar(50) DEFAULT 'Active',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
