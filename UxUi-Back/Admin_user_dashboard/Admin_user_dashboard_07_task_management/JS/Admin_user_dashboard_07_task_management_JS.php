@@ -72,16 +72,16 @@
 
           return `
             <tr data-id="${t.id}">
-              <td class="col-task">
+              <td class="col-task" data-label="Task">
                 <div class="task-title-text">${t.title}</div>
                 <div class="task-dept-text">${t.dept || t.department || 'General'}</div>
               </td>
-              <td class="col-employee" style="font-weight:600; color:#14204d;">${t.employee || t.assigned_to || 'Staff'}</td>
-              <td class="col-mode"><span class="task-pill ${modeClass}">${t.mode || 'Online'}</span></td>
-              <td class="col-deadline">${t.deadline || '—'}</td>
-              <td class="col-priority"><span class="task-pill ${priorityClass}">${t.priority || 'Medium'}</span></td>
-              <td class="col-status"><span class="task-pill ${statusClass}">${t.status || 'Pending'}</span></td>
-              <td class="col-actions" style="text-align: center;">
+              <td class="col-employee" data-label="Assigned To" style="font-weight:600; color:#14204d;">${t.employee || t.assigned_to || 'Staff'}</td>
+              <td class="col-mode" data-label="Mode"><span class="task-pill ${modeClass}">${t.mode || 'Online'}</span></td>
+              <td class="col-deadline" data-label="Deadline">${t.deadline || '—'}</td>
+              <td class="col-priority" data-label="Priority"><span class="task-pill ${priorityClass}">${t.priority || 'Medium'}</span></td>
+              <td class="col-status" data-label="Status"><span class="task-pill ${statusClass}">${t.status || 'Pending'}</span></td>
+              <td class="col-actions" data-label="Actions" style="text-align: center;">
                 <div class="task-action-group">
                   <button class="task-action-btn task-btn-edit" aria-label="Edit Task" title="Edit Task" onclick="editTask(${t.id})">${iconEdit}</button>
                   <button class="task-action-btn task-btn-delete" aria-label="Delete Task" title="Delete Task" onclick="deleteTask(${t.id})">${iconDelete}</button>
