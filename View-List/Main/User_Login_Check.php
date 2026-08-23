@@ -46,7 +46,7 @@ function get_dashboard_redirect_url($ac_type = "", $accessLevelId = "")
             return $home_page . '/UxUi/Admin_user_dashboard.php';
         }
         if (strpos($candidate, 'employee') !== false || strpos($candidate, 'user') !== false || strpos($candidate, 'staff') !== false) {
-            return $home_page . '/UxUi/Main-Dashboard.php';
+            return $home_page . '/UxUi/Employee_user_dashboard.php';
         }
     }
 
