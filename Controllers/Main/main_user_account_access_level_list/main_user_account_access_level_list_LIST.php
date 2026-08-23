@@ -1,12 +1,4 @@
 <?php
-if (!class_exists('DataBase')) {
-    if (file_exists(__DIR__ . '/../../../imports/need/DB.php')) {
-        include_once __DIR__ . '/../../../imports/need/DB.php';
-    } elseif (file_exists(__DIR__ . '/../../../database.php')) {
-        include_once __DIR__ . '/../../../database.php';
-    }
-}
-
 class main_user_account_access_level_list_LIST
 {
     private $sql_search_data = "";
