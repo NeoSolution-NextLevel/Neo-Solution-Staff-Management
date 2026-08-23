@@ -31,12 +31,9 @@ class DataBase
         $this->servername = "localhost";
         $this->username = "root";
         $this->password = "";
+        $this->dbname = "user_login_db";
 
-
-
-         $this->dbname = "user_login_db";
-
-        //$this->dbname = "user_login_db_new";
+      
     }
 
     public function __destruct()
