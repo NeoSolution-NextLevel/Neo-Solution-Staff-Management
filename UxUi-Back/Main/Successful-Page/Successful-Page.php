@@ -258,14 +258,21 @@
 
 
 
-          } else if (sucessType === "User-Login-Successful") {
+           } else if (sucessType === "User-Login-Successful") {
+              <?php
+                $target_dashboard = $home_page . 'UxUi/Admin_user_dashboard' . $online_offline_extention;
+                $user_role_check = $_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? '';
+                if (strtolower($user_role_check) === 'employee' || strtolower($user_role_check) === 'user') {
+                    $target_dashboard = $home_page . 'UxUi/Employee_user_dashboard' . $online_offline_extention;
+                }
+              ?>
               customizeSuccess(
                   'Login Successful',
-                  'Welcome back to the ERP System',
+                  'Welcome to NEO Solution',
                   'Authentication successful. You are now logged in and your dashboard is loading.',
                   'Go to Dashboard',
-                  '<?php echo $home_page ?>UxUi/Admin_user_dashboard<?php echo $online_offline_extention ?>',
-                  3000,
+                  '<?php echo $target_dashboard; ?>',
+                  2500,
                   true,
                   'Back to Home',
                   '<?php echo $home_page ?>'
