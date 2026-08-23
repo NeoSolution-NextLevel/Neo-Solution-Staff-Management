@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP Admin Portal | Two-Step Verification</title>
+    <title>Two-Step Verification | NEO Solution</title>
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../UxUi-Back/assets/css/erp-theme.css">
@@ -394,45 +394,11 @@
         <div class="erp-login-card">
             <!-- Header Section: Displays company branding and 2FA title -->
             <div class="erp-login-card__header">
-                <div class="erp-login-card__brand">
-                    <svg viewBox="0 0 280 100" width="190" height="64" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <radialGradient id="otpBlueSphere" cx="32%" cy="30%" r="68%">
-                                <stop offset="0%" stop-color="#7399f7"/>
-                                <stop offset="25%" stop-color="#2b4db3"/>
-                                <stop offset="60%" stop-color="#142668"/>
-                                <stop offset="90%" stop-color="#091338"/>
-                                <stop offset="100%" stop-color="#04091c"/>
-                            </radialGradient>
-                            <radialGradient id="otpGreenSphere" cx="32%" cy="30%" r="68%">
-                                <stop offset="0%" stop-color="#5ec95e"/>
-                                <stop offset="25%" stop-color="#238029"/>
-                                <stop offset="60%" stop-color="#125219"/>
-                                <stop offset="90%" stop-color="#0a3310"/>
-                                <stop offset="100%" stop-color="#041a08"/>
-                            </radialGradient>
-                            <linearGradient id="otpSpecularGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
-                                <stop offset="40%" stop-color="#ffffff" stop-opacity="0.1"/>
-                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                            </linearGradient>
-                            <filter id="otpSphereShadow" x="-20%" y="-20%" width="140%" height="140%">
-                                <feDropShadow dx="1.5" dy="2.5" stdDeviation="2" flood-color="#0a1535" flood-opacity="0.3"/>
-                            </filter>
-                        </defs>
-                        <g transform="translate(6, 4)" filter="url(#otpSphereShadow)">
-                            <circle cx="28" cy="28" r="17" fill="url(#otpBlueSphere)"/>
-                            <ellipse cx="23" cy="23" rx="7" ry="4" fill="url(#otpSpecularGlow)" transform="rotate(-30 23 23)"/>
-                            <circle cx="62" cy="38" r="16" fill="url(#otpGreenSphere)"/>
-                            <ellipse cx="57" cy="33" rx="6" ry="3.5" fill="url(#otpSpecularGlow)" transform="rotate(-30 57 33)"/>
-                            <circle cx="30" cy="62" r="16" fill="url(#otpGreenSphere)"/>
-                            <ellipse cx="25" cy="57" rx="6" ry="3.5" fill="url(#otpSpecularGlow)" transform="rotate(-30 25 57)"/>
-                            <circle cx="62" cy="72" r="17" fill="url(#otpBlueSphere)"/>
-                            <ellipse cx="57" cy="67" rx="7" ry="4" fill="url(#otpSpecularGlow)" transform="rotate(-30 57 67)"/>
-                        </g>
-                        <text x="96" y="58" font-family="'Impact', 'Arial Black', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="58" font-weight="900" letter-spacing="2.5" fill="#ffffff">NEO</text>
-                        <text x="130" y="84" font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" font-size="28" font-style="italic" font-weight="600" letter-spacing="0.5" fill="#dbeafe">Solution</text>
-                    </svg>
+                <div class="erp-login-card__brand" style="display: flex; justify-content: center; margin-bottom: 16px;">
+                    <img src="../../UxUi-Back/assets/neo_solution_official.png" 
+                         onerror="this.src='/UxUi-Back/assets/neo_solution_official.png'; this.onerror=function(){this.src='../../imports/img/logo.png';}" 
+                         alt="NEO Solution" 
+                         style="height: 52px; width: auto; max-width: 220px; object-fit: contain; display: block; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));">
                 </div>
                 <h1 class="erp-login-card__title">Two-Step Verification</h1>
                 <p class="erp-login-card__subtitle">Enter the 6-digit code sent to your device</p>
