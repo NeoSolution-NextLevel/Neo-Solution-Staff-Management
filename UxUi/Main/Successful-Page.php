@@ -8,7 +8,7 @@ include_once '../../imports/need/session_setup.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
-    <title>ERP Admin Portal | Success</title>
+    <title>Success | NEO Solution</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../UxUi-Back/assets/css/erp-theme.css">
     <style>
