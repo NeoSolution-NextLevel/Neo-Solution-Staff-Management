@@ -262,7 +262,19 @@
              );
 
 
-         } else if (errorType === "Username-Incorrect") {
+          } else if (errorType === "OAuth-Token-Failed" || errorType === "User-Info-Failed" || errorType === "User-Not-Found") {
+              customizeError(
+                  'Social Sign-In Notice',
+                  'Authentication Incomplete',
+                  'We could not complete your social sign-in. Please ensure your account has access or try logging in with your corporate credentials.',
+                  'ERR-AUTH-401',
+                  'Social OAuth verification encountered an issue.',
+                  'Try Social Login Again',
+                  'Back to Login',
+                  '<?php echo $home_page ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention ?>',
+                  '<?php echo $home_page ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention ?>'
+              );
+          } else if (errorType === "Username-Incorrect") {
              customizeError(
                  'Login Failed',
                  'Incorrect email address',
