@@ -241,7 +241,7 @@
 
   .leave-submit-btn {
     width: 100%;
-    background: var(--blue);
+    background: #14204d;
     color: #ffffff;
     font-weight: 700;
     font-size: 14px;
@@ -254,11 +254,11 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 14px rgba(59, 91, 219, 0.25);
+    box-shadow: 0 2px 6px rgba(20, 32, 77, 0.2);
   }
 
   .leave-submit-btn:hover {
-    background: #2f4ec7;
+    background: #1c2b63;
     transform: translateY(-1px);
   }
 
