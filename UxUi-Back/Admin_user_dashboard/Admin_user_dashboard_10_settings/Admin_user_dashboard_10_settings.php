@@ -32,8 +32,10 @@
 
     .app-layout {
       display: flex;
-      width: 100vw;
+      width: 100%;
+      max-width: 100%;
       min-height: 100vh;
+      box-sizing: border-box;
     }
 
     /* Mobile Drawer Overlay */
@@ -298,17 +300,19 @@
 
     /* Settings Content Layout */
     .content {
-      padding: 16px 20px 40px;
+      padding: 24px 28px 60px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
       max-width: 100%;
       width: 100%;
       margin: 0 0 30px 0;
+      box-sizing: border-box;
     }
 
     .content-header {
-      margin-bottom: 4px;
+      margin-bottom: 8px;
+      padding: 0 4px;
     }
 
     .content-header h1 {
@@ -318,32 +322,36 @@
     }
 
     .content-header p {
-      font-size: 13px;
+      font-size: 13.5px;
       color: var(--text-muted);
       margin-top: 3px;
+      font-weight: 500;
     }
 
     /* Settings Cards */
     .settings-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 18px;
+      border-radius: 16px;
+      padding: 24px 28px;
       width: 100%;
       max-width: 100%;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-      margin-bottom: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      margin-bottom: 16px;
+      box-sizing: border-box;
     }
 
     .settings-card:last-child {
-      margin-bottom: 24px;
+      margin-bottom: 30px;
     }
 
     .settings-card h3 {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f1f5f9;
     }
 
     /* Settings Item Rows */
@@ -351,27 +359,27 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 0;
-      gap: 16px;
+      padding: 16px 0;
+      gap: 18px;
     }
 
     .setting-item:not(:last-child) {
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f8fafc;
     }
 
     .setting-info h4 {
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 600;
       color: var(--text-main);
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .setting-info p {
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--text-muted);
     }
 
-    /* Custom Toggle Switch */
+    /* Toggle Switch Component */
     .switch {
       position: relative;
       display: inline-block;
@@ -420,27 +428,29 @@
     .info-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
     .info-box {
       background: #f8fafc;
-      border: 1px solid #f1f5f9;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
-      padding: 12px 16px;
+      padding: 16px 20px;
     }
 
     .info-box span {
       display: block;
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-muted);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
     .info-box strong {
-      font-size: 13.5px;
+      font-size: 14.5px;
       color: var(--text-main);
       font-weight: 700;
     }
@@ -448,19 +458,22 @@
     /* Action Buttons */
     .btn-submit {
       width: 100%;
-      background: var(--primary-dark);
+      background: #14204d;
       color: white;
       border: none;
-      padding: 12px;
+      padding: 14px 24px;
       border-radius: 12px;
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(20, 32, 77, 0.2);
     }
 
     .btn-submit:hover {
-      background: #172e6d;
+      background: #1c2b63;
+      box-shadow: 0 4px 12px rgba(20, 32, 77, 0.25);
+      transform: translateY(-1px);
     }
 
     .btn-submit:active {
@@ -473,7 +486,7 @@
         margin-left: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
-        padding: 12px 12px 80px !important;
+        padding: 0 !important;
       }
 
       .sidebar {
@@ -494,7 +507,7 @@
       }
 
       .topbar {
-        padding: 12px 16px;
+        padding: 10px 14px;
       }
 
       .profile-pill span {
@@ -507,7 +520,7 @@
       }
 
       .content {
-        padding: 20px 16px;
+        padding: 12px 10px 70px !important;
       }
 
       .info-grid {
