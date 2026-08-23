@@ -229,10 +229,9 @@
   /* Responsive Modal Layout */
   .doc-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(15, 23, 42, 0.8);
     z-index: 999999;
     display: none;
@@ -268,9 +267,9 @@
       padding: 0 !important;
     }
     .doc-modal-box {
-      width: 100vw !important;
-      height: 100vh !important;
-      max-height: 100vh !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
       border-radius: 0 !important;
     }
   }
