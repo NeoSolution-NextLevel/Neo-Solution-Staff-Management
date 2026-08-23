@@ -10,7 +10,6 @@ include_once '../../imports/need/session_setup.php';
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
     <title>ERP Admin Portal | Operation Failed</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../UxUi-Back/assets/css/erp-theme.css">
     <?php
     include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
 
@@ -20,17 +19,17 @@ include_once '../../imports/need/session_setup.php';
         /* ===== GLOBAL COLOR SYSTEM ===== */
         :root {
             /* Primary ERP Brand Colors */
-            --erp-primary: #2563eb;
-            --erp-primary-dark: #1d4ed8;
-            --erp-primary-light: #eff6ff;
-            --erp-primary-subtle: #f0f7ff;
+            --erp-primary: #2c5282;
+            --erp-primary-dark: #1a365d;
+            --erp-primary-light: #4299e1;
+            --erp-primary-subtle: #ebf8ff;
 
             /* Neutral Colors */
             --erp-surface: #ffffff;
-            --erp-surface-alt: #f8fafc;
+            --erp-surface-alt: #f7fafc;
             --erp-border: #e2e8f0;
-            --erp-border-dark: #cbd5e1;
-            --erp-text-primary: #1e293b;
+            --erp-border-dark: #cbd5e0;
+            --erp-text-primary: #2d3748;
             --erp-text-secondary: #4a5568;
             --erp-text-tertiary: #718096;
 
@@ -630,14 +629,16 @@ include_once '../../imports/need/session_setup.php';
 </head>
 
 <body>
-   
+    <?php
+    include_once '../../UxUI-Back/Includes/header.php';
+    ?>
     <?php
     include_once '../../UxUI-Back/Main/Failed-Page/Failed-Page.php';
 
     include_once '../../UxUI-Back/Main/Failed-Page/JS/Failed-Page_JS.php';
     ?>
 
-   
+    <?php include_once '../../UxUI-Back/Includes/footer.php'; ?>
 </body>
 
 </html>
