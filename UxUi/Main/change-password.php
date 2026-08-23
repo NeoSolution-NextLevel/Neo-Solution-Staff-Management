@@ -9,34 +9,33 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ERP Admin Portal | Change Password</title>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"defer></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="../../UxUi-Back/assets/css/erp-theme.css">
         <style>
             /* ===== GLOBAL COLOR SYSTEM ===== ---------------------------------------------------colors and spacing*/
             :root {
                 /* Primary ERP Brand Colors */
-                --erp-primary: #2563eb;
-                --erp-primary-dark: #1d4ed8;
-                --erp-primary-light: #eff6ff;
-                --erp-primary-subtle: #f0f7ff;
+                --erp-primary: #2c5282;
+                --erp-primary-dark: #1a365d;
+                --erp-primary-light: #4299e1;
+                --erp-primary-subtle: #ebf8ff;
 
                 /* Neutral Colors */
                 --erp-surface: #ffffff;
-                --erp-surface-alt: #f8fafc;
+                --erp-surface-alt: #f7fafc;
                 --erp-border: #e2e8f0;
-                --erp-border-dark: #cbd5e1;
-                --erp-text-primary: #1e293b;
+                --erp-border-dark: #cbd5e0;
+                --erp-text-primary: #2d3748;
                 --erp-text-secondary: #4a5568;
                 --erp-text-tertiary: #718096;
 
                 /* Accent Colors */
                 --erp-accent-success: #38a169;
-                --erp-accent-warning: #dd6b20;
+                --erp-accent-warning: #d69e2e;
                 --erp-accent-error: #e53e3e;
-                --erp-accent-info: #2563eb;
+                --erp-accent-info: #3182ce;
 
                 /* Shadows */
                 --erp-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -354,7 +353,7 @@
     </head>
 
     <body>
-        
+        <?php include_once '../../UxUI-Back/Common/header.php'; ?>
 
         <?php
         include_once '../../UxUI-Back/Main/Change-Password/change_password.php';
@@ -362,6 +361,7 @@
         ?>
 
 
+        <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
     </body>
 
     </html>
