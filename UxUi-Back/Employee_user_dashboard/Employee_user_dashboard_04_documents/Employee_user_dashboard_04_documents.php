@@ -95,7 +95,7 @@
   .doc-dropzone {
     border: 2px dashed #cbd5e1;
     border-radius: 12px;
-    padding: 20px 16px;
+    padding: 18px 14px;
     text-align: center;
     background: #f8fafc;
     cursor: pointer;
@@ -106,69 +106,96 @@
     justify-content: center;
     gap: 6px;
     margin-bottom: 14px;
+    min-height: 125px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
   }
 
   .doc-dropzone:hover, .doc-dropzone.dragover {
-    border-color: #3b5bdb;
+    border-color: #2563eb;
     background: #eff6ff;
   }
 
-  .doc-dropzone svg, .doc-dropzone i {
-    font-size: 26px;
-    color: #3b5bdb;
+  .doc-dropzone.has-file {
+    border: 1.5px solid #86efac;
+    background: #f0fdf4;
+    padding: 12px;
+  }
+
+  .doc-dropzone.has-file:hover {
+    border-color: #22c55e;
+    background: #ecfdf5;
+  }
+
+  .doc-drop-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+  }
+
+  .doc-drop-filled {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .doc-dropzone.has-file .doc-drop-empty {
+    display: none !important;
+  }
+
+  .doc-dropzone.has-file .doc-drop-filled {
+    display: flex !important;
+  }
+
+  .doc-filled-thumb {
+    max-height: 60px;
+    max-width: 100%;
+    border-radius: 6px;
+    object-fit: contain;
+    border: 1px solid #bbf7d0;
+    background: #fff;
     margin-bottom: 2px;
   }
 
-  .doc-dropzone .drop-title {
-    font-weight: 700;
-    font-size: 13.5px;
-    color: #1e293b;
-  }
-
-  .doc-dropzone .drop-hint {
-    font-size: 11.5px;
-    color: #94a3b8;
-  }
-
-  /* Selected File Info Box */
-  .doc-file-info {
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 14px;
-  }
-
-  .doc-file-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    overflow: hidden;
-  }
-
-  .doc-file-left svg, .doc-file-left i {
+  .doc-filled-icon {
+    font-size: 28px;
     color: #16a34a;
-    font-size: 18px;
-    flex-shrink: 0;
+    margin-bottom: 2px;
   }
 
-  .doc-file-name {
-    font-size: 13px;
+  .doc-filled-name {
+    font-size: 12.5px;
     font-weight: 700;
-    color: #15803d;
+    color: #14532d;
+    max-width: 90%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 220px;
   }
 
-  .doc-file-size {
-    font-size: 11.5px;
-    color: #4ade80;
+  .doc-filled-size {
+    font-size: 11px;
     font-weight: 600;
+    color: #16a34a;
+  }
+
+  .doc-filled-change {
+    font-size: 11px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-top: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
 
   /* Action Buttons Row */
@@ -222,6 +249,32 @@
   }
 
   .btn-doc-view:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-doc-delete {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-doc-delete:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+  .btn-doc-delete:disabled {
     opacity: 0.45;
     cursor: not-allowed;
   }
@@ -315,67 +368,87 @@
       <!-- Grid of 5 Upload Cards -->
       <div class="docs-grid">
 
-        <!-- 1. CV Upload Card -->
+        <!-- 1. CV Upload Card (1 PDF) -->
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_cv" data-doc-id="0">
           <div>
             <div class="doc-card-head">
               <h4>Curriculum Vitae (CV)</h4>
               <span class="doc-status-tag not-uploaded" id="tag_cv">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload your updated resume or CV.</p>
+            <p class="doc-desc">Upload your updated resume or CV (PDF format).</p>
 
-            <input type="file" id="fileInput_cv" accept=".pdf,.doc,.docx,.png,.jpg" style="display:none;" onchange="previewDocFile(this, 'cv')">
+            <input type="file" id="fileInput_cv" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'cv')">
 
-            <div class="doc-dropzone" onclick="document.getElementById('fileInput_cv').click();">
-              <i class="fa-solid fa-cloud-arrow-up"></i>
-              <span class="drop-title">Drag & drop or click to browse</span>
-              <span class="drop-hint">PDF, DOC, PNG up to 10MB</span>
-            </div>
-
-            <div class="doc-file-info" id="info_cv">
-              <div class="doc-file-left">
-                <i class="fa-solid fa-file-circle-check"></i>
-                <div>
-                  <div class="doc-file-name" id="name_cv">document.pdf</div>
-                  <div class="doc-file-size" id="size_cv">2.4 MB</div>
-                </div>
+            <div class="doc-dropzone" id="dropzone_cv" onclick="document.getElementById('fileInput_cv').click();">
+              <div class="doc-drop-empty" id="empty_cv">
+                <i class="fa-solid fa-file-pdf" style="font-size: 26px; color: #dc2626;"></i>
+                <span class="drop-title">Upload CV (PDF)</span>
+                <span class="drop-hint">PDF only (Max 10MB)</span>
+              </div>
+              <div class="doc-drop-filled" id="filled_cv">
+                <i class="fa-solid fa-file-circle-check doc-filled-icon" style="color: #dc2626;"></i>
+                <span class="doc-filled-name" id="name_cv">document.pdf</span>
+                <span class="doc-filled-size" id="size_cv">2.4 MB</span>
+                <span class="doc-filled-change"><i class="fa-solid fa-arrows-rotate"></i> Change PDF</span>
               </div>
             </div>
           </div>
 
           <div class="doc-actions-row">
             <button type="button" class="btn-doc-save" id="btnSave_cv" onclick="saveEmployeeDoc('cv', 'CV')">
-              <i class="fa-solid fa-floppy-disk"></i> <span>Save Document</span>
+              <i class="fa-solid fa-floppy-disk"></i> <span>Save</span>
             </button>
             <button type="button" class="btn-doc-view" id="btnView_cv" onclick="viewEmployeeDoc('cv', 'CV')" disabled>
               <i class="fa-solid fa-eye"></i> <span>View</span>
             </button>
+            <button type="button" class="btn-doc-delete" id="btnDelete_cv" onclick="deleteEmployeeDoc('cv', 'CV')" disabled>
+              <i class="fa-solid fa-trash"></i> <span>Delete</span>
+            </button>
           </div>
         </div>
 
-        <!-- 2. National ID / Passport -->
+        <!-- 2. National ID / Passport (2 PNGs: Front & Back) -->
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_id" data-doc-id="0">
           <div>
             <div class="doc-card-head">
-              <h4>National ID / Passport</h4>
+              <h4>National ID / Passport (2 PNG)</h4>
               <span class="doc-status-tag not-uploaded" id="tag_id">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload front & back scan of your NIC or Passport.</p>
+            <p class="doc-desc">Upload Front & Back PNG images of your NIC / Passport.</p>
 
-            <input type="file" id="fileInput_id" accept=".pdf,.doc,.docx,.png,.jpg" style="display:none;" onchange="previewDocFile(this, 'id')">
+            <input type="file" id="fileInput_id_front" accept=".png,.jpg,.jpeg" style="display:none;" onchange="previewDocFileSide(this, 'id', 'front')">
+            <input type="file" id="fileInput_id_back" accept=".png,.jpg,.jpeg" style="display:none;" onchange="previewDocFileSide(this, 'id', 'back')">
 
-            <div class="doc-dropzone" onclick="document.getElementById('fileInput_id').click();">
-              <i class="fa-solid fa-id-card"></i>
-              <span class="drop-title">Drag & drop or click to browse</span>
-              <span class="drop-hint">PDF, PNG, JPG up to 10MB</span>
-            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+              <!-- Front Side PNG Dropzone -->
+              <div class="doc-dropzone" id="dropzone_id_front" style="padding: 12px 8px; margin: 0; min-height: 125px;" onclick="document.getElementById('fileInput_id_front').click();">
+                <div class="doc-drop-empty" id="empty_id_front">
+                  <i class="fa-solid fa-image" style="font-size: 22px; color: #2563eb;"></i>
+                  <span class="drop-title" style="font-size: 12px;">Front Side (PNG)</span>
+                  <span class="drop-hint" style="font-size: 10px;">PNG image</span>
+                </div>
+                <div class="doc-drop-filled" id="filled_id_front">
+                  <img id="thumb_id_front" class="doc-filled-thumb" src="" alt="Front" style="display:none;" />
+                  <i id="icon_id_front" class="fa-solid fa-file-image doc-filled-icon" style="color: #2563eb;"></i>
+                  <span class="doc-filled-name" id="name_id_front" style="font-size: 11.5px;">front.png</span>
+                  <span class="doc-filled-size" id="size_id_front" style="font-size: 10px;">Front Side</span>
+                  <span class="doc-filled-change" style="font-size: 10.5px;"><i class="fa-solid fa-arrows-rotate"></i> Change</span>
+                </div>
+              </div>
 
-            <div class="doc-file-info" id="info_id">
-              <div class="doc-file-left">
-                <i class="fa-solid fa-file-circle-check"></i>
-                <div>
-                  <div class="doc-file-name" id="name_id">nic_scan.pdf</div>
-                  <div class="doc-file-size" id="size_id">1.2 MB</div>
+              <!-- Back Side PNG Dropzone -->
+              <div class="doc-dropzone" id="dropzone_id_back" style="padding: 12px 8px; margin: 0; min-height: 125px;" onclick="document.getElementById('fileInput_id_back').click();">
+                <div class="doc-drop-empty" id="empty_id_back">
+                  <i class="fa-solid fa-image" style="font-size: 22px; color: #0284c7;"></i>
+                  <span class="drop-title" style="font-size: 12px;">Back Side (PNG)</span>
+                  <span class="drop-hint" style="font-size: 10px;">PNG image</span>
+                </div>
+                <div class="doc-drop-filled" id="filled_id_back">
+                  <img id="thumb_id_back" class="doc-filled-thumb" src="" alt="Back" style="display:none;" />
+                  <i id="icon_id_back" class="fa-solid fa-file-image doc-filled-icon" style="color: #0284c7;"></i>
+                  <span class="doc-filled-name" id="name_id_back" style="font-size: 11.5px;">back.png</span>
+                  <span class="doc-filled-size" id="size_id_back" style="font-size: 10px;">Back Side</span>
+                  <span class="doc-filled-change" style="font-size: 10.5px;"><i class="fa-solid fa-arrows-rotate"></i> Change</span>
                 </div>
               </div>
             </div>
@@ -383,124 +456,130 @@
 
           <div class="doc-actions-row">
             <button type="button" class="btn-doc-save" id="btnSave_id" onclick="saveEmployeeDoc('id', 'National ID')">
-              <i class="fa-solid fa-floppy-disk"></i> <span>Save Document</span>
+              <i class="fa-solid fa-floppy-disk"></i> <span>Save</span>
             </button>
             <button type="button" class="btn-doc-view" id="btnView_id" onclick="viewEmployeeDoc('id', 'National ID')" disabled>
               <i class="fa-solid fa-eye"></i> <span>View</span>
             </button>
+            <button type="button" class="btn-doc-delete" id="btnDelete_id" onclick="deleteEmployeeDoc('id', 'National ID')" disabled>
+              <i class="fa-solid fa-trash"></i> <span>Delete</span>
+            </button>
           </div>
         </div>
 
-        <!-- 3. Employment Agreement -->
+        <!-- 3. Employment Agreement (1 PDF) -->
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_agreement" data-doc-id="0">
           <div>
             <div class="doc-card-head">
               <h4>Employment Agreement</h4>
               <span class="doc-status-tag not-uploaded" id="tag_agreement">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload signed employment contract or agreement copy.</p>
+            <p class="doc-desc">Upload signed employment agreement (PDF format).</p>
 
-            <input type="file" id="fileInput_agreement" accept=".pdf,.doc,.docx,.png,.jpg" style="display:none;" onchange="previewDocFile(this, 'agreement')">
+            <input type="file" id="fileInput_agreement" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'agreement')">
 
-            <div class="doc-dropzone" onclick="document.getElementById('fileInput_agreement').click();">
-              <i class="fa-solid fa-file-signature"></i>
-              <span class="drop-title">Drag & drop or click to browse</span>
-              <span class="drop-hint">PDF, DOC up to 10MB</span>
-            </div>
-
-            <div class="doc-file-info" id="info_agreement">
-              <div class="doc-file-left">
-                <i class="fa-solid fa-file-circle-check"></i>
-                <div>
-                  <div class="doc-file-name" id="name_agreement">agreement.pdf</div>
-                  <div class="doc-file-size" id="size_agreement">3.1 MB</div>
-                </div>
+            <div class="doc-dropzone" id="dropzone_agreement" onclick="document.getElementById('fileInput_agreement').click();">
+              <div class="doc-drop-empty" id="empty_agreement">
+                <i class="fa-solid fa-file-signature" style="font-size: 26px; color: #14204d;"></i>
+                <span class="drop-title">Upload Agreement (PDF)</span>
+                <span class="drop-hint">PDF only (Max 10MB)</span>
+              </div>
+              <div class="doc-drop-filled" id="filled_agreement">
+                <i class="fa-solid fa-file-circle-check doc-filled-icon" style="color: #14204d;"></i>
+                <span class="doc-filled-name" id="name_agreement">agreement.pdf</span>
+                <span class="doc-filled-size" id="size_agreement">3.1 MB</span>
+                <span class="doc-filled-change"><i class="fa-solid fa-arrows-rotate"></i> Change PDF</span>
               </div>
             </div>
           </div>
 
           <div class="doc-actions-row">
             <button type="button" class="btn-doc-save" id="btnSave_agreement" onclick="saveEmployeeDoc('agreement', 'Agreement')">
-              <i class="fa-solid fa-floppy-disk"></i> <span>Save Document</span>
+              <i class="fa-solid fa-floppy-disk"></i> <span>Save</span>
             </button>
             <button type="button" class="btn-doc-view" id="btnView_agreement" onclick="viewEmployeeDoc('agreement', 'Agreement')" disabled>
               <i class="fa-solid fa-eye"></i> <span>View</span>
             </button>
+            <button type="button" class="btn-doc-delete" id="btnDelete_agreement" onclick="deleteEmployeeDoc('agreement', 'Agreement')" disabled>
+              <i class="fa-solid fa-trash"></i> <span>Delete</span>
+            </button>
           </div>
         </div>
 
-        <!-- 4. Grama Sevaka Certificate -->
+        <!-- 4. Grama Sevaka Certificate (1 PDF) -->
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_grama" data-doc-id="0">
           <div>
             <div class="doc-card-head">
               <h4>Grama Sevaka Certificate</h4>
               <span class="doc-status-tag not-uploaded" id="tag_grama">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload certificate issued by your Grama Niladhari.</p>
+            <p class="doc-desc">Upload Grama Niladhari certificate (PDF format).</p>
 
-            <input type="file" id="fileInput_grama" accept=".pdf,.doc,.docx,.png,.jpg" style="display:none;" onchange="previewDocFile(this, 'grama')">
+            <input type="file" id="fileInput_grama" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'grama')">
 
-            <div class="doc-dropzone" onclick="document.getElementById('fileInput_grama').click();">
-              <i class="fa-solid fa-stamp"></i>
-              <span class="drop-title">Drag & drop or click to browse</span>
-              <span class="drop-hint">PDF, PNG, JPG up to 10MB</span>
-            </div>
-
-            <div class="doc-file-info" id="info_grama">
-              <div class="doc-file-left">
-                <i class="fa-solid fa-file-circle-check"></i>
-                <div>
-                  <div class="doc-file-name" id="name_grama">grama_cert.pdf</div>
-                  <div class="doc-file-size" id="size_grama">950 KB</div>
-                </div>
+            <div class="doc-dropzone" id="dropzone_grama" onclick="document.getElementById('fileInput_grama').click();">
+              <div class="doc-drop-empty" id="empty_grama">
+                <i class="fa-solid fa-stamp" style="font-size: 26px; color: #059669;"></i>
+                <span class="drop-title">Upload Certificate (PDF)</span>
+                <span class="drop-hint">PDF only (Max 10MB)</span>
+              </div>
+              <div class="doc-drop-filled" id="filled_grama">
+                <i class="fa-solid fa-file-circle-check doc-filled-icon" style="color: #059669;"></i>
+                <span class="doc-filled-name" id="name_grama">grama_cert.pdf</span>
+                <span class="doc-filled-size" id="size_grama">950 KB</span>
+                <span class="doc-filled-change"><i class="fa-solid fa-arrows-rotate"></i> Change PDF</span>
               </div>
             </div>
           </div>
 
           <div class="doc-actions-row">
             <button type="button" class="btn-doc-save" id="btnSave_grama" onclick="saveEmployeeDoc('grama', 'Grama Sevaka Certificate')">
-              <i class="fa-solid fa-floppy-disk"></i> <span>Save Document</span>
+              <i class="fa-solid fa-floppy-disk"></i> <span>Save</span>
             </button>
             <button type="button" class="btn-doc-view" id="btnView_grama" onclick="viewEmployeeDoc('grama', 'Grama Sevaka Certificate')" disabled>
               <i class="fa-solid fa-eye"></i> <span>View</span>
             </button>
+            <button type="button" class="btn-doc-delete" id="btnDelete_grama" onclick="deleteEmployeeDoc('grama', 'Grama Sevaka Certificate')" disabled>
+              <i class="fa-solid fa-trash"></i> <span>Delete</span>
+            </button>
           </div>
         </div>
 
-        <!-- 5. Police Report -->
+        <!-- 5. Police Report (1 PDF) -->
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_police" data-doc-id="0" style="grid-column: 1 / -1;">
           <div>
             <div class="doc-card-head">
               <h4>Police Clearance Report</h4>
               <span class="doc-status-tag not-uploaded" id="tag_police">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload your valid Police Clearance Certificate.</p>
+            <p class="doc-desc">Upload your valid Police Clearance Certificate (PDF format).</p>
 
-            <input type="file" id="fileInput_police" accept=".pdf,.doc,.docx,.png,.jpg" style="display:none;" onchange="previewDocFile(this, 'police')">
+            <input type="file" id="fileInput_police" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'police')">
 
-            <div class="doc-dropzone" onclick="document.getElementById('fileInput_police').click();">
-              <i class="fa-solid fa-shield-halved"></i>
-              <span class="drop-title">Drag & drop or click to browse</span>
-              <span class="drop-hint">PDF, PNG, JPG up to 10MB</span>
-            </div>
-
-            <div class="doc-file-info" id="info_police">
-              <div class="doc-file-left">
-                <i class="fa-solid fa-file-circle-check"></i>
-                <div>
-                  <div class="doc-file-name" id="name_police">police_report.pdf</div>
-                  <div class="doc-file-size" id="size_police">1.8 MB</div>
-                </div>
+            <div class="doc-dropzone" id="dropzone_police" onclick="document.getElementById('fileInput_police').click();">
+              <div class="doc-drop-empty" id="empty_police">
+                <i class="fa-solid fa-shield-halved" style="font-size: 26px; color: #4338ca;"></i>
+                <span class="drop-title">Upload Police Report (PDF)</span>
+                <span class="drop-hint">PDF only (Max 10MB)</span>
+              </div>
+              <div class="doc-drop-filled" id="filled_police">
+                <i class="fa-solid fa-file-circle-check doc-filled-icon" style="color: #4338ca;"></i>
+                <span class="doc-filled-name" id="name_police">police_report.pdf</span>
+                <span class="doc-filled-size" id="size_police">1.8 MB</span>
+                <span class="doc-filled-change"><i class="fa-solid fa-arrows-rotate"></i> Change PDF</span>
               </div>
             </div>
           </div>
 
           <div class="doc-actions-row">
             <button type="button" class="btn-doc-save" id="btnSave_police" onclick="saveEmployeeDoc('police', 'Police Report')">
-              <i class="fa-solid fa-floppy-disk"></i> <span>Save Document</span>
+              <i class="fa-solid fa-floppy-disk"></i> <span>Save</span>
             </button>
             <button type="button" class="btn-doc-view" id="btnView_police" onclick="viewEmployeeDoc('police', 'Police Report')" disabled>
               <i class="fa-solid fa-eye"></i> <span>View</span>
+            </button>
+            <button type="button" class="btn-doc-delete" id="btnDelete_police" onclick="deleteEmployeeDoc('police', 'Police Report')" disabled>
+              <i class="fa-solid fa-trash"></i> <span>Delete</span>
             </button>
           </div>
         </div>
@@ -591,16 +670,28 @@
 
   function loadUploadedEmployeeDocs() {
     var pth = "<?php echo isset($pth) ? $pth : '../'; ?>";
+    if (typeof window.userProfileData === 'undefined' || !window.userProfileData.full_name) {
+      $.ajax({
+        url: pth + "UxUi-Back/Employee/fetch_profile/fetch_profile.php",
+        type: "GET",
+        dataType: "json",
+        success: function(pRes) {
+          if (pRes && pRes.status === 'success' && pRes.data) {
+            window.userProfileData = pRes.data;
+          }
+        }
+      });
+    }
+
     $.ajax({
       url: pth + "View-List/Documents/Fetch_Document.php",
       type: "GET",
-      data: { employee_id: "EMP-002" },
       dataType: "json",
       success: function(res) {
         if (res && res.status === 'success' && res.data && res.data.length > 0) {
           res.data.forEach(function(doc) {
             var key = '';
-            var type = (doc.doc_type || '').toLowerCase();
+            var type = (doc.category || doc.doc_type || doc.type || '').toLowerCase();
             if (type.indexOf('cv') > -1 || type.indexOf('resume') > -1) key = 'cv';
             else if (type.indexOf('id') > -1 || type.indexOf('passport') > -1 || type.indexOf('nic') > -1) key = 'id';
             else if (type.indexOf('agree') > -1) key = 'agreement';
@@ -611,20 +702,47 @@
               empUploadedDocs[key] = doc;
               var card = document.getElementById('docCard_' + key);
               var tag = document.getElementById('tag_' + key);
-              var info = document.getElementById('info_' + key);
-              var name = document.getElementById('name_' + key);
-              var size = document.getElementById('size_' + key);
               var viewBtn = document.getElementById('btnView_' + key);
+              var delBtn = document.getElementById('btnDelete_' + key);
 
               if (card && doc.id) card.setAttribute('data-doc-id', doc.id);
               if (tag) {
                 tag.className = 'doc-status-tag uploaded';
                 tag.innerText = doc.status || 'Uploaded';
               }
-              if (info) info.style.display = 'flex';
-              if (name) name.innerText = doc.file_name || 'document';
-              if (size) size.innerText = doc.file_size || '';
               if (viewBtn) viewBtn.disabled = false;
+              if (delBtn) delBtn.disabled = false;
+
+              if (key === 'id') {
+                var dzFront = document.getElementById('dropzone_id_front');
+                var dzBack = document.getElementById('dropzone_id_back');
+                var nameFront = document.getElementById('name_id_front');
+                var nameBack = document.getElementById('name_id_back');
+                var thumbFront = document.getElementById('thumb_id_front');
+                var iconFront = document.getElementById('icon_id_front');
+
+                if (dzFront) dzFront.classList.add('has-file');
+                if (dzBack) dzBack.classList.add('has-file');
+                if (nameFront) nameFront.innerText = doc.file_name || doc.title || 'front.png';
+                if (nameBack) nameBack.innerText = doc.file_name || doc.title || 'back.png';
+
+                if (doc.url && (doc.url.indexOf('.png') > -1 || doc.url.indexOf('.jpg') > -1 || doc.url.indexOf('.jpeg') > -1)) {
+                  var pthUrl = (doc.url.indexOf('http') === 0) ? doc.url : (pth + doc.url);
+                  if (thumbFront) {
+                    thumbFront.src = pthUrl;
+                    thumbFront.style.display = 'block';
+                  }
+                  if (iconFront) iconFront.style.display = 'none';
+                }
+              } else {
+                var dropzone = document.getElementById('dropzone_' + key);
+                var name = document.getElementById('name_' + key);
+                var size = document.getElementById('size_' + key);
+
+                if (dropzone) dropzone.classList.add('has-file');
+                if (name) name.innerText = doc.file_name || doc.title || 'document.pdf';
+                if (size) size.innerText = doc.file_size || doc.size || '';
+              }
             }
           });
         }
@@ -636,7 +754,7 @@
     if (!input.files || !input.files[0]) return;
     var file = input.files[0];
 
-    var info = document.getElementById('info_' + key);
+    var dropzone = document.getElementById('dropzone_' + key);
     var name = document.getElementById('name_' + key);
     var size = document.getElementById('size_' + key);
 
@@ -644,30 +762,83 @@
       ? (file.size / 1048576).toFixed(2) + ' MB' 
       : (file.size / 1024).toFixed(1) + ' KB';
 
-    if (info) info.style.display = 'flex';
+    if (dropzone) dropzone.classList.add('has-file');
     if (name) name.innerText = file.name;
     if (size) size.innerText = formattedSize;
   }
 
-  function saveEmployeeDoc(key, docType) {
-    var input = document.getElementById('fileInput_' + key);
-    if (!input.files || !input.files[0]) {
-      alert('Please select a file to upload first.');
-      input.click();
-      return;
-    }
-
+  function previewDocFileSide(input, key, side) {
+    if (!input.files || !input.files[0]) return;
     var file = input.files[0];
+
+    var dropzone = document.getElementById('dropzone_' + key + '_' + side);
+    var name = document.getElementById('name_' + key + '_' + side);
+    var size = document.getElementById('size_' + key + '_' + side);
+    var thumb = document.getElementById('thumb_' + key + '_' + side);
+    var icon = document.getElementById('icon_' + key + '_' + side);
+
+    var formattedSize = (file.size >= 1048576) 
+      ? (file.size / 1048576).toFixed(2) + ' MB' 
+      : (file.size / 1024).toFixed(1) + ' KB';
+
+    if (dropzone) dropzone.classList.add('has-file');
+    if (name) name.innerText = file.name;
+    if (size) size.innerText = (side.toUpperCase() + ' • ' + formattedSize);
+
+    if (file.type && file.type.indexOf('image') > -1) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        if (thumb) {
+          thumb.src = e.target.result;
+          thumb.style.display = 'block';
+        }
+        if (icon) icon.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function saveEmployeeDoc(key, docType) {
     var formData = new FormData();
-    formData.append('document_file', file);
+    var empName = (typeof window.userProfileData !== 'undefined' && window.userProfileData.full_name) ? window.userProfileData.full_name : '';
+    var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : 'EMP-001';
+
     formData.append('doc_type', docType);
-    formData.append('employee_name', 'Amal Perera');
-    formData.append('employee_id', 'EMP-002');
+    formData.append('category', docType);
+    if (empName) {
+      formData.append('employee_name', empName);
+      formData.append('employee', empName);
+    }
+    formData.append('employee_id', empId);
     formData.append('user_id', 1);
+
+    if (key === 'id') {
+      var frontInput = document.getElementById('fileInput_id_front');
+      var backInput = document.getElementById('fileInput_id_back');
+      var hasFront = frontInput && frontInput.files && frontInput.files[0];
+      var hasBack = backInput && backInput.files && backInput.files[0];
+
+      if (!hasFront && !hasBack) {
+        alert('Please select at least one National ID PNG image (Front or Back) to upload.');
+        if (frontInput) frontInput.click();
+        return;
+      }
+
+      if (hasFront) formData.append('document_file_front', frontInput.files[0]);
+      if (hasBack) formData.append('document_file_back', backInput.files[0]);
+    } else {
+      var input = document.getElementById('fileInput_' + key);
+      if (!input || !input.files || !input.files[0]) {
+        alert('Please select a PDF file to upload first.');
+        if (input) input.click();
+        return;
+      }
+      formData.append('document_file', input.files[0]);
+    }
 
     var btn = document.getElementById('btnSave_' + key);
     var tag = document.getElementById('tag_' + key);
-    var originalBtnText = btn ? btn.innerHTML : 'Save Document';
+    var originalBtnText = btn ? btn.innerHTML : 'Save';
 
     if (btn) {
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
@@ -693,24 +864,34 @@
         }
 
         if (response && response.status === 'success') {
+          var savedId = response.id || (response.data && response.data.id) || 0;
+          var savedUrl = response.file_path || (response.data && response.data.url) || '';
+          var savedName = response.file_name || (response.data && response.data.title) || '';
+
           if (tag) {
             tag.className = 'doc-status-tag uploaded';
             tag.innerText = 'Uploaded';
           }
           var card = document.getElementById('docCard_' + key);
-          if (card && response.id) card.setAttribute('data-doc-id', response.id);
+          if (card && savedId) card.setAttribute('data-doc-id', savedId);
 
           var viewBtn = document.getElementById('btnView_' + key);
           if (viewBtn) viewBtn.disabled = false;
 
+          var delBtn = document.getElementById('btnDelete_' + key);
+          if (delBtn) delBtn.disabled = false;
+
           empUploadedDocs[key] = {
-            id: response.id,
-            file_name: response.file_name || file.name,
+            id: savedId,
+            file_name: savedName,
+            title: savedName,
             doc_type: docType,
-            file_path: response.file_path || ''
+            category: docType,
+            file_path: savedUrl,
+            url: savedUrl
           };
 
-          alert(docType + ' saved and uploaded successfully!');
+          alert(docType + ' saved and uploaded to database successfully!');
         } else {
           alert('Upload failed: ' + (response.message || 'Error occurred.'));
           if (tag) {
@@ -725,6 +906,93 @@
           btn.innerHTML = originalBtnText;
         }
         alert('Server error during upload.');
+      }
+    });
+  }
+
+  function deleteEmployeeDoc(key, docType) {
+    var card = document.getElementById('docCard_' + key);
+    var docId = card ? card.getAttribute('data-doc-id') : '0';
+
+    if (!docId || docId === '0') {
+      if (key === 'id') {
+        var fiFront = document.getElementById('fileInput_id_front');
+        var fiBack = document.getElementById('fileInput_id_back');
+        if (fiFront) fiFront.value = '';
+        if (fiBack) fiBack.value = '';
+        var dzF = document.getElementById('dropzone_id_front');
+        var dzB = document.getElementById('dropzone_id_back');
+        if (dzF) dzF.classList.remove('has-file');
+        if (dzB) dzB.classList.remove('has-file');
+      } else {
+        var input = document.getElementById('fileInput_' + key);
+        if (input) input.value = '';
+        var dz = document.getElementById('dropzone_' + key);
+        if (dz) dz.classList.remove('has-file');
+      }
+      return;
+    }
+
+    if (!confirm('Are you sure you want to permanently delete your ' + docType + '?')) {
+      return;
+    }
+
+    var delBtn = document.getElementById('btnDelete_' + key);
+    if (delBtn) delBtn.disabled = true;
+
+    var pth = "<?php echo isset($pth) ? $pth : '../'; ?>";
+    $.ajax({
+      url: pth + "View-List/Documents/Delete_Document.php",
+      type: "POST",
+      data: { id: docId },
+      dataType: "json",
+      success: function(res) {
+        if (res && res.status === 'success') {
+          delete empUploadedDocs[key];
+          if (card) card.setAttribute('data-doc-id', '0');
+          var tag = document.getElementById('tag_' + key);
+          if (tag) {
+            tag.className = 'doc-status-tag not-uploaded';
+            tag.innerText = 'Not Uploaded';
+          }
+          
+          if (key === 'id') {
+            var fiFront = document.getElementById('fileInput_id_front');
+            var fiBack = document.getElementById('fileInput_id_back');
+            if (fiFront) fiFront.value = '';
+            if (fiBack) fiBack.value = '';
+            var dzF = document.getElementById('dropzone_id_front');
+            var dzB = document.getElementById('dropzone_id_back');
+            if (dzF) dzF.classList.remove('has-file');
+            if (dzB) dzB.classList.remove('has-file');
+            var thumbF = document.getElementById('thumb_id_front');
+            var thumbB = document.getElementById('thumb_id_back');
+            var iconF = document.getElementById('icon_id_front');
+            var iconB = document.getElementById('icon_id_back');
+            if (thumbF) thumbF.style.display = 'none';
+            if (thumbB) thumbB.style.display = 'none';
+            if (iconF) iconF.style.display = 'block';
+            if (iconB) iconB.style.display = 'block';
+          } else {
+            var input = document.getElementById('fileInput_' + key);
+            if (input) input.value = '';
+            var dz = document.getElementById('dropzone_' + key);
+            if (dz) dz.classList.remove('has-file');
+          }
+
+          var viewBtn = document.getElementById('btnView_' + key);
+          if (viewBtn) viewBtn.disabled = true;
+          if (delBtn) delBtn.disabled = true;
+
+          alert(docType + ' deleted permanently from database.');
+        } else {
+          if (delBtn) delBtn.disabled = false;
+          alert('Delete failed: ' + (res.message || 'Error occurred.'));
+        }
+      },
+      error: function() {
+        if (delBtn) delBtn.disabled = false;
+        alert('Server error during deletion.');
       }
     });
   }
