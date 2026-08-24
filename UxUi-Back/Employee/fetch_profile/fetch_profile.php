@@ -15,13 +15,13 @@ $db->get_result("CREATE TABLE IF NOT EXISTS `employee_profiles` (
     `email` varchar(255) DEFAULT '',
     `phone` varchar(50) DEFAULT '',
     `nic` varchar(50) DEFAULT '',
-    `dob` varchar(50) DEFAULT '',
+    `dob` date DEFAULT NULL,
     `gender` varchar(20) DEFAULT '',
     `address` varchar(255) DEFAULT '',
     `emergency_contact_name` varchar(255) DEFAULT '',
     `emergency_contact_phone` varchar(50) DEFAULT '',
     `profile_pic` varchar(255) DEFAULT '',
-    `join_date` varchar(50) DEFAULT '',
+    `join_date` date DEFAULT NULL,
     `employee_id_code` varchar(50) DEFAULT 'EMP-001',
     `work_location` varchar(100) DEFAULT 'Main Branch',
     `employment_type` varchar(100) DEFAULT 'Full-Time',
@@ -47,7 +47,7 @@ if (!$check || $check->num_rows == 0) {
     $db->get_result("INSERT INTO `employee_profiles` (
         `user_id`, `full_name`, `job_title`, `department`, `email`, `phone`, `nic`, `dob`, `gender`, `address`, `emergency_contact_name`, `emergency_contact_phone`, `profile_pic`, `join_date`, `employee_id_code`, `work_location`, `employment_type`
     ) VALUES (
-        1, '" . addslashes($empName) . "', '" . addslashes($empRole) . "', '" . addslashes($empDept) . "', '" . addslashes($empEmail) . "', '" . addslashes($empPhone) . "', '" . addslashes($empNic) . "', '', '', '', '', '', '', '" . addslashes($empJoined) . "', 'EMP-001', 'HQ', 'Full-Time'
+        1, '" . addslashes($empName) . "', '" . addslashes($empRole) . "', '" . addslashes($empDept) . "', '" . addslashes($empEmail) . "', '" . addslashes($empPhone) . "', '" . addslashes($empNic) . "', NULL, '', '', '', '', '', " . (!empty($empJoined) ? "'" . addslashes($empJoined) . "'" : "NULL") . ", 'EMP-001', 'Colombo HQ', 'Full-Time'
     )");
     $check = $db->get_result("SELECT * FROM `employee_profiles` WHERE `user_id` = 1 LIMIT 1");
 }
