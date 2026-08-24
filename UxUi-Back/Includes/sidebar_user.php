@@ -302,6 +302,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span>My Profile</span>
         </a>
 
+        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_03_OPEN==='function'){ Employee_user_dashboard_03_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+           data-page="personal_details"
+           class="sidebar-link">
+            <span>Personal Details</span>
+        </a>
+
         <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_04_OPEN==='function'){ Employee_user_dashboard_04_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="documents"
            class="sidebar-link">
