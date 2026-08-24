@@ -528,7 +528,7 @@
       }
     }
   </style>
-<div id="Admin_user_dashboard_10_settings">
+<div id="Admin_user_dashboard_10_settings" style="display:none;">
 
   <div class="app-layout">
     <!-- Mobile Drawer Backdrop Overlay -->
