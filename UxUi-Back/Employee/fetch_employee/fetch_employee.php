@@ -19,8 +19,6 @@ $db->get_result("CREATE TABLE IF NOT EXISTS `employee_profiles` (
     `dob` varchar(50) DEFAULT '',
     `gender` varchar(20) DEFAULT '',
     `address` varchar(255) DEFAULT '',
-    `emergency_contact_name` varchar(255) DEFAULT '',
-    `emergency_contact_phone` varchar(50) DEFAULT '',
     `profile_pic` varchar(255) DEFAULT '',
     `join_date` varchar(50) DEFAULT '',
     `employee_id_code` varchar(50) DEFAULT 'EMP-001',
@@ -58,8 +56,6 @@ if ($prof_res && $prof_res->num_rows > 0) {
             'dob'             => !empty($p['dob']) ? $p['dob'] : '—',
             'gender'          => !empty($p['gender']) ? $p['gender'] : '—',
             'address'         => !empty($p['address']) ? $p['address'] : '—',
-            'emergency_name'  => !empty($p['emergency_contact_name']) ? $p['emergency_contact_name'] : '—',
-            'emergency_phone' => !empty($p['emergency_contact_phone']) ? $p['emergency_contact_phone'] : '—',
             'profile_pic'     => !empty($p['profile_pic']) ? $p['profile_pic'] : '',
             'emp_code'        => !empty($p['employee_id_code']) ? $p['employee_id_code'] : 'EMP-' . str_pad($p['id'], 3, '0', STR_PAD_LEFT),
             'location'        => !empty($p['work_location']) ? $p['work_location'] : 'HQ'
@@ -112,8 +108,6 @@ if ($result && $result->num_rows > 0) {
             'dob'             => isset($row['date_of_birth']) ? $row['date_of_birth'] : '—',
             'gender'          => isset($row['gender']) ? $row['gender'] : '—',
             'address'         => isset($row['address']) ? $row['address'] : '—',
-            'emergency_name'  => '—',
-            'emergency_phone' => '—',
             'profile_pic'     => '',
             'emp_code'        => 'EMP-' . str_pad($row['id'], 3, '0', STR_PAD_LEFT),
             'location'        => 'Colombo HQ'
