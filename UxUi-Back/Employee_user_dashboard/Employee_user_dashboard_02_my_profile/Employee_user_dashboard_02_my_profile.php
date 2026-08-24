@@ -360,8 +360,8 @@
     background: #ffffff;
     border-radius: 20px;
     width: 100%;
-    max-width: 600px;
-    max-height: 90vh;
+    max-width: 620px;
+    max-height: 85vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -374,6 +374,15 @@
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
 
+  #editProfileForm {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    margin: 0;
+  }
+
   .modal-header {
     padding: 18px 24px;
     border-bottom: 1px solid #e2e8f0;
@@ -381,6 +390,7 @@
     align-items: center;
     justify-content: space-between;
     background: #ffffff;
+    flex-shrink: 0;
   }
 
   .modal-header h3 {
@@ -408,10 +418,13 @@
   .modal-body {
     padding: 20px 24px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     gap: 14px;
+    box-sizing: border-box;
   }
 
   .modal-form-group {
@@ -436,6 +449,8 @@
     outline: none;
     transition: all 0.2s;
     font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
   }
   .modal-form-control:focus {
     background: #ffffff;
@@ -450,8 +465,8 @@
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    position: sticky;
-    bottom: 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
   }
 
   @media (max-width: 768px) {
@@ -465,7 +480,7 @@
   }
 </style>
 
-<div id="Employee_user_dashboard_02_my_profile" class="emp-main" style="padding:0;">
+<div id="Employee_user_dashboard_02_my_profile" class="emp-main" style="display:none; padding:0;">
   <div class="emp-prof-container">
     
     <!-- Topbar Navigation -->
@@ -523,6 +538,7 @@
           <span class="profile-tag blue" id="viewEmpIdTag">EMP-001</span>
           <span class="profile-tag green" id="viewStatusTag">Active Employee</span>
           <span class="profile-tag gray" id="viewLocationTag">HQ</span>
+          <span class="profile-tag" style="background:#eff6ff; color:#2563eb; font-weight:700;" id="viewProbationTag">Probation: 15 Days </span>
         </div>
       </div>
     </div>
@@ -532,40 +548,33 @@
       
       <!-- Left Column: Details -->
       <div>
-        <!-- Personal Info Card -->
+        <!-- Professional Bio & Competencies Card -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <span>Personal Information</span>
+              <span>Professional Overview</span>
             </h3>
           </div>
-          <div class="info-field-grid">
-            <div class="info-field">
-              <span class="info-field-label">Full Name</span>
-              <span class="info-field-val" id="viewFullName">Loading...</span>
-            </div>
-            <div class="info-field">
-              <span class="info-field-label">NIC / Passport Number</span>
-              <span class="info-field-val" id="viewNic">—</span>
-            </div>
-            <div class="info-field">
-              <span class="info-field-label">Date of Birth</span>
-              <span class="info-field-val" id="viewDob">—</span>
-            </div>
-            <div class="info-field">
-              <span class="info-field-label">Gender</span>
-              <span class="info-field-val" id="viewGender">—</span>
+          <div style="padding: 4px 0 10px 0; color: #475569; font-size: 13.5px; line-height: 1.6;">
+            <p id="viewBioStatement" style="margin: 0 0 12px 0;">Official staff profile and operational record at NEO Solution. Dedicated to maintaining high quality organizational standards and staff management excellence.</p>
+            <div style="font-weight: 700; font-size: 12px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;">Key Competencies & Focus</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Staff Management</span>
+              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">ERP Operations</span>
+              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">HR Workflow</span>
+              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Team Coordination</span>
+              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Compliance</span>
             </div>
           </div>
         </div>
 
-        <!-- Contact Details Card -->
+        <!-- Contact Coordinates Card -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              <span>Contact Information</span>
+              <span>Contact Coordinates</span>
             </h3>
           </div>
           <div class="info-field-grid">
@@ -581,24 +590,12 @@
               <span class="info-field-label">Residential Address</span>
               <span class="info-field-val" id="viewAddress">—</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Emergency Contact Card -->
-        <div class="prof-card">
-          <div class="prof-card-head">
-            <h3>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <span>Emergency Contact</span>
-            </h3>
-          </div>
-          <div class="info-field-grid">
             <div class="info-field">
-              <span class="info-field-label">Contact Person & Relationship</span>
+              <span class="info-field-label">Emergency Contact Person</span>
               <span class="info-field-val" id="viewEmName">—</span>
             </div>
             <div class="info-field">
-              <span class="info-field-label">Emergency Phone</span>
+              <span class="info-field-label">Emergency Contact Phone</span>
               <span class="info-field-val" id="viewEmPhone">—</span>
             </div>
           </div>
@@ -612,7 +609,7 @@
           <div class="prof-card-head">
             <h3>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-              <span>Job Snapshot</span>
+              <span>Job & Service Snapshot</span>
             </h3>
           </div>
           <div style="display:flex; flex-direction:column; gap:10px;">
@@ -625,8 +622,20 @@
               <span class="info-field-val" id="viewJobRole">—</span>
             </div>
             <div class="info-field">
+              <span class="info-field-label">Employment Type</span>
+              <span class="info-field-val" id="viewEmpType">—</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field-label">Work Location</span>
+              <span class="info-field-val" id="viewWorkLocation">—</span>
+            </div>
+            <div class="info-field">
               <span class="info-field-label">Joining Date</span>
               <span class="info-field-val" id="viewJoinDate">—</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field-label">Probation Review</span>
+              <span class="info-field-val" id="viewProbationStatus" style="color:#2563eb; font-weight:700;">6 Months</span>
             </div>
           </div>
         </div>
@@ -636,12 +645,16 @@
           <div class="prof-card-head">
             <h3>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              <span>Quick Navigation</span>
+              <span>Quick Navigation Hub</span>
             </h3>
           </div>
           <div>
+            <div class="quick-action-link" onclick="Employee_user_dashboard_03_OPEN()">
+              <span>Personal Details (Legal & Identity)</span>
+              <span>&rarr;</span>
+            </div>
             <div class="quick-action-link" onclick="Employee_user_dashboard_06_OPEN()">
-              <span>Job Information</span>
+              <span>Job Information & Timeline</span>
               <span>&rarr;</span>
             </div>
             <div class="quick-action-link" onclick="Employee_user_dashboard_07_OPEN()">
@@ -722,14 +735,26 @@
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="modal-form-group">
-            <label for="editEmName">Emergency Contact Person</label>
-            <input type="text" id="editEmName" name="emergency_contact_name" class="modal-form-control" />
+            <label for="editEmName">Emergency Contact Name</label>
+            <input type="text" id="editEmName" name="emergency_contact_name" class="modal-form-control" placeholder="e.g. S. Perera (Father)" />
           </div>
           <div class="modal-form-group">
-            <label for="editEmPhone">Emergency Phone</label>
-            <input type="text" id="editEmPhone" name="emergency_contact_phone" class="modal-form-control" />
+            <label for="editEmPhone">Emergency Contact Phone</label>
+            <input type="text" id="editEmPhone" name="emergency_contact_phone" class="modal-form-control" placeholder="e.g. 077 1234567" />
           </div>
         </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="modal-form-group">
+            <label for="editLocation">Work Location</label>
+            <input type="text" id="editLocation" name="work_location" class="modal-form-control" placeholder="e.g. Colombo HQ" />
+          </div>
+          <div class="modal-form-group">
+            <label for="editEmpType">Employment Type</label>
+            <input type="text" id="editEmpType" name="employment_type" class="modal-form-control" placeholder="e.g. Full-Time" />
+          </div>
+        </div>
+      
       </div>
 
       <div class="modal-footer">
@@ -759,15 +784,15 @@
   };
 
   function renderProfileData(p) {
-    const name = p.full_name || 'Amal Perera';
-    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    const name = p.full_name || p.fullname || p.name || 'Employee';
+    const initials = name.split(' ').filter(n => n.length > 0).map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'EM';
 
     // 1. Text Fields
     const el = id => document.getElementById(id);
     if (el('viewProfileName')) el('viewProfileName').textContent = name;
     if (el('viewFullName')) el('viewFullName').textContent = name;
     if (el('topEmpName')) el('topEmpName').textContent = name;
-    if (el('viewProfileTitle')) el('viewProfileTitle').textContent = `${p.job_title || 'Senior Software Engineer'} • ${p.department || 'Engineering'}`;
+    if (el('viewProfileTitle')) el('viewProfileTitle').textContent = `${p.job_title || p.role || 'Staff'} • ${p.department || p.dept || 'General'}`;
     if (el('viewEmail')) el('viewEmail').textContent = p.email || '—';
     if (el('viewPhone')) el('viewPhone').textContent = p.phone || '—';
     if (el('viewNic')) el('viewNic').textContent = p.nic || '—';
@@ -776,11 +801,38 @@
     if (el('viewAddress')) el('viewAddress').textContent = p.address || '—';
     if (el('viewEmName')) el('viewEmName').textContent = p.emergency_contact_name || '—';
     if (el('viewEmPhone')) el('viewEmPhone').textContent = p.emergency_contact_phone || '—';
-    if (el('viewDept')) el('viewDept').textContent = p.department || 'Engineering';
-    if (el('viewJobRole')) el('viewJobRole').textContent = p.job_title || 'Senior Software Engineer';
-    if (el('viewJoinDate')) el('viewJoinDate').textContent = p.join_date || '2024-01-15';
-    if (el('viewEmpIdTag')) el('viewEmpIdTag').textContent = p.employee_id_code || 'EMP-002';
-    if (el('viewLocationTag')) el('viewLocationTag').textContent = p.work_location || 'Colombo HQ';
+    if (el('viewDept')) el('viewDept').textContent = p.department || p.dept || 'General';
+    if (el('viewJobRole')) el('viewJobRole').textContent = p.job_title || p.role || 'Staff';
+    if (el('viewEmpType')) el('viewEmpType').textContent = p.employment_type || 'Full-Time';
+    if (el('viewWorkLocation')) el('viewWorkLocation').textContent = p.work_location || 'Colombo HQ';
+    if (el('viewJoinDate')) el('viewJoinDate').textContent = p.join_date || p.joined || '—';
+    if (el('viewEmpIdTag')) el('viewEmpIdTag').textContent = p.employee_id_code || ('EMP-' + String(p.id || 1).padStart(3, '0'));
+    if (el('viewLocationTag')) el('viewLocationTag').textContent = p.work_location || 'HQ';
+
+    // Calculate Probation Status
+    const joined = p.join_date || p.joined;
+    if (joined && joined !== '—') {
+      const joinD = new Date(joined);
+      if (!isNaN(joinD.getTime())) {
+        const probD = new Date(joinD);
+        probD.setMonth(probD.getMonth() + 6);
+        const probStr = probD.toISOString().split('T')[0];
+        const now = new Date();
+        if (now < probD) {
+          if (el('viewProbationStatus')) {
+            el('viewProbationStatus').textContent = '6 Months (In Progress - Review ' + probStr + ')';
+            el('viewProbationStatus').style.color = '#d97706';
+          }
+          if (el('viewProbationTag')) el('viewProbationTag').textContent = 'Probation: In Progress';
+        } else {
+          if (el('viewProbationStatus')) {
+            el('viewProbationStatus').textContent = 'Completed (Confirmed)';
+            el('viewProbationStatus').style.color = '#16a34a';
+          }
+          if (el('viewProbationTag')) el('viewProbationTag').textContent = 'Confirmed Staff';
+        }
+      }
+    }
 
     // 2. Avatar / Profile Picture
     const picImg = el('myProfilePicImg');
@@ -812,7 +864,7 @@
     const modal = document.getElementById('editProfileModal');
     if (!modal) return;
 
-    document.getElementById('editFullName').value = userProfileData.full_name || 'Amal Perera';
+    document.getElementById('editFullName').value = userProfileData.full_name || '';
     document.getElementById('editEmail').value = userProfileData.email || '';
     document.getElementById('editPhone').value = userProfileData.phone || '';
     document.getElementById('editNic').value = userProfileData.nic || '';
@@ -821,6 +873,8 @@
     document.getElementById('editAddress').value = userProfileData.address || '';
     document.getElementById('editEmName').value = userProfileData.emergency_contact_name || '';
     document.getElementById('editEmPhone').value = userProfileData.emergency_contact_phone || '';
+    document.getElementById('editLocation').value = userProfileData.work_location || '';
+    document.getElementById('editEmpType').value = userProfileData.employment_type || '';
 
     modal.classList.add('open');
   };
