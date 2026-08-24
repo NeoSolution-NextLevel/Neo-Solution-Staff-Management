@@ -317,7 +317,7 @@
   }
 </style>
 
-<div id="Admin_user_dashboard_08_leave_requests">
+<div id="Admin_user_dashboard_08_leave_requests" style="display:none;">
   <div class="main-wrapper">
     
     <!-- Topbar -->
