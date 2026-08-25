@@ -425,7 +425,7 @@
       }
     }
   </style>
-<div id="Admin_user_dashboard_09_notifications">
+<div id="Admin_user_dashboard_09_notifications" style="display:none;">
 
   <div class="app-layout">
     <!-- Backdrop Overlay for Mobile Drawer -->
