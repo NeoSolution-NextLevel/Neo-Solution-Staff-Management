@@ -290,61 +290,61 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Navigation Links -->
     <nav class="sidebar-menu">
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_01_OPEN==='function'){ Employee_user_dashboard_01_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_01_OPEN==='function'){ Employee_user_dashboard_01_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="dashboard"
            class="sidebar-link active">
             <span>Dashboard</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="my_profile"
            class="sidebar-link">
             <span>My Profile</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_03_OPEN==='function'){ Employee_user_dashboard_03_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_03_OPEN==='function'){ Employee_user_dashboard_03_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="personal_details"
            class="sidebar-link">
             <span>Personal Details</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_04_OPEN==='function'){ Employee_user_dashboard_04_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_04_OPEN==='function'){ Employee_user_dashboard_04_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="documents"
            class="sidebar-link">
             <span>Documents</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_05_OPEN==='function'){ Employee_user_dashboard_05_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_05_OPEN==='function'){ Employee_user_dashboard_05_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="bank_details"
            class="sidebar-link">
             <span>Bank Details</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_06_OPEN==='function'){ Employee_user_dashboard_06_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_06_OPEN==='function'){ Employee_user_dashboard_06_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="job_information"
            class="sidebar-link">
             <span>Job Information</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_07_OPEN==='function'){ Employee_user_dashboard_07_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_07_OPEN==='function'){ Employee_user_dashboard_07_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="daily_work_plan"
            class="sidebar-link">
             <span>Daily Work Plan</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_08_OPEN==='function'){ Employee_user_dashboard_08_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_08_OPEN==='function'){ Employee_user_dashboard_08_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="leave_requests"
            class="sidebar-link">
             <span>Leave Requests</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_09_OPEN==='function'){ Employee_user_dashboard_09_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_09_OPEN==='function'){ Employee_user_dashboard_09_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="notifications"
            class="sidebar-link">
             <span>Notifications</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Employee_user_dashboard_10_OPEN==='function'){ Employee_user_dashboard_10_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_10_OPEN==='function'){ Employee_user_dashboard_10_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="settings"
            class="sidebar-link">
             <span>Settings</span>
@@ -354,7 +354,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <!-- Logout -->
     <div class="sidebar-bottom">
-        <a href="javascript:void(0)" class="sidebar-link logout-link" onclick="logoutUser(); return false;">
+        <a role="button" tabindex="0" class="sidebar-link logout-link" onclick="logoutUser(); return false;">
             <span>Logout</span>
         </a>
     </div>
