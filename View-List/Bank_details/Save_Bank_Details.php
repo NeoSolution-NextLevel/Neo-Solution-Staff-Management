@@ -51,8 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ";
         $db->get_result($create_sql);
 
-        // Encrypt the sensitive bank account number with AES-256
-        $encrypted_acc = Bank_Security::encrypt($raw_account_no);
+        // Plain unencrypted bank account number
         $masked_acc = Bank_Security::mask($raw_account_no);
 
         $bank_details_ADD_UPDATE_obj = new bank_details_ADD_UPDATE();
@@ -61,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $get_result = $bank_details_LIST_obj->get_result();
 
-        $bank_details_ADD_UPDATE_obj->set_data($user_id, $employee_id, $employee_name, $holder_name, $bank_name, $branch, $encrypted_acc, "Active");
+        $bank_details_ADD_UPDATE_obj->set_data($user_id, $employee_id, $employee_name, $holder_name, $bank_name, $branch, $raw_account_no, "Active");
 
         $existing_id = 0;
         if ($get_result && $get_result->num_rows > 0) {
