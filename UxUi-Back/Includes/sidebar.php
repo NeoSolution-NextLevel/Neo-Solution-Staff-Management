@@ -316,61 +316,61 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Navigation Links -->
     <nav class="sidebar-menu">
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_01_OPEN==='function'){ Admin_user_dashboard_01_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_01_OPEN==='function'){ Admin_user_dashboard_01_OPEN(); } closeAdminSidebar();"
            data-page="dashboard"
            class="sidebar-link active">
             <span>Dashboard</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_02_OPEN==='function'){ Admin_user_dashboard_02_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_02_OPEN==='function'){ Admin_user_dashboard_02_OPEN(); } closeAdminSidebar();"
            data-page="employees"
            class="sidebar-link">
             <span>Employees</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_03_OPEN==='function'){ Admin_user_dashboard_03_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_03_OPEN==='function'){ Admin_user_dashboard_03_OPEN(); } closeAdminSidebar();"
            data-page="documents"
            class="sidebar-link">
             <span>Documents</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_04_OPEN==='function'){ Admin_user_dashboard_04_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_04_OPEN==='function'){ Admin_user_dashboard_04_OPEN(); } closeAdminSidebar();"
            data-page="bank_details"
            class="sidebar-link">
             <span>Bank Details</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_05_OPEN==='function'){ Admin_user_dashboard_05_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_05_OPEN==='function'){ Admin_user_dashboard_05_OPEN(); } closeAdminSidebar();"
            data-page="departments"
            class="sidebar-link">
             <span>Departments</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_06_OPEN==='function'){ Admin_user_dashboard_06_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_06_OPEN==='function'){ Admin_user_dashboard_06_OPEN(); } closeAdminSidebar();"
            data-page="job_roles"
            class="sidebar-link">
             <span>Job Roles</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_07_OPEN==='function'){ Admin_user_dashboard_07_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_07_OPEN==='function'){ Admin_user_dashboard_07_OPEN(); } closeAdminSidebar();"
            data-page="task_management"
            class="sidebar-link">
             <span>Task Management</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_08_OPEN==='function'){ Admin_user_dashboard_08_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_08_OPEN==='function'){ Admin_user_dashboard_08_OPEN(); } closeAdminSidebar();"
            data-page="leave_requests"
            class="sidebar-link">
             <span>Leave Requests</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_09_OPEN==='function'){ Admin_user_dashboard_09_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_09_OPEN==='function'){ Admin_user_dashboard_09_OPEN(); } closeAdminSidebar();"
            data-page="notifications"
            class="sidebar-link">
             <span>Notifications</span>
         </a>
 
-        <a href="javascript:void(0)" onclick="if(typeof Admin_user_dashboard_10_OPEN==='function'){ Admin_user_dashboard_10_OPEN(); } closeAdminSidebar();"
+        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_10_OPEN==='function'){ Admin_user_dashboard_10_OPEN(); } closeAdminSidebar();"
            data-page="settings"
            class="sidebar-link">
             <span>Settings</span>
