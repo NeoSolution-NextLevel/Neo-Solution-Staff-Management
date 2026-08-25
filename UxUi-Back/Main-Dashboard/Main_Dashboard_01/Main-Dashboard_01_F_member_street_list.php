@@ -241,9 +241,9 @@ include '../UxUI-Back/Includes/header.php';
     <!-- ================= MAIN ================= -->
     <main class="member-street-main">
       <p class="member-street-breadcrumb">
-        <a href="javascript:void(0);" onclick="main_dashboard_01_A_OPEN()">Dashboard</a> /
-        <a href="javascript:void(0);" onclick="main_dashboard_01_A_OPEN()">Member List</a> /
-        <a href="javascript:void(0);" onclick="main_dashboard_01_B_OPEN()">Add New</a> /
+        <a role="button" tabindex="0" onclick="main_dashboard_01_A_OPEN()">Dashboard</a> /
+        <a role="button" tabindex="0" onclick="main_dashboard_01_A_OPEN()">Member List</a> /
+        <a role="button" tabindex="0" onclick="main_dashboard_01_B_OPEN()">Add New</a> /
         <span>Select Street</span>
       </p>
 
