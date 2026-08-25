@@ -1,5 +1,5 @@
 <?php 
-include_once '../imports/need/session_setup.php';
+include_once __DIR__ . '/../imports/need/session_setup.php';
 ?>
 
 <!DOCTYPE html>
@@ -42,10 +42,9 @@ include_once '../imports/need/session_setup.php';
             padding: 0;
             width: 100%;
             min-height: 100vh !important;
-            height: auto !important;
-            display: block !important;
+            display: flex !important;
+            flex-direction: column !important;
             overflow-x: hidden !important;
-            overflow-y: auto !important;
             background-color: var(--bg);
             color: var(--ink);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
@@ -53,8 +52,8 @@ include_once '../imports/need/session_setup.php';
 
         /* Base container reset */
         [id^="Admin_user_dashboard_"] {
-            min-height: 100vh !important;
-            height: auto !important;
+            flex: 1 0 auto;
+            min-height: calc(100vh - 60px);
             box-sizing: border-box !important;
         }
 
@@ -100,7 +99,7 @@ include_once '../imports/need/session_setup.php';
                 margin-left: 250px !important;
                 width: calc(100% - 250px) !important;
                 max-width: calc(100% - 250px) !important;
-                padding: 0 24px 80px !important;
+                padding: 0 24px 30px !important;
                 transition: margin-left 0.3s ease, width 0.3s ease;
             }
 

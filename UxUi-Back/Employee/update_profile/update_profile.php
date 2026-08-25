@@ -25,9 +25,11 @@ $nic        = isset($_POST['nic']) ? trim($_POST['nic']) : '';
 $dob        = isset($_POST['dob']) ? trim($_POST['dob']) : '';
 $gender     = isset($_POST['gender']) ? trim($_POST['gender']) : '';
 $address    = isset($_POST['address']) ? trim($_POST['address']) : '';
-$emName     = isset($_POST['emergency_contact_name']) ? trim($_POST['emergency_contact_name']) : '';
-$emPhone    = isset($_POST['emergency_contact_phone']) ? trim($_POST['emergency_contact_phone']) : '';
-$location   = isset($_POST['work_location']) ? trim($_POST['work_location']) : '';
+$emName     = isset($_POST['emergency_contact_name']) ? trim($_POST['emergency_contact_name']) : (isset($_POST['emergency_name']) ? trim($_POST['emergency_name']) : '');
+$emPhone    = isset($_POST['emergency_contact_phone']) ? trim($_POST['emergency_contact_phone']) : (isset($_POST['emergency_phone']) ? trim($_POST['emergency_phone']) : '');
+$empCode    = isset($_POST['employee_id_code']) ? trim($_POST['employee_id_code']) : (isset($_POST['emp_code']) ? trim($_POST['emp_code']) : '');
+$empType    = isset($_POST['employment_type']) ? trim($_POST['employment_type']) : '';
+$location   = isset($_POST['work_location']) ? trim($_POST['work_location']) : (isset($_POST['location']) ? trim($_POST['location']) : '');
 
 // Build dynamic update for employee_profiles table
 $updates = [];
@@ -43,6 +45,8 @@ if (!empty($gender))   $updates[] = "`gender` = '" . addslashes($gender) . "'";
 if (!empty($address))  $updates[] = "`address` = '" . addslashes($address) . "'";
 if (!empty($emName))   $updates[] = "`emergency_contact_name` = '" . addslashes($emName) . "'";
 if (!empty($emPhone))  $updates[] = "`emergency_contact_phone` = '" . addslashes($emPhone) . "'";
+if (!empty($empCode))  $updates[] = "`employee_id_code` = '" . addslashes($empCode) . "'";
+if (!empty($empType))  $updates[] = "`employment_type` = '" . addslashes($empType) . "'";
 if (!empty($location)) $updates[] = "`work_location` = '" . addslashes($location) . "'";
 
 if (!empty($updates)) {
@@ -66,10 +70,10 @@ if (!empty($fullName) || !empty($email) || !empty($dept) || !empty($role)) {
 }
 
 // Trigger notification for Employee
-$targetName = !empty($fullName) ? $fullName : 'Amal Perera';
+$targetName = !empty($fullName) ? $fullName : 'Employee';
 SystemNotifications::create(
-    "Profile Updated by Admin",
-    "Your employment details & department information were updated by Administrator.",
+    "Profile Updated",
+    "Your employment details & profile information were successfully updated.",
     "profile_update",
     "employee",
     $targetName

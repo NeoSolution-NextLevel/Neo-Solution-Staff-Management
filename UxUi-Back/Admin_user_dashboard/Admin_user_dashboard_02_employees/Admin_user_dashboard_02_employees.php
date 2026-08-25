@@ -655,7 +655,7 @@
   }
 </style>
 
-<div id="Admin_user_dashboard_02_employees" class="w3-container" style="padding:0;">
+<div id="Admin_user_dashboard_02_employees" class="w3-container" style="display:none; padding:0;">
   <div class="overlay" id="overlay"></div>
 
   <!-- MAIN -->
@@ -836,15 +836,6 @@
             <div class="w3-detail-box">
               <span class="w3-detail-label">Work Location</span>
               <strong class="w3-detail-val" id="viewEmpLocation">—</strong>
-            </div>
-          </div>
-
-          <!-- Section 3: Emergency & Next of Kin -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Emergency Contact</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box" style="grid-column: 1 / -1;">
-              <span class="w3-detail-label">Emergency Contact Person & Phone</span>
-              <strong class="w3-detail-val" id="viewEmpEmergency" style="color:#d97706;">—</strong>
             </div>
           </div>
 

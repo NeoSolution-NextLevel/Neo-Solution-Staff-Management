@@ -215,7 +215,7 @@
   }
 </style>
 
-<div id="Employee_user_dashboard_03_personal_details" class="emp-main" style="padding:0;">
+<div id="Employee_user_dashboard_03_personal_details" class="emp-main" style="display:none; padding:0;">
   <div class="emp-pd-container">
     
     <!-- Topbar Navigation -->
@@ -303,39 +303,23 @@
         <div class="pd-item-list">
           <div class="pd-item-box full-width">
             <span class="pd-label">Official Work Email</span>
-            <span class="pd-val" id="pdEmail">amal.perera@neosolution.com</span>
+            <span class="pd-val" id="pdEmail">—</span>
           </div>
           <div class="pd-item-box full-width">
             <span class="pd-label">Primary Mobile Phone</span>
-            <span class="pd-val" id="pdPhone">+94 77 123 4567</span>
+            <span class="pd-val" id="pdPhone">—</span>
           </div>
           <div class="pd-item-box full-width">
             <span class="pd-label">Residential Address</span>
-            <span class="pd-val" id="pdAddress">No. 45, Galle Road, Colombo 03, Sri Lanka</span>
+            <span class="pd-val" id="pdAddress">—</span>
           </div>
-        </div>
-      </div>
-
-      <!-- Card 3: Emergency Contacts -->
-      <div class="pd-bento-card">
-        <div class="pd-card-header">
-          <div class="pd-card-icon amber">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <div>
-            <h3 class="pd-card-title">Emergency Contact</h3>
-            <p class="pd-card-subtitle">Next of kin emergency details</p>
-          </div>
-        </div>
-
-        <div class="pd-item-list">
-          <div class="pd-item-box full-width">
+          <div class="pd-item-box">
             <span class="pd-label">Emergency Contact Person</span>
-            <span class="pd-val" id="pdEmName">Nimal Perera (Father)</span>
+            <span class="pd-val" id="pdEmName">—</span>
           </div>
-          <div class="pd-item-box full-width">
+          <div class="pd-item-box">
             <span class="pd-label">Emergency Contact Phone</span>
-            <span class="pd-val" id="pdEmPhone">+94 71 987 6543</span>
+            <span class="pd-val" id="pdEmPhone">—</span>
           </div>
         </div>
       </div>
@@ -347,35 +331,39 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
           </div>
           <div>
-            <h3 class="pd-card-title">Company Position</h3>
-            <p class="pd-card-subtitle">Organizational placement</p>
+            <h3 class="pd-card-title">Service & Placement Record</h3>
+            <p class="pd-card-subtitle">Official appointment & probation status</p>
           </div>
         </div>
 
         <div class="pd-item-list">
           <div class="pd-item-box">
-            <span class="pd-label">Employee Code</span>
-            <span class="pd-val" id="pdEmpCode">EMP-002</span>
+            <span class="pd-label">Employee ID Code</span>
+            <span class="pd-val" id="pdEmpCode">—</span>
           </div>
           <div class="pd-item-box">
             <span class="pd-label">Department</span>
-            <span class="pd-val" id="pdDept">Engineering</span>
+            <span class="pd-val" id="pdDept">—</span>
           </div>
           <div class="pd-item-box">
-            <span class="pd-label">Job Title</span>
-            <span class="pd-val" id="pdJobTitle">Senior Software Engineer</span>
+            <span class="pd-label">Designation / Role</span>
+            <span class="pd-val" id="pdJobTitle">—</span>
           </div>
           <div class="pd-item-box">
             <span class="pd-label">Work Location</span>
-            <span class="pd-val" id="pdLocation">Colombo HQ</span>
+            <span class="pd-val" id="pdLocation">—</span>
           </div>
           <div class="pd-item-box">
-            <span class="pd-label">Joining Date</span>
-            <span class="pd-val" id="pdJoinDate">2024-01-15</span>
+            <span class="pd-label">Official Joining Date</span>
+            <span class="pd-val" id="pdJoinDate">—</span>
           </div>
           <div class="pd-item-box">
+            <span class="pd-label">Probation Period Status</span>
+            <span class="pd-val" id="pdProbationStatus" style="color: #2563eb; font-weight: 700;">6 Months</span>
+          </div>
+          <div class="pd-item-box full-width">
             <span class="pd-label">Employment Type</span>
-            <span class="pd-val" id="pdEmpType">Full-Time (Permanent)</span>
+            <span class="pd-val" id="pdEmpType">—</span>
           </div>
         </div>
       </div>
@@ -384,52 +372,3 @@
 
   </div>
 </div>
-
-<script>
-(function () {
-  window.fetchPersonalDetails = function () {
-    const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/fetch_profile/fetch_profile.php';
-
-    fetch(fetchUrl)
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === 'success' && res.data) {
-          const p = res.data;
-          const name = p.full_name || 'Amal Perera';
-          const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-
-          const el = id => document.getElementById(id);
-          if (el('pdFullName')) el('pdFullName').textContent = name;
-          if (el('topEmpPdName')) el('topEmpPdName').textContent = name;
-          if (el('pdNic')) el('pdNic').textContent = p.nic || '—';
-          if (el('pdDob')) el('pdDob').textContent = p.dob || '—';
-          if (el('pdGender')) el('pdGender').textContent = p.gender || '—';
-          if (el('pdEmail')) el('pdEmail').textContent = p.email || '—';
-          if (el('pdPhone')) el('pdPhone').textContent = p.phone || '—';
-          if (el('pdAddress')) el('pdAddress').textContent = p.address || '—';
-          if (el('pdEmName')) el('pdEmName').textContent = p.emergency_contact_name || '—';
-          if (el('pdEmPhone')) el('pdEmPhone').textContent = p.emergency_contact_phone || '—';
-          if (el('pdEmpCode')) el('pdEmpCode').textContent = p.employee_id_code || 'EMP-002';
-          if (el('pdDept')) el('pdDept').textContent = p.department || 'Engineering';
-          if (el('pdJobTitle')) el('pdJobTitle').textContent = p.job_title || 'Senior Software Engineer';
-          if (el('pdLocation')) el('pdLocation').textContent = p.work_location || 'Colombo HQ';
-          if (el('pdJoinDate')) el('pdJoinDate').textContent = p.join_date || '2024-01-15';
-          if (el('pdEmpType')) el('pdEmpType').textContent = p.employment_type || 'Full-Time (Permanent)';
-
-          const topAvatar = el('topAvatarPdPreview');
-          if (topAvatar) {
-            if (p.profile_pic && p.profile_pic.trim() !== '') {
-              const pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + p.profile_pic;
-              topAvatar.innerHTML = `<img src="${pth}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
-            } else {
-              topAvatar.textContent = initials;
-            }
-          }
-        }
-      })
-      .catch(() => {});
-  };
-
-  window.fetchPersonalDetails();
-})();
-</script>

@@ -188,7 +188,7 @@
   }
 </style>
 
-<div id="Employee_user_dashboard_09_notifications" class="emp-main" style="padding:0;">
+<div id="Employee_user_dashboard_09_notifications" class="emp-main" style="display:none; padding:0;">
   <div class="emp-notif-container">
     
     <!-- Topbar Navigation -->

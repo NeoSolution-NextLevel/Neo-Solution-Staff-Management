@@ -114,7 +114,14 @@
   }
 
   function Employee_user_dashboard_03_OPEN() {
-    Employee_user_dashboard_02_OPEN();
+    Employee_user_dashboard_close_all();
+    var el = document.getElementById("Employee_user_dashboard_03_personal_details");
+    if (el) el.style.display = "";
+    setEmployeeSidebarActive('personal_details');
+    window.syncGlobalEmployeeData();
+    if (typeof window.fetchPersonalDetails === 'function') {
+      window.fetchPersonalDetails();
+    }
   }
 
   function Employee_user_dashboard_04_OPEN() {
@@ -190,4 +197,16 @@
     setEmployeeSidebarActive('settings');
     window.syncGlobalEmployeeData();
   }
+
+  window.Employee_user_dashboard_close_all = Employee_user_dashboard_close_all;
+  window.Employee_user_dashboard_01_OPEN = Employee_user_dashboard_01_OPEN;
+  window.Employee_user_dashboard_02_OPEN = Employee_user_dashboard_02_OPEN;
+  window.Employee_user_dashboard_03_OPEN = Employee_user_dashboard_03_OPEN;
+  window.Employee_user_dashboard_04_OPEN = Employee_user_dashboard_04_OPEN;
+  window.Employee_user_dashboard_05_OPEN = Employee_user_dashboard_05_OPEN;
+  window.Employee_user_dashboard_06_OPEN = Employee_user_dashboard_06_OPEN;
+  window.Employee_user_dashboard_07_OPEN = Employee_user_dashboard_07_OPEN;
+  window.Employee_user_dashboard_08_OPEN = Employee_user_dashboard_08_OPEN;
+  window.Employee_user_dashboard_09_OPEN = Employee_user_dashboard_09_OPEN;
+  window.Employee_user_dashboard_10_OPEN = Employee_user_dashboard_10_OPEN;
 </script>

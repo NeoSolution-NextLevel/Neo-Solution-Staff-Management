@@ -4,18 +4,6 @@ header('Content-Type: application/json; charset=utf-8');
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../Controllers/Main/Departments/departments_details_LIST.php';
 
-$db = new DataBase();
-$db->get_result("CREATE TABLE IF NOT EXISTS `departments` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ast` varchar(10) DEFAULT '1',
-  `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
-  `name` varchar(150) NOT NULL,
-  `head` varchar(150) DEFAULT 'Unassigned',
-  `employees` int(11) DEFAULT 0,
-  `color` varchar(50) DEFAULT 'blue',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-
 $departments = [];
 
 $dept_list_obj = new departments_details_LIST();

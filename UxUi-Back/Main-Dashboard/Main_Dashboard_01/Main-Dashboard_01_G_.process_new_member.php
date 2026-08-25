@@ -313,10 +313,10 @@ $needed_contact_person_count = ($company_info_var && method_exists($company_info
   <!-- ================= MAIN ================= -->
   <main class="add-member-manual-main">
     <p class="add-member-manual-breadcrumb">
-      <a href="javascript:void(0);" onclick="main_dashboard_01_A_OPEN()">Dashboard</a> /
-      <a href="javascript:void(0);" onclick="main_dashboard_01_A_OPEN()">Member List</a> /
-      <a href="javascript:void(0);" onclick="main_dashboard_01_B_OPEN()">Add New</a> /
-      <a href="javascript:void(0);" onclick="main_dashboard_01_F_OPEN()">Select Street</a> /
+      <a role="button" tabindex="0" onclick="main_dashboard_01_A_OPEN()">Dashboard</a> /
+      <a role="button" tabindex="0" onclick="main_dashboard_01_A_OPEN()">Member List</a> /
+      <a role="button" tabindex="0" onclick="main_dashboard_01_B_OPEN()">Add New</a> /
+      <a role="button" tabindex="0" onclick="main_dashboard_01_F_OPEN()">Select Street</a> /
       <span>Manual Entry</span>
     </p>
 

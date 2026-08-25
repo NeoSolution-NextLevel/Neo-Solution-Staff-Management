@@ -63,8 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $state['message'] = "Please fill in all required bank fields.";
         $json[] = $state;
     } else {
-        // Encrypt the sensitive bank account number with AES-256
-        $encrypted_acc = Bank_Security::encrypt($raw_account_no);
+        // Plain unencrypted bank account number
         $masked_acc = Bank_Security::mask($raw_account_no);
 
         $bank_details_ADD_UPDATE_obj = new bank_details_ADD_UPDATE();
@@ -80,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $holder_name,
             $bank_name,
             $branch,
-            $encrypted_acc,
+            $raw_account_no,
             "Active"
         );
 

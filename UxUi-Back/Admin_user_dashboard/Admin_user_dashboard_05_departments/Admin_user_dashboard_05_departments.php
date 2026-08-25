@@ -295,21 +295,82 @@
 
     /* Modals (Fixed Header, Scrollable Body, Sticky Footer) */
     .w3-modal-overlay {
-      position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 999999;
-      display: none; align-items: center; justify-content: center; padding: 12px; box-sizing: border-box; overflow-y: auto;
+      position: fixed; 
+      inset: 0; 
+      background-color: rgba(15, 23, 42, 0.75); 
+      backdrop-filter: blur(4px); 
+      z-index: 999999;
+      display: none; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 12px; 
+      box-sizing: border-box; 
+      overflow-y: auto;
     }
-    .w3-modal-overlay.active { display: flex; }
+    .w3-modal-overlay.active { 
+      display: flex; 
+    }
     .w3-modal-card {
-      background-color: #ffffff; border-radius: 16px; width: 100%; max-width: 480px; max-height: 88vh;
-      display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); overflow: hidden; margin: auto;
+      background-color: #ffffff; 
+      border-radius: 16px; 
+      width: 100%; 
+      max-width: 480px; 
+      max-height: 88vh;
+      display: flex; 
+      flex-direction: column; 
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); 
+      overflow: hidden; margin: auto;
     }
-    .w3-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0; }
-    .w3-modal-header h3 { font-size: 16px; font-weight: 800; color: #14204d; margin: 0; }
-    .w3-modal-close { background: none; border: none; font-size: 24px; color: #64748b; cursor: pointer; line-height: 1; padding: 0 4px; }
-    .w3-modal-form-wrapper { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
-    .w3-modal-body-scroll { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .w3-form-group { display: flex; flex-direction: column; gap: 4px; }
-    .w3-form-group label { font-size: 12px; font-weight: 700; color: #475569; }
+    .w3-modal-header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 14px 18px; 
+      background-color: #ffffff; 
+      border-bottom: 1px solid #e2e8f0; 
+      flex-shrink: 0; 
+    }
+    .w3-modal-header h3 { 
+      font-size: 16px; 
+      font-weight: 800; 
+      color: #14204d; 
+      margin: 0; 
+    }
+    .w3-modal-close {
+       background: none; 
+       border: none; 
+       font-size: 24px; 
+       color: #64748b; 
+       cursor: pointer; 
+       line-height: 1; 
+       padding: 0 4px; 
+      }
+    .w3-modal-form-wrapper { 
+      display: flex; 
+      flex-direction: column; 
+      flex: 1; 
+      min-height: 0; 
+      overflow: hidden; 
+    }
+    .w3-modal-body-scroll { 
+      padding: 16px 18px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+      flex: 1; 
+      overflow-y: auto; 
+      -webkit-overflow-scrolling: touch; 
+    }
+    .w3-form-group { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 4px; 
+    }
+    .w3-form-group label { 
+      font-size: 12px; 
+      font-weight: 700; 
+      color: #475569; 
+    }
     .w3-form-group input, .w3-form-group select { padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; color: #1e293b; outline: none; background-color: #ffffff; }
     .w3-modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 12px 18px; background: #ffffff; border-top: 1px solid #f1f5f9; flex-shrink: 0; }
     .w3-btn-cancel { padding: 9px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #64748b; font-size: 13px; font-weight: 600; cursor: pointer; }
@@ -335,7 +396,7 @@
     }
 </style>
 
-<div id="Admin_user_dashboard_05_departments">
+<div id="Admin_user_dashboard_05_departments" style="display:none;">
   <div class="main-wrapper">
     
     <!-- Topbar Header -->

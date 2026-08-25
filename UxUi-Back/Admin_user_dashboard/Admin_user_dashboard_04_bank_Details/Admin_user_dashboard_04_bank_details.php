@@ -21,7 +21,10 @@
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
   }
 
-  *{ box-sizing:border-box; margin:0; padding:0; }
+  *{ 
+    box-sizing:border-box; 
+    margin:0; padding:0; 
+  }
 
   #Admin_user_dashboard_04_bank_details {
     width: 100%;
@@ -71,7 +74,8 @@
   .icon-btn svg{ 
     width:18px; 
     height:18px; 
-    color: var(--navy); }
+    color: var(--navy); 
+  }
   .dot{
     position:absolute; 
     top:8px; 
@@ -120,7 +124,10 @@
     color: var(--navy);
     margin-right:6px;
   }
-  .menu-btn svg{ width:20px; height:20px; }
+  .menu-btn svg{ 
+    width:20px; 
+    height:20px; 
+  }
 
   .page-head{
     display:flex;
@@ -130,7 +137,11 @@
     flex-wrap: wrap;
     margin-bottom: 20px;
   }
-  .page-head p{ font-size:14px; color: var(--muted); margin-top: 4px; }
+  .page-head p{ 
+    font-size:14px; 
+    color: var(--muted); 
+    margin-top: 4px; 
+  }
 
   .head-actions {
     display: flex;
@@ -198,7 +209,13 @@
     font-size: 13.5px;
     line-height:1.5;
   }
-  .notice-banner svg{ width:18px; height:18px; flex-shrink:0; margin-top:2px; color: var(--amber); }
+  .notice-banner svg{ 
+    width:18px; 
+    height:18px; 
+    flex-shrink:0; 
+    margin-top:2px; 
+    color: var(--amber); 
+  }
 
   .acc-chip{
     display:inline-block;
@@ -210,6 +227,34 @@
     letter-spacing: .04em;
     padding: 6px 12px;
     border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .view-acc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    color: var(--navy);
+    padding: 5px 11px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .view-acc-btn:hover {
+    background: var(--blue-lighter);
+    border-color: var(--blue);
+    color: var(--blue);
+    transform: translateY(-1px);
+  }
+  .view-acc-btn.active {
+    background: #eff6ff;
+    border-color: var(--blue);
+    color: var(--blue);
   }
 
   /* Desktop Table Layout */
@@ -456,7 +501,7 @@
   }
 </style>
 
-<div id="Admin_user_dashboard_04_bank_details">
+<div id="Admin_user_dashboard_04_bank_details" style="display:none;">
   <!-- ================= MAIN ================= -->
   <main class="main">
 
@@ -495,9 +540,9 @@
       </div>
     </div>
 
-    <div class="notice-banner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      <span>Bank account numbers are partially masked for security. Full details are available in encrypted storage only.</span>
+    <div class="notice-banner" style="background:#f0f7ff; border-color:#dbeafe; color:#1e40af;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--blue);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span>Click the <strong>View</strong> button on any record to view the unmasked bank account number.</span>
     </div>
 
     <!-- 1. Desktop & Tablet Table -->
@@ -679,7 +724,7 @@
         '<td>' +
           '<div style="display:inline-flex; align-items:center; gap:8px;">' +
             '<span class="acc-chip" id="' + rowId + '_desk" data-raw="' + accRaw + '" data-masked="' + accMasked + '">' + accMasked + '</span>' +
-            (accRaw !== '-' ? '<button type="button" onclick="toggleAdminAccView(\'' + rowId + '_desk\', this)" style="background:none; border:none; cursor:pointer; color:#64748b; font-size:14px; padding:2px 4px;" title="Show/Hide"><i class="fa-solid fa-eye-slash"></i></button>' : '') +
+            (accRaw !== '-' ? '<button type="button" class="view-acc-btn" onclick="toggleAdminAccView(\'' + rowId + '_desk\', this)" title="View Account Number"><i class="fa-solid fa-eye"></i> <span>View</span></button>' : '') +
           '</div>' +
         '</td>';
         tbody.appendChild(tr);
@@ -689,7 +734,7 @@
       if (mobileContainer) {
         var card = document.createElement('div');
         card.className = 'mobile-bank-card';
-        card.innerHTML = '<div style="display:flex; align-items:center; justify-content:space-between;">' +
+        card.innerHTML = '<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">' +
           '<div class="emp-cell">' +
             '<div class="emp-avatar">' + initials + '</div>' +
             '<div>' +
@@ -699,7 +744,7 @@
           '</div>' +
           '<div style="display:inline-flex; align-items:center; gap:6px;">' +
             '<span class="acc-chip" id="' + rowId + '_mob" data-raw="' + accRaw + '" data-masked="' + accMasked + '">' + accMasked + '</span>' +
-            (accRaw !== '-' ? '<button type="button" onclick="toggleAdminAccView(\'' + rowId + '_mob\', this)" style="background:none; border:none; cursor:pointer; color:#64748b; font-size:14px; padding:2px 4px;" title="Show/Hide"><i class="fa-solid fa-eye-slash"></i></button>' : '') +
+            (accRaw !== '-' ? '<button type="button" class="view-acc-btn" onclick="toggleAdminAccView(\'' + rowId + '_mob\', this)" title="View Account Number"><i class="fa-solid fa-eye"></i> <span>View</span></button>' : '') +
           '</div>' +
         '</div>' +
         '<div class="mobile-bank-details">' +
@@ -860,20 +905,25 @@
     if (!chip) return;
     var raw = chip.getAttribute('data-raw');
     var masked = chip.getAttribute('data-masked');
-    var icon = btn.querySelector('i');
+    var icon = btn ? btn.querySelector('i') : null;
+    var label = btn ? btn.querySelector('span') : null;
 
     if (chip.textContent === masked) {
       chip.textContent = raw;
-      chip.style.letterSpacing = '0.5px';
-      chip.style.background = '#eef2ff';
+      chip.style.letterSpacing = '0.04em';
+      chip.style.background = '#dbeafe';
       chip.style.color = '#1e3a8a';
-      if (icon) icon.className = 'fa-solid fa-eye';
+      if (btn) btn.classList.add('active');
+      if (icon) icon.className = 'fa-solid fa-eye-slash';
+      if (label) label.textContent = 'Hide';
     } else {
       chip.textContent = masked;
-      chip.style.letterSpacing = 'normal';
-      chip.style.background = '#f1f5f9';
-      chip.style.color = '#334155';
-      if (icon) icon.className = 'fa-solid fa-eye-slash';
+      chip.style.letterSpacing = '0.04em';
+      chip.style.background = 'var(--blue-lighter)';
+      chip.style.color = 'var(--navy)';
+      if (btn) btn.classList.remove('active');
+      if (icon) icon.className = 'fa-solid fa-eye';
+      if (label) label.textContent = 'View';
     }
   };
 </script>

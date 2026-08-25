@@ -253,8 +253,8 @@
         </div>
 
         <div class="admin-pill" onclick="typeof Employee_user_dashboard_02_OPEN === 'function' ? Employee_user_dashboard_02_OPEN() : null">
-          <div class="avatar" id="topAvatarJobPreview">AP</div>
-          <span id="topEmpJobName">Amal Perera</span>
+          <div class="avatar" id="topAvatarJobPreview">--</div>
+          <span id="topEmpJobName">Loading...</span>
         </div>
       </div>
     </div>
@@ -335,31 +335,31 @@
         </div>
       </div>
 
-      <!-- 5. Employment Status -->
+      <!-- 5. Probation Status -->
       <div class="job-stat-box">
         <div class="job-stat-icon green">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14 9 11"/>
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
           </svg>
         </div>
         <div class="job-stat-content">
-          <span class="label">Employment Status</span>
-          <span class="value" id="jobStatus" style="color: #16a34a;">Active</span>
+          <span class="label">Probation Period</span>
+          <span class="value" id="jobProbationStatus" style="color: #2563eb;">6 Months</span>
         </div>
       </div>
 
-      <!-- 6. Work Email -->
+      <!-- 6. Work Location -->
       <div class="job-stat-box">
         <div class="job-stat-icon purple">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
           </svg>
         </div>
         <div class="job-stat-content">
-          <span class="label">Work Email</span>
-          <span class="value" id="jobEmail">—</span>
+          <span class="label">Work Location</span>
+          <span class="value" id="jobLocation">Colombo HQ</span>
         </div>
       </div>
 
@@ -374,25 +374,25 @@
         <!-- Event 1 -->
         <div class="timeline-item">
           <div class="timeline-dot filled"></div>
-          <div class="timeline-date" id="timelineJoinDate">2024-01-15</div>
+          <div class="timeline-date" id="timelineJoinDate">—</div>
           <div class="timeline-title">Joined Organization</div>
-          <div class="timeline-desc" id="timelineJoinDesc">Joined as Senior Software Engineer in Engineering department</div>
+          <div class="timeline-desc" id="timelineJoinDesc">Joined as staff member</div>
         </div>
 
-        <!-- Event 2 -->
+        <!-- Event 2 (Dynamic Probation) -->
         <div class="timeline-item">
-          <div class="timeline-dot"></div>
-          <div class="timeline-date">2024-06-01</div>
-          <div class="timeline-title">Probation Completed</div>
-          <div class="timeline-desc">Successfully completed initial review period with exemplary performance</div>
+          <div class="timeline-dot" id="timelineProbationDot"></div>
+          <div class="timeline-date" id="timelineProbationDate">—</div>
+          <div class="timeline-title" id="timelineProbationTitle">Probation Period Review</div>
+          <div class="timeline-desc" id="timelineProbationDesc">15 days probation review and confirmation</div>
         </div>
 
         <!-- Event 3 -->
         <div class="timeline-item">
-          <div class="timeline-dot"></div>
-          <div class="timeline-date">Current</div>
-          <div class="timeline-title">Active Full-Time Staff</div>
-          <div class="timeline-desc" id="timelineActiveDesc">Active member of Engineering team</div>
+          <div class="timeline-dot filled" style="background:#2563eb; border-color:#2563eb;"></div>
+          <div class="timeline-date">Current Position</div>
+          <div class="timeline-title" id="timelineActiveTitle">Active Staff Member</div>
+          <div class="timeline-desc" id="timelineActiveDesc">Active contributing member</div>
         </div>
 
       </div>
@@ -412,10 +412,12 @@
         if (res.status === 'success' && res.data) {
           const p = res.data;
           const name = p.full_name || '';
-          const dept = p.department || '—';
-          const role = p.job_title || '—';
+          const dept = p.department || 'General';
+          const role = p.job_title || 'Staff';
           const joined = p.join_date || '—';
           const email = p.email || '—';
+          const location = p.work_location || 'Colombo HQ';
+          const empType = p.employment_type || 'Full-Time';
           const empId = p.employee_id_code || 'EMP-001';
           const initials = name ? name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'EM';
 
@@ -424,11 +426,44 @@
           if (el('jobDept')) el('jobDept').textContent = dept;
           if (el('jobRole')) el('jobRole').textContent = role;
           if (el('jobJoined')) el('jobJoined').textContent = joined;
-          if (el('jobEmail')) el('jobEmail').textContent = email;
+          if (el('jobLocation')) el('jobLocation').textContent = location;
           if (el('topEmpJobName')) el('topEmpJobName').textContent = name;
+          
           if (el('timelineJoinDate')) el('timelineJoinDate').textContent = joined;
-          if (el('timelineJoinDesc')) el('timelineJoinDesc').textContent = `Joined as ${role} in ${dept} department`;
-          if (el('timelineActiveDesc')) el('timelineActiveDesc').textContent = `Active member of ${dept} team`;
+          if (el('timelineJoinDesc')) el('timelineJoinDesc').textContent = `Official appointment as ${role} in ${dept} department.`;
+          if (el('timelineActiveTitle')) el('timelineActiveTitle').textContent = `Active ${empType}`;
+          if (el('timelineActiveDesc')) el('timelineActiveDesc').textContent = `Active member of ${dept} team at ${location}.`;
+
+          // Calculate Dynamic 6-Month Probation Review
+          if (joined && joined !== '—') {
+            const joinD = new Date(joined);
+            if (!isNaN(joinD.getTime())) {
+              const probD = new Date(joinD);
+              probD.setMonth(probD.getMonth() + 6);
+              const probStr = probD.toISOString().split('T')[0];
+              const now = new Date();
+
+              if (now < probD) {
+                if (el('jobProbationStatus')) {
+                  el('jobProbationStatus').textContent = '6 Months (In Progress)';
+                  el('jobProbationStatus').style.color = '#d97706';
+                }
+                if (el('timelineProbationDate')) el('timelineProbationDate').textContent = probStr;
+                if (el('timelineProbationTitle')) el('timelineProbationTitle').textContent = 'Probation Review (Scheduled)';
+                if (el('timelineProbationDesc')) el('timelineProbationDesc').textContent = `Initial 6-month performance evaluation scheduled on ${probStr}.`;
+                if (el('timelineProbationDot')) el('timelineProbationDot').className = 'timeline-dot';
+              } else {
+                if (el('jobProbationStatus')) {
+                  el('jobProbationStatus').textContent = 'Completed (Confirmed)';
+                  el('jobProbationStatus').style.color = '#16a34a';
+                }
+                if (el('timelineProbationDate')) el('timelineProbationDate').textContent = probStr;
+                if (el('timelineProbationTitle')) el('timelineProbationTitle').textContent = 'Probation Completed & Confirmed';
+                if (el('timelineProbationDesc')) el('timelineProbationDesc').textContent = `Successfully completed 6-month review period on ${probStr} with confirmation.`;
+                if (el('timelineProbationDot')) el('timelineProbationDot').className = 'timeline-dot filled';
+              }
+            }
+          }
 
           const topAvatar = el('topAvatarJobPreview');
           if (topAvatar) {
@@ -444,6 +479,7 @@
       .catch(() => {});
   };
 
-  window.fetchJobInformation();
+  window.fetchJobInformation = fetchJobInformation;
+  fetchJobInformation();
 })();
 </script>

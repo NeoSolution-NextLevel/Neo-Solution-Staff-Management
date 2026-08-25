@@ -392,7 +392,7 @@
   }
 </style>
 
-<div id="Employee_user_dashboard_08_leave_request" class="emp-main" style="padding:0;">
+<div id="Employee_user_dashboard_08_leave_request" class="emp-main" style="display:none; padding:0;">
   <div class="emp-leave-container">
     
     <!-- Topbar Navigation -->
@@ -654,7 +654,7 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === 'success' && res.data) {
-          const name = res.data.full_name || 'Amal Perera';
+          const name = res.data.full_name || res.data.fullname || res.data.name || 'Employee';
           const nameEl = document.getElementById('topEmpLeaveName');
           const avatarEl = document.getElementById('topAvatarLeavePreview');
           if (nameEl) nameEl.textContent = name;
@@ -663,7 +663,7 @@
               const pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + res.data.profile_pic;
               avatarEl.innerHTML = `<img src="${pth}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
             } else {
-              const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+              const initials = name.split(' ').filter(n => n.length > 0).map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'EM';
               avatarEl.textContent = initials;
             }
           }

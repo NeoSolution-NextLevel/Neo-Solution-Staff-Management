@@ -503,9 +503,116 @@ function deleteAdminDocument(id) {
   });
 }
 
+function toggleAdminDocFileInputs(cat) {
+  var singleWrap = document.getElementById('adminSinglePdfWrap');
+  var pngWrap = document.getElementById('adminNationalIdPngWrap');
+  var singleInput = document.getElementById('adminUploadFile');
+  var frontInput = document.getElementById('adminUploadFileFront');
+  var backInput = document.getElementById('adminUploadFileBack');
+
+  if (cat === 'National ID') {
+    if (singleWrap) singleWrap.style.display = 'none';
+    if (pngWrap) pngWrap.style.display = 'flex';
+    if (singleInput) singleInput.value = '';
+  } else {
+    if (singleWrap) singleWrap.style.display = 'flex';
+    if (pngWrap) pngWrap.style.display = 'none';
+    if (frontInput) frontInput.value = '';
+    if (backInput) backInput.value = '';
+  }
+}
+
+function openAdminUploadModal() {
+  var modal = document.getElementById('adminUploadDocModal');
+  if (modal) {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    var catSelect = document.getElementById('adminUploadCategory');
+    if (catSelect) toggleAdminDocFileInputs(catSelect.value);
+  }
+}
+
+function closeAdminUploadModal() {
+  var modal = document.getElementById('adminUploadDocModal');
+  if (modal) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    var form = document.getElementById('adminUploadDocForm');
+    if (form) form.reset();
+  }
+}
+
+function submitAdminDocUpload(e) {
+  e.preventDefault();
+  var form = document.getElementById('adminUploadDocForm');
+  var catSelect = document.getElementById('adminUploadCategory');
+  var category = catSelect ? catSelect.value : 'CV';
+
+  if (category === 'National ID') {
+    var frontInput = document.getElementById('adminUploadFileFront');
+    var backInput = document.getElementById('adminUploadFileBack');
+    var hasFront = frontInput && frontInput.files && frontInput.files[0];
+    var hasBack = backInput && backInput.files && backInput.files[0];
+
+    if (!hasFront && !hasBack) {
+      alert('Please select at least one National ID PNG image (Front or Back) to upload.');
+      return;
+    }
+  } else {
+    var fileInput = document.getElementById('adminUploadFile');
+    if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+      alert('Please select a PDF document file to upload.');
+      return;
+    }
+  }
+
+  var btn = document.getElementById('btnAdminUploadSubmit');
+  var originalText = btn ? btn.innerHTML : 'Upload & Save';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+  }
+
+  var formData = new FormData(form);
+  var pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+
+  $.ajax({
+    url: pth + "View-List/Documents/Upload_Document.php",
+    type: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "json",
+    success: function(res) {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+      if (res && res.status === 'success') {
+        alert('Document(s) uploaded and saved to database successfully!');
+        closeAdminUploadModal();
+        loadAdminDocuments();
+      } else {
+        alert('Upload failed: ' + (res.message || 'Error occurred.'));
+      }
+    },
+    error: function() {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+      alert('Server error during document upload.');
+    }
+  });
+}
+
 window.loadAdminDocuments = loadAdminDocuments;
 window.filterAdminDocs = filterAdminDocs;
 window.triggerDocPreview = triggerDocPreview;
 window.closeDocumentViewer = closeDocumentViewer;
 window.deleteAdminDocument = deleteAdminDocument;
+window.openAdminUploadModal = openAdminUploadModal;
+window.closeAdminUploadModal = closeAdminUploadModal;
+window.submitAdminDocUpload = submitAdminDocUpload;
+window.toggleAdminDocFileInputs = toggleAdminDocFileInputs;
 </script>
