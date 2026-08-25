@@ -457,7 +457,7 @@
   }
 </style>
 
-<div id="Admin_user_dashboard_06_job_roles">
+<div id="Admin_user_dashboard_06_job_roles" style="display:none;">
   <div class="main-wrapper">
     
     <!-- Top Navigation Header -->
