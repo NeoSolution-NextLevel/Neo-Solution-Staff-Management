@@ -2,9 +2,7 @@
 header('Content-Type: application/json; charset=utf-8');
 
 include_once __DIR__ . '/../../../imports/need/DB.php';
-include_once __DIR__ . '/../../../imports/need/SystemNotifications.php';
 
-SystemNotifications::ensure_table();
 $db = new DataBase();
 
 $role = isset($_GET['role']) ? trim($_GET['role']) : 'admin';
