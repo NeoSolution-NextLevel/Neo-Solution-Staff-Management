@@ -410,7 +410,7 @@
     }
 </style>
 
-<div id="Admin_user_dashboard_07_task_management" class="w3-container" style="padding: 0;"> 
+<div id="Admin_user_dashboard_07_task_management" class="w3-container" style="display: none; padding: 0;"> 
 
     <!-- Topbar Header -->
     <div class="topbar">
