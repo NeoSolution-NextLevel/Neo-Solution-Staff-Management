@@ -184,7 +184,6 @@
       if (el('viewEmpDob')) el('viewEmpDob').textContent = e.dob || '—';
       if (el('viewEmpGender')) el('viewEmpGender').textContent = e.gender || 'Male';
       if (el('viewEmpAddress')) el('viewEmpAddress').textContent = e.address || '—';
-      if (el('viewEmpEmergency')) el('viewEmpEmergency').textContent = `${e.emergency_name || '—'} (${e.emergency_phone || '—'})`;
       if (el('viewEmpCode')) el('viewEmpCode').textContent = e.emp_code || 'EMP-002';
 
       const statusEl = el('viewEmpStatus');
