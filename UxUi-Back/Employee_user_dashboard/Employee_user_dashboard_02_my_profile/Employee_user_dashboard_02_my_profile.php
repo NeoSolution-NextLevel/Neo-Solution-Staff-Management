@@ -85,38 +85,42 @@
   /* 1. Hero Profile Header Card */
   .profile-hero-card {
     background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(20, 25, 60, 0.05);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
     border: 1px solid var(--border);
     overflow: hidden;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     width: 100%;
     position: relative;
   }
 
   .profile-banner {
     position: relative;
-    height: 140px;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #1e3a8a 100%);
+    height: 130px;
+    background: linear-gradient(120deg, var(--navy) 0%, var(--navy-2) 55%, #3648a0 100%);
     overflow: hidden;
   }
 
-  .profile-banner-shapes {
+  .profile-banner::before {
+    content: "";
     position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
-    background-size: 18px 18px;
-    opacity: 0.7;
+    top: -90px;
+    right: -60px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.14), transparent 65%);
   }
 
-  .profile-banner-glow {
+  .profile-banner::after {
+    content: "";
     position: absolute;
-    top: -50px;
-    right: -20px;
-    width: 280px;
-    height: 280px;
+    bottom: -120px;
+    right: 120px;
+    width: 260px;
+    height: 260px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, transparent 70%);
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08), transparent 65%);
   }
 
   .profile-hero-content {
@@ -248,14 +252,14 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 5px 12px;
+    padding: 4px 12px;
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
   }
-  .profile-tag.blue { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
-  .profile-tag.green { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
-  .profile-tag.gray { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+  .profile-tag.code, .profile-tag.blue { background: #14204d; color: #ffffff; border: 1px solid #14204d; }
+  .profile-tag.status, .profile-tag.green { background: #e3f9ee; color: #12b76a; border: 1px solid #c2f0d9; }
+  .profile-tag.dept, .profile-tag.gray { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
 
   /* 2. Grid Layout */
   .profile-grid-layout {
@@ -353,32 +357,32 @@
     border-radius: 12px;
     text-align: center;
     border: 1px solid #e2e8f0;
-    background: #f8fafc;
+    background: #ffffff;
     transition: all 0.2s ease;
   }
   
   .roster-day-name {
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 700;
     color: #1e293b;
     margin-bottom: 6px;
   }
 
   .roster-day-badge {
     font-size: 10px;
-    font-weight: 800;
+    font-weight: 700;
     padding: 3px 8px;
-    border-radius: 999px;
+    border-radius: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
   }
-  .roster-day-badge.onsite { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-  .roster-day-badge.wfh { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
-  .roster-day-badge.leave { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+  .roster-day-badge.onsite { background: #0f172a; color: #ffffff; border: 1px solid #0f172a; }
+  .roster-day-badge.wfh { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+  .roster-day-badge.leave { background: #ffffff; color: #64748b; border: 1px dashed #cbd5e1; }
 
   .roster-summary-row {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     margin-top: 14px;
     padding-top: 12px;
     border-top: 1px solid #f1f5f9;
@@ -388,15 +392,14 @@
   .roster-stat-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
     font-size: 12px;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
   }
-  .roster-stat-pill.onsite { background: #ecfdf5; color: #047857; }
-  .roster-stat-pill.wfh { background: #faf5ff; color: #6b21a8; }
-  .roster-stat-pill.leave { background: #fffbeb; color: #92400e; }
 
   .quick-action-link {
     display: flex;
@@ -579,33 +582,51 @@
   }
 </style>
 
-<div id="Employee_user_dashboard_02_my_profile" class="w3-container tab-content" style="display: none;">
+<div id="Employee_user_dashboard_02_my_profile" class="w3-container tab-content" style="display: none; padding: 0;">
   <div class="emp-prof-container">
 
-    <!-- Topbar -->
-    <div class="emp-prof-topbar">
-      <div class="emp-prof-topbar-left">
-        <button class="emp-prof-menu-btn" onclick="openSidebar()" aria-label="Open menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <!-- Standard Dashboard Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" id="menuBtn_02" aria-label="Open menu" onclick="if(typeof openEmployeeSidebar==='function'){ openEmployeeSidebar(); }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/>
+          </svg>
         </button>
-        <div>
-          <h2>My Profile</h2>
-          <p>Workplace role identity, duty roster & working schedule</p>
+        <h2>My Profile</h2>
+      </div>
+
+      <div class="topbar-right">
+        <div class="icon-btn" onclick="if(typeof Employee_user_dashboard_09_OPEN==='function'){ Employee_user_dashboard_09_OPEN(); }" title="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+          </svg>
+          <span class="dot"></span>
         </div>
+
+        <div class="admin-pill" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); }">
+          <div class="avatar" id="topAvatar_02">--</div>
+          <span id="topEmpName_02">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Action Subbar -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <p style="font-size: 13.5px; color: #64748b; margin: 0; font-weight: 500;">Workplace role identity, duty roster & working schedule</p>
       </div>
 
       <button type="button" class="btn-edit-profile" onclick="openEditProfileModal()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         <span>Edit Profile & Schedule</span>
       </button>
     </div>
 
     <!-- 1. Hero Profile Header Card -->
     <div class="profile-hero-card">
-      <div class="profile-banner">
-        <div class="profile-banner-shapes"></div>
-        <div class="profile-banner-glow"></div>
-      </div>
+      <div class="profile-banner"></div>
 
       <div class="profile-hero-content">
         <div class="profile-avatar-row">
