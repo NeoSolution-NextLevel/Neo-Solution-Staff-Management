@@ -94,7 +94,7 @@
     if (el('viewSchedEnd')) el('viewSchedEnd').textContent = schedEnd;
     if (el('viewWorkMode')) {
       el('viewWorkMode').textContent = workMode;
-      el('viewWorkMode').style.color = workMode.toLowerCase().includes('remote') ? '#7c3aed' : (workMode.toLowerCase().includes('hybrid') ? '#2563eb' : '#16a34a');
+      el('viewWorkMode').style.color = '#1e293b';
     }
 
     // Parse Weekly Roster (On-Site, WFH, Leave)
