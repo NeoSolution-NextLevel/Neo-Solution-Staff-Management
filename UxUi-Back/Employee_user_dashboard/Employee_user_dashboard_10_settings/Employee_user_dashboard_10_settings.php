@@ -383,7 +383,7 @@
         </div>
 
         <button type="button" class="settings-save-btn w3-button w3-round-large" id="saveSettingsBtn" onclick="saveEmployeeSettings()">
-          <span>Save Settings</span>
+          <span>Save Preferences</span>
         </button>
       </div>
 
@@ -439,7 +439,7 @@
 
   function saveEmployeeSettings() {
     var btn = document.getElementById('saveSettingsBtn');
-    var originalText = btn ? btn.innerHTML : 'Save Settings';
+    var originalText = btn ? btn.innerHTML : 'Save Preferences';
     if (btn) {
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
@@ -460,7 +460,7 @@
       .then(function(res) { return res.json(); })
       .then(function(res) {
         if (btn) {
-          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (res.message || 'Settings Saved Successfully');
+          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (res.message || 'Preferences Saved Successfully');
           btn.style.background = '#16a34a';
           setTimeout(function() {
             btn.innerHTML = originalText;
@@ -471,7 +471,7 @@
       })
       .catch(function(err) {
         if (btn) {
-          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Settings Saved';
+          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Preferences Saved';
           btn.style.background = '#16a34a';
           setTimeout(function() {
             btn.innerHTML = originalText;
