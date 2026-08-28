@@ -4,8 +4,6 @@
     $page_title = "Manual Entry · Add New Member · WWJM Admin";
 if (file_exists(__DIR__ . '/../../../imports/Company_Info/Company_Info_Variable_List.php')) {
     include_once __DIR__ . '/../../../imports/Company_Info/Company_Info_Variable_List.php';
-} else if (file_exists('../imports/Company_Info/Company_Info_Variable_List.php')) {
-    include_once '../imports/Company_Info/Company_Info_Variable_List.php';
 }
 $company_info_var = class_exists('Company_Info_Variable_List') ? new Company_Info_Variable_List() : null;
 $needed_contact_person_count = ($company_info_var && method_exists($company_info_var, 'get_needed_contact_person_count')) ? $company_info_var->get_needed_contact_person_count() : 2;
@@ -286,7 +284,7 @@ $needed_contact_person_count = ($company_info_var && method_exists($company_info
 
 <div class="add-member-manual-app">
 
- <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+ <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
      
   

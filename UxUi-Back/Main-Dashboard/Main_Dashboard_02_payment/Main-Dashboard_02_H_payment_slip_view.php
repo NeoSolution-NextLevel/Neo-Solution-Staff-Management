@@ -3,7 +3,7 @@ $pth = "../";
 $active_page = "payment-list";
 $page_title = "Payment Slip View · WWJM Admin";
 
-include '../UxUI-Back/Includes/header.php'; 
+include_once __DIR__ . '/../../Includes/header.php'; 
 
 // TODO: replace with a real lookup once a DB layer is wired up.
 $payment_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -251,7 +251,7 @@ $payment_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 <div data-page="payment-slip-view" id="Main_dashboard_02_H">
 
 <div class="payment-slip-app">
-  <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+  <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
   <!-- ================= TOPBAR ================= -->
   <header class="payment-slip-topbar">

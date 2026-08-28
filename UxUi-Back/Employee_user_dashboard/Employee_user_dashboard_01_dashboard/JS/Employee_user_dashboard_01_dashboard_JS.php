@@ -154,7 +154,36 @@
           }
         })
         .catch(() => {});
+
+      // 4. Fetch Leave Requests for KPI
+      fetch(pth + 'UxUi-Back/Leave_Requests/fetch_leave_request/fetch_leave_request.php')
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success' && Array.isArray(res.data)) {
+            const count = res.data.length;
+            const el = document.getElementById('kpiLeaveRequests');
+            if (el) el.textContent = count;
+          }
+        })
+        .catch(() => {});
     };
+
+    function showDashToast(msg, type = 'success') {
+      let c = document.getElementById('dashboardToastContainer');
+      if (!c) {
+        c = document.createElement('div');
+        c.id = 'dashboardToastContainer';
+        c.style.cssText = 'position:fixed; top:24px; right:24px; z-index:99999; display:flex; flex-direction:column; gap:10px; pointer-events:none;';
+        document.body.appendChild(c);
+      }
+      const t = document.createElement('div');
+      const bg = type === 'success' ? '#16a34a' : (type === 'error' ? '#dc2626' : '#2563eb');
+      t.style.cssText = `background:${bg}; color:#ffffff; padding:12px 18px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.18); font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:8px; opacity:0; transform:translateY(-10px); transition:all 0.25s ease; pointer-events:auto;`;
+      t.innerHTML = `<span>${type==='success'?'✓':(type==='error'?'✕':'ℹ')}</span> <span>${msg}</span>`;
+      c.appendChild(t);
+      requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(-10px)'; setTimeout(() => t.remove(), 300); }, 3200);
+    }
 
     window.fetchEmployeeDashboardData();
   });

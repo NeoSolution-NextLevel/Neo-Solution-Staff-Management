@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "payment-new"; // Tells the sidebar to highlight this tab
     $page_title = "Create Payment · WWJM Admin";
-include '../UxUI-Back/Includes/header.php';  
+include_once __DIR__ . '/../../Includes/header.php';  
 ?>
 
 <style>
@@ -159,7 +159,7 @@ include '../UxUI-Back/Includes/header.php';
 
 <div class="payment-new-app">
 
-   <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+   <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
 
   <!-- ================= TOPBAR ================= -->
@@ -229,7 +229,7 @@ function selectPaymentReason(reason) {
 
 
 <!-- ================= FOOTER (shared component) =================
-     PHP projects: delete this div and put <?php include 'footer.php'; ?>
+     PHP projects: delete this div and put <?php include_once __DIR__ . '/../../Includes/footer.php'; ?>
      in its place instead. -->
 <div id="wwjm-footer-root"></div>
 <script src="footer-loader.js"></script>

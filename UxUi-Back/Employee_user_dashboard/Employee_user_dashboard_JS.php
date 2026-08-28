@@ -196,6 +196,9 @@
     if (el) el.style.display = "";
     setEmployeeSidebarActive('settings');
     window.syncGlobalEmployeeData();
+    if (typeof window.fetchEmployeeSettings === 'function') {
+      window.fetchEmployeeSettings();
+    }
   }
 
   window.Employee_user_dashboard_close_all = Employee_user_dashboard_close_all;

@@ -345,43 +345,46 @@
 
     <!-- Welcome Banner -->
     <section class="banner">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; position: relative;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; position: relative; flex-wrap: wrap; gap: 8px;">
         <div class="date"><?php echo date('l, F j, Y'); ?></div>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
           <span id="dashEmpCode" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;">EMP-002</span>
           <span id="dashEmpDept" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;">Engineering</span>
         </div>
       </div>
 
-      <h3 id="dashWelcomeTitle">Welcome back, Amal</h3>
-      <p id="dashWelcomeSubtitle">Here's your work overview for today.</p>
+      <h3 id="dashWelcomeTitle" style="margin:0 0 4px 0;">Welcome back, Amal</h3>
+      <p id="dashWelcomeSubtitle" style="margin:0;">Here's your work overview for today.</p>
     </section>
 
-    <!-- 4 Stat Cards -->
+    <!-- 4 Stat Cards (Clickable Navigation) -->
     <section class="stats">
-      <div class="stat-card">
+      <!-- Today's Tasks -> Daily Work Plan -->
+      <div class="stat-card" onclick="if(typeof Employee_user_dashboard_07_OPEN==='function') Employee_user_dashboard_07_OPEN();" title="View Today's Tasks" style="cursor: pointer;">
         <div class="stat-icon blue">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 11 12 14 22 4"></polyline>
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
           </svg>
         </div>
-        <div class="stat-value" id="kpiTodayTasks">2</div>
+        <div class="stat-value" id="kpiTodayTasks">0</div>
         <div class="stat-label">Today's Tasks</div>
       </div>
 
-      <div class="stat-card">
+      <!-- Pending Tasks -> Daily Work Plan -->
+      <div class="stat-card" onclick="if(typeof Employee_user_dashboard_07_OPEN==='function') Employee_user_dashboard_07_OPEN();" title="View Pending Tasks" style="cursor: pointer;">
         <div class="stat-icon amber">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
         </div>
-        <div class="stat-value" id="kpiPendingTasks">1</div>
+        <div class="stat-value" id="kpiPendingTasks">0</div>
         <div class="stat-label">Pending Tasks</div>
       </div>
 
-      <div class="stat-card">
+      <!-- Completed Tasks -> Daily Work Plan -->
+      <div class="stat-card" onclick="if(typeof Employee_user_dashboard_07_OPEN==='function') Employee_user_dashboard_07_OPEN();" title="View Completed Tasks" style="cursor: pointer;">
         <div class="stat-icon green">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -392,7 +395,8 @@
         <div class="stat-label">Completed</div>
       </div>
 
-      <div class="stat-card">
+      <!-- Leave Requests -> Leave Request Tab -->
+      <div class="stat-card" onclick="if(typeof Employee_user_dashboard_08_OPEN==='function') Employee_user_dashboard_08_OPEN();" title="View Leave Requests" style="cursor: pointer;">
         <div class="stat-icon navy">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -401,7 +405,7 @@
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
         </div>
-        <div class="stat-value" id="kpiLeaveRequests">1</div>
+        <div class="stat-value" id="kpiLeaveRequests">0</div>
         <div class="stat-label">Leave Requests</div>
       </div>
     </section>

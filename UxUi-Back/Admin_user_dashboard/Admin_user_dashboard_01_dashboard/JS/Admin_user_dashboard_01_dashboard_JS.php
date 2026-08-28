@@ -20,75 +20,77 @@
       menuBtn.addEventListener('click', toggleMobileSidebar);
     }
 
-    // ---- Bar chart data & animation ----
-    const barGroups = document.getElementById('barGroups');
-
-    function renderBarChart(customMonths) {
-      if (!barGroups) return;
-      barGroups.innerHTML = '';
-
-      const months = customMonths || [
-        { m: 'Mar', light: 9,  dark: 8  },
-        { m: 'Apr', light: 15, dark: 12 },
-        { m: 'May', light: 11, dark: 7  },
-        { m: 'Jun', light: 16, dark: 16 },
-        { m: 'Jul', light: 12, dark: 10 },
-        { m: 'Aug', light: 4,  dark: 2  }
-      ];
-      const maxVal = Math.max(...months.map(m => Math.max(m.light || 0, m.dark || 0)), 16);
-      const chartHeight = 234;
-
-      months.forEach(({ m, light, dark }, groupIndex) => {
-        const group = document.createElement('div');
-        group.className = 'bar-group';
-
-        const bars = document.createElement('div');
-        bars.className = 'bars';
-
-        const lightBar = document.createElement('div');
-        lightBar.className = 'bar light animate';
-        lightBar.style.height = (light / maxVal * chartHeight) + 'px';
-        lightBar.style.animationDelay = (groupIndex * 0.1) + 's';
-
-        const darkBar = document.createElement('div');
-        darkBar.className = 'bar dark animate';
-        darkBar.style.height = (dark / maxVal * chartHeight) + 'px';
-        darkBar.style.animationDelay = (groupIndex * 0.1 + 0.05) + 's';
-
-        bars.appendChild(lightBar);
-        bars.appendChild(darkBar);
-
-        const label = document.createElement('div');
-        label.className = 'month';
-        label.textContent = m;
-
-        group.appendChild(bars);
-        group.appendChild(label);
-        barGroups.appendChild(group);
-      });
-    }
-
-    // ---- Donut rotation animation trigger ----
-    function playDonutAnimation() {
+    // ---- Donut / Pie chart dynamic rendering purely from database ----
+    function renderTaskStatusPieChart(taskStatusList, kpiData) {
       const donut = document.getElementById('donutChart');
+      const totalEl = document.getElementById('donutTotalTasks');
+
+      let completed = 0;
+      let inProgress = 0;
+      let pending = 0;
+
+      if (Array.isArray(taskStatusList)) {
+        taskStatusList.forEach(ts => {
+          const lbl = (ts.label || '').toLowerCase();
+          const cnt = Number(ts.count) || 0;
+          if (lbl === 'completed' || lbl === 'done') completed = cnt;
+          else if (lbl.includes('progress')) inProgress = cnt;
+          else if (lbl === 'pending') pending = cnt;
+        });
+      } else if (kpiData) {
+        completed = Number(kpiData.completed_tasks) || 0;
+        inProgress = Number(kpiData.in_progress_tasks) || 0;
+        pending = Number(kpiData.pending_tasks) || 0;
+      }
+
+      const total = completed + inProgress + pending;
+      if (totalEl) totalEl.textContent = total;
+
+      // Update Legend Counts and Percentages
+      const setLegend = (idVal, idPct, count) => {
+        const elVal = document.getElementById(idVal);
+        const elPct = document.getElementById(idPct);
+        if (elVal) elVal.textContent = count;
+        if (elPct) {
+          const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+          elPct.textContent = `(${pct}%)`;
+        }
+      };
+
+      setLegend('legendCompleted', 'legendCompletedPct', completed);
+      setLegend('legendInProgress', 'legendInProgressPct', inProgress);
+      setLegend('legendPending', 'legendPendingPct', pending);
+
+      // Render Dynamic Conic Gradient Slices
       if (donut) {
+        if (total === 0) {
+          donut.style.background = 'conic-gradient(#e2e8f0 0deg 360deg)';
+        } else {
+          const cDeg = (completed / total) * 360;
+          const ipDeg = cDeg + (inProgress / total) * 360;
+
+          donut.style.background = `conic-gradient(
+            var(--green) 0deg ${cDeg}deg,
+            var(--blue) ${cDeg}deg ${ipDeg}deg,
+            var(--amber) ${ipDeg}deg 360deg
+          )`;
+        }
+
         donut.classList.remove('animate');
         void donut.offsetWidth; // trigger DOM reflow
         donut.classList.add('animate');
       }
     }
 
-    // ---- Department distribution ----
+    // ---- Department distribution (Strictly from Database) ----
     const deptList = document.getElementById('deptList');
-    function renderDepartments(customDepts) {
+    function renderDepartments(depts) {
       if (!deptList) return;
-      const depts = customDepts || [
-        { name: 'Engineering', count: 2 },
-        { name: 'Marketing', count: 1 },
-        { name: 'Finance', count: 1 },
-        { name: 'HR', count: 1 },
-        { name: 'Management', count: 1 }
-      ];
+      if (!Array.isArray(depts) || depts.length === 0) {
+        deptList.innerHTML = '<div style="padding: 24px; text-align: center; color: #94a3b8; font-size: 13px; font-weight: 500;">No departments found in database.</div>';
+        return;
+      }
+
       const maxDept = Math.max(...depts.map(d => d.count), 1);
 
       deptList.innerHTML = '';
@@ -97,8 +99,8 @@
         row.className = 'dept-row';
         row.innerHTML = `
           <div class="dept-head">
-            <span class="name">${name}</span>
-            <span class="count">${count}</span>
+            <span>${escapeHtml(name)}</span>
+            <span class="dept-count-pill">${count} staff</span>
           </div>
           <div class="progress-track">
             <div class="progress-fill" style="width:${(count / maxDept * 100)}%"></div>
@@ -108,27 +110,70 @@
       });
     }
 
-    // ---- Recent Activities ----
+    // ---- Recent Activities (Clickable Navigation to Relevant Tabs) ----
     const activitiesList = document.getElementById('dashboardActivitiesList');
     function renderActivities(customActs) {
       if (!activitiesList) return;
       if (!customActs || customActs.length === 0) {
-        activitiesList.innerHTML = '<div style="padding: 24px; text-align: center; color: #94a3b8; font-size: 13px; font-weight: 500;">No recent system activities found.</div>';
+        activitiesList.innerHTML = '<div style="padding: 24px; text-align: center; color: #94a3b8; font-size: 13px; font-weight: 500;">No recent system activities found in database.</div>';
         return;
       }
       activitiesList.innerHTML = '';
       customActs.forEach(act => {
         const item = document.createElement('div');
         item.className = 'activity-item';
+
+        const titleText = act.title || 'System Activity';
+        const titleLower = titleText.toLowerCase();
+        const typeLower = (act.type || '').toLowerCase();
+
+        // 1. Determine destination page
+        let navAction = "if(typeof Admin_user_dashboard_09_OPEN==='function') Admin_user_dashboard_09_OPEN();";
+        let iconClass = 'blue';
+        let iconHtml = '<i class="fa-solid fa-bell"></i>';
+
+        if (titleLower.includes('leave') || typeLower.includes('leave')) {
+          navAction = "if(typeof Admin_user_dashboard_08_OPEN==='function') Admin_user_dashboard_08_OPEN();";
+          iconClass = 'amber';
+          iconHtml = '<i class="fa-solid fa-calendar-check"></i>';
+        } else if (titleLower.includes('task') || typeLower.includes('task')) {
+          navAction = "if(typeof Admin_user_dashboard_07_OPEN==='function') Admin_user_dashboard_07_OPEN();";
+          iconClass = 'navy';
+          iconHtml = '<i class="fa-solid fa-list-check"></i>';
+        } else if (titleLower.includes('employee') || titleLower.includes('profile') || typeLower.includes('employee') || typeLower.includes('profile')) {
+          navAction = "if(typeof Admin_user_dashboard_02_OPEN==='function') Admin_user_dashboard_02_OPEN();";
+          iconClass = 'green';
+          iconHtml = '<i class="fa-solid fa-user-check"></i>';
+        } else if (titleLower.includes('department') || typeLower.includes('department')) {
+          navAction = "if(typeof Admin_user_dashboard_05_OPEN==='function') Admin_user_dashboard_05_OPEN();";
+          iconClass = 'blue';
+          iconHtml = '<i class="fa-solid fa-building"></i>';
+        }
+
+        item.setAttribute('onclick', navAction);
+        item.setAttribute('title', `Click to open ${titleText}`);
+
         item.innerHTML = `
-          <div class="activity-icon ${act.icon || 'blue'}"></div>
+          <div class="activity-icon ${iconClass}">
+            ${iconHtml}
+          </div>
           <div class="activity-text">
-            <p>${act.title}</p>
-            <span>${act.date}</span>
+            <p style="font-weight:700; color:#1e293b; margin:0 0 2px; font-size:13px;">${escapeHtml(titleText)}</p>
+            <span style="font-size:11.5px; color:#64748b;">${escapeHtml(act.date)}</span>
           </div>
         `;
         activitiesList.appendChild(item);
       });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
     // ---- Fetch Live Data from Dashboard Controller Endpoint ----
@@ -142,7 +187,7 @@
         .then(res => {
           if (res && res.data) {
             const d = res.data;
-            // Update KPI cards
+            // Update KPI cards strictly from database
             if (d.kpi) {
               const kpi = d.kpi;
               if (document.getElementById('kpiTotalEmployees')) document.getElementById('kpiTotalEmployees').textContent = kpi.total_employees;
@@ -152,50 +197,29 @@
               if (document.getElementById('kpiPendingLeaves')) document.getElementById('kpiPendingLeaves').textContent = kpi.pending_leaves;
             }
 
-            // Update Task Status Legend
-            if (d.task_status) {
-              d.task_status.forEach(ts => {
-                if (ts.label === 'Completed' && document.getElementById('legendCompleted')) {
-                  document.getElementById('legendCompleted').textContent = ts.count;
-                } else if (ts.label === 'In Progress' && document.getElementById('legendInProgress')) {
-                  document.getElementById('legendInProgress').textContent = ts.count;
-                } else if (ts.label === 'Pending' && document.getElementById('legendPending')) {
-                  document.getElementById('legendPending').textContent = ts.count;
-                }
-              });
-            }
+            // Update Task Status Pie / Donut Chart purely from database
+            renderTaskStatusPieChart(d.task_status, d.kpi);
 
-            // Update Bar Chart
-            if (d.monthly_tasks) {
-              renderBarChart(d.monthly_tasks);
-            }
-
-            // Update Department Distribution
+            // Update Department Distribution purely from database
             if (d.departments) {
               renderDepartments(d.departments);
             }
 
-            // Update Activities
+            // Update Activities purely from database
             if (d.activities) {
               renderActivities(d.activities);
             }
           }
         })
         .catch(err => {
-          console.warn('Dashboard data fetch note (using defaults):', err);
+          console.error('Error fetching dashboard live data:', err);
         });
     }
 
-    // Initial render & animation play
-    renderBarChart();
-    playDonutAnimation();
-    renderDepartments();
     fetchLiveDashboardData();
 
     // Global playback function for tab switching
     window.playDashboardChartAnimations = function() {
-      renderBarChart();
-      playDonutAnimation();
       fetchLiveDashboardData();
     };
 

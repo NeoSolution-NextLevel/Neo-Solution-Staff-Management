@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "User-dashboard"; // Tells the sidebar to highlight this tab
     $page_title = "User-dashboard | staff management";
-    include '../UxUI-Back/Includes/header.php'; 
+    include_once __DIR__ . '/../../Includes/header.php'; 
 
 ?>
 
@@ -46,15 +46,11 @@
 <div data-page="member-list" id="Main_dashboard_01_A">
 
 <div class="member-list-app">
- <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+ <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
-  
-  
-
-  <?php include_once __DIR__ . '/sidebar.php'; ?>
 <main class="dashboard-main">
 
-<?php $page_title = 'Dashboard'; include_once __DIR__ . '/header.php'; ?>
+<?php $page_title = 'Dashboard'; include_once __DIR__ . '/../../Includes/header.php'; ?>
 
     <section class="dashboard-content">
 

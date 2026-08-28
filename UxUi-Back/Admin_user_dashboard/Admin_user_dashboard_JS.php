@@ -110,6 +110,9 @@ function Admin_user_dashboard_10_OPEN() {
  Admin_user_dashboard_close_all();
  document.getElementById("Admin_user_dashboard_10_settings").style.display = "";
 setSidebarActive('settings');
+if (typeof window.fetchAdminSettings === 'function') {
+ window.fetchAdminSettings();
+}
 if (typeof Member_body_01_01_A_01_Memeber_Details_Display === 'function') {
  Member_body_01_01_A_01_Memeber_Details_Display();
  }

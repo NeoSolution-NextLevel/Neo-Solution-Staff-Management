@@ -195,62 +195,141 @@
   }
 
   /* Column Widths */
-  .col-emp { width: 22%; }
-  .col-type { width: 16%; }
-  .col-period { width: 22%; }
-  .col-reason { width: 16%; }
+  .col-emp { width: 18%; }
+  .col-type { width: 14%; }
+  .col-period { width: 21%; }
+  .col-reason { width: 17%; }
   .col-status { width: 11%; }
-  .col-actions { width: 13%; text-align: right; }
+  .col-actions { width: 19%; min-width: 175px; text-align: right; }
+
+  table.leave-table th:last-child,
+  table.leave-table td:last-child {
+    text-align: right;
+    padding-right: 22px !important;
+  }
 
   /* Simple Status Tags */
   .status-tag {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+  .status-tag.pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+  .status-tag.approved { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .status-tag.rejected { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+  /* Modern Action Buttons */
+  .btn-actions-group {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 6px;
     font-size: 12px;
     font-weight: 700;
-  }
-  .status-tag.pending { background: #fef3c7; color: #b45309; }
-  .status-tag.approved { background: #dcfce7; color: #15803d; }
-  .status-tag.rejected { background: #fee2e2; color: #b91c1c; }
-
-  /* Action Buttons */
-  .btn-approve {
-    background: #15803d;
-    color: #ffffff;
     border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
     cursor: pointer;
-    margin-right: 4px;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    line-height: 1.25;
+    text-decoration: none;
   }
-  .btn-approve:hover { background: #166534; }
 
-  .btn-reject {
+  .btn-action.approve {
+    background: #16a34a;
+    color: #ffffff;
+  }
+  .btn-action.approve:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(22, 163, 74, 0.3);
+  }
+
+  .btn-action.reject {
     background: #dc2626;
     color: #ffffff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
   }
-  .btn-reject:hover { background: #991b1b; }
+  .btn-action.reject:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(220, 38, 38, 0.3);
+  }
 
-  .btn-view {
-    background: #e2e8f0;
+  .btn-action.view {
+    background: #f1f5f9;
     color: #334155;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
+    border: 1px solid #cbd5e1;
+    padding: 5px 14px;
   }
-  .btn-view:hover { background: #cbd5e1; }
+  .btn-action.view:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+  }
+
+  /* Leave Modal Styles */
+  .leave-modal-card {
+    max-width: 520px;
+    width: 90%;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+  }
+
+  .leave-modal-header {
+    background: linear-gradient(135deg, #14204d 0%, #1c2b63 100%);
+    color: #ffffff;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .leave-modal-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.2px;
+  }
+
+  .leave-modal-close {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+    line-height: 1;
+  }
+
+  .leave-modal-close:hover {
+    background: #ef4444;
+    transform: scale(1.05);
+  }
 
   /* Clickable Text */
   .clickable-link {
@@ -378,54 +457,54 @@
 
     </main>
 
-    <!-- Simple W3 Modal for Leave Details -->
-    <div id="leaveDetailsModal" class="w3-modal" style="padding-top: 50px;">
-      <div class="w3-modal-content w3-card-4 w3-round" style="max-width: 500px; overflow: hidden; background: #ffffff;">
-        <header class="w3-container w3-padding" style="background: #14204d; color: #ffffff; display:flex; align-items:center; justify-content:space-between;">
-          <h4 style="margin:0; font-size:16px; font-weight:700;">Leave Request Details</h4>
-          <span onclick="closeLeaveModal()" class="w3-button w3-display-topright w3-hover-red" style="font-size:20px; cursor:pointer;">&times;</span>
-        </header>
+    <!-- Modern Modal for Leave Details -->
+    <div id="leaveDetailsModal" class="w3-modal" style="padding-top: 50px; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px);">
+      <div class="leave-modal-card">
+        <div class="leave-modal-header">
+          <h4>Leave Request Details</h4>
+          <button type="button" class="leave-modal-close" onclick="closeLeaveModal()" aria-label="Close">&times;</button>
+        </div>
         
-        <div class="w3-container w3-padding-16">
-          <table class="w3-table w3-bordered" style="margin-bottom: 16px;">
-            <tr>
-              <td style="font-weight:700; width:35%;">Employee:</td>
-              <td id="modalEmpName">—</td>
+        <div style="padding: 20px 24px; background: #ffffff;">
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="font-weight:700; color:#475569; width:35%; padding: 10px 0;">Employee:</td>
+              <td id="modalEmpName" style="font-weight:700; color:#1e293b; padding: 10px 0;">—</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="font-weight:700; color:#475569; padding: 10px 0;">Leave Type:</td>
+              <td id="modalLeaveType" style="color:#1e293b; padding: 10px 0;">—</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="font-weight:700; color:#475569; padding: 10px 0;">Leave Period:</td>
+              <td id="modalLeaveDuration" style="color:#1e293b; padding: 10px 0;">—</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="font-weight:700; color:#475569; padding: 10px 0;">Duration:</td>
+              <td id="modalLeaveDays" style="font-weight:700; color:#2563eb; padding: 10px 0;">—</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="font-weight:700; color:#475569; padding: 10px 0;">Submitted Date:</td>
+              <td id="modalLeaveSubmitted" style="color:#64748b; padding: 10px 0;">—</td>
             </tr>
             <tr>
-              <td style="font-weight:700;">Leave Type:</td>
-              <td id="modalLeaveType">—</td>
-            </tr>
-            <tr>
-              <td style="font-weight:700;">Leave Period:</td>
-              <td id="modalLeaveDuration">—</td>
-            </tr>
-            <tr>
-              <td style="font-weight:700;">Duration:</td>
-              <td id="modalLeaveDays">—</td>
-            </tr>
-            <tr>
-              <td style="font-weight:700;">Submitted Date:</td>
-              <td id="modalLeaveSubmitted">—</td>
-            </tr>
-            <tr>
-              <td style="font-weight:700;">Status:</td>
-              <td id="modalLeaveStatus">—</td>
+              <td style="font-weight:700; color:#475569; padding: 10px 0;">Status:</td>
+              <td id="modalLeaveStatus" style="padding: 10px 0;">—</td>
             </tr>
           </table>
 
-          <div style="margin-top: 12px;">
-            <div style="font-weight:700; color:#14204d; margin-bottom:6px;">Reason:</div>
-            <div id="modalLeaveReason" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; font-size: 13.5px; color: #334155; min-height: 60px; line-height: 1.4; word-break: break-word;">
+          <div style="margin-top: 14px;">
+            <div style="font-weight:700; color:#14204d; font-size:13.5px; margin-bottom:6px;">Reason for Leave:</div>
+            <div id="modalLeaveReason" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 8px; font-size: 13.5px; color: #334155; min-height: 64px; line-height: 1.5; word-break: break-word;">
               —
             </div>
           </div>
         </div>
 
-        <footer class="w3-container w3-padding" style="background:#f1f5f9; display:flex; align-items:center; justify-content:space-between;">
-          <div id="modalActionButtons"></div>
-          <button type="button" class="w3-button w3-white w3-border w3-round" style="font-weight:600; font-size:13px; margin-left:auto;" onclick="closeLeaveModal()">Close</button>
-        </footer>
+        <div style="background:#f8fafc; padding: 14px 24px; border-top: 1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; gap: 10px;">
+          <div id="modalActionButtons" class="btn-actions-group"></div>
+          <button type="button" class="btn-action view" style="margin-left:auto; padding: 7px 18px;" onclick="closeLeaveModal()">Close</button>
+        </div>
       </div>
     </div>
 

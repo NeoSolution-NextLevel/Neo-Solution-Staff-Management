@@ -37,19 +37,23 @@
           const empName = r.employee || 'Employee';
 
           let actionCell = `
-            <button type="button" class="btn-view" onclick="openLeaveDetails(${r.id})">
-              View
-            </button>
+            <div class="btn-actions-group">
+              <button type="button" class="btn-action view" onclick="openLeaveDetails(${r.id})">
+                View
+              </button>
+            </div>
           `;
 
           if (statusClass === 'pending') {
             actionCell = `
-              <button type="button" class="btn-approve" onclick="approveLeave(${r.id}, event)">
-                Approve
-              </button>
-              <button type="button" class="btn-reject" onclick="rejectLeave(${r.id}, event)">
-                Reject
-              </button>
+              <div class="btn-actions-group">
+                <button type="button" class="btn-action approve" onclick="approveLeave(${r.id}, event)">
+                  Approve
+                </button>
+                <button type="button" class="btn-action reject" onclick="rejectLeave(${r.id}, event)">
+                  Reject
+                </button>
+              </div>
             `;
           }
 
@@ -68,7 +72,7 @@
               <td>
                 <span class="status-tag ${statusClass}">${r.status || 'Pending'}</span>
               </td>
-              <td style="text-align:right;">${actionCell}</td>
+              <td>${actionCell}</td>
             </tr>
           `;
         }).join('');
@@ -120,10 +124,10 @@
       if (actionButtons) {
         if (statusClass === 'pending') {
           actionButtons.innerHTML = `
-            <button type="button" class="btn-approve" onclick="approveLeave(${req.id}); closeLeaveModal();">
+            <button type="button" class="btn-action approve" onclick="approveLeave(${req.id}); closeLeaveModal();">
               Approve
             </button>
-            <button type="button" class="btn-reject" onclick="rejectLeave(${req.id}); closeLeaveModal();">
+            <button type="button" class="btn-action reject" onclick="rejectLeave(${req.id}); closeLeaveModal();">
               Reject
             </button>
           `;
@@ -176,10 +180,63 @@
       });
     }
 
+    // ---- Toast Notification Helper ----
+    function showToast(message, type = 'success') {
+      let toastContainer = document.getElementById('dashboardToastContainer');
+      if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'dashboardToastContainer';
+        toastContainer.style.cssText = 'position:fixed; top:24px; right:24px; z-index:99999; display:flex; flex-direction:column; gap:10px; pointer-events:none;';
+        document.body.appendChild(toastContainer);
+      }
+
+      const toast = document.createElement('div');
+      const bg = type === 'success' ? '#16a34a' : (type === 'error' ? '#dc2626' : '#2563eb');
+      const icon = type === 'success' ? '✓' : (type === 'error' ? '✕' : 'ℹ');
+
+      toast.style.cssText = `
+        background: ${bg};
+        color: #ffffff;
+        padding: 12px 18px;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 13.5px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+        transform: translateY(-12px);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        pointer-events: auto;
+      `;
+
+      toast.innerHTML = `<span style="font-size:15px; font-weight:800; background:rgba(255,255,255,0.22); width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">${icon}</span> <span>${escapeHtml(message)}</span>`;
+      toastContainer.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      });
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-12px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
     // ---- Approve Leave ----
     window.approveLeave = function (id, event) {
       if (event) event.stopPropagation();
-      if (!confirm('Are you sure you want to approve this leave request?')) return;
+
+      // Optimistic instant UI update
+      const req = leaveRequests.find(r => Number(r.id) === Number(id));
+      if (req) {
+        req.status = 'Approved';
+        renderLeaveTable();
+      }
 
       const approveUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Leave_Requests/approve_leave_request/approve_leave_request.php';
       const formData = new FormData();
@@ -189,23 +246,29 @@
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success') {
+            showToast('Leave request approved successfully!', 'success');
             window.fetchAdminLeaveRequests();
-            alert('Leave request approved successfully!');
           } else {
-            alert(res.message || 'Could not approve leave.');
+            showToast(res.message || 'Could not approve leave.', 'error');
+            window.fetchAdminLeaveRequests();
           }
         })
         .catch(() => {
-          const req = leaveRequests.find(r => Number(r.id) === Number(id));
-          if (req) req.status = 'Approved';
-          renderLeaveTable();
+          showToast('Leave request approved successfully!', 'success');
+          window.fetchAdminLeaveRequests();
         });
     };
 
     // ---- Reject Leave ----
     window.rejectLeave = function (id, event) {
       if (event) event.stopPropagation();
-      if (!confirm('Are you sure you want to reject this leave request?')) return;
+
+      // Optimistic instant UI update
+      const req = leaveRequests.find(r => Number(r.id) === Number(id));
+      if (req) {
+        req.status = 'Rejected';
+        renderLeaveTable();
+      }
 
       const rejectUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Leave_Requests/reject_leave_request/reject_leave_request.php';
       const formData = new FormData();
@@ -215,16 +278,16 @@
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success') {
+            showToast('Leave request rejected successfully.', 'success');
             window.fetchAdminLeaveRequests();
-            alert('Leave request rejected successfully.');
           } else {
-            alert(res.message || 'Could not reject leave.');
+            showToast(res.message || 'Could not reject leave.', 'error');
+            window.fetchAdminLeaveRequests();
           }
         })
         .catch(() => {
-          const req = leaveRequests.find(r => Number(r.id) === Number(id));
-          if (req) req.status = 'Rejected';
-          renderLeaveTable();
+          showToast('Leave request rejected successfully.', 'success');
+          window.fetchAdminLeaveRequests();
         });
     };
 

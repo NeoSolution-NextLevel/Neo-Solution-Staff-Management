@@ -1,12 +1,8 @@
 <?php
-if (!class_exists('DataBase')) {
-    if (file_exists(__DIR__ . '/../../../imports/need/DB.php')) {
         include_once __DIR__ . '/../../../imports/need/DB.php';
-    } elseif (file_exists(__DIR__ . '/../../../database.php')) {
         include_once __DIR__ . '/../../../database.php';
-    }
-}
 
+    
 class bank_details_ADD_UPDATE
 {
     private $id;
@@ -51,77 +47,77 @@ class bank_details_ADD_UPDATE
         $this->status              = $get_status;
 
         $this->sql_update_query =
-            ", user_id = '" . addslashes($this->user_id) . "'"
-            . ", employee_id = '" . addslashes($this->employee_id) . "'"
-            . ", employee_name = '" . addslashes($this->employee_name) . "'"
-            . ", holder_name = '" . addslashes($this->holder_name) . "'"
-            . ", bank_name = '" . addslashes($this->bank_name) . "'"
-            . ", branch = '" . addslashes($this->branch) . "'"
-            . ", bank_account_number = '" . addslashes($this->bank_account_number) . "'"
-            . ", account_number = '" . addslashes($this->account_number) . "'"
-            . ", status = '" . addslashes($this->status) . "'";
+            ", user_id = '" . $this->user_id . "'"
+            . ", employee_id = '" . $this->employee_id . "'"
+            . ", employee_name = '" . $this->employee_name . "'"
+            . ", holder_name = '" . $this->holder_name . "'"
+            . ", bank_name = '" . $this->bank_name . "'"
+            . ", branch = '" . $this->branch . "'"
+            . ", bank_account_number = '" . $this->bank_account_number . "'"
+            . ", account_number = '" . $this->account_number . "'"
+            . ", status = '" . $this->status . "'";
     }
 
     public function set_user_id($get_user_id)
     {
         $this->user_id = $get_user_id;
-        $this->sql_update_query .= ", user_id = '" . addslashes($this->user_id) . "'";
+        $this->sql_update_query .= ", user_id = '" . $this->user_id . "'";
     }
 
     public function set_employee_id($get_employee_id)
     {
         $this->employee_id = $get_employee_id;
-        $this->sql_update_query .= ", employee_id = '" . addslashes($this->employee_id) . "'";
+        $this->sql_update_query .= ", employee_id = '" . $this->employee_id . "'";
     }
 
     public function set_employee_name($get_employee_name)
     {
         $this->employee_name = $get_employee_name;
-        $this->sql_update_query .= ", employee_name = '" . addslashes($this->employee_name) . "'";
+        $this->sql_update_query .= ", employee_name = '" . $this->employee_name . "'";
     }
 
     public function set_holder_name($get_holder_name)
     {
         $this->holder_name = $get_holder_name;
-        $this->sql_update_query .= ", holder_name = '" . addslashes($this->holder_name) . "'";
+        $this->sql_update_query .= ", holder_name = '" . $this->holder_name . "'";
     }
 
     public function set_bank_name($get_bank_name)
     {
         $this->bank_name = $get_bank_name;
-        $this->sql_update_query .= ", bank_name = '" . addslashes($this->bank_name) . "'";
+        $this->sql_update_query .= ", bank_name = '" . $this->bank_name . "'";
     }
 
     public function set_branch($get_branch)
     {
         $this->branch = $get_branch;
-        $this->sql_update_query .= ", branch = '" . addslashes($this->branch) . "'";
+        $this->sql_update_query .= ", branch = '" . $this->branch . "'";
     }
 
     public function set_bank_account_number($get_bank_account_number)
     {
         $this->bank_account_number = $get_bank_account_number;
         $this->account_number = $get_bank_account_number;
-        $this->sql_update_query .= ", bank_account_number = '" . addslashes($this->bank_account_number) . "', account_number = '" . addslashes($this->account_number) . "'";
+        $this->sql_update_query .= ", bank_account_number = '" . $this->bank_account_number . "', account_number = '" . addslashes($this->account_number) . "'";
     }
 
     public function set_account_number($get_account_number)
     {
         $this->account_number = $get_account_number;
         $this->bank_account_number = $get_account_number;
-        $this->sql_update_query .= ", account_number = '" . addslashes($this->account_number) . "', bank_account_number = '" . addslashes($this->bank_account_number) . "'";
+        $this->sql_update_query .= ", account_number = '" . $this->account_number . "', bank_account_number = '" . addslashes($this->bank_account_number) . "'";
     }
 
     public function set_status($get_status)
     {
         $this->status = $get_status;
-        $this->sql_update_query .= ", status = '" . addslashes($this->status) . "'";
+        $this->sql_update_query .= ", status = '" . $this->status . "'";
     }
 
     public function set_ast($get_ast)
     {
         $this->ast = $get_ast;
-        $this->sql_update_query .= ", ast = '" . addslashes($this->ast) . "'";
+        $this->sql_update_query .= ", ast = '" . $this->ast . "'";
     }
 
     public function set_sdt($get_sdt)
@@ -154,7 +150,6 @@ class bank_details_ADD_UPDATE
     {
         $data_base_obj = new DataBase();
 
-        // Ensure table exists
         $create_sql = "
             CREATE TABLE IF NOT EXISTS `bank_details` (
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -190,17 +185,17 @@ class bank_details_ADD_UPDATE
             account_number,
             status)
             VALUES
-            ('" . addslashes($this->ast) . "',
-            '" . addslashes($this->sdt) . "',
+            ('" . $this->ast . "',
+            '" . $this->sdt . "',
             '" . (int)$this->user_id . "',
-            '" . addslashes($this->employee_id) . "',
-            '" . addslashes($this->employee_name) . "',
-            '" . addslashes($this->holder_name) . "',
-            '" . addslashes($this->bank_name) . "',
-            '" . addslashes($this->branch) . "',
-            '" . addslashes($this->bank_account_number) . "',
-            '" . addslashes($this->account_number) . "',
-            '" . addslashes($this->status) . "'
+            '" . $this->employee_id . "',
+            '" . $this->employee_name . "',
+            '" . $this->holder_name . "',
+            '" . $this->bank_name . "',
+            '" . $this->branch . "',
+            '" . $this->bank_account_number . "',
+            '" . $this->account_number . "',
+            '" . $this->status . "'
             )";
 
         $res = $data_base_obj->get_result($get_sql_query);
@@ -212,7 +207,7 @@ class bank_details_ADD_UPDATE
     public function process_update()
     {
         $data_base_obj = new DataBase();
-        $get_sql_query = "UPDATE bank_details SET ast='" . addslashes($this->ast) . "'" . $this->sql_update_query . " WHERE id='" . (int)$this->id . "'";
+        $get_sql_query = "UPDATE bank_details SET ast='" . $this->ast . "'" . $this->sql_update_query . " WHERE id='" . (int)$this->id . "'";
 
         $res = $data_base_obj->get_result($get_sql_query);
         $this->error_msg = $data_base_obj->get_error();

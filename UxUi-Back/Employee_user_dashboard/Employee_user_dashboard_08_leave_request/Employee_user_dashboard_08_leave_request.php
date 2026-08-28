@@ -611,7 +611,9 @@
       const d1 = new Date(from);
       const d2 = new Date(to);
       let diffDays = Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
-      const currentEmployee = (document.getElementById('empSidebarName') && document.getElementById('empSidebarName').textContent.trim()) || 'Employee';
+      const currentEmployee = (document.getElementById('topEmpLeaveName') && document.getElementById('topEmpLeaveName').textContent.trim()) 
+        || (document.getElementById('empSidebarName') && document.getElementById('empSidebarName').textContent.trim()) 
+        || 'Employee';
 
       const formData = new FormData();
       formData.append('employee', currentEmployee);
@@ -626,21 +628,67 @@
       const btn = document.getElementById('submitLeaveBtn');
       if (btn) btn.disabled = true;
 
+      function showEmpToast(message, type = 'success') {
+        let toastContainer = document.getElementById('empToastContainer');
+        if (!toastContainer) {
+          toastContainer = document.createElement('div');
+          toastContainer.id = 'empToastContainer';
+          toastContainer.style.cssText = 'position:fixed; top:24px; right:24px; z-index:99999; display:flex; flex-direction:column; gap:10px; pointer-events:none;';
+          document.body.appendChild(toastContainer);
+        }
+
+        const toast = document.createElement('div');
+        const bg = type === 'success' ? '#16a34a' : (type === 'error' ? '#dc2626' : '#2563eb');
+        const icon = type === 'success' ? '✓' : (type === 'error' ? '✕' : 'ℹ');
+
+        toast.style.cssText = `
+          background: ${bg};
+          color: #ffffff;
+          padding: 12px 18px;
+          border-radius: 10px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+          font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-size: 13.5px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          opacity: 0;
+          transform: translateY(-12px);
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          pointer-events: auto;
+        `;
+
+        toast.innerHTML = `<span style="font-size:15px; font-weight:800; background:rgba(255,255,255,0.22); width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">${icon}</span> <span>${message}</span>`;
+        toastContainer.appendChild(toast);
+
+        requestAnimationFrame(() => {
+          toast.style.opacity = '1';
+          toast.style.transform = 'translateY(0)';
+        });
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(-12px)';
+          setTimeout(() => toast.remove(), 300);
+        }, 3200);
+      }
+
       fetch(submitUrl, { method: 'POST', body: formData })
         .then(res => res.json())
         .then(res => {
           if (btn) btn.disabled = false;
           if (res.status === 'success') {
-            alert('Leave request submitted to Admin successfully!');
+            showEmpToast('Leave request submitted to Admin successfully!', 'success');
             form.reset();
             window.fetchEmpLeaveHistory();
           } else {
-            alert(res.message || 'Error submitting leave request.');
+            showEmpToast(res.message || 'Error submitting leave request.', 'error');
           }
         })
         .catch(() => {
           if (btn) btn.disabled = false;
-          alert('Leave request submitted successfully.');
+          showEmpToast('Leave request submitted successfully.', 'success');
           form.reset();
           window.fetchEmpLeaveHistory();
         });

@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "share-sms"; // Tells the sidebar to highlight this tab
     $page_title = "Share By SMS · WWJM Admin";
-include '../Includes/header.php'; 
+include_once __DIR__ . '/../../Includes/header.php'; 
 ?>
 
 <style>
@@ -190,7 +190,7 @@ include '../Includes/header.php';
 
 <div class="share-sms-app">
 
-     <?php include "../Includes/Sidebar.php"; ?>
+     <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
   
 

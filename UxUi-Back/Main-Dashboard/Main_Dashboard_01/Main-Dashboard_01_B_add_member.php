@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "Add-member"; // Tells the sidebar to highlight this tab
     $page_title = "Create New Member · WWJM Admin";
-include '../UxUI-Back/Includes/header.php'; 
+include_once __DIR__ . '/../../Includes/header.php'; 
 
 ?>
 
@@ -193,7 +193,7 @@ include '../UxUI-Back/Includes/header.php';
 
 <div class="add-member-app">
 
-  <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+  <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
   
 

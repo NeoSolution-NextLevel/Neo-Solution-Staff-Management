@@ -142,7 +142,11 @@
       }
 
       if (empCount) {
-        empCount.textContent = `${employees.length} total employees`;
+        if (activeFilter === 'all' && !query) {
+          empCount.textContent = `${employees.length} total employee${employees.length === 1 ? '' : 's'}`;
+        } else {
+          empCount.textContent = `${rows.length} of ${employees.length} employee${employees.length === 1 ? '' : 's'}`;
+        }
       }
     }
 

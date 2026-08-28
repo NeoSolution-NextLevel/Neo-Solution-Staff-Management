@@ -29,11 +29,21 @@ $add_obj->set_data($name, $email, $dept, $role, $status, $joined);
 $res = $add_obj->process_new_record();
 
 if ($res) {
+    $new_emp_id = (int)$add_obj->get_id();
+    if (!empty($joined)) {
+        $db = new DataBase();
+        $conn = $db->get_data_base_connction();
+        $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `email`, `department`, `job_title`, `join_date`, `created_at`) 
+                      VALUES ('$new_emp_id', '" . addslashes($name) . "', '" . addslashes($email) . "', '" . addslashes($dept) . "', '" . addslashes($role) . "', '" . addslashes($joined) . "', NOW())
+                      ON DUPLICATE KEY UPDATE `join_date` = '" . addslashes($joined) . "'");
+        $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$new_emp_id' OR `user_name` = '" . addslashes($email) . "'");
+    }
+
     echo json_encode([
         'status'  => 'success',
         'message' => 'Employee added successfully in database.',
         'data'    => [
-            'id'       => (int)$add_obj->get_id(),
+            'id'       => $new_emp_id,
             'initials' => $add_obj->get_initials(),
             'name'     => $name,
             'email'    => $email,

@@ -258,7 +258,7 @@
     if (empNotifs.length === 0) {
       listContainer.innerHTML = `
         <div style="text-align:center; padding: 40px 16px; color: #64748b; background:#f8fafc; border-radius:12px; border:1px dashed #cbd5e1;">
-          <div style="font-size:30px; margin-bottom:6px;">🔔</div>
+          <div style="margin-bottom:8px; color:#94a3b8;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
           <div style="font-weight:700; color:#1e293b; font-size:14.5px;">No notifications found</div>
           <p style="font-size:12.5px; color:#64748b; margin-top:4px;">Updates on your leave requests, documents, and tasks will appear here.</p>
         </div>
