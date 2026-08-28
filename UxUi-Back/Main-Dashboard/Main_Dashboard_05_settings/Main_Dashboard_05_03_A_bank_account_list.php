@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "settings-bank-account"; // Tells the sidebar to highlight this tab
     $page_title = "Create New Member · WWJM Admin";
-include '../UxUI-Back/Includes/header.php'; 
+include_once __DIR__ . '/../../Includes/header.php'; 
 ?>
 
 <title>Bank Account List · WWJM Admin</title>
@@ -253,7 +253,7 @@ include '../UxUI-Back/Includes/header.php';
 
 <div class="settings-bank-account-app">
 
-     <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+     <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
 
   
@@ -332,7 +332,7 @@ include '../UxUI-Back/Includes/header.php';
 
 
 <!-- ================= FOOTER (shared component) =================
-     PHP projects: delete this div and put <?php include 'footer.php'; ?>
+     PHP projects: delete this div and put <?php include_once __DIR__ . '/../../Includes/footer.php'; ?>
      in its place instead. -->
 <div id="wwjm-footer-root"></div>
 <script src="footer-loader.js"></script>
