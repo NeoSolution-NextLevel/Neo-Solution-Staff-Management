@@ -146,9 +146,9 @@
     flex-shrink: 0;
   }
   .pd-card-icon.blue { background: #eff6ff; color: #2563eb; }
-  .pd-card-icon.emerald { background: #ecfdf5; color: #059669; }
-  .pd-card-icon.purple { background: #f5f3ff; color: #7c3aed; }
-  .pd-card-icon.amber { background: #fef3c7; color: #d97706; }
+  .pd-card-icon.emerald { background: #e3f9ee; color: #12b76a; }
+  .pd-card-icon.purple { background: #eef2ff; color: #3b5bdb; }
+  .pd-card-icon.amber { background: #f8fafc; color: #14204d; border: 1px solid #e2e8f0; }
 
   .pd-card-title {
     font-size: 16px;
@@ -167,6 +167,23 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
+  }
+
+  .pd-probation-4col-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .pd-probation-4col-grid .pd-item-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 70px;
+    height: 100%;
+    box-sizing: border-box;
   }
 
   .pd-item-box {
@@ -188,6 +205,9 @@
     color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .pd-val {
@@ -301,31 +321,58 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   }
 
+  @media (max-width: 900px) {
+    .pd-probation-4col-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
   @media (max-width: 868px) {
     .emp-pd-menu-btn { display: inline-flex !important; }
     .pd-bento-grid { grid-template-columns: 1fr !important; }
     .pd-item-list { grid-template-columns: 1fr !important; }
     .btn-pd-edit { width: 100%; justify-content: center; }
   }
+  @media (max-width: 500px) {
+    .pd-probation-4col-grid { grid-template-columns: 1fr !important; }
+  }
 </style>
 
-<div id="Employee_user_dashboard_03_personal_details" class="w3-container tab-content" style="display: none;">
+<div id="Employee_user_dashboard_03_personal_details" class="w3-container tab-content" style="display: none; padding: 0;">
   <div class="emp-pd-container">
 
-    <!-- Topbar -->
-    <div class="emp-pd-topbar">
-      <div class="emp-pd-topbar-left">
-        <button class="emp-pd-menu-btn" onclick="openSidebar()" aria-label="Open menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <!-- Standard Dashboard Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" id="menuBtn_03" aria-label="Open menu" onclick="if(typeof openEmployeeSidebar==='function'){ openEmployeeSidebar(); }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/>
+          </svg>
         </button>
-        <div>
-          <h2>Personal Details</h2>
-          <p>Official employee identification, legal credentials & service record dossier</p>
+        <h2>Personal Details</h2>
+      </div>
+
+      <div class="topbar-right">
+        <div class="icon-btn" onclick="if(typeof Employee_user_dashboard_09_OPEN==='function'){ Employee_user_dashboard_09_OPEN(); }" title="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+          </svg>
+          <span class="dot"></span>
         </div>
+
+        <div class="admin-pill" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); }">
+          <div class="avatar" id="topAvatar_03">--</div>
+          <span id="topEmpName_03">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Action Subbar -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <p style="font-size: 13.5px; color: #64748b; margin: 0; font-weight: 500;">Official employee identification, legal credentials & service record dossier</p>
       </div>
 
       <button type="button" class="btn-pd-edit" onclick="openEditPersonalDetailsModal()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         <span>Edit Legal Details</span>
       </button>
     </div>
@@ -441,45 +488,46 @@
         </div>
       </div>
 
-      <!-- Card 4: Probation Process & Career Lifecycle (Dedicated Milestone Card) -->
-      <div class="pd-bento-card" style="grid-column: 1 / -1;">
+      <!-- Card 4: Probation Process & Career Lifecycle (Bottom-Right Card in 2x2 Bento Grid) -->
+      <div class="pd-bento-card">
         <div class="pd-card-header">
           <div class="pd-card-icon blue">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
           <div>
             <h3 class="pd-card-title">Probation Process & Career Milestones</h3>
-            <p class="pd-card-subtitle">Probation review timeline, confirmation milestones & attendance progress</p>
+            <p class="pd-card-subtitle">Probation review timeline & confirmation</p>
           </div>
         </div>
 
-        <div class="pd-item-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+        <!-- 2x2 Internal Grid for 4 Probation Items -->
+        <div class="pd-item-list">
           <!-- 1. Probation Status -->
           <div class="pd-item-box">
             <span class="pd-label">Probation Status</span>
             <span class="pd-val" id="pdProbationStatus" style="color: #2563eb; font-weight: 700; margin-top:2px;">In Progress</span>
           </div>
 
-          <!-- 2. Probation Start Date -->
+          <!-- 2. Official Confirmed Start Date -->
+          <div class="pd-item-box">
+            <span class="pd-label">Confirmed Start Date</span>
+            <span class="pd-val" id="pdOfficialStartDate" style="color: #16a34a; font-weight: 700;">—</span>
+          </div>
+
+          <!-- 3. Probation Start Date -->
           <div class="pd-item-box">
             <span class="pd-label">Probation Start Date</span>
             <span class="pd-val" id="pdProbationStartDate">—</span>
           </div>
 
-          <!-- 3. Probation End Date -->
+          <!-- 4. Probation End Date -->
           <div class="pd-item-box">
             <span class="pd-label">Probation End Date</span>
             <span class="pd-val" id="pdProbationEndDate">—</span>
           </div>
 
-          <!-- 4. Official Active Job Start Date -->
-          <div class="pd-item-box">
-            <span class="pd-label">Official Confirmed Start Date</span>
-            <span class="pd-val" id="pdOfficialStartDate" style="color: #16a34a; font-weight: 700;">—</span>
-          </div>
-
           <!-- 5. 15-Day Attendance Progress Tracker -->
-          <div class="pd-item-box" style="grid-column: 1 / -1;">
+          <div class="pd-item-box full-width" style="margin-top: 2px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
               <span class="pd-label" style="font-weight:700;">15-Day Probation Attendance Tracking</span>
               <span id="pdAttendanceDaysBadge" style="font-size:11.5px; font-weight:700; background:#eff6ff; color:#2563eb; padding:3px 10px; border-radius:6px;">0 / 15 Days Marked</span>
