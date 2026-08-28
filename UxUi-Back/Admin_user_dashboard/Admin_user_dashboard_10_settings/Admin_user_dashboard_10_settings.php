@@ -641,25 +641,63 @@
           </section>
 
           <!-- Section 3: Account Information -->
+          <?php
+          $admin_init_type = $_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? 'Administrator';
+          $admin_init_status = 'Active';
+          $admin_init_last_login = date('Y-m-d');
+          $admin_init_member_since = date('Y-m-d');
+
+          try {
+              if (file_exists(__DIR__ . '/../../../imports/need/DB.php')) {
+                  include_once __DIR__ . '/../../../imports/need/DB.php';
+              }
+              if (class_exists('DataBase')) {
+                  $db_adm = new DataBase();
+                  $conn_adm = $db_adm->get_data_base_connction();
+                  $uid_adm = $_SESSION['user_id'] ?? $_SESSION['main_user_login_id'] ?? $_SESSION['user_name'] ?? '';
+                  $adm_found = false;
+                  if (!empty($uid_adm)) {
+                      $uid_adm_esc = $conn_adm->real_escape_string((string)$uid_adm);
+                      $q_adm = $conn_adm->query("SELECT * FROM `main_user_login` WHERE `id` = '$uid_adm_esc' OR `user_name` = '$uid_adm_esc' LIMIT 1");
+                      if ($q_adm && $r_adm = $q_adm->fetch_assoc()) {
+                          $admin_init_type = !empty($r_adm['ac_type']) ? $r_adm['ac_type'] : $admin_init_type;
+                          $admin_init_status = ($r_adm['account_active_state'] == 1 || $r_adm['account_active_state'] === null) ? 'Active' : 'Inactive';
+                          if (!empty($r_adm['last_login'])) $admin_init_last_login = date('Y-m-d', strtotime($r_adm['last_login']));
+                          if (!empty($r_adm['sdt'])) $admin_init_member_since = date('Y-m-d', strtotime($r_adm['sdt']));
+                          $adm_found = true;
+                      }
+                  }
+                  if (!$adm_found) {
+                      $q_def_adm = $conn_adm->query("SELECT * FROM `main_user_login` WHERE `main_user_account_access_level_list_id` = '1' OR `ac_type` LIKE '%Admin%' ORDER BY `id` ASC LIMIT 1");
+                      if ($q_def_adm && $r_def_adm = $q_def_adm->fetch_assoc()) {
+                          $admin_init_type = !empty($r_def_adm['ac_type']) ? $r_def_adm['ac_type'] : 'Administrator';
+                          $admin_init_status = ($r_def_adm['account_active_state'] == 1 || $r_def_adm['account_active_state'] === null) ? 'Active' : 'Inactive';
+                          if (!empty($r_def_adm['last_login'])) $admin_init_last_login = date('Y-m-d', strtotime($r_def_adm['last_login']));
+                          if (!empty($r_def_adm['sdt'])) $admin_init_member_since = date('Y-m-d', strtotime($r_def_adm['sdt']));
+                      }
+                  }
+              }
+          } catch (Exception $ex) {}
+          ?>
           <section class="settings-card">
             <h3>Account Information</h3>
 
             <div class="info-grid">
               <div class="info-box">
                 <span>Account Type</span>
-                <strong>Administrator</strong>
+                <strong id="admin_account_type"><?php echo htmlspecialchars($admin_init_type); ?></strong>
               </div>
               <div class="info-box">
                 <span>Account Status</span>
-                <strong>Active</strong>
+                <strong id="admin_account_status" style="color:<?php echo ($admin_init_status === 'Active') ? '#16a34a' : '#dc2626'; ?>;"><?php echo htmlspecialchars($admin_init_status); ?></strong>
               </div>
               <div class="info-box">
                 <span>Last Login</span>
-                <strong>2026-08-07</strong>
+                <strong id="admin_last_login"><?php echo htmlspecialchars($admin_init_last_login); ?></strong>
               </div>
               <div class="info-box">
                 <span>Member Since</span>
-                <strong>2022-01-15</strong>
+                <strong id="admin_member_since"><?php echo htmlspecialchars($admin_init_member_since); ?></strong>
               </div>
             </div>
 

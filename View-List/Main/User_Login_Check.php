@@ -1,20 +1,20 @@
 <?php
 
-include_once '../../imports/need/session_setup.php';
-include_once '../../imports/need/DB.php';
-include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
+include_once __DIR__ . '/../../imports/need/session_setup.php';
+include_once __DIR__ . '/../../imports/need/DB.php';
+include_once __DIR__ . '/../../imports/Company_Info/Company_Info_Variable_List.php';
 
-include_once '../../imports/security/encrypt_decrypt.php';
-include_once '../../imports/security/key_list.php';
-include_once '../../Controllers/Main/main_user_login/main_user_login_LIST.php';
-include_once '../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
-include_once '../../Controllers/Main/main_user_login_device/main_user_login_device_ADD_UPDATE.php';
-include_once '../../Controllers/Main/main_user_login_device/main_user_login_device_LIST.php';
-include_once '../../Controllers/Main/Cook_Managment/Cook_Createing.php';
-include_once '../../Controllers/Main/User_Accout_Check_Device.php';
-include_once '../../Controllers/Main/User_Accout_Check.php';
-include_once '../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_SINGLE_DATA.php';
-include_once '../../imports/sms/SMS_Sending.php';
+include_once __DIR__ . '/../../imports/security/encrypt_decrypt.php';
+include_once __DIR__ . '/../../imports/security/key_list.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login/main_user_login_LIST.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login_device/main_user_login_device_ADD_UPDATE.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login_device/main_user_login_device_LIST.php';
+include_once __DIR__ . '/../../Controllers/Main/Cook_Managment/Cook_Createing.php';
+include_once __DIR__ . '/../../Controllers/Main/User_Account_Check_Device.php';
+include_once __DIR__ . '/../../Controllers/Main/User_Account_Check.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_SINGLE_DATA.php';
+include_once __DIR__ . '/../../imports/sms/SMS_Sending.php';
 
 
 function get_dashboard_redirect_url($ac_type = "", $accessLevelId = "")

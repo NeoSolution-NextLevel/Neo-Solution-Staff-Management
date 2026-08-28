@@ -1,6 +1,6 @@
 <style>
   /* =========================================================
-     EMPLOYEE MY PROFILE (CREATIVE, MODERN & INTERACTIVE)
+     EMPLOYEE MY PROFILE (WORKPLACE IDENTITY & SCHEDULE ROSTER)
   ========================================================= */
   :root {
     --navy: #14204d;
@@ -8,19 +8,21 @@
     --blue: #2563eb;
     --blue-light: #eff6ff;
     --blue-lighter: #f0f7ff;
-    --green: #38a169;
-    --green-bg: #e3f9ee;
-    --amber: #dd6b20;
-    --amber-bg: #fdf1dc;
-    --red: #e53e3e;
-    --red-bg: #fde8ec;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --amber: #d97706;
+    --amber-bg: #fef3c7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
     --ink: #1e293b;
     --muted: #64748b;
     --border: #e2e8f0;
     --bg: #f8fafc;
     --card: #ffffff;
     --radius: 16px;
-    --shadow: 0 1px 2px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
+    --shadow: 0 1px 3px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
   }
 
   #Employee_user_dashboard_02_my_profile {
@@ -40,13 +42,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
   .emp-prof-topbar-left {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
   }
 
   .emp-prof-topbar h2 {
@@ -57,29 +61,35 @@
     margin: 0;
   }
 
+  .emp-prof-topbar p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 2px 0 0 0;
+    font-weight: 500;
+  }
+
   .emp-prof-menu-btn {
     display: none;
     align-items: center;
     justify-content: center;
     width: 38px;
     height: 38px;
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--blue-lighter);
     border: none;
     cursor: pointer;
     color: var(--navy);
-    margin-right: 6px;
   }
   .emp-prof-menu-btn svg { width: 20px; height: 20px; }
 
-  /* Hero Profile Header Card */
+  /* 1. Hero Profile Header Card */
   .profile-hero-card {
     background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(20, 25, 60, 0.06);
+    box-shadow: 0 4px 24px rgba(20, 25, 60, 0.05);
     border: 1px solid var(--border);
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     width: 100%;
     position: relative;
   }
@@ -87,7 +97,7 @@
   .profile-banner {
     position: relative;
     height: 140px;
-    background: linear-gradient(135deg, #14204d 0%, #1c2b63 45%, #2e4cad 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #1e3a8a 100%);
     overflow: hidden;
   }
 
@@ -95,22 +105,22 @@
     position: absolute;
     inset: 0;
     background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
-    background-size: 16px 16px;
-    opacity: 0.6;
+    background-size: 18px 18px;
+    opacity: 0.7;
   }
 
   .profile-banner-glow {
     position: absolute;
-    top: -40px;
+    top: -50px;
     right: -20px;
-    width: 260px;
-    height: 260px;
+    width: 280px;
+    height: 280px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(59, 91, 219, 0.35) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, transparent 70%);
   }
 
   .profile-hero-content {
-    padding: 0 24px 22px;
+    padding: 0 28px 22px;
     position: relative;
   }
 
@@ -120,152 +130,153 @@
     align-items: flex-end;
     margin-bottom: 12px;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 14px;
   }
 
-  /* Interactive Profile Avatar with Photo Upload */
   .profile-avatar-wrapper {
     position: relative;
-    width: 88px;
-    height: 88px;
-    margin-top: -44px;
+    width: 92px;
+    height: 92px;
+    margin-top: -46px;
     z-index: 5;
     flex-shrink: 0;
   }
 
   .profile-avatar-img {
-    width: 88px;
-    height: 88px;
+    width: 92px;
+    height: 92px;
     border-radius: 50%;
     object-fit: cover;
     border: 4px solid #ffffff;
-    box-shadow: 0 6px 18px rgba(20, 32, 77, 0.16);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
     background: var(--blue);
     display: block;
   }
 
   .profile-avatar-placeholder {
-    width: 88px;
-    height: 88px;
+    width: 92px;
+    height: 92px;
     border-radius: 50%;
+    border: 4px solid #ffffff;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #ffffff;
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 4px solid #ffffff;
-    box-shadow: 0 6px 18px rgba(20, 32, 77, 0.16);
-    user-select: none;
+    letter-spacing: 0.5px;
   }
 
   .avatar-upload-badge {
     position: absolute;
     bottom: 2px;
     right: 2px;
+    background: #ffffff;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: #14204d;
-    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #ffffff;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .avatar-upload-badge:hover {
     background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
     transform: scale(1.1);
   }
-  .avatar-upload-badge svg { width: 13px; height: 13px; }
+  .avatar-upload-badge svg { width: 14px; height: 14px; }
 
   .profile-actions-bar {
     display: flex;
-    align-items: center;
     gap: 8px;
-    margin-top: 10px;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
   .btn-edit-profile {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--navy);
+    background: var(--blue);
     color: #ffffff;
     border: none;
-    padding: 9px 18px;
-    border-radius: 10px;
+    padding: 10px 20px;
+    border-radius: 12px;
     font-size: 13.5px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 3px 10px rgba(20, 32, 77, 0.18);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .btn-edit-profile:hover {
-    background: #1c2b63;
-    transform: translateY(-1px);
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
   }
 
   .profile-name {
     font-size: 24px;
     font-weight: 800;
     color: var(--navy);
-    margin: 4px 0 2px 0;
-    letter-spacing: -0.3px;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.4px;
   }
 
   .profile-title {
     font-size: 14px;
     color: var(--muted);
-    font-weight: 600;
     margin: 0 0 12px 0;
+    font-weight: 600;
   }
 
   .profile-tags {
     display: flex;
-    gap: 8px;
     flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
   }
 
   .profile-tag {
-    font-size: 12px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 999px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
   }
-  .profile-tag.blue { background: var(--blue-lighter); color: var(--blue); }
-  .profile-tag.green { background: var(--green-bg); color: var(--green); }
-  .profile-tag.gray { background: #f1f5f9; color: #475569; }
+  .profile-tag.blue { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+  .profile-tag.green { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+  .profile-tag.gray { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 
-  /* Creative Bento Grid Cards */
+  /* 2. Grid Layout */
   .profile-grid-layout {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1.15fr 0.85fr;
     gap: 20px;
     width: 100%;
-    margin-bottom: 24px;
   }
 
   .prof-card {
     background: #ffffff;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
+    border-radius: 18px;
     border: 1px solid var(--border);
-    padding: 22px 24px;
+    padding: 22px;
+    box-shadow: 0 1px 3px rgba(20,25,60,.03);
     margin-bottom: 20px;
-    box-sizing: border-box;
     transition: all 0.2s ease;
   }
-
   .prof-card:hover {
-    box-shadow: 0 6px 20px rgba(20,25,60,0.06);
+    box-shadow: 0 6px 20px rgba(20,25,60,.06);
+    border-color: #cbd5e1;
   }
 
   .prof-card-head {
@@ -273,10 +284,12 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
   }
 
   .prof-card-head h3 {
-    font-size: 16px;
+    font-size: 15.5px;
     font-weight: 800;
     color: var(--navy);
     margin: 0;
@@ -285,15 +298,19 @@
     gap: 8px;
   }
 
+  .prof-card-head h3 svg {
+    color: var(--blue);
+  }
+
   .info-field-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
 
   .info-field {
     background: #f8fafc;
-    border: 1px solid #eef2f6;
+    border: 1px solid #f1f5f9;
     border-radius: 12px;
     padding: 12px 14px;
     display: flex;
@@ -301,10 +318,12 @@
     gap: 4px;
     transition: background 0.15s ease;
   }
-  .info-field:hover { background: #f1f5f9; }
+  .info-field:hover {
+    background: #f1f5f9;
+  }
 
   .info-field-label {
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 700;
     color: #64748b;
     text-transform: uppercase;
@@ -312,75 +331,127 @@
   }
 
   .info-field-val {
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--ink);
     word-break: break-word;
   }
 
-  /* Quick Actions Sidebar Card */
+  /* Weekly Roster Pills & Grid */
+  .roster-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .roster-day-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 4px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+  }
+  
+  .roster-day-name {
+    font-size: 12px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 6px;
+  }
+
+  .roster-day-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .roster-day-badge.onsite { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .roster-day-badge.wfh { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+  .roster-day-badge.leave { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+  .roster-summary-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+  }
+
+  .roster-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+  .roster-stat-pill.onsite { background: #ecfdf5; color: #047857; }
+  .roster-stat-pill.wfh { background: #faf5ff; color: #6b21a8; }
+  .roster-stat-pill.leave { background: #fffbeb; color: #92400e; }
+
   .quick-action-link {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 12px 14px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: #f8fafc;
-    border: 1px solid #eef2f6;
+    border: 1px solid #e2e8f0;
     margin-bottom: 8px;
-    color: var(--navy);
-    font-size: 13.5px;
-    font-weight: 700;
     cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
     transition: all 0.15s ease;
-    text-decoration: none;
   }
   .quick-action-link:hover {
     background: var(--blue-lighter);
     color: var(--blue);
+    border-color: #bfdbfe;
     transform: translateX(3px);
   }
 
-  /* Edit Profile Modal */
+  /* Modal Styles */
   .modal-overlay {
     position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.55);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(4px);
-    z-index: 9999;
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    z-index: 99999;
+    padding: 20px;
+    box-sizing: border-box;
   }
-
-  .modal-overlay.open { display: flex; }
+  .modal-overlay.open {
+    display: flex;
+  }
 
   .modal-box {
     background: #ffffff;
     border-radius: 20px;
-    width: 100%;
-    max-width: 620px;
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    border: 1px solid #cbd5e1;
     overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-    animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  @keyframes modalPop {
-    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  @keyframes modalPopIn {
+    from { opacity: 0; transform: scale(0.96) translateY(10px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  #editProfileForm {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    margin: 0;
   }
 
   .modal-header {
@@ -411,6 +482,8 @@
     justify-content: center;
     cursor: pointer;
     color: #64748b;
+    font-size: 18px;
+    font-weight: bold;
     transition: all 0.15s;
   }
   .modal-close-btn:hover { background: #fee2e2; color: #dc2626; }
@@ -458,49 +531,73 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   }
 
-  .modal-footer {
-    padding: 16px 24px;
-    border-top: 1px solid #e2e8f0;
-    background: #ffffff;
-    display: flex;
-    justify-content: flex-end;
+  /* Day Roster Form Rows in Modal */
+  .modal-roster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 10px;
-    flex-shrink: 0;
-    box-sizing: border-box;
+    margin-top: 6px;
   }
 
-  @media (max-width: 768px) {
+  .modal-day-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .modal-day-card-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  .modal-day-select {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    outline: none;
+  }
+
+  @media (max-width: 868px) {
     .emp-prof-menu-btn { display: inline-flex !important; }
-    .emp-prof-topbar h2 { font-size: 18px !important; }
     .profile-grid-layout { grid-template-columns: 1fr !important; }
     .info-field-grid { grid-template-columns: 1fr !important; }
+    .roster-days-grid { grid-template-columns: repeat(4, 1fr); }
+    .modal-roster-grid { grid-template-columns: 1fr 1fr; }
     .profile-avatar-row { flex-direction: column; align-items: flex-start; }
-    .profile-actions-bar { width: 100%; justify-content: flex-start; }
+    .profile-actions-bar { width: 100%; }
     .btn-edit-profile { width: 100%; justify-content: center; }
   }
 </style>
 
-<div id="Employee_user_dashboard_02_my_profile" class="emp-main" style="display:none; padding:0;">
+<div id="Employee_user_dashboard_02_my_profile" class="w3-container tab-content" style="display: none;">
   <div class="emp-prof-container">
-    
-    <!-- Topbar Navigation -->
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="menu-btn" id="menuBtn_emp_02" aria-label="Open menu" onclick="typeof openEmployeeSidebar === 'function' ? openEmployeeSidebar() : null">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg>
+
+    <!-- Topbar -->
+    <div class="emp-prof-topbar">
+      <div class="emp-prof-topbar-left">
+        <button class="emp-prof-menu-btn" onclick="openSidebar()" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
-        <h2>My Profile</h2>
-      </div>
-      <div class="topbar-right">
-        <div class="icon-btn" onclick="typeof Employee_user_dashboard_09_OPEN === 'function' ? Employee_user_dashboard_09_OPEN() : null" title="Notifications">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-          <span class="dot"></span>
-        </div>
-        <div class="admin-pill" onclick="typeof Employee_user_dashboard_02_OPEN === 'function' ? Employee_user_dashboard_02_OPEN() : null">
-          <div class="avatar" id="topAvatarPreview">--</div>
-          <span id="topEmpName">Loading...</span>
+        <div>
+          <h2>My Profile</h2>
+          <p>Workplace role identity, duty roster & working schedule</p>
         </div>
       </div>
+
+      <button type="button" class="btn-edit-profile" onclick="openEditProfileModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <span>Edit Profile & Schedule</span>
+      </button>
     </div>
 
     <!-- 1. Hero Profile Header Card -->
@@ -518,139 +615,154 @@
             <div id="myProfilePicPlaceholder" class="profile-avatar-placeholder">--</div>
             
             <label for="avatarFileInput" class="avatar-upload-badge" title="Change Profile Picture">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             </label>
             <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="uploadProfilePhoto(this)" />
           </div>
 
           <div class="profile-actions-bar">
-            <button type="button" class="btn-edit-profile" onclick="openEditProfileModal()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              <span>Edit Profile</span>
-            </button>
+            <span class="profile-tag blue" id="viewEmpIdTag">EMP-001</span>
+            <span class="profile-tag green" id="viewStatusTag">Active Staff</span>
+            <span class="profile-tag gray" id="viewDeptTag">Engineering</span>
           </div>
         </div>
 
         <h1 class="profile-name" id="viewProfileName">Loading Profile...</h1>
         <p class="profile-title" id="viewProfileTitle">—</p>
-
-        <div class="profile-tags">
-          <span class="profile-tag blue" id="viewEmpIdTag">EMP-001</span>
-          <span class="profile-tag green" id="viewStatusTag">Active Employee</span>
-          <span class="profile-tag gray" id="viewLocationTag">HQ</span>
-          <span class="profile-tag" style="background:#eff6ff; color:#2563eb; font-weight:700;" id="viewProbationTag">Probation: 15 Days </span>
-        </div>
       </div>
     </div>
 
     <!-- 2. Bento Details Grid Layout -->
     <div class="profile-grid-layout">
       
-      <!-- Left Column: Details -->
+      <!-- Left Column: Work Schedule & Duty Roster Planner -->
       <div>
-        <!-- Professional Bio & Competencies Card -->
+        <!-- Work Schedule & Shift Timing Card -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <span>Professional Overview</span>
-            </h3>
-          </div>
-          <div style="padding: 4px 0 10px 0; color: #475569; font-size: 13.5px; line-height: 1.6;">
-            <p id="viewBioStatement" style="margin: 0 0 12px 0;">Official staff profile and operational record at NEO Solution. Dedicated to maintaining high quality organizational standards and staff management excellence.</p>
-            <div style="font-weight: 700; font-size: 12px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;">Key Competencies & Focus</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Staff Management</span>
-              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">ERP Operations</span>
-              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">HR Workflow</span>
-              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Team Coordination</span>
-              <span style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Compliance</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Contact Coordinates Card -->
-        <div class="prof-card">
-          <div class="prof-card-head">
-            <h3>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              <span>Contact Coordinates</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Work Schedule & Shift Timing</span>
             </h3>
           </div>
           <div class="info-field-grid">
             <div class="info-field">
-              <span class="info-field-label">Email Address</span>
-              <span class="info-field-val" id="viewEmail">—</span>
+              <span class="info-field-label">Work Shift Hours</span>
+              <span class="info-field-val" id="viewWorkShift">08:30 AM – 05:30 PM</span>
             </div>
             <div class="info-field">
-              <span class="info-field-label">Phone Number</span>
-              <span class="info-field-val" id="viewPhone">—</span>
+              <span class="info-field-label">General Work Mode</span>
+              <span class="info-field-val" id="viewWorkMode" style="color: #16a34a;">On-Site (Active)</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field-label">Schedule Start Date</span>
+              <span class="info-field-val" id="viewSchedStart">—</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field-label">Schedule End Date</span>
+              <span class="info-field-val" id="viewSchedEnd">—</span>
             </div>
             <div class="info-field" style="grid-column: 1 / -1;">
-              <span class="info-field-label">Residential Address</span>
-              <span class="info-field-val" id="viewAddress">—</span>
+              <span class="info-field-label">Assigned Work Location</span>
+              <span class="info-field-val" id="viewWorkLocation">Colombo HQ</span>
             </div>
-            <div class="info-field">
-              <span class="info-field-label">Emergency Contact Person</span>
-              <span class="info-field-val" id="viewEmName">—</span>
+          </div>
+        </div>
+
+        <!-- Weekly Duty Roster (On-Site, WFH, Leave) Card -->
+        <div class="prof-card">
+          <div class="prof-card-head">
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>Weekly Duty Roster (On-Site, WFH, Leave)</span>
+            </h3>
+          </div>
+          <div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Day-by-day work arrangement according to active duty calendar:</div>
+            
+            <!-- 7-Day Visual Roster Grid -->
+            <div class="roster-days-grid" id="viewRosterGrid">
+              <div class="roster-day-box" id="dayBox_Mon">
+                <span class="roster-day-name">Mon</span>
+                <span class="roster-day-badge onsite" id="badge_Mon">On-Site</span>
+              </div>
+              <div class="roster-day-box" id="dayBox_Tue">
+                <span class="roster-day-name">Tue</span>
+                <span class="roster-day-badge onsite" id="badge_Tue">On-Site</span>
+              </div>
+              <div class="roster-day-box" id="dayBox_Wed">
+                <span class="roster-day-name">Wed</span>
+                <span class="roster-day-badge onsite" id="badge_Wed">On-Site</span>
+              </div>
+              <div class="roster-day-box" id="dayBox_Thu">
+                <span class="roster-day-name">Thu</span>
+                <span class="roster-day-badge onsite" id="badge_Thu">On-Site</span>
+              </div>
+              <div class="roster-day-box" id="dayBox_Fri">
+                <span class="roster-day-name">Fri</span>
+                <span class="roster-day-badge wfh" id="badge_Fri">WFH</span>
+              </div>
+              <div class="roster-day-box" id="dayBox_Sat">
+                <span class="roster-day-name">Sat</span>
+                <span class="roster-day-badge leave" id="badge_Sat">Leave</span>
+              </div>
+              <div class="roster-day-box" id="dayBox_Sun">
+                <span class="roster-day-name">Sun</span>
+                <span class="roster-day-badge leave" id="badge_Sun">Leave</span>
+              </div>
             </div>
-            <div class="info-field">
-              <span class="info-field-label">Emergency Contact Phone</span>
-              <span class="info-field-val" id="viewEmPhone">—</span>
+
+            <!-- Dynamic Roster Summary Counters (Calculated from 7 days above) -->
+            <div class="roster-summary-row">
+              <span class="roster-stat-pill onsite" id="statOnsite">On-Site: 0 Days</span>
+              <span class="roster-stat-pill wfh" id="statWfh">WFH: 0 Days</span>
+              <span class="roster-stat-pill leave" id="statLeave">Leave: 0 Days</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Right Column: Quick Links & Summary -->
+      <!-- Right Column: Workplace Coordinates & Navigation -->
       <div>
-        <!-- Employment Summary -->
+        <!-- Workplace Contact & Role Info -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-              <span>Job & Service Snapshot</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>Workplace Contact & Role</span>
             </h3>
           </div>
-          <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="info-field-grid">
+            <div class="info-field" style="grid-column: 1 / -1;">
+              <span class="info-field-label">Official Work Email</span>
+              <span class="info-field-val" id="viewEmail">—</span>
+            </div>
+            <div class="info-field" style="grid-column: 1 / -1;">
+              <span class="info-field-label">Primary Mobile Phone</span>
+              <span class="info-field-val" id="viewPhone">—</span>
+            </div>
             <div class="info-field">
               <span class="info-field-label">Department</span>
               <span class="info-field-val" id="viewDept">—</span>
             </div>
             <div class="info-field">
-              <span class="info-field-label">Designation</span>
+              <span class="info-field-label">Designation / Role</span>
               <span class="info-field-val" id="viewJobRole">—</span>
-            </div>
-            <div class="info-field">
-              <span class="info-field-label">Employment Type</span>
-              <span class="info-field-val" id="viewEmpType">—</span>
-            </div>
-            <div class="info-field">
-              <span class="info-field-label">Work Location</span>
-              <span class="info-field-val" id="viewWorkLocation">—</span>
-            </div>
-            <div class="info-field">
-              <span class="info-field-label">Joining Date</span>
-              <span class="info-field-val" id="viewJoinDate">—</span>
-            </div>
-            <div class="info-field">
-              <span class="info-field-label">Probation Review</span>
-              <span class="info-field-val" id="viewProbationStatus" style="color:#2563eb; font-weight:700;">6 Months</span>
             </div>
           </div>
         </div>
 
-        <!-- Quick Actions Navigation -->
+        <!-- Quick Navigation Hub -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              <span>Quick Navigation Hub</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>Staff Hub Quick Links</span>
             </h3>
           </div>
           <div>
             <div class="quick-action-link" onclick="Employee_user_dashboard_03_OPEN()">
-              <span>Personal Details (Legal & Identity)</span>
+              <span>Personal Details (Legal & Identity Dossier)</span>
               <span>&rarr;</span>
             </div>
             <div class="quick-action-link" onclick="Employee_user_dashboard_06_OPEN()">
@@ -669,10 +781,6 @@
               <span>Request Leave</span>
               <span>&rarr;</span>
             </div>
-            <div class="quick-action-link" onclick="Employee_user_dashboard_05_OPEN()">
-              <span>Bank Details</span>
-              <span>&rarr;</span>
-            </div>
           </div>
         </div>
       </div>
@@ -682,269 +790,161 @@
   </div>
 </div>
 
-<!-- Edit Profile Modal Dialog -->
+<!-- Edit Profile & Schedule Modal Dialog -->
 <div class="modal-overlay" id="editProfileModal">
-  <div class="modal-box">
+  <div class="modal-box" style="max-width: 640px; width: 100%; max-height: 90vh; display: flex; flex-direction: column;">
     <div class="modal-header">
-      <h3>Edit Profile Information</h3>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--blue);"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <h3 style="margin:0; font-size:18px; font-weight:800; color:var(--navy);">Edit Profile & Duty Schedule</h3>
+      </div>
       <button type="button" class="modal-close-btn" onclick="closeEditProfileModal()">&times;</button>
     </div>
 
-    <form id="editProfileForm" onsubmit="saveProfileEdits(event)">
-      <div class="modal-body">
+    <form id="editProfileForm" onsubmit="saveProfileEdits(event)" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+      <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 130px); padding: 20px 24px; display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Section 1: Professional Identity & Role -->
+        <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">1. Professional Identity & Role</div>
+        
         <div class="modal-form-group">
-          <label for="editFullName">Full Name *</label>
-          <input type="text" id="editFullName" name="full_name" class="modal-form-control" required />
+          <label for="editFullName">Display Name *</label>
+          <input type="text" id="editFullName" name="full_name" class="modal-form-control" required placeholder="e.g. Kasun Kalhara Perera" />
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="modal-form-group">
-            <label for="editEmail">Email Address</label>
-            <input type="email" id="editEmail" name="email" class="modal-form-control" />
+            <label for="editDept">Department</label>
+            <input type="text" id="editDept" name="dept" class="modal-form-control" placeholder="e.g. Engineering" />
           </div>
           <div class="modal-form-group">
-            <label for="editPhone">Phone Number</label>
-            <input type="text" id="editPhone" name="phone" class="modal-form-control" />
+            <label for="editJobRole">Job Role / Designation</label>
+            <input type="text" id="editJobRole" name="role" class="modal-form-control" placeholder="e.g. Senior Software Engineer" />
           </div>
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="modal-form-group">
-            <label for="editNic">NIC / Passport Number</label>
-            <input type="text" id="editNic" name="nic" class="modal-form-control" />
+            <label for="editEmail">Official Work Email</label>
+            <input type="email" id="editEmail" name="email" class="modal-form-control" placeholder="e.g. kasun@company.com" />
           </div>
           <div class="modal-form-group">
-            <label for="editDob">Date of Birth</label>
-            <input type="date" id="editDob" name="dob" class="modal-form-control" />
+            <label for="editPhone">Primary Contact Phone</label>
+            <input type="text" id="editPhone" name="phone" class="modal-form-control" placeholder="e.g. 077 1234567" />
+          </div>
+        </div>
+
+        <!-- Section 2: Work Schedule & Shift Timing -->
+        <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 6px;">2. Schedule Dates & Shift Timings</div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="modal-form-group">
+            <label for="editSchedStart">Schedule Effective Start Date</label>
+            <input type="date" id="editSchedStart" name="schedule_start_date" class="modal-form-control" />
+          </div>
+          <div class="modal-form-group">
+            <label for="editSchedEnd">Schedule Effective End Date</label>
+            <input type="date" id="editSchedEnd" name="schedule_end_date" class="modal-form-control" />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="modal-form-group">
+            <label for="editWorkShift">Work Shift Hours</label>
+            <input type="text" id="editWorkShift" name="work_shift" class="modal-form-control" placeholder="e.g. 08:30 AM – 05:30 PM" />
+          </div>
+          <div class="modal-form-group">
+            <label for="editWorkMode">General Work Mode</label>
+            <select id="editWorkMode" name="work_mode" class="modal-form-control">
+              <option value="On-Site (Active)">On-Site (Active)</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="Remote">Remote</option>
+            </select>
           </div>
         </div>
 
         <div class="modal-form-group">
-          <label for="editGender">Gender</label>
-          <select id="editGender" name="gender" class="modal-form-control">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
+          <label for="editLocation">Assigned Work Location</label>
+          <input type="text" id="editLocation" name="work_location" class="modal-form-control" placeholder="e.g. Colombo HQ" />
         </div>
 
-        <div class="modal-form-group">
-          <label for="editAddress">Residential Address</label>
-          <input type="text" id="editAddress" name="address" class="modal-form-control" />
-        </div>
+        <!-- Section 3: Daily Work Arrangement (On-Site / WFH / Leave) -->
+        <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 6px;">3. Weekly Duty Arrangement (On-Site, WFH, Leave)</div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-          <div class="modal-form-group">
-            <label for="editEmName">Emergency Contact Name</label>
-            <input type="text" id="editEmName" name="emergency_contact_name" class="modal-form-control" placeholder="e.g. S. Perera (Father)" />
+        <input type="hidden" id="editWeeklyRosterHidden" name="weekly_roster" value="" />
+        
+        <div class="modal-roster-grid">
+          <!-- Mon -->
+          <div class="modal-day-card">
+            <span class="modal-day-card-title">Monday</span>
+            <select class="modal-day-select" id="rosterSel_Mon">
+              <option value="onsite">On-Site</option>
+              <option value="wfh">WFH</option>
+              <option value="leave">Leave</option>
+            </select>
           </div>
-          <div class="modal-form-group">
-            <label for="editEmPhone">Emergency Contact Phone</label>
-            <input type="text" id="editEmPhone" name="emergency_contact_phone" class="modal-form-control" placeholder="e.g. 077 1234567" />
+          <!-- Tue -->
+          <div class="modal-day-card">
+            <span class="modal-day-card-title">Tuesday</span>
+            <select class="modal-day-select" id="rosterSel_Tue">
+              <option value="onsite">On-Site</option>
+              <option value="wfh">WFH</option>
+              <option value="leave">Leave</option>
+            </select>
           </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-          <div class="modal-form-group">
-            <label for="editLocation">Work Location</label>
-            <input type="text" id="editLocation" name="work_location" class="modal-form-control" placeholder="e.g. Colombo HQ" />
+          <!-- Wed -->
+          <div class="modal-day-card">
+            <span class="modal-day-card-title">Wednesday</span>
+            <select class="modal-day-select" id="rosterSel_Wed">
+              <option value="onsite">On-Site</option>
+              <option value="wfh">WFH</option>
+              <option value="leave">Leave</option>
+            </select>
           </div>
-          <div class="modal-form-group">
-            <label for="editEmpType">Employment Type</label>
-            <input type="text" id="editEmpType" name="employment_type" class="modal-form-control" placeholder="e.g. Full-Time" />
+          <!-- Thu -->
+          <div class="modal-day-card">
+            <span class="modal-day-card-title">Thursday</span>
+            <select class="modal-day-select" id="rosterSel_Thu">
+              <option value="onsite">On-Site</option>
+              <option value="wfh">WFH</option>
+              <option value="leave">Leave</option>
+            </select>
+          </div>
+          <!-- Fri -->
+          <div class="modal-day-card">
+            <span class="modal-day-card-title">Friday</span>
+            <select class="modal-day-select" id="rosterSel_Fri">
+              <option value="onsite">On-Site</option>
+              <option value="wfh" selected>WFH</option>
+              <option value="leave">Leave</option>
+            </select>
+          </div>
+          <!-- Sat -->
+          <div class="modal-day-card">
+            <span class="modal-day-card-title">Saturday</span>
+            <select class="modal-day-select" id="rosterSel_Sat">
+              <option value="onsite">On-Site</option>
+              <option value="wfh">WFH</option>
+              <option value="leave" selected>Leave</option>
+            </select>
+          </div>
+          <!-- Sun -->
+          <div class="modal-day-card">
+            <span class="modal-day-card-title">Sunday</span>
+            <select class="modal-day-select" id="rosterSel_Sun">
+              <option value="onsite">On-Site</option>
+              <option value="wfh">WFH</option>
+              <option value="leave" selected>Leave</option>
+            </select>
           </div>
         </div>
       
       </div>
 
-      <div class="modal-footer">
+      <div class="modal-footer" style="padding: 14px 24px; border-top: 1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:10px; background:#fafbfd; flex-shrink:0;">
         <button type="button" class="btn-edit-profile" style="background:#f1f5f9; color:#475569; box-shadow:none;" onclick="closeEditProfileModal()">Cancel</button>
-        <button type="submit" class="btn-edit-profile" id="saveProfileBtn">Save Changes</button>
+        <button type="submit" class="btn-edit-profile" id="saveProfileBtn" style="background:var(--navy); color:#ffffff;">Save Changes</button>
       </div>
     </form>
   </div>
 </div>
-
-<script>
-(function () {
-  let userProfileData = {};
-
-  window.fetchEmployeeProfileData = function () {
-    const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/fetch_profile/fetch_profile.php';
-
-    fetch(fetchUrl)
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === 'success' && res.data) {
-          userProfileData = res.data;
-          renderProfileData(res.data);
-        }
-      })
-      .catch(() => {});
-  };
-
-  function renderProfileData(p) {
-    const name = p.full_name || p.fullname || p.name || 'Employee';
-    const initials = name.split(' ').filter(n => n.length > 0).map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'EM';
-
-    // 1. Text Fields
-    const el = id => document.getElementById(id);
-    if (el('viewProfileName')) el('viewProfileName').textContent = name;
-    if (el('viewFullName')) el('viewFullName').textContent = name;
-    if (el('topEmpName')) el('topEmpName').textContent = name;
-    if (el('viewProfileTitle')) el('viewProfileTitle').textContent = `${p.job_title || p.role || 'Staff'} • ${p.department || p.dept || 'General'}`;
-    if (el('viewEmail')) el('viewEmail').textContent = p.email || '—';
-    if (el('viewPhone')) el('viewPhone').textContent = p.phone || '—';
-    if (el('viewNic')) el('viewNic').textContent = p.nic || '—';
-    if (el('viewDob')) el('viewDob').textContent = p.dob || '—';
-    if (el('viewGender')) el('viewGender').textContent = p.gender || '—';
-    if (el('viewAddress')) el('viewAddress').textContent = p.address || '—';
-    if (el('viewEmName')) el('viewEmName').textContent = p.emergency_contact_name || '—';
-    if (el('viewEmPhone')) el('viewEmPhone').textContent = p.emergency_contact_phone || '—';
-    if (el('viewDept')) el('viewDept').textContent = p.department || p.dept || 'General';
-    if (el('viewJobRole')) el('viewJobRole').textContent = p.job_title || p.role || 'Staff';
-    if (el('viewEmpType')) el('viewEmpType').textContent = p.employment_type || 'Full-Time';
-    if (el('viewWorkLocation')) el('viewWorkLocation').textContent = p.work_location || 'Colombo HQ';
-    if (el('viewJoinDate')) el('viewJoinDate').textContent = p.join_date || p.joined || '—';
-    if (el('viewEmpIdTag')) el('viewEmpIdTag').textContent = p.employee_id_code || ('EMP-' + String(p.id || 1).padStart(3, '0'));
-    if (el('viewLocationTag')) el('viewLocationTag').textContent = p.work_location || 'HQ';
-
-    // Calculate Probation Status
-    const joined = p.join_date || p.joined;
-    if (joined && joined !== '—') {
-      const joinD = new Date(joined);
-      if (!isNaN(joinD.getTime())) {
-        const probD = new Date(joinD);
-        probD.setMonth(probD.getMonth() + 6);
-        const probStr = probD.toISOString().split('T')[0];
-        const now = new Date();
-        if (now < probD) {
-          if (el('viewProbationStatus')) {
-            el('viewProbationStatus').textContent = '6 Months (In Progress - Review ' + probStr + ')';
-            el('viewProbationStatus').style.color = '#d97706';
-          }
-          if (el('viewProbationTag')) el('viewProbationTag').textContent = 'Probation: In Progress';
-        } else {
-          if (el('viewProbationStatus')) {
-            el('viewProbationStatus').textContent = 'Completed (Confirmed)';
-            el('viewProbationStatus').style.color = '#16a34a';
-          }
-          if (el('viewProbationTag')) el('viewProbationTag').textContent = 'Confirmed Staff';
-        }
-      }
-    }
-
-    // 2. Avatar / Profile Picture
-    const picImg = el('myProfilePicImg');
-    const placeholder = el('myProfilePicPlaceholder');
-    const topAvatar = el('topAvatarPreview');
-
-    if (p.profile_pic && p.profile_pic.trim() !== '') {
-      const pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + p.profile_pic;
-      if (picImg) {
-        picImg.src = pth;
-        picImg.style.display = 'block';
-      }
-      if (placeholder) placeholder.style.display = 'none';
-      if (topAvatar) {
-        topAvatar.innerHTML = `<img src="${pth}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
-      }
-    } else {
-      if (picImg) picImg.style.display = 'none';
-      if (placeholder) {
-        placeholder.textContent = initials;
-        placeholder.style.display = 'flex';
-      }
-      if (topAvatar) topAvatar.textContent = initials;
-    }
-  }
-
-  // ---- Modal Open / Close ----
-  window.openEditProfileModal = function () {
-    const modal = document.getElementById('editProfileModal');
-    if (!modal) return;
-
-    document.getElementById('editFullName').value = userProfileData.full_name || '';
-    document.getElementById('editEmail').value = userProfileData.email || '';
-    document.getElementById('editPhone').value = userProfileData.phone || '';
-    document.getElementById('editNic').value = userProfileData.nic || '';
-    document.getElementById('editDob').value = userProfileData.dob || '';
-    document.getElementById('editGender').value = userProfileData.gender || 'Male';
-    document.getElementById('editAddress').value = userProfileData.address || '';
-    document.getElementById('editEmName').value = userProfileData.emergency_contact_name || '';
-    document.getElementById('editEmPhone').value = userProfileData.emergency_contact_phone || '';
-    document.getElementById('editLocation').value = userProfileData.work_location || '';
-    document.getElementById('editEmpType').value = userProfileData.employment_type || '';
-
-    modal.classList.add('open');
-  };
-
-  window.closeEditProfileModal = function () {
-    const modal = document.getElementById('editProfileModal');
-    if (modal) modal.classList.remove('open');
-  };
-
-  // ---- Save Profile Edits via AJAX ----
-  window.saveProfileEdits = function (e) {
-    e.preventDefault();
-
-    const saveUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/update_profile/update_profile.php';
-    const form = document.getElementById('editProfileForm');
-    const formData = new FormData(form);
-    formData.append('user_id', 1);
-
-    const btn = document.getElementById('saveProfileBtn');
-    if (btn) btn.disabled = true;
-
-    fetch(saveUrl, { method: 'POST', body: formData })
-      .then(res => res.json())
-      .then(res => {
-        if (btn) btn.disabled = false;
-        if (res.status === 'success') {
-          alert('Profile details updated successfully!');
-          closeEditProfileModal();
-          window.fetchEmployeeProfileData();
-          if (typeof window.fetchPersonalDetails === 'function') window.fetchPersonalDetails();
-        } else {
-          alert(res.message || 'Error updating profile.');
-        }
-      })
-      .catch(() => {
-        if (btn) btn.disabled = false;
-        alert('Profile updated successfully.');
-        closeEditProfileModal();
-        window.fetchEmployeeProfileData();
-      });
-  };
-
-  // ---- Upload Profile Photo via AJAX ----
-  window.uploadProfilePhoto = function (input) {
-    if (!input.files || !input.files[0]) return;
-
-    const file = input.files[0];
-    const formData = new FormData();
-    formData.append('avatar_file', file);
-    formData.append('user_id', 1);
-
-    const uploadUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/upload_avatar/upload_avatar.php';
-
-    fetch(uploadUrl, { method: 'POST', body: formData })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === 'success') {
-          alert('Profile picture updated successfully!');
-          window.fetchEmployeeProfileData();
-          if (typeof window.fetchPersonalDetails === 'function') window.fetchPersonalDetails();
-        } else {
-          alert(res.message || 'Could not upload profile picture.');
-        }
-      })
-      .catch(() => {
-        alert('Profile picture updated.');
-        window.fetchEmployeeProfileData();
-      });
-  };
-
-  window.fetchEmployeeProfileData();
-})();
-</script>

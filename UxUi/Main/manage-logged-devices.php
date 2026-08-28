@@ -490,15 +490,15 @@ include_once '../../imports/need/session_setup.php'
     </script>
 
 
-    <?php include_once '../../UxUI-Back/Common/header.php'; ?>
+    <?php if (file_exists(__DIR__ . '/../../UxUi-Back/Includes/header.php')) include_once __DIR__ . '/../../UxUi-Back/Includes/header.php'; ?>
 
     <?php
-    include_once '../../UxUI-Back/Main/manage-logged-devices/manage_logged_devices.php';
-    include_once '../../UxUI-Back/Main/manage-logged-devices/JS/manage_logged_devices_JS.php';
+    include_once __DIR__ . '/../../UxUi-Back/Main/manage-logged-devices/manage_logged_devices.php';
+    include_once __DIR__ . '/../../UxUi-Back/Main/manage-logged-devices/JS/manage_logged_devices_JS.php';
     ?>
 
 
-    <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+    <?php if (file_exists(__DIR__ . '/../../UxUi-Back/Includes/footer.php')) include_once __DIR__ . '/../../UxUi-Back/Includes/footer.php'; ?>
 </body>
 
 </html>

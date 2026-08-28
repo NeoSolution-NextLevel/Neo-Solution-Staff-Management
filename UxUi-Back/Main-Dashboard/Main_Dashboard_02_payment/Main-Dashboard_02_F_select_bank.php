@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "payment-subscription"; // Tells the sidebar to highlight this tab
     $page_title = "Select Bank Account · Subscription Payment · WWJM Admin";
-include '../UxUI-Back/Includes/header.php';  
+include_once __DIR__ . '/../../Includes/header.php';  
 ?>
 
 <style>
@@ -234,7 +234,7 @@ include '../UxUI-Back/Includes/header.php';
 
 <div class="payment-bank-app">
 
-   <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+   <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
   <!-- ================= TOPBAR ================= -->
   <header class="payment-bank-topbar">

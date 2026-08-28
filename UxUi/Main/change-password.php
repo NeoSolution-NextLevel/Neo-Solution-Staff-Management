@@ -353,15 +353,15 @@
     </head>
 
     <body>
-        <?php include_once '../../UxUI-Back/Common/header.php'; ?>
+        <?php if (file_exists(__DIR__ . '/../../UxUi-Back/Includes/header.php')) include_once __DIR__ . '/../../UxUi-Back/Includes/header.php'; ?>
 
         <?php
-        include_once '../../UxUI-Back/Main/Change-Password/change_password.php';
-        include_once '../../UxUI-Back/Main/Change-Password/JS/change_password_JS.php';
+        include_once __DIR__ . '/../../UxUi-Back/Main/Change-Password/change_password.php';
+        include_once __DIR__ . '/../../UxUi-Back/Main/Change-Password/JS/change_password_JS.php';
         ?>
 
 
-        <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+        <?php if (file_exists(__DIR__ . '/../../UxUi-Back/Includes/footer.php')) include_once __DIR__ . '/../../UxUi-Back/Includes/footer.php'; ?>
     </body>
 
     </html>

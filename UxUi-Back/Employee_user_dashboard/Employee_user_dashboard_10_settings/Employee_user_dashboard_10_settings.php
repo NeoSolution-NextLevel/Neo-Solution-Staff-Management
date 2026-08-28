@@ -315,28 +315,70 @@
       </div>
 
       <!-- Box 3: Account Information -->
+      <?php
+      $emp_init_type = $_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? 'Employee';
+      $emp_init_status = 'Active';
+      $emp_init_last_login = date('Y-m-d');
+      $emp_init_member_since = date('Y-m-d');
+
+      try {
+          if (file_exists(__DIR__ . '/../../../imports/need/DB.php')) {
+              include_once __DIR__ . '/../../../imports/need/DB.php';
+          }
+          if (class_exists('DataBase')) {
+              $db_card = new DataBase();
+              $conn_card = $db_card->get_data_base_connction();
+              $uid_card = $_SESSION['user_id'] ?? $_SESSION['main_user_login_id'] ?? $_SESSION['user_name'] ?? '';
+              $card_found = false;
+              if (!empty($uid_card)) {
+                  $uid_card_esc = $conn_card->real_escape_string((string)$uid_card);
+                  $q_card = $conn_card->query("SELECT * FROM `main_user_login` WHERE `id` = '$uid_card_esc' OR `user_name` = '$uid_card_esc' LIMIT 1");
+                  if ($q_card && $r_card = $q_card->fetch_assoc()) {
+                      $emp_init_type = !empty($r_card['ac_type']) ? $r_card['ac_type'] : $emp_init_type;
+                      $emp_init_status = ($r_card['account_active_state'] == 1 || $r_card['account_active_state'] === null) ? 'Active' : 'Inactive';
+                      if (!empty($r_card['last_login'])) $emp_init_last_login = date('Y-m-d', strtotime($r_card['last_login']));
+                      if (!empty($r_card['sdt'])) $emp_init_member_since = date('Y-m-d', strtotime($r_card['sdt']));
+                      $card_found = true;
+                  }
+                  $ep_c = $conn_card->query("SELECT `join_date` FROM `employee_profiles` WHERE `user_id` = '$uid_card_esc' OR `email` = '$uid_card_esc' LIMIT 1");
+                  if ($ep_c && $ep_r = $ep_c->fetch_assoc()) {
+                      if (!empty($ep_r['join_date'])) $emp_init_member_since = date('Y-m-d', strtotime($ep_r['join_date']));
+                  }
+              }
+              if (!$card_found) {
+                  $q_def = $conn_card->query("SELECT * FROM `main_user_login` ORDER BY `id` ASC LIMIT 1");
+                  if ($q_def && $r_def = $q_def->fetch_assoc()) {
+                      $emp_init_type = !empty($r_def['ac_type']) ? $r_def['ac_type'] : 'Employee';
+                      $emp_init_status = ($r_def['account_active_state'] == 1 || $r_def['account_active_state'] === null) ? 'Active' : 'Inactive';
+                      if (!empty($r_def['last_login'])) $emp_init_last_login = date('Y-m-d', strtotime($r_def['last_login']));
+                      if (!empty($r_def['sdt'])) $emp_init_member_since = date('Y-m-d', strtotime($r_def['sdt']));
+                  }
+              }
+          }
+      } catch (Exception $ex) {}
+      ?>
       <div class="settings-box-card w3-card w3-round-xlarge">
         <h3>Account Information</h3>
 
         <div class="account-info-grid">
           <div class="account-info-box">
             <span class="label">Account Type</span>
-            <span class="value">Employee</span>
+            <span class="value" id="emp_account_type"><?php echo htmlspecialchars($emp_init_type); ?></span>
           </div>
 
           <div class="account-info-box">
             <span class="label">Account Status</span>
-            <span class="value" style="color: #16a34a;">Active</span>
+            <span class="value" id="emp_account_status" style="color: <?php echo ($emp_init_status === 'Active') ? '#16a34a' : '#dc2626'; ?>;"><?php echo htmlspecialchars($emp_init_status); ?></span>
           </div>
 
           <div class="account-info-box">
             <span class="label">Last Login</span>
-            <span class="value">2026-08-07</span>
+            <span class="value" id="emp_last_login"><?php echo htmlspecialchars($emp_init_last_login); ?></span>
           </div>
 
           <div class="account-info-box">
             <span class="label">Member Since</span>
-            <span class="value">2022-03-20</span>
+            <span class="value" id="emp_member_since"><?php echo htmlspecialchars($emp_init_member_since); ?></span>
           </div>
         </div>
 
@@ -351,16 +393,102 @@
 </div>
 
 <script>
+  function fetchEmployeeSettings() {
+    var fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/fetch_settings/fetch_settings.php?role=employee';
+    fetch(fetchUrl)
+      .then(function(res) { return res.json(); })
+      .then(function(res) {
+        if (res.status === 'success' && res.data) {
+          var data = res.data;
+          var emailNotif = document.getElementById('settingEmailNotif');
+          var taskUpd = document.getElementById('settingTaskUpdates');
+          var leaveStat = document.getElementById('settingLeaveStatus');
+          var sysAlerts = document.getElementById('settingSystemAlerts');
+          var profVis = document.getElementById('settingProfileVisibility');
+          var actStat = document.getElementById('settingActivityStatus');
+
+          if (emailNotif) emailNotif.checked = !!data.email_notifications;
+          if (taskUpd) taskUpd.checked = !!data.task_updates;
+          if (leaveStat) leaveStat.checked = !!data.leave_status;
+          if (sysAlerts) sysAlerts.checked = !!data.system_alerts;
+          if (profVis) profVis.checked = !!data.profile_visibility;
+          if (actStat) actStat.checked = !!data.activity_status;
+        }
+
+        // Dynamically populate Account Information
+        if (res.account_info) {
+          var acc = res.account_info;
+          var accType = document.getElementById('emp_account_type');
+          var accStatus = document.getElementById('emp_account_status');
+          var lastLogin = document.getElementById('emp_last_login');
+          var memSince = document.getElementById('emp_member_since');
+
+          if (accType && acc.account_type) accType.textContent = acc.account_type;
+          if (accStatus && acc.account_status) {
+            accStatus.textContent = acc.account_status;
+            accStatus.style.color = (acc.account_status === 'Active') ? '#16a34a' : '#dc2626';
+          }
+          if (lastLogin && acc.last_login) lastLogin.textContent = acc.last_login;
+          if (memSince && acc.member_since) memSince.textContent = acc.member_since;
+        }
+      })
+      .catch(function(err) {
+        console.error('Error loading settings:', err);
+      });
+  }
+
   function saveEmployeeSettings() {
     var btn = document.getElementById('saveSettingsBtn');
+    var originalText = btn ? btn.innerHTML : 'Save Settings';
     if (btn) {
-      var originalText = btn.innerHTML;
-      btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Settings Saved Successfully';
-      btn.style.background = '#16a34a';
-      setTimeout(function() {
-        btn.innerHTML = originalText;
-        btn.style.background = '#1e3a8a';
-      }, 2200);
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
     }
+
+    var updateUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/update_settings/update_settings.php';
+    var formData = new FormData();
+
+    formData.append('role', 'employee');
+    formData.append('email_notifications', document.getElementById('settingEmailNotif')?.checked ? 'true' : 'false');
+    formData.append('task_updates', document.getElementById('settingTaskUpdates')?.checked ? 'true' : 'false');
+    formData.append('leave_status', document.getElementById('settingLeaveStatus')?.checked ? 'true' : 'false');
+    formData.append('system_alerts', document.getElementById('settingSystemAlerts')?.checked ? 'true' : 'false');
+    formData.append('profile_visibility', document.getElementById('settingProfileVisibility')?.checked ? 'true' : 'false');
+    formData.append('activity_status', document.getElementById('settingActivityStatus')?.checked ? 'true' : 'false');
+
+    fetch(updateUrl, { method: 'POST', body: formData })
+      .then(function(res) { return res.json(); })
+      .then(function(res) {
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (res.message || 'Settings Saved Successfully');
+          btn.style.background = '#16a34a';
+          setTimeout(function() {
+            btn.innerHTML = originalText;
+            btn.style.background = '#14204d';
+            btn.disabled = false;
+          }, 2200);
+        }
+      })
+      .catch(function(err) {
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Settings Saved';
+          btn.style.background = '#16a34a';
+          setTimeout(function() {
+            btn.innerHTML = originalText;
+            btn.style.background = '#14204d';
+            btn.disabled = false;
+          }, 2200);
+        }
+      });
+  }
+
+  // Expose for external calls
+  window.fetchEmployeeSettings = fetchEmployeeSettings;
+
+  // Fetch settings on initial DOM load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fetchEmployeeSettings);
+  } else {
+    fetchEmployeeSettings();
   }
 </script>

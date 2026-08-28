@@ -28,10 +28,11 @@ Database: `user_login_db`
 --
 
 CREATE TABLE `audit_trail_report` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ast` tinyint(1) DEFAULT NULL,
   `sdt` timestamp NULL DEFAULT NULL,
   `dis` varchar(4500) DEFAULT NULL,
+  `main_user_login_id` int NOT NULL,
   `main_user_login_email_list_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -42,7 +43,7 @@ CREATE TABLE `audit_trail_report` (
 --
 
 CREATE TABLE `branch` (
-  `id` int(11) NOT NULL
+  `id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -59,7 +60,7 @@ INSERT INTO `branch` (`id`) VALUES
 --
 
 CREATE TABLE `company` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ast` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -68,7 +69,7 @@ CREATE TABLE `company` (
 --
 
 INSERT INTO `company` (`id`, `ast`) VALUES
-(1, 1);
+(1, NULL);
 
 -- --------------------------------------------------------
 
@@ -77,7 +78,7 @@ INSERT INTO `company` (`id`, `ast`) VALUES
 --
 
 CREATE TABLE `email_sms_link_manament` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `state_of_view` tinyint(1) DEFAULT NULL,
   `on_short_lock` tinyint(1) DEFAULT NULL,
   `key_of_encript` varchar(450) DEFAULT NULL,
@@ -85,7 +86,9 @@ CREATE TABLE `email_sms_link_manament` (
   `id_of_value` text DEFAULT NULL,
   `view_count` int(11) DEFAULT NULL,
   `state_email` tinyint(1) DEFAULT NULL,
-  `state_sms` tinyint(1) DEFAULT NULL
+  `state_sms` tinyint(1) DEFAULT NULL,
+  `company_id` int NOT NULL,
+  `branch_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -95,7 +98,7 @@ CREATE TABLE `email_sms_link_manament` (
 --
 
 CREATE TABLE `email_sms_link_view_history` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `sdt` timestamp NULL DEFAULT NULL,
   `ast` tinyint(1) DEFAULT NULL,
   `Email_SMS_link_manament_id` int(11) NOT NULL
@@ -108,7 +111,7 @@ CREATE TABLE `email_sms_link_view_history` (
 --
 
 CREATE TABLE `main_user_account_access_level_list` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `type_of_access` varchar(45) DEFAULT NULL,
   `ast` tinyint(1) DEFAULT NULL,
   `sdt` timestamp NULL DEFAULT NULL,
@@ -133,7 +136,7 @@ INSERT INTO `main_user_account_access_level_list` (`id`, `type_of_access`, `ast`
 --
 
 CREATE TABLE `main_user_login` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `user_name` varchar(450) DEFAULT NULL,
   `password` varchar(450) DEFAULT NULL,
   `account_active_state` tinyint(1) DEFAULT NULL,
@@ -179,7 +182,7 @@ INSERT INTO `main_user_login` (`id`, `user_name`, `password`, `account_active_st
 --
 
 CREATE TABLE `main_user_login_device` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ast` tinyint(1) DEFAULT NULL,
   `sdt` timestamp NULL DEFAULT NULL,
   `device_type` varchar(45) DEFAULT NULL,
@@ -201,7 +204,7 @@ CREATE TABLE `main_user_login_device` (
 --
 
 CREATE TABLE `bank_details` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `ast` varchar(10) DEFAULT '1',
   `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
   `user_id` int(11) DEFAULT 1,
@@ -223,14 +226,14 @@ CREATE TABLE `bank_details` (
 --
 
 CREATE TABLE `main_user_login_email_list` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `email_steate` tinyint(1) DEFAULT NULL,
   `key_of_email` varchar(4500) DEFAULT NULL,
   `ast` tinyint(1) DEFAULT NULL,
   `sdt` timestamp NULL DEFAULT NULL,
   `type_email` varchar(45) DEFAULT NULL,
-  `main_user_login_id` int(11) NOT NULL,
-  `company_id` int(11) NOT NULL
+  `main_user_login_id` int NOT NULL,
+  `company_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -307,55 +310,55 @@ ALTER TABLE `main_user_login_email_list`
 -- AUTO_INCREMENT for table `audit_trail_report`
 --
 ALTER TABLE `audit_trail_report`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `branch`
 --
 ALTER TABLE `branch`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `company`
 --
 ALTER TABLE `company`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `email_sms_link_manament`
 --
 ALTER TABLE `email_sms_link_manament`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `email_sms_link_view_history`
 --
 ALTER TABLE `email_sms_link_view_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `main_user_account_access_level_list`
 --
 ALTER TABLE `main_user_account_access_level_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `main_user_login`
 --
 ALTER TABLE `main_user_login`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `main_user_login_device`
 --
 ALTER TABLE `main_user_login_device`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `main_user_login_email_list`
 --
 ALTER TABLE `main_user_login_email_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -398,6 +401,208 @@ ALTER TABLE `main_user_login_device`
 ALTER TABLE `main_user_login_email_list`
   ADD CONSTRAINT `fk_main_user_login_email_list_company1` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_main_user_login_email_list_main_user_login2` FOREIGN KEY (`main_user_login_id`) REFERENCES `main_user_login` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `departments`
+--
+
+CREATE TABLE IF NOT EXISTS `departments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `ast` varchar(10) DEFAULT '1',
+  `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `name` varchar(255) NOT NULL,
+  `head` varchar(255) DEFAULT '',
+  `employees` int DEFAULT 0,
+  `color` varchar(50) DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_roles`
+--
+
+CREATE TABLE IF NOT EXISTS `job_roles` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `ast` varchar(10) DEFAULT '1',
+  `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `job_title` varchar(255) NOT NULL,
+  `departments` varchar(255) DEFAULT '',
+  `number_of_employees` int DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `documents`
+--
+
+CREATE TABLE IF NOT EXISTS `documents` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT 1,
+  `employee_id` varchar(50) DEFAULT 'EMP-001',
+  `employee_name` varchar(255) DEFAULT '',
+  `doc_type` varchar(255) DEFAULT 'Document',
+  `file_name` varchar(255) DEFAULT '',
+  `file_path` varchar(500) DEFAULT '',
+  `file_size` varchar(50) DEFAULT '1.0 MB',
+  `status` varchar(50) DEFAULT 'Uploaded',
+  `uploaded_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ast` varchar(10) DEFAULT '1',
+  `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `leave_requests`
+--
+
+CREATE TABLE IF NOT EXISTS `leave_requests` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `ast` varchar(10) DEFAULT '1',
+  `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `employee_id` varchar(50) DEFAULT '',
+  `employee_name` varchar(255) DEFAULT '',
+  `leave_type` varchar(100) DEFAULT 'Annual Leave',
+  `from_date` date DEFAULT NULL,
+  `to_date` date DEFAULT NULL,
+  `days` int DEFAULT 1,
+  `reason` text DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Pending',
+  `approved_by` varchar(255) DEFAULT NULL,
+  `approved_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_management`
+--
+
+CREATE TABLE IF NOT EXISTS `task_management` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `task_title` varchar(255) NOT NULL,
+  `department` varchar(255) DEFAULT '',
+  `assigned_employee` varchar(255) DEFAULT '',
+  `work_mode` varchar(50) DEFAULT 'Onsite',
+  `deadline` varchar(100) DEFAULT '',
+  `priority` varchar(50) DEFAULT 'Medium',
+  `status` varchar(50) DEFAULT 'Pending',
+  `ast` varchar(10) DEFAULT '1',
+  `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `system_notifications`
+--
+
+CREATE TABLE IF NOT EXISTS `system_notifications` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `recipient_role` varchar(50) DEFAULT 'admin',
+  `recipient_name` varchar(150) DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `type` varchar(50) DEFAULT 'general',
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin_settings`
+--
+
+CREATE TABLE IF NOT EXISTS `admin_settings` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(100) NOT NULL,
+  `email_notifications` tinyint(1) NOT NULL DEFAULT 1,
+  `task_updates` tinyint(1) NOT NULL DEFAULT 1,
+  `leave_status` tinyint(1) NOT NULL DEFAULT 1,
+  `system_alerts` tinyint(1) NOT NULL DEFAULT 0,
+  `profile_visibility` tinyint(1) NOT NULL DEFAULT 1,
+  `activity_status` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_admin_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `employee_settings`
+--
+
+CREATE TABLE IF NOT EXISTS `employee_settings` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(100) NOT NULL,
+  `email_notifications` tinyint(1) NOT NULL DEFAULT 1,
+  `task_updates` tinyint(1) NOT NULL DEFAULT 1,
+  `leave_status` tinyint(1) NOT NULL DEFAULT 1,
+  `system_alerts` tinyint(1) NOT NULL DEFAULT 0,
+  `profile_visibility` tinyint(1) NOT NULL DEFAULT 1,
+  `activity_status` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_employee_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `employee_profiles`
+--
+
+CREATE TABLE IF NOT EXISTS `employee_profiles` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `full_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(50) DEFAULT NULL,
+  `department` varchar(100) DEFAULT NULL,
+  `job_title` varchar(100) DEFAULT NULL,
+  `join_date` date DEFAULT NULL,
+  `nic` varchar(50) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `gender` varchar(20) DEFAULT ,
+  `address` text DEFAULT NULL,
+  `emergency_contact_name` varchar(255) DEFAULT NULL,
+  `emergency_contact_phone` varchar(50) DEFAULT NULL,
+  `employee_id_code` varchar(50) DEFAULT NULL,
+  `employment_type` varchar(50) DEFAULT,
+  `work_location` varchar(100) DEFAULT,
+  `work_shift` varchar(100) DEFAULT ,
+  `working_days` varchar(255) DEFAULT ,
+  `weekly_roster` text DEFAULT NULL,
+  `schedule_start_date` date DEFAULT NULL,
+  `schedule_end_date` date DEFAULT NULL,
+  `work_mode` varchar(100) DEFAULT ,
+  `probation_status` varchar(100) DEFAULT ,
+  `probation_start_date` date DEFAULT NULL,
+  `probation_end_date` date DEFAULT NULL,
+  `official_start_date` date DEFAULT NULL,
+  `attendance_days` int DEFAULT 0,
+  `last_attendance_date` date DEFAULT NULL,
+  `profile_pic` varchar(500) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -20,7 +20,7 @@ $reason   = isset($_POST['reason']) ? trim($_POST['reason']) : 'Personal Leave';
 if ($days <= 0) $days = 1;
 
 $leave_obj = new leave_requests_ADD_UPDATE();
-$leave_obj->set_data("", $employee, $type, $from, $to, $days, $reason, "Pending");
+$leave_obj->set_data($employee, $type, $from, $to, $days, $reason, "Pending");
 $res = $leave_obj->process_new_record();
 
 if ($res) {

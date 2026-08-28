@@ -28,6 +28,13 @@ $update_obj->set_data($name, $email, $dept, $role, $status, $joined);
 $res = $update_obj->process_update();
 
 if ($res) {
+    if (!empty($joined)) {
+        $db = new DataBase();
+        $conn = $db->get_data_base_connction();
+        $conn->query("UPDATE `employee_profiles` SET `join_date` = '" . addslashes($joined) . "' WHERE `user_id` = '$id' OR `email` = '" . addslashes($email) . "'");
+        $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$id' OR `user_name` = '" . addslashes($email) . "'");
+    }
+
     echo json_encode([
         'status'  => 'success',
         'message' => 'Employee updated successfully in database.',

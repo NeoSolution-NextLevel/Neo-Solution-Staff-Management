@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "payment-subscription"; // Tells the sidebar to highlight this tab
     $page_title = "Select Member · Subscription Payment · WWJM Admin";
-include '../UxUI-Back/Includes/header.php';  
+include_once __DIR__ . '/../../Includes/header.php';  
 ?>
 
 <style>
@@ -224,7 +224,7 @@ include '../UxUI-Back/Includes/header.php';
 
 <div class="payment-subscription-app">
 
-   <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+   <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
 
   <!-- ================= TOPBAR ================= -->
@@ -303,7 +303,7 @@ include '../UxUI-Back/Includes/header.php';
 
 
 <!-- ================= FOOTER (shared component) =================
-     PHP projects: delete this div and put <?php include 'footer.php'; ?>
+     PHP projects: delete this div and put <?php include_once __DIR__ . '/../../Includes/footer.php'; ?>
      in its place instead. -->
 <div id="wwjm-footer-root"></div>
 <script src="footer-loader.js"></script>

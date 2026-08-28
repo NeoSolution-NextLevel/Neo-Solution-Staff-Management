@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "member-street-list"; // Tells the sidebar to highlight this tab
     $page_title = "Member Street List · WWJM Admin";
-include '../UxUI-Back/Includes/header.php'; 
+include_once __DIR__ . '/../../Includes/header.php'; 
 ?>
 
 <style>
@@ -215,7 +215,7 @@ include '../UxUI-Back/Includes/header.php';
 
   <div class="member-street-app">
 
-      <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+      <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
     
 

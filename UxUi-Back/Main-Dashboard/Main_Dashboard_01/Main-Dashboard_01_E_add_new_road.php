@@ -2,7 +2,7 @@
     $pth = "../"; 
     $active_page = "add-new-road"; // Tells the sidebar to highlight this tab
     $page_title = "Add New Road · WWJM Admin";
-include '../UxUI-Back/Includes/header.php'; 
+include_once __DIR__ . '/../../Includes/header.php'; 
 
 ?>
 
@@ -197,7 +197,7 @@ include '../UxUI-Back/Includes/header.php';
 
   <div class="add-road-app">
 
-    <?php include "../UxUI-Back/Includes/Sidebar.php"; ?>
+    <?php include_once __DIR__ . '/../../Includes/sidebar.php'; ?>
 
     <!-- ================= TOPBAR ================= -->
     <header class="add-road-topbar">

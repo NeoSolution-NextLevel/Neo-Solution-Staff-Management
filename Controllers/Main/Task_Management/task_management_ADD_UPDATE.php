@@ -150,7 +150,7 @@ class task_management_ADD_UPDATE
             )";
 
         $data_base_obj->get_result($get_sql_query);
-        $this->error_msg = $data_base_obj->get_error_state_boolean();
+        $this->error_msg = $data_base_obj->get_error();
         return $data_base_obj->get_error_state_boolean();
     }
 
@@ -169,7 +169,7 @@ class task_management_ADD_UPDATE
         }
 
         $data_base_obj->get_result($get_sql_query);
-        $this->error_msg = $data_base_obj->get_error_state_boolean();
+        $this->error_msg = $data_base_obj->get_error();
         return $data_base_obj->get_error_state_boolean();
     }
 }
