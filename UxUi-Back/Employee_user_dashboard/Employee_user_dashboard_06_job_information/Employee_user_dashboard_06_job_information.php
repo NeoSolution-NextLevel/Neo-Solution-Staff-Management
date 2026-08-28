@@ -100,22 +100,24 @@
   }
 
   .job-stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #14204d;
     flex-shrink: 0;
+    transition: all 0.2s ease;
   }
 
-  .job-stat-icon.blue { background: #eff6ff; color: #2563eb; }
-  .job-stat-icon.cyan { background: #ecfeff; color: #0891b2; }
-  .job-stat-icon.amber { background: #fffbeb; color: #d97706; }
-  .job-stat-icon.red { background: #fef2f2; color: #dc2626; }
-  .job-stat-icon.green { background: #f0fdf4; color: #16a34a; }
-  .job-stat-icon.purple { background: #faf5ff; color: #9333ea; }
+  .job-stat-box:hover .job-stat-icon {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #dbeafe;
+  }
 
   .job-stat-content {
     display: flex;
@@ -269,7 +271,7 @@
 
       <!-- 1. Employee ID -->
       <div class="job-stat-box">
-        <div class="job-stat-icon blue">
+        <div class="job-stat-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="16" rx="2"/>
             <line x1="7" y1="8" x2="17" y2="8"/>
@@ -284,7 +286,7 @@
 
       <!-- 2. Department -->
       <div class="job-stat-box">
-        <div class="job-stat-icon cyan">
+        <div class="job-stat-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
             <line x1="9" y1="22" x2="9" y2="22.01"/>
@@ -307,7 +309,7 @@
 
       <!-- 3. Job Role -->
       <div class="job-stat-box">
-        <div class="job-stat-icon amber">
+        <div class="job-stat-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
@@ -321,7 +323,7 @@
 
       <!-- 4. Joining Date -->
       <div class="job-stat-box">
-        <div class="job-stat-icon red">
+        <div class="job-stat-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
             <line x1="16" y1="2" x2="16" y2="6"/>
@@ -337,7 +339,7 @@
 
       <!-- 5. Probation Status -->
       <div class="job-stat-box">
-        <div class="job-stat-icon green">
+        <div class="job-stat-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12 6 12 12 16 14"/>
@@ -345,13 +347,13 @@
         </div>
         <div class="job-stat-content">
           <span class="label">Probation Period</span>
-          <span class="value" id="jobProbationStatus" style="color: #2563eb;">6 Months</span>
+          <span class="value" id="jobProbationStatus">In Progress</span>
         </div>
       </div>
 
       <!-- 6. Work Location -->
       <div class="job-stat-box">
-        <div class="job-stat-icon purple">
+        <div class="job-stat-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
             <circle cx="12" cy="10" r="3"/>
@@ -429,13 +431,35 @@
           if (el('jobLocation')) el('jobLocation').textContent = location;
           if (el('topEmpJobName')) el('topEmpJobName').textContent = name;
           
-          if (el('timelineJoinDate')) el('timelineJoinDate').textContent = joined;
+          // 1. Official Appointment / Join Date
+          const officialStart = p.official_start_date || joined || '—';
+          if (el('timelineJoinDate')) el('timelineJoinDate').textContent = officialStart;
           if (el('timelineJoinDesc')) el('timelineJoinDesc').textContent = `Official appointment as ${role} in ${dept} department.`;
-          if (el('timelineActiveTitle')) el('timelineActiveTitle').textContent = `Active ${empType}`;
-          if (el('timelineActiveDesc')) el('timelineActiveDesc').textContent = `Active member of ${dept} team at ${location}.`;
 
-          // Calculate Dynamic 6-Month Probation Review
-          if (joined && joined !== '—') {
+          // 2. Current Position
+          if (el('timelineActiveTitle')) el('timelineActiveTitle').textContent = `Current Position (${empType})`;
+          if (el('timelineActiveDesc')) el('timelineActiveDesc').textContent = `Active member of ${dept} team at ${location} (${role}).`;
+
+          // 3. Dynamic Probation Review Milestones
+          const probStatus = p.probation_status || 'In Progress';
+          const probStart = p.probation_start_date || joined || '';
+          const probEnd = p.probation_end_date || '';
+
+          if (el('jobProbationStatus')) {
+            el('jobProbationStatus').textContent = probStatus;
+            el('jobProbationStatus').style.color = probStatus.toLowerCase().includes('completed') || probStatus.toLowerCase().includes('confirmed') ? '#16a34a' : '#2563eb';
+          }
+
+          if (probEnd) {
+            if (el('timelineProbationDate')) el('timelineProbationDate').textContent = probEnd;
+            if (el('timelineProbationTitle')) el('timelineProbationTitle').textContent = `Probation Review (${probStatus})`;
+            if (el('timelineProbationDesc')) {
+              el('timelineProbationDesc').textContent = probStart ? `Probation evaluation scheduled from ${probStart} to ${probEnd}.` : `Probation evaluation target date: ${probEnd}.`;
+            }
+            if (el('timelineProbationDot')) {
+              el('timelineProbationDot').className = probStatus.toLowerCase().includes('completed') || probStatus.toLowerCase().includes('confirmed') ? 'timeline-dot filled' : 'timeline-dot';
+            }
+          } else if (joined && joined !== '—') {
             const joinD = new Date(joined);
             if (!isNaN(joinD.getTime())) {
               const probD = new Date(joinD);
@@ -444,22 +468,14 @@
               const now = new Date();
 
               if (now < probD) {
-                if (el('jobProbationStatus')) {
-                  el('jobProbationStatus').textContent = '6 Months (In Progress)';
-                  el('jobProbationStatus').style.color = '#d97706';
-                }
                 if (el('timelineProbationDate')) el('timelineProbationDate').textContent = probStr;
                 if (el('timelineProbationTitle')) el('timelineProbationTitle').textContent = 'Probation Review (Scheduled)';
-                if (el('timelineProbationDesc')) el('timelineProbationDesc').textContent = `Initial 6-month performance evaluation scheduled on ${probStr}.`;
+                if (el('timelineProbationDesc')) el('timelineProbationDesc').textContent = `Performance evaluation scheduled on ${probStr}.`;
                 if (el('timelineProbationDot')) el('timelineProbationDot').className = 'timeline-dot';
               } else {
-                if (el('jobProbationStatus')) {
-                  el('jobProbationStatus').textContent = 'Completed (Confirmed)';
-                  el('jobProbationStatus').style.color = '#16a34a';
-                }
                 if (el('timelineProbationDate')) el('timelineProbationDate').textContent = probStr;
                 if (el('timelineProbationTitle')) el('timelineProbationTitle').textContent = 'Probation Completed & Confirmed';
-                if (el('timelineProbationDesc')) el('timelineProbationDesc').textContent = `Successfully completed 6-month review period on ${probStr} with confirmation.`;
+                if (el('timelineProbationDesc')) el('timelineProbationDesc').textContent = `Successfully completed review period on ${probStr} with confirmation.`;
                 if (el('timelineProbationDot')) el('timelineProbationDot').className = 'timeline-dot filled';
               }
             }
