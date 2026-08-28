@@ -33,7 +33,8 @@ CREATE TABLE `audit_trail_report` (
   `sdt` timestamp NULL DEFAULT NULL,
   `dis` varchar(4500) DEFAULT NULL,
   `main_user_login_id` int NOT NULL,
-  `main_user_login_email_list_id` int(11) NOT NULL
+  `main_user_login_email_list_id` int(11) NOT NULL,
+  `company_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
