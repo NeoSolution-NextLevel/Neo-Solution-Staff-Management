@@ -35,7 +35,13 @@ if ($prof_res && $prof_res->num_rows > 0) {
             'address'         => !empty($p['address']) ? $p['address'] : '',
             'profile_pic'     => !empty($p['profile_pic']) ? $p['profile_pic'] : '',
             'emp_code'        => !empty($p['employee_id_code']) ? $p['employee_id_code'] : 'EMP-' . str_pad($p['id'], 3, '0', STR_PAD_LEFT),
-            'location'        => !empty($p['work_location']) ? $p['work_location'] : ''
+            'location'        => !empty($p['work_location']) ? $p['work_location'] : '',
+            'work_shift'      => !empty($p['work_shift']) ? $p['work_shift'] : '08:30 AM – 05:30 PM',
+            'working_days'    => !empty($p['working_days']) ? $p['working_days'] : 'Mon,Tue,Wed,Thu,Fri',
+            'weekly_roster'   => !empty($p['weekly_roster']) ? $p['weekly_roster'] : '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"wfh","Sat":"leave","Sun":"leave"}',
+            'employment_type' => !empty($p['employment_type']) ? $p['employment_type'] : 'Full-Time',
+            'em_name'         => !empty($p['emergency_contact_name']) ? $p['emergency_contact_name'] : '',
+            'em_phone'        => !empty($p['emergency_contact_phone']) ? $p['emergency_contact_phone'] : ''
         ];
     }
 }
@@ -87,7 +93,13 @@ if ($result && $result->num_rows > 0) {
             'address'         => isset($row['address']) ? $row['address'] : '',
             'profile_pic'     => '',
             'emp_code'        => 'EMP-' . str_pad($row['id'], 3, '0', STR_PAD_LEFT),
-            'location'        => ''
+            'location'        => '',
+            'work_shift'      => '08:30 AM – 05:30 PM',
+            'working_days'    => 'Mon,Tue,Wed,Thu,Fri',
+            'weekly_roster'   => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"wfh","Sat":"leave","Sun":"leave"}',
+            'employment_type' => 'Full-Time',
+            'em_name'         => '',
+            'em_phone'        => ''
         ];
     }
 }
