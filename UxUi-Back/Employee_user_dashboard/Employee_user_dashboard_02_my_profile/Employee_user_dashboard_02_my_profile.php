@@ -620,11 +620,11 @@
 
       <button type="button" class="btn-edit-profile" onclick="openEditProfileModal()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        <span>Edit Profile & Schedule</span>
+        <span>Edit Profile</span>
       </button>
     </div>
 
-    <!-- 1. Hero Profile Header Card -->
+    <!-- 1.Header Card -->
     <div class="profile-hero-card">
       <div class="profile-banner"></div>
 
@@ -783,7 +783,7 @@
           </div>
           <div>
             <div class="quick-action-link" onclick="Employee_user_dashboard_03_OPEN()">
-              <span>Personal Details (Legal & Identity Dossier)</span>
+              <span>Personal Details</span>
               <span>&rarr;</span>
             </div>
             <div class="quick-action-link" onclick="Employee_user_dashboard_06_OPEN()">
@@ -875,7 +875,7 @@
             <input type="text" id="editWorkShift" name="work_shift" class="modal-form-control" placeholder="e.g. 08:30 AM – 05:30 PM" />
           </div>
           <div class="modal-form-group">
-            <label for="editWorkMode">General Work Mode</label>
+            <label for="editWorkMode">Work Mode</label>
             <select id="editWorkMode" name="work_mode" class="modal-form-control">
               <option value="On-Site (Active)">On-Site (Active)</option>
               <option value="Hybrid">Hybrid</option>
@@ -885,7 +885,7 @@
         </div>
 
         <div class="modal-form-group">
-          <label for="editLocation">Assigned Work Location</label>
+          <label for="editLocation">Work Location</label>
           <input type="text" id="editLocation" name="work_location" class="modal-form-control" placeholder="e.g. Colombo HQ" />
         </div>
 
