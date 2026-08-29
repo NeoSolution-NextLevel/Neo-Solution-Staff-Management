@@ -533,6 +533,9 @@
             <button class="filter-pill" data-filter="Pending">Pending</button>
             <button class="filter-pill" data-filter="In Progress">In Progress</button>
             <button class="filter-pill" data-filter="Completed">Completed</button>
+            <select id="taskEmployeeFilter" class="filter-pill" style="padding: 7px 14px; outline: none; margin-left: auto; cursor: pointer; background-color: #fff; border: 1px solid #e2e8f0; border-radius: 999px;">
+              <option value="All">All Employees</option>
+            </select>
           </div>
         </div>
 
@@ -582,7 +585,9 @@
             </div>
             <div class="w3-form-group">
               <label>Assigned Employee</label>
-              <input type="text" name="employee" id="createTaskEmployee" required placeholder="e.g. Amal Perera">
+              <select name="employee" id="createTaskEmployee" required>
+                <option value="">Select Employee</option>
+              </select>
             </div>
           </div>
           <div class="w3-form-row">
@@ -646,7 +651,9 @@
             </div>
             <div class="w3-form-group">
               <label>Assigned Employee</label>
-              <input type="text" name="employee" id="editTaskEmployee" required placeholder="e.g. Amal Perera">
+              <select name="employee" id="editTaskEmployee" required>
+                <option value="">Select Employee</option>
+              </select>
             </div>
           </div>
           <div class="w3-form-row">
