@@ -120,8 +120,12 @@
     const cancelCreateTaskModal = document.getElementById('cancelCreateTaskModal');
     const createTaskForm = document.getElementById('createTaskForm');
 
-    function populateTaskDropdowns(deptSelectId, empSelectId) {
+    function populateTaskDropdowns(deptSelectId, empSelectId, callback) {
       const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      let deptsLoaded = false;
+      let empsLoaded = false;
+      const checkDone = () => { if (deptsLoaded && empsLoaded && callback) callback(); };
+
       // Load departments
       fetch(pth + 'UxUi-Back/Departments/fetch_department/fetch_department.php')
         .then(res => res.json())
@@ -130,7 +134,7 @@
             const el = document.getElementById(deptSelectId);
             if (el) el.innerHTML = res.data.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
           }
-        }).catch(() => {});
+        }).catch(() => {}).finally(() => { deptsLoaded = true; checkDone(); });
 
       // Load employees
       fetch(pth + 'UxUi-Back/Employee/fetch_employee/fetch_employee.php')
@@ -140,7 +144,7 @@
             const el = document.getElementById(empSelectId);
             if (el) el.innerHTML = res.data.map(e => `<option value="${e.name}">${e.name} (${e.dept})</option>`).join('');
           }
-        }).catch(() => {});
+        }).catch(() => {}).finally(() => { empsLoaded = true; checkDone(); });
     }
 
     function openCreateModal() { 
@@ -198,8 +202,11 @@
       const el = id => document.getElementById(id);
       if (el('editTaskId')) el('editTaskId').value = task.id;
       if (el('editTaskTitle')) el('editTaskTitle').value = task.title;
-      if (el('editTaskDept')) el('editTaskDept').value = task.dept || task.department || '';
-      if (el('editTaskEmployee')) el('editTaskEmployee').value = task.employee || task.assigned_to || '';
+      populateTaskDropdowns('editTaskDept', 'editTaskEmployee', () => {
+        if (el('editTaskDept')) el('editTaskDept').value = task.dept || task.department || '';
+        if (el('editTaskEmployee')) el('editTaskEmployee').value = task.employee || task.assigned_to || '';
+      });
+
       if (el('editTaskMode')) el('editTaskMode').value = task.mode || 'Online';
       if (el('editTaskDeadline')) el('editTaskDeadline').value = task.deadline || '';
       if (el('editTaskPriority')) el('editTaskPriority').value = task.priority || 'Medium';
