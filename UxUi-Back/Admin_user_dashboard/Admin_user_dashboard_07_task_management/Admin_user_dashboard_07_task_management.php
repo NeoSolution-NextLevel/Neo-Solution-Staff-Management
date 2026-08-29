@@ -281,18 +281,98 @@
       background-color: #ffffff; border-radius: 16px; width: 100%; max-width: 540px; max-height: 90vh; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); overflow: hidden;
       display: flex; flex-direction: column; margin: auto;
     }
-    .w3-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-shrink: 0; }
-    .w3-modal-header h3 { font-size: 17px; font-weight: 800; color: #14204d; margin: 0; }
-    .w3-modal-close { background: none; border: none; font-size: 24px; color: #64748b; cursor: pointer; line-height: 1; padding: 0 4px; }
-    .w3-modal-body { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; }
-    .w3-form-group { display: flex; flex-direction: column; gap: 5px; }
-    .w3-form-group label { font-size: 12px; font-weight: 700; color: #475569; }
-    .w3-form-group input, .w3-form-group select, .w3-form-group textarea { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; color: #1e293b; outline: none; background-color: #ffffff; width: 100%; box-sizing: border-box; font-family: inherit; }
-    .w3-form-group input:focus, .w3-form-group select:focus, .w3-form-group textarea:focus { border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.12); }
-    .w3-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .w3-modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 14px 22px; border-top: 1px solid #f1f5f9; background: #ffffff; flex-shrink: 0; }
-    .w3-btn-cancel { padding: 10px 18px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #64748b; font-size: 13px; font-weight: 600; cursor: pointer; }
-    .w3-btn-save { padding: 10px 20px; border-radius: 8px; border: none; background-color: #14204d; color: #ffffff; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 6px rgba(20, 32, 77, 0.2); }
+    .w3-modal-header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 16px 22px; 
+      background-color: #f8fafc; 
+      border-bottom: 1px solid #e2e8f0; 
+      flex-shrink: 0; 
+    }
+    .w3-modal-header h3 { 
+      font-size: 17px; 
+      font-weight: 800; 
+      color: #14204d; 
+      margin: 0; 
+    }
+    .w3-modal-close { 
+      background: none; 
+      border: none; 
+      font-size: 24px; 
+      color: #64748b; 
+      cursor: pointer; 
+      line-height: 1; 
+      padding: 0 4px; 
+    }
+    .w3-modal-body { 
+      padding: 18px 22px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 14px; 
+      overflow-y: auto; 
+      -webkit-overflow-scrolling: touch; 
+      flex: 1; 
+    }
+    .w3-form-group { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 5px; 
+    }
+    .w3-form-group label { 
+      font-size: 12px; 
+      font-weight: 700; 
+      color: #475569; 
+    }
+    .w3-form-group input, .w3-form-group select, .w3-form-group textarea { 
+      padding: 10px 12px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 8px; 
+      font-size: 13.5px; 
+      color: #1e293b; 
+      outline: none; 
+      background-color: #ffffff; 
+      width: 100%; 
+      box-sizing: border-box; 
+      font-family: inherit; 
+    }
+    .w3-form-group input:focus, .w3-form-group select:focus, .w3-form-group textarea:focus { 
+      border-color: #3b5bdb; 
+      box-shadow: 0 0 0 3px rgba(59,91,219,0.12); 
+    }
+    .w3-form-row { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 12px; 
+    }
+    .w3-modal-footer { 
+      display: flex; 
+      align-items: center; 
+      justify-content: flex-end; 
+      gap: 10px; 
+      padding: 14px 22px; 
+      border-top: 1px solid #f1f5f9; 
+      background: #ffffff; flex-shrink: 0; 
+    }
+    .w3-btn-cancel { 
+      padding: 10px 18px; 
+      border-radius: 8px; 
+      border: 1px solid #cbd5e1; 
+      background-color: #ffffff; 
+      color: #64748b; font-size: 13px; 
+      font-weight: 600; cursor: pointer; 
+    }
+    .w3-btn-save { 
+      padding: 10px 20px; 
+      border-radius: 8px; 
+      border: none; 
+      background-color: #14204d; 
+      color: #ffffff; 
+      font-size: 13px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      box-shadow: 0 2px 6px rgba(20, 32, 77, 0.2); 
+    }
 
     /* Dynamic Mobile Responsiveness */
     @media (max-width: 768px) {
@@ -433,16 +513,15 @@
     </div>
         
     <div class="main-task-wrapper">
-        <!-- Header Row (Count + Create Task Button) -->
         <div class="task-header-row">
-          <p class="task-count-text" id="taskCount">0 total tasks</p>
+          <p class="task-count-text" id="taskCount"></p>
           <button class="btn-create-task" id="openCreateTaskBtn" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
             Create Task
           </button>
         </div>
 
-        <!-- Toolbar (Search Box + Filter Pills) -->
+        <!-- Toolbar  -->
         <div class="task-controls-row">
           <div class="task-search-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -498,11 +577,7 @@
             <div class="w3-form-group">
               <label>Department</label>
               <select name="dept" id="createTaskDept" required>
-                <option value="Engineering">Engineering</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Finance">Finance</option>
-                <option value="HR">HR</option>
-                <option value="Management">Management</option>
+               
               </select>
             </div>
             <div class="w3-form-group">
@@ -528,7 +603,7 @@
               <label>Priority</label>
               <select name="priority">
                 <option value="High">High</option>
-                <option value="Medium" selected>Medium</option>
+                <option value="Medium">Medium</option>
                 <option value="Low">Low</option>
               </select>
             </div>
@@ -566,11 +641,7 @@
             <div class="w3-form-group">
               <label>Department</label>
               <select name="dept" id="editTaskDept">
-                <option value="Engineering">Engineering</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Finance">Finance</option>
-                <option value="HR">HR</option>
-                <option value="Management">Management</option>
+               
               </select>
             </div>
             <div class="w3-form-group">
