@@ -52,19 +52,33 @@ if (!empty($updates)) {
 
 // Check task details to send notification
 $taskRes = $db->get_result("SELECT * FROM `system_tasks` WHERE `id` = $id LIMIT 1");
+$updater_role = isset($_POST['updater_role']) ? trim($_POST['updater_role']) : '';
+
 if ($taskRes && $taskRes->num_rows > 0) {
     $taskData = $taskRes->fetch_assoc();
     $taskTitle = $taskData['title'];
     $taskStatus = $taskData['status'];
     $taskEmp = $taskData['assigned_to'];
 
-    if (!empty($status)) {
+    if (!empty($status) && $updater_role !== 'admin') {
+        // Notify admin if the update was NOT made by the admin
         SystemNotifications::create(
             "Task Status Updated: " . $taskTitle,
             "Task status is now '" . $taskStatus . "' for " . $taskEmp,
             "task_update",
             "admin",
             "Admin"
+        );
+    }
+    
+    // Notify the assigned employee if the update was NOT made by the employee
+    if (!empty($taskEmp) && $updater_role !== 'employee') {
+        SystemNotifications::create(
+            "Task Updated: " . $taskTitle,
+            "Your task '" . $taskTitle . "' has been updated.",
+            "task_update",
+            "employee",
+            $taskEmp
         );
     }
 }
