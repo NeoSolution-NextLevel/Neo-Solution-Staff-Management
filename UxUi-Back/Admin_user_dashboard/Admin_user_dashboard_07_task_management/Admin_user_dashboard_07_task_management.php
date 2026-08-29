@@ -176,7 +176,7 @@
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       width: 100%;
-      max-width: 100%;
+      max-width: 100vw;
     }
 
     .task-table {
@@ -374,10 +374,26 @@
       box-shadow: 0 2px 6px rgba(20, 32, 77, 0.2); 
     }
 
-    /* Dynamic Mobile Responsiveness */
+    /* Dynamic Responsive View */
+    @media (max-width: 1024px) {
+      .task-controls-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .task-search-box {
+        width: 100%;
+        max-width: 100%;
+      }
+      .task-filter-group {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 5px;
+      }
+    }
+
     @media (max-width: 768px) {
       #Admin_user_dashboard_07_task_management {
-        padding: 0 4px 80px !important;
+        padding: 10px 4px 80px !important;
       }
 
       .task-header-row {
