@@ -64,7 +64,7 @@
 
       // 2. Fetch Tasks for KPIs and Today's Work Plan
       function fetchTasksForEmployee(employeeName, pth) {
-        let taskUrl = pth + 'UxUi-Back/Task_Management/fetch_task/fetch_task.php';
+        let taskUrl = pth + 'UxUi-Back/Tasks/fetch_tasks/fetch_tasks.php';
         if (employeeName) {
             taskUrl += '?employee=' + encodeURIComponent(employeeName);
         }
@@ -135,7 +135,11 @@
       }
 
       // 3. Fetch Notifications for Dashboard Widget
-      fetch(pth + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php')
+      let notifUrl = pth + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php?role=employee';
+      if (window.currentEmployeeName) {
+        notifUrl += '&user=' + encodeURIComponent(window.currentEmployeeName);
+      }
+      fetch(notifUrl)
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success' && Array.isArray(res.data)) {
