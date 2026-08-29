@@ -680,7 +680,6 @@
       </div>
     </section>
 
-    <!-- 2. 5 KPI Stat Cards (Same scale as Employees Dashboard) -->
     <section class="stats">
       <!-- Total Staff -> Employees -->
       <div class="stat-card" onclick="if(typeof Admin_user_dashboard_02_OPEN === 'function') Admin_user_dashboard_02_OPEN();" title="View Employees" style="cursor: pointer;">
