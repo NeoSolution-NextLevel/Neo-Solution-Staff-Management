@@ -15,6 +15,9 @@ if (isset($_GET['status']) && !empty($_GET['status'])) {
 if (isset($_GET['department']) && !empty($_GET['department'])) {
     $task_list_obj->filter_by_department($_GET['department']);
 }
+if (isset($_GET['employee']) && !empty($_GET['employee'])) {
+    $task_list_obj->filter_by_employee($_GET['employee']);
+}
 
 $res = $task_list_obj->get_result();
 $tasks = [];
