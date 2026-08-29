@@ -638,7 +638,6 @@ include_once '../../imports/need/session_setup.php';
     include_once '../../UxUI-Back/Main/Failed-Page/JS/Failed-Page_JS.php';
     ?>
 
-    <?php include_once '../../UxUI-Back/Includes/footer.php'; ?>
 </body>
 
 </html>
