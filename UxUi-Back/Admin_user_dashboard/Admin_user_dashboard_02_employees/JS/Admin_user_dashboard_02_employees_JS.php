@@ -189,6 +189,11 @@
       if (el('viewEmpGender')) el('viewEmpGender').textContent = e.gender || 'Male';
       if (el('viewEmpAddress')) el('viewEmpAddress').textContent = e.address || '—';
       if (el('viewEmpCode')) el('viewEmpCode').textContent = e.emp_code || 'EMP-002';
+      if (el('viewEmpWorkShift')) el('viewEmpWorkShift').textContent = e.work_shift || '—';
+      if (el('viewEmpWorkingDays')) el('viewEmpWorkingDays').textContent = e.working_days || '—';
+      if (el('viewEmpType')) el('viewEmpType').textContent = e.employment_type || 'Full-Time';
+      if (el('viewEmpEmName')) el('viewEmpEmName').textContent = e.em_name || '—';
+      if (el('viewEmpEmPhone')) el('viewEmpEmPhone').textContent = e.em_phone || '—';
 
       const statusEl = el('viewEmpStatus');
       if (statusEl) {
@@ -225,16 +230,43 @@
       document.getElementById('editEmpId').value = e.id;
       document.getElementById('editEmpName').value = e.name;
       document.getElementById('editEmpEmail').value = e.email;
-      document.getElementById('editEmpRole').value = e.role;
       document.getElementById('editEmpStatus').value = e.status;
       document.getElementById('editEmpJoined').value = e.joined;
+      document.getElementById('editEmpWorkShift').value = e.work_shift || '';
+      document.getElementById('editEmpWorkingDays').value = e.working_days || '';
+      document.getElementById('editEmpType').value = e.employment_type || 'Full-Time (Permanent)';
+      document.getElementById('editEmpEmName').value = e.em_name || '';
+      document.getElementById('editEmpEmPhone').value = e.em_phone || '';
 
-      // Populate department select
+      // Populate department select dynamically
       const deptSelect = document.getElementById('editEmpDept');
-      if (deptSelect && typeof window.cachedDepartments !== 'undefined' && Array.isArray(window.cachedDepartments)) {
-        deptSelect.innerHTML = window.cachedDepartments.map(d => 
-          `<option value="${d.name}" ${d.name.toLowerCase() === (e.dept||'').toLowerCase() ? 'selected' : ''}>${d.name}</option>`
-        ).join('');
+      if (deptSelect) {
+        const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+        fetch(pth + 'UxUi-Back/Departments/fetch_department/fetch_department.php')
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === 'success' && Array.isArray(res.data)) {
+              deptSelect.innerHTML = res.data.map(d => 
+                `<option value="${d.name}" ${d.name.toLowerCase() === (e.dept||'').toLowerCase() ? 'selected' : ''}>${d.name}</option>`
+              ).join('');
+            }
+          }).catch(() => {});
+      }
+
+      // Populate job roles dynamically
+      const roleSelect = document.getElementById('editEmpRole');
+      if (roleSelect) {
+        const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+        fetch(pth + 'UxUi-Back/Job_Roles/fetch_job_roles/fetch_job_roles.php')
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === 'success' && Array.isArray(res.data)) {
+              const uniqueRoles = [...new Set(res.data.map(r => r.title))];
+              roleSelect.innerHTML = uniqueRoles.map(r => 
+                `<option value="${r}" ${r.toLowerCase() === (e.role||'').toLowerCase() ? 'selected' : ''}>${r}</option>`
+              ).join('');
+            }
+          }).catch(() => {});
       }
 
       editEmpModal.classList.add('active');
@@ -250,6 +282,9 @@
         const role = document.getElementById('editEmpRole').value.trim();
         const status = document.getElementById('editEmpStatus').value;
         const joined = document.getElementById('editEmpJoined').value;
+        const work_shift = document.getElementById('editEmpWorkShift').value.trim();
+        const working_days = document.getElementById('editEmpWorkingDays').value.trim();
+        const employment_type = document.getElementById('editEmpType').value;
 
         const updateUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/update_profile/update_profile.php';
         const formData = new FormData();
@@ -260,6 +295,11 @@
         formData.append('role', role);
         formData.append('status', status);
         formData.append('joined', joined);
+        formData.append('work_shift', work_shift);
+        formData.append('working_days', working_days);
+        formData.append('employment_type', employment_type);
+        formData.append('emergency_contact_name', document.getElementById('editEmpEmName').value.trim());
+        formData.append('emergency_contact_phone', document.getElementById('editEmpEmPhone').value.trim());
 
         fetch(updateUrl, { method: 'POST', body: formData })
           .then(res => res.json())
