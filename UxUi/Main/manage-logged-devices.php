@@ -498,7 +498,6 @@ include_once '../../imports/need/session_setup.php'
     ?>
 
 
-    <?php if (file_exists(__DIR__ . '/../../UxUi-Back/Includes/footer.php')) include_once __DIR__ . '/../../UxUi-Back/Includes/footer.php'; ?>
 </body>
 
 </html>
