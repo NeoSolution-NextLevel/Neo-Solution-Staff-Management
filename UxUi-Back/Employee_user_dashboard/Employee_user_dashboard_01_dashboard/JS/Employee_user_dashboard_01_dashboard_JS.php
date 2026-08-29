@@ -46,25 +46,37 @@
             const topAvatar = el('dashTopAvatar');
             if (topAvatar) {
               if (p.profile_pic && p.profile_pic.trim() !== '') {
-                const pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + p.profile_pic;
-                topAvatar.innerHTML = `<img src="${pth}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
+                const img_pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + p.profile_pic;
+                topAvatar.innerHTML = `<img src="${img_pth}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
               } else {
                 topAvatar.textContent = initials;
               }
             }
+            
+            fetchTasksForEmployee(fullName, pth);
+          } else {
+            fetchTasksForEmployee('', pth);
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          fetchTasksForEmployee('', pth);
+        });
 
       // 2. Fetch Tasks for KPIs and Today's Work Plan
-      fetch(pth + 'UxUi-Back/Tasks/fetch_tasks/fetch_tasks.php')
+      function fetchTasksForEmployee(employeeName, pth) {
+        let taskUrl = pth + 'UxUi-Back/Task_Management/fetch_task/fetch_task.php';
+        if (employeeName) {
+            taskUrl += '?employee=' + encodeURIComponent(employeeName);
+        }
+        
+        fetch(taskUrl)
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success' && Array.isArray(res.data)) {
             const tasks = res.data;
             const todayTasks = tasks.length;
-            const pendingTasks = tasks.filter(t => t.status === 'Pending').length;
-            const completedTasks = tasks.filter(t => t.status === 'Completed').length;
+            const pendingTasks = tasks.filter(t => t.status && t.status.trim().toLowerCase() === 'pending').length;
+            const completedTasks = tasks.filter(t => t.status && (t.status.trim().toLowerCase() === 'completed' || t.status.trim().toLowerCase() === 'done')).length;
 
             const el = id => document.getElementById(id);
             if (el('kpiTodayTasks')) el('kpiTodayTasks').textContent = todayTasks;
@@ -120,6 +132,7 @@
           }
         })
         .catch(() => {});
+      }
 
       // 3. Fetch Notifications for Dashboard Widget
       fetch(pth + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php')
