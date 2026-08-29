@@ -230,6 +230,7 @@
       document.getElementById('editEmpId').value = e.id;
       document.getElementById('editEmpName').value = e.name;
       document.getElementById('editEmpEmail').value = e.email;
+      document.getElementById('editEmpRole').value = e.role;
       document.getElementById('editEmpStatus').value = e.status;
       document.getElementById('editEmpJoined').value = e.joined;
       document.getElementById('editEmpWorkShift').value = e.work_shift || '';
@@ -252,7 +253,6 @@
             }
           }).catch(() => {});
       }
-
       // Populate job roles dynamically
       const roleSelect = document.getElementById('editEmpRole');
       if (roleSelect) {
@@ -329,12 +329,36 @@
 
     function openAddModal() {
       addEmpModal?.classList.add('active');
-      // Populate department select from DB
+      
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      
+      // Populate department select dynamically
       const deptSelect = document.getElementById('addEmpDept');
-      if (deptSelect && typeof window.cachedDepartments !== 'undefined' && Array.isArray(window.cachedDepartments)) {
-        deptSelect.innerHTML = '<option value="">Select Department...</option>' + window.cachedDepartments.map(d => 
-          `<option value="${d.name}">${d.name}</option>`
-        ).join('');
+      if (deptSelect) {
+        fetch(pth + 'UxUi-Back/Departments/fetch_department/fetch_department.php')
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === 'success' && Array.isArray(res.data)) {
+              deptSelect.innerHTML = '<option value="">Select Department...</option>' + res.data.map(d => 
+                `<option value="${d.name}">${d.name}</option>`
+              ).join('');
+            }
+          }).catch(() => {});
+      }
+
+      // Populate job roles dynamically
+      const roleSelect = document.getElementById('addJobRole');
+      if (roleSelect) {
+        fetch(pth + 'UxUi-Back/Job_Roles/fetch_job_roles/fetch_job_roles.php')
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === 'success' && Array.isArray(res.data)) {
+              const uniqueRoles = [...new Set(res.data.map(r => r.title))];
+              roleSelect.innerHTML = '<option value="">Select Job Roles...</option>' + uniqueRoles.map(r => 
+                `<option value="${r}">${r}</option>`
+              ).join('');
+            }
+          }).catch(() => {});
       }
     }
     function closeAddModal() {
