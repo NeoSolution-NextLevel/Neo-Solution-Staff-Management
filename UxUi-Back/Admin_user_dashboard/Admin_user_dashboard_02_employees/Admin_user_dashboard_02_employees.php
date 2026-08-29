@@ -1,6 +1,6 @@
 <style>
   /* =========================================================
-     ADMIN EMPLOYEES PAGE (FULLY RESPONSIVE FOR MOBILE & DESKTOP)
+     ADMIN EMPLOYEES PAGE
   ========================================================= */
   :root {
     --navy: #14204d;
@@ -435,7 +435,6 @@
     cursor: pointer;
   }
 
-  /* Modals (Fixed Header, Scrollable Body, Always-Visible Footer) */
   .w3-modal-overlay {
     position: fixed;
     inset: 0;
@@ -553,7 +552,6 @@
     box-shadow: 0 2px 8px rgba(59, 91, 219, 0.25);
   }
 
-  /* Profile Card Modal */
   .w3-emp-profile-modal { max-width: 460px; padding: 0; }
   .w3-emp-profile-header {
     position: relative;
@@ -593,7 +591,6 @@
   .w3-p-stat .num { display: block; font-size: 14px; font-weight: 800; color: var(--navy); }
   .w3-p-stat .lbl { font-size: 11px; color: var(--muted); font-weight: 600; }
 
-  /* Mobile Responsive Breakpoints */
   @media (max-width: 768px) {
     #Admin_user_dashboard_02_employees {
       padding: 0 12px 80px !important;
@@ -629,7 +626,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    /* Switch from desktop table to mobile cards */
     .w3-table-card { display: none !important; }
     .mobile-emp-cards { display: flex !important; }
 
@@ -753,9 +749,11 @@
                 </select>
               </div>
               <div class="w3-form-group">
+                <div class="w3-form-group">
                 <label>Job Role</label>
-                <input type="text" name="role" required placeholder="e.g. Senior Developer">
-              </div>
+                <select name="role" id="addJobRole" required>
+                  <option value="">Select Job Roles...</option>
+                </select>
             </div>
             <div class="w3-form-row">
               <div class="w3-form-group">
@@ -777,6 +775,8 @@
           </div>
         </form>
       </div>
+      </div>
+</div>
     </div>
 
     <!-- View Employee Profile Details Card Modal -->
@@ -839,16 +839,42 @@
             </div>
           </div>
 
+          <!-- Section 3: Emergency Contacts -->
+          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Emergency Contacts</div>
+          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+            <div class="w3-detail-box">
+              <span class="w3-detail-label">Emergency Contact Name</span>
+              <strong class="w3-detail-val" id="viewEmpEmName">—</strong>
+            </div>
+            <div class="w3-detail-box">
+              <span class="w3-detail-label">Emergency Contact Phone</span>
+              <strong class="w3-detail-val" id="viewEmpEmPhone">—</strong>
+            </div>
+          </div>
+
+          <!-- Section 4: Work Schedule -->
+          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Work Schedule</div>
+          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+            <div class="w3-detail-box">
+              <span class="w3-detail-label">Work Shift</span>
+              <strong class="w3-detail-val" id="viewEmpWorkShift">—</strong>
+            </div>
+            <div class="w3-detail-box">
+              <span class="w3-detail-label">Working Days</span>
+              <strong class="w3-detail-val" id="viewEmpWorkingDays">—</strong>
+            </div>
+          </div>
+
           <!-- Section 4: Employment Information -->
           <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Employment Snapshot</div>
           <div class="w3-emp-profile-details-grid">
             <div class="w3-detail-box">
               <span class="w3-detail-label">Date Joined</span>
-              <strong class="w3-detail-val" id="viewEmpJoined">2024-01-15</strong>
+              <strong class="w3-detail-val" id="viewEmpJoined">—</strong>
             </div>
             <div class="w3-detail-box">
               <span class="w3-detail-label">Employment Type</span>
-              <strong class="w3-detail-val" id="viewEmpType">Full-Time (Permanent)</strong>
+              <strong class="w3-detail-val" id="viewEmpType">—</strong>
             </div>
           </div>
 
@@ -870,38 +896,73 @@
         <form id="editEmpForm" class="w3-modal-form-wrapper">
           <input type="hidden" name="id" id="editEmpId">
           <div class="w3-modal-body-scroll">
-            <div class="w3-form-group">
-              <label>Full Name</label>
-              <input type="text" name="name" id="editEmpName" required placeholder="e.g. Kasun Kalhara">
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" id="editEmpName" readonly placeholder="e.g. Kasun Kalhara" style="background-color: #f1f5f9; cursor: not-allowed;">
+              </div>
+              <div class="w3-form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" id="editEmpEmail" readonly placeholder="e.g. kasun@office.com" style="background-color: #f1f5f9; cursor: not-allowed;">
+              </div>
             </div>
-            <div class="w3-form-group">
-              <label>Email Address</label>
-              <input type="email" name="email" id="editEmpEmail" required placeholder="e.g. kasun@office.com">
-            </div>
+            
             <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Department</label>
-                <select name="dept" id="editEmpDept" required>
-                  <option value="">Select Department...</option>
+                <select name="dept" id="editEmpDept">
+                  <option value=""></option>
                 </select>
               </div>
+
               <div class="w3-form-group">
                 <label>Job Role</label>
-                <input type="text" name="role" id="editEmpRole" required placeholder="e.g. Senior Developer">
+                <select name="role" id="editEmpRole">
+                  <option value=""></option>
+                </select>
               </div>
             </div>
+            
             <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Status</label>
                 <select name="status" id="editEmpStatus">
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="active">On-Site (Active)</option>
+                  <option value="inactive">Remote</option>
                 </select>
               </div>
               <div class="w3-form-group">
                 <label>Joined Date</label>
                 <input type="date" name="joined" id="editEmpJoined">
               </div>
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Emergency Contact Name</label>
+                <input type="text" name="emergency_contact_name" id="editEmpEmName" placeholder="e.g. Namal Perera">
+              </div>
+              <div class="w3-form-group">
+                <label>Emergency Contact Phone</label>
+                <input type="text" name="emergency_contact_phone" id="editEmpEmPhone" placeholder="e.g. 0771234567">
+              </div>
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Work Shift</label>
+                <input type="text" name="work_shift" id="editEmpWorkShift" placeholder="e.g. 08:30 AM – 05:30 PM">
+              </div>
+              <div class="w3-form-group">
+                <label>Working Days</label>
+                <input type="text" name="working_days" id="editEmpWorkingDays" placeholder="e.g. Mon,Tue,Wed,Thu,Fri">
+              </div>
+            </div>
+            <div class="w3-form-group">
+              <label>Employment Type</label>
+              <select name="employment_type" id="editEmpType">
+                <option value="Full-Time">Full-Time</option>
+                <option value="Internship">Internship</option>
+                <option value="Probation">Probation</option>
+              </select>
             </div>
           </div>
           <div class="w3-modal-footer">
@@ -911,5 +972,6 @@
         </form>
       </div>
     </div>
+</div>
   </main>
 </div>

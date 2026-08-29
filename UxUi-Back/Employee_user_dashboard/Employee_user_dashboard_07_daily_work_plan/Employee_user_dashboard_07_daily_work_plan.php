@@ -418,7 +418,10 @@
 
   window.fetchEmployeeWorkplanTasks = function () {
     const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
-    const fetchUrl = pth + 'UxUi-Back/Tasks/fetch_tasks/fetch_tasks.php';
+    let fetchUrl = pth + 'UxUi-Back/Tasks/fetch_tasks/fetch_tasks.php';
+    if (window.currentEmployeeName) {
+      fetchUrl += '?employee=' + encodeURIComponent(window.currentEmployeeName);
+    }
 
     fetch(fetchUrl)
       .then(res => res.json())
@@ -516,6 +519,7 @@
     const formData = new FormData();
     formData.append('id', id);
     formData.append('status', newStatus);
+    formData.append('updater_role', 'employee');
 
     fetch(updateUrl, { method: 'POST', body: formData })
       .then(res => res.json())

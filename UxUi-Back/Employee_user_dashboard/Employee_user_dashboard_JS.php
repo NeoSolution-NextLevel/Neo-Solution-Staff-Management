@@ -39,6 +39,8 @@
           var empId = d.employee_id_code || 'EMP-002';
           var initials = name.split(' ').map(function(n) { return n[0]; }).join('').substring(0, 2).toUpperCase();
           var pic = (d.profile_pic && d.profile_pic.trim() !== '') ? ((typeof window.pth !== 'undefined' ? window.pth : '../') + d.profile_pic) : null;
+          
+          window.currentEmployeeName = name;
 
           // 1. Sync Sidebar User Block
           var sbName = document.getElementById('empSidebarName');
