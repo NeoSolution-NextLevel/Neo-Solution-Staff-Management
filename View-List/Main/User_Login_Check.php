@@ -1,57 +1,19 @@
 <?php
 
-include_once __DIR__ . '/../../imports/need/session_setup.php';
-include_once __DIR__ . '/../../imports/need/DB.php';
-include_once __DIR__ . '/../../imports/Company_Info/Company_Info_Variable_List.php';
+include_once '../../imports/need/session_setup.php';
+include_once '../../imports/need/DB.php';
+include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
 
-include_once __DIR__ . '/../../imports/security/encrypt_decrypt.php';
-include_once __DIR__ . '/../../imports/security/key_list.php';
-include_once __DIR__ . '/../../Controllers/Main/main_user_login/main_user_login_LIST.php';
-include_once __DIR__ . '/../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
-include_once __DIR__ . '/../../Controllers/Main/main_user_login_device/main_user_login_device_ADD_UPDATE.php';
-include_once __DIR__ . '/../../Controllers/Main/main_user_login_device/main_user_login_device_LIST.php';
-include_once __DIR__ . '/../../Controllers/Main/Cook_Managment/Cook_Createing.php';
-include_once __DIR__ . '/../../Controllers/Main/User_Account_Check_Device.php';
-include_once __DIR__ . '/../../Controllers/Main/User_Account_Check.php';
-include_once __DIR__ . '/../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_SINGLE_DATA.php';
-include_once __DIR__ . '/../../imports/sms/SMS_Sending.php';
-
-
-function get_dashboard_redirect_url($ac_type = "", $accessLevelId = "")
-{
-    $home_page = isset($GLOBALS['home_page']) ? rtrim($GLOBALS['home_page'], '/') : '';
-    $default_url = $home_page !== '' ? $home_page . '/UxUi/Main/Successful-Page.php' : 'UxUi/Main/Successful-Page.php';
-
-    $candidate = trim(strtolower($ac_type));
-
-    if ($accessLevelId !== "") {
-        $access_level = new main_user_account_access_level_list_SINGLE_DATA($accessLevelId);
-        if ($access_level->get_state()) {
-            $target = trim($access_level->get_url_home());
-            if ($target !== "") {
-                if (stripos($target, 'http://') === 0 || stripos($target, 'https://') === 0) {
-                    return $target;
-                }
-                if (strpos($target, '/') === 0) {
-                    return $home_page . $target;
-                }
-                return $home_page . '/' . $target;
-            }
-            $candidate = trim(strtolower($access_level->get_type_of_access()));
-        }
-    }
-
-    if ($candidate !== "") {
-        if (strpos($candidate, 'admin') !== false || strpos($candidate, 'manager') !== false || strpos($candidate, 'super') !== false) {
-            return $home_page . '/UxUi/Admin_user_dashboard.php';
-        }
-        if (strpos($candidate, 'employee') !== false || strpos($candidate, 'user') !== false || strpos($candidate, 'staff') !== false) {
-            return $home_page . '/UxUi/Employee_user_dashboard.php';
-        }
-    }
-
-    return $default_url;
-}
+include_once '../../imports/security/encrypt_decrypt.php';
+include_once '../../imports/security/key_list.php';
+include_once '../../Controllers/Main/main_user_login/main_user_login_LIST.php';
+include_once '../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
+include_once '../../Controllers/Main/main_user_login_device/main_user_login_device_ADD_UPDATE.php';
+include_once '../../Controllers/Main/main_user_login_device/main_user_login_device_LIST.php';
+include_once '../../Controllers/Main/Cook_Managment/Cook_Createing.php';
+include_once '../../Controllers/Main/User_Accout_Check_Device.php';
+include_once '../../Controllers/Main/User_Accout_Check.php';
+include_once '../../imports/sms/SMS_Sending.php';
 
 
 $get_user_name = isset($_POST['val_01']) ? $_POST['val_01'] : "";
@@ -90,30 +52,20 @@ if ($User_Account_Check_obj->check_user_name()) {
         $_SESSION['session_token'] = $User_Account_Check_obj->get_session_token();
 
 
-        $redirect_url = get_dashboard_redirect_url(
-            $User_Account_Check_obj->get_ac_type(),
-            $User_Account_Check_obj->get_main_user_account_access_level_list_id()
-        );
-
-        $_SESSION['user_id'] = $User_Account_Check_obj->get_user_id();
-        $_SESSION['user_name'] = $User_Account_Check_obj->get_user_name();
-        $_SESSION['user_role'] = $User_Account_Check_obj->get_ac_type();
-        $_SESSION['ac_type'] = $User_Account_Check_obj->get_ac_type();
-        $_SESSION['main_user_account_access_level_list_id'] = $User_Account_Check_obj->get_main_user_account_access_level_list_id();
-        $_SESSION['login_redirect_url'] = $redirect_url;
-
         if ($User_Account_Check_obj->get_google_authentication()) {
             $state['error'] = "0";
+            $_SESSION['user_id'] = $User_Account_Check_obj->get_user_id();
+            $_SESSION['user_name'] = $User_Account_Check_obj->get_user_name();
             $_SESSION['otp_pending'] = true;
             $state['google_authentication'] = "1";
-            $state['redirect_url'] = $redirect_url;
 
             $json[] = $state;
         } else {
             $state['error'] = "0";
+            $_SESSION['user_id'] = $User_Account_Check_obj->get_user_id();
+            $_SESSION['user_name'] = $User_Account_Check_obj->get_user_name();
             $_SESSION['otp_pending'] = false;
             $state['google_authentication'] = "0";
-            $state['redirect_url'] = $redirect_url;
             if ($User_Account_Check_obj->get_is_two_factor_auth_enable() == "1") {
                 $phone_number = $User_Account_Check_obj->get_phone_number();
 

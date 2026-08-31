@@ -3,48 +3,11 @@
         <div class="erp-registration-card">
             <!-- Header Section: Displays company branding and registration title -->
             <div class="erp-registration-card__header">
-                <div class="erp-registration-card__brand">
-                    <svg viewBox="0 0 280 100" width="190" height="64" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <radialGradient id="regBlueSphere" cx="32%" cy="30%" r="68%">
-                                <stop offset="0%" stop-color="#7399f7"/>
-                                <stop offset="25%" stop-color="#2b4db3"/>
-                                <stop offset="60%" stop-color="#142668"/>
-                                <stop offset="90%" stop-color="#091338"/>
-                                <stop offset="100%" stop-color="#04091c"/>
-                            </radialGradient>
-                            <radialGradient id="regGreenSphere" cx="32%" cy="30%" r="68%">
-                                <stop offset="0%" stop-color="#5ec95e"/>
-                                <stop offset="25%" stop-color="#238029"/>
-                                <stop offset="60%" stop-color="#125219"/>
-                                <stop offset="90%" stop-color="#0a3310"/>
-                                <stop offset="100%" stop-color="#041a08"/>
-                            </radialGradient>
-                            <linearGradient id="regSpecularGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
-                                <stop offset="40%" stop-color="#ffffff" stop-opacity="0.1"/>
-                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                            </linearGradient>
-                            <filter id="regSphereShadow" x="-20%" y="-20%" width="140%" height="140%">
-                                <feDropShadow dx="1.5" dy="2.5" stdDeviation="2" flood-color="#0a1535" flood-opacity="0.3"/>
-                            </filter>
-                        </defs>
-                        <g transform="translate(6, 4)" filter="url(#regSphereShadow)">
-                            <circle cx="28" cy="28" r="17" fill="url(#regBlueSphere)"/>
-                            <ellipse cx="23" cy="23" rx="7" ry="4" fill="url(#regSpecularGlow)" transform="rotate(-30 23 23)"/>
-                            <circle cx="62" cy="38" r="16" fill="url(#regGreenSphere)"/>
-                            <ellipse cx="57" cy="33" rx="6" ry="3.5" fill="url(#regSpecularGlow)" transform="rotate(-30 57 33)"/>
-                            <circle cx="30" cy="62" r="16" fill="url(#regGreenSphere)"/>
-                            <ellipse cx="25" cy="57" rx="6" ry="3.5" fill="url(#regSpecularGlow)" transform="rotate(-30 25 57)"/>
-                            <circle cx="62" cy="72" r="17" fill="url(#regBlueSphere)"/>
-                            <ellipse cx="57" cy="67" rx="7" ry="4" fill="url(#regSpecularGlow)" transform="rotate(-30 57 67)"/>
-                        </g>
-                        <text x="96" y="58" font-family="'Impact', 'Arial Black', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="58" font-weight="900" letter-spacing="2.5" fill="#ffffff">NEO</text>
-                        <text x="130" y="84" font-family="'Playfair Display', 'Georgia', 'Times New Roman', serif" font-size="28" font-style="italic" font-weight="600" letter-spacing="0.5" fill="#dbeafe">Solution</text>
-                    </svg>
+                <div class="erp-registration-card__logo">
+                    <i class="fas fa-user-plus"></i>
                 </div>
-                <h1 class="erp-registration-card__title">Create Account</h1>
-                <p class="erp-registration-card__subtitle">Join NEO Solution Office Staff System</p>
+                <h1 class="erp-registration-card__title">Create Account..</h1>
+                <p class="erp-registration-card__subtitle">Join the <?php echo $company_obj->get_compnay_name() ?></p>
             </div>
 
             <!-- Main Body: Contains the registration form -->
@@ -65,7 +28,7 @@
                                     <input
                                         type="text"
                                         class="erp-form__control erp-form__control--with-icon"
-                                        name="val_07"
+                                        name="first_name"
                                         id="User_Registration_A_01_val_01_child_01"
                                         placeholder="John"
                                         required
@@ -80,7 +43,7 @@
                                     <input
                                         type="text"
                                         class="erp-form__control erp-form__control--with-icon"
-                                        name="val_08"
+                                        name="last_name"
                                         placeholder="Doe"
                                         id="User_Registration_A_01_val_01_child_02"
                                         required
@@ -96,7 +59,7 @@
                                 <input
                                     type="email"
                                     class="erp-form__control erp-form__control--with-icon"
-                                    name="val_02"
+                                    name="email"
                                     placeholder="john.doe@company.com"
                                     id="User_Registration_A_01_val_02"
                                     required
@@ -112,7 +75,7 @@
                                 <input
                                     type="text"
                                     class="erp-form__control erp-form__control--with-icon"
-                                    name="val_03"
+                                    name="employee_id"
                                     placeholder="EMP-12345"
                                     id="User_Registration_A_01_val_03"
                                     aria-label="Employee ID">
@@ -135,7 +98,7 @@
                                     <input
                                         type="password"
                                         class="erp-form__control erp-form__control--with-icon erp-form__control--with-toggle"
-                                        name="val_04"
+                                        name="password"
                                         placeholder="••••••••"
                                         required
                                         id="User_Registration_A_01_val_04_child_01"
@@ -189,22 +152,29 @@
                         <div class="erp-form-grid">
                             <div class="erp-form__group">
                                 <label class="erp-form__label">Department <span style="color: var(--erp-accent-error);">*</span></label>
-                                <select class="erp-form__control" name="val_05" required aria-label="Department" id="User_Registration_A_01_val_05_select_obj" onchange="User_Registration_A_01_update_ac_type(this)">
-                                    <option value="" disabled selected>Select Department</option>
+                                <select class="erp-form__control" name="department" required aria-label="Department" id="User_Registration_A_01_val_05_select_obj">
+                                    <option value="1" disabled selected>Select Department</option>
+                                    <option value="2">Human Resources</option>
+                                    <option value="3">Finance</option>
+                                    <option value="4">Information Technology</option>
+                                    <option value="5">Sales</option>
+                                    <option value="6">Marketing</option>
+                                    <option value="7">Operations</option>
+                                    <option value="8">Research & Development</option>
+                                    <option value="9">Customer Support</option>
                                 </select>
                             </div>
 
                             <div class="erp-form__group">
-                                <label class="erp-form__label">Access Type <span style="color: var(--erp-accent-error);">*</span></label>
+                                <label class="erp-form__label">Job Title <span style="color: var(--erp-accent-error);">*</span></label>
                                 <input
                                     type="text"
                                     class="erp-form__control"
-                                    name="val_06"
-                                    placeholder="Select a department to set access type"
-                                    readonly
+                                    name="job_title"
+                                    placeholder="e.g., Senior Analyst"
                                     required
                                     id="User_Registration_A_01_val_06"
-                                    aria-label="Access Type">
+                                    aria-label="Job Title">
                             </div>
                         </div>
                     </div>
@@ -213,7 +183,7 @@
                     <div class="erp-form__group">
                         <div class="erp-terms">
                             <input type="checkbox" class="erp-terms__checkbox" id="User_Registration_A_01_val_07" name="terms" required>
-                            <label for="User_Registration_A_01_val_07" class="erp-terms__label">
+                            <label for="terms" class="erp-terms__label">
                                 I agree to the <a href="#" class="erp-link">Terms of Service</a> and <a href="#" class="erp-link">Privacy Policy</a>.
                                 I understand that my account will be verified by the system administrator before I can access the ERP system.
                                 <span style="color: var(--erp-accent-error);">*</span>
@@ -242,7 +212,7 @@
 
             <!-- Footer: Displays copyright and version info -->
             <div class="erp-registration-card__footer">
-                <p class="erp-footer__copyright" id="copyright">© <span id="current-year"></span> <strong>NEO Solution</strong> • Staff Management System</p>
+                <p class="erp-footer__copyright" id="copyright">© <span id="current-year"></span> <?php echo $company_obj->get_compnay_name() ?></p>
             </div>
         </div>
     </div>
@@ -369,4 +339,28 @@
             }
         }
 
+        // Form submission handler
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.getElementById('User_Registration_A_01_val_04_child_01').value;
+            const confirmPassword = document.getElementById('User_Registration_A_01_val_04_child_02').value;
+            const terms = document.getElementById('User_Registration_A_01_val_07').checked; //agree checkbox
+
+            // Check password match
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match. Please correct and try again.');
+                return;
+            }
+
+            // Check terms agreement
+            if (!terms) {
+                e.preventDefault();
+                alert('You must agree to the Terms of Service and Privacy Policy.');
+                return;
+            }
+
+            // Additional validation could be added here
+            // For now, we'll allow the form to submit
+            // In a real application, this would be handled server-side
+        });
     </script>

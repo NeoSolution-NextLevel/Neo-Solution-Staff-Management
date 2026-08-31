@@ -604,6 +604,44 @@ CREATE TABLE IF NOT EXISTS `employee_profiles` (
   KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `salary_payments`
+--
+
+CREATE TABLE IF NOT EXISTS `salary_payments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `receipt_no` varchar(50) NOT NULL,
+  `employee_id` varchar(50) DEFAULT 'EMP-001',
+  `user_id` int DEFAULT 1,
+  `employee_name` varchar(255) DEFAULT '',
+  `department` varchar(100) DEFAULT 'General',
+  `job_title` varchar(100) DEFAULT 'Staff',
+  `bank_name` varchar(255) DEFAULT '',
+  `branch` varchar(255) DEFAULT '',
+  `account_number` varchar(100) DEFAULT '',
+  `basic_salary` decimal(12,2) DEFAULT 0.00,
+  `allowances` decimal(12,2) DEFAULT 0.00,
+  `deductions` decimal(12,2) DEFAULT 0.00,
+  `epf_employee` decimal(12,2) DEFAULT 0.00,
+  `net_salary` decimal(12,2) DEFAULT 0.00,
+  `payment_month` varchar(50) DEFAULT '',
+  `payment_date` date DEFAULT NULL,
+  `payment_method` varchar(50) DEFAULT 'Bank Transfer',
+  `reference_no` varchar(100) DEFAULT '',
+  `notes` text DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Paid',
+  `paid_by` varchar(100) DEFAULT 'Admin',
+  `ast` varchar(10) DEFAULT '1',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_receipt_no` (`receipt_no`),
+  KEY `idx_emp_id` (`employee_id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_pay_month` (`payment_month`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

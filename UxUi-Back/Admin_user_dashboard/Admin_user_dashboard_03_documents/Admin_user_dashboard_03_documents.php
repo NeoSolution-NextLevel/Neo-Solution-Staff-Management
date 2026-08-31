@@ -715,7 +715,7 @@
 <div id="Admin_user_dashboard_03_documents" style="display:none;">
   <main class="main">
 
-    <!-- Compact Fixed Topbar Header -->
+    <!-- Compact Topbar Header -->
     <div class="topbar">
       <div class="topbar-left">
         <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="typeof openAdminSidebar === 'function' ? openAdminSidebar() : null">
@@ -748,13 +748,11 @@
 
           <select id="docTypeFilter" class="doc-select" onchange="filterAdminDocs();">
             <option value="all">All Document Types</option>
-            <option value="CV">CV / Resume</option>
+            <option value="CV">CV</option>
             <option value="National ID">National ID</option>
+            <option value="Agreement">Employment Agreement</option>
+            <option value="Certificate">Grama sevaka Certificate</option>
             <option value="Police Report">Police Report</option>
-            <option value="Certificate">Certificate</option>
-            <option value="Agreement">Agreement</option>
-            <option value="Bank">Bank Document</option>
-            <option value="Other">Other</option>
           </select>
         </div>
 
@@ -763,9 +761,7 @@
             <i class="fa-solid fa-folder-closed"></i> <span id="docCountText">0 Documents</span>
           </div>
 
-          <button type="button" class="doc-btn-refresh" onclick="openAdminUploadModal();" style="background: #14204d; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px;" title="Upload Document">
-            <i class="fa-solid fa-plus"></i> Upload Document
-          </button>
+      
 
           <button type="button" class="doc-btn-refresh" onclick="loadAdminDocuments();" title="Refresh Document List">
             <i class="fa-solid fa-rotate-right"></i> Refresh
@@ -866,57 +862,7 @@
       </div>
     </div>
 
-    <!-- 4. Admin Upload Document Modal -->
-    <div class="doc-modal-overlay" id="adminUploadDocModal">
-      <div class="doc-modal-box" style="max-width: 520px; height: auto; max-height: 90vh;">
-        <div class="doc-modal-header">
-          <h3 style="font-size: 16px; font-weight: 800; color: #14204d; margin: 0;">Upload Employee Document</h3>
-          <button type="button" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b;" onclick="closeAdminUploadModal()">&times;</button>
-        </div>
-        <form id="adminUploadDocForm" onsubmit="submitAdminDocUpload(event)" style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; padding: 18px 22px; gap: 14px; box-sizing: border-box;">
-          <div style="display: flex; flex-direction: column; gap: 4px;">
-            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Employee Name / ID</label>
-            <input type="text" name="employee_name" id="adminUploadEmpName" required placeholder="e.g. John Doe" style="padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; outline: none; width: 100%; box-sizing: border-box;">
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 4px;">
-            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Document Type</label>
-            <select name="category" id="adminUploadCategory" required onchange="toggleAdminDocFileInputs(this.value)" style="padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; outline: none; background: #fff; width: 100%; box-sizing: border-box;">
-              <option value="CV">CV / Resume (1 PDF)</option>
-              <option value="National ID">National ID / Passport (2 PNG)</option>
-              <option value="Agreement">Employment Agreement (1 PDF)</option>
-              <option value="Certificate">Grama Sevaka Certificate (1 PDF)</option>
-              <option value="Police Report">Police Clearance Report (1 PDF)</option>
-              <option value="Other">Other Document (1 PDF)</option>
-            </select>
-          </div>
-
-          <!-- Single PDF Upload Section -->
-          <div id="adminSinglePdfWrap" style="display: flex; flex-direction: column; gap: 4px;">
-            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Select Document (1 PDF only)</label>
-            <input type="file" name="document_file" id="adminUploadFile" accept=".pdf" style="padding: 8px 0; font-size: 13px;">
-            <span style="font-size: 11.5px; color: #64748b;">Accepted format: PDF only (Max 10MB)</span>
-          </div>
-
-          <!-- Dual PNG Upload Section for National ID -->
-          <div id="adminNationalIdPngWrap" style="display: none; flex-direction: column; gap: 10px;">
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-              <label style="font-size: 12.5px; font-weight: 700; color: #2563eb;">Front Side (PNG)</label>
-              <input type="file" name="document_file_front" id="adminUploadFileFront" accept=".png,.jpg,.jpeg" style="padding: 6px 0; font-size: 13px;">
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-              <label style="font-size: 12.5px; font-weight: 700; color: #0284c7;">Back Side (PNG)</label>
-              <input type="file" name="document_file_back" id="adminUploadFileBack" accept=".png,.jpg,.jpeg" style="padding: 6px 0; font-size: 13px;">
-            </div>
-            <span style="font-size: 11.5px; color: #64748b;">Accepted format: PNG only (Max 5MB each)</span>
-          </div>
-
-          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 14px;">
-            <button type="button" onclick="closeAdminUploadModal()" style="padding: 9px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #64748b; font-weight: 600; font-size: 13px; cursor: pointer;">Cancel</button>
-            <button type="submit" id="btnAdminUploadSubmit" style="padding: 9px 18px; border-radius: 8px; border: none; background: #14204d; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer;">Upload & Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
+  
 
   </main>
 </div>

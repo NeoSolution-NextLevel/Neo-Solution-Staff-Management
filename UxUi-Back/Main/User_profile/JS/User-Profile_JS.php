@@ -19,7 +19,7 @@
 
     function User_Profile_A_01_single_main_user_login_SET_DB() {
 
-       
+        // alert("1");
 
         var sending_value = "session_user_id=0&user_access_level_dedtails=0&main_user_login_device_login_details=0";
 

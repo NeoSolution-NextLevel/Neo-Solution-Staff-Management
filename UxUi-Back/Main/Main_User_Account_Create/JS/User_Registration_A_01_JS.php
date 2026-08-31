@@ -2,46 +2,57 @@
     function User_Registration_A_01_from_01_SUMBIT(event) {
         event.preventDefault();
 
-            var val_01_child_01 = document.getElementById("User_Registration_A_01_val_01_child_01"); // first name 
-            var val_01_child_02 = document.getElementById("User_Registration_A_01_val_01_child_02"); // last name 
-            var val_02 = document.getElementById("User_Registration_A_01_val_02"); // Email - User name 
-            var val_03 = document.getElementById("User_Registration_A_01_val_03"); // Employee id 
-            var val_04_child_01 = document.getElementById("User_Registration_A_01_val_04_child_01"); // Password
-            var val_04_child_02 = document.getElementById("User_Registration_A_01_val_04_child_02"); // confirm password 
+        // alert("1");
+        var val_01_child_01 = document.getElementById("User_Registration_A_01_val_01_child_01"); //first name 
+        var val_01_child_02 = document.getElementById("User_Registration_A_01_val_01_child_02"); //last name 
+        var val_02 = document.getElementById("User_Registration_A_01_val_02"); // Email - User name 
+        var val_03 = document.getElementById("User_Registration_A_01_val_03"); // Employee id 
+        var val_04_child_01 = document.getElementById("User_Registration_A_01_val_04_child_01"); // Password
+        var val_04_child_02 = document.getElementById("User_Registration_A_01_val_04_child_02"); // confirm password 
 
-            var val_05 = document.getElementById("User_Registration_A_01_val_05_select_obj"); // Access level id
-            var val_06 = document.getElementById("User_Registration_A_01_val_06"); // Access type text
+        var val_05 = document.getElementById("User_Registration_A_01_val_05_select_obj"); // Department
+        var val_06 = document.getElementById("User_Registration_A_01_val_06"); // Department
 
-            var agree_check_box = document.getElementById("User_Registration_A_01_val_07"); // Agree checkbox 
 
-            if (agree_check_box.checked === false) {
-                var errorMsg = encodeURIComponent("Not-Check-Agree");
-                window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
-                return;
-            }
+        var agree_check_box = document.getElementById("User_Registration_A_01_val_07"); // Agree checkbox 
 
-            if (val_04_child_01.value !== val_04_child_02.value) {
-                var errorMsg = encodeURIComponent("Password-Mismatched");
-                window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
-                return;
-            }
+        // aggree button checked
+        if (agree_check_box.checked === false) {
+            var errorMsg = encodeURIComponent("Not-Check-Agree");
+            window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
-            var val_01 = val_01_child_01.value.trim() + " " + val_01_child_02.value.trim();
+            return;
 
-            var Sending_value = "val_01=" + encodeURIComponent(val_01) +
-                "&val_02=" + encodeURIComponent(val_02.value.trim()) +
-                "&val_03=" + encodeURIComponent(val_03.value.trim()) +
-                "&val_04=" + encodeURIComponent(val_04_child_01.value) +
-                "&val_05=" + encodeURIComponent(val_05.value) +
-                "&val_06=" + encodeURIComponent(val_06.value) +
-                "&val_07=" + encodeURIComponent(val_01_child_01.value.trim()) +
-                "&val_08=" + encodeURIComponent(val_01_child_02.value.trim());
+        }
+
+        //check password and confirm password 
+        if (val_04_child_01.value !== val_04_child_02.value) {
+            var errorMsg = encodeURIComponent("Password-Mismatched");
+            window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
+            return;
+        }
+
+        //combine first and last name 
+        var val_01 = val_01_child_01.value + " " + val_01_child_02.value;
+
+        var Sending_value = "val_01=" + encodeURIComponent(val_01) +
+            "&val_02=" + encodeURIComponent(val_02.value) +
+            "&val_03=" + encodeURIComponent(val_03.value) +
+            "&val_04=" + encodeURIComponent(val_04_child_01.value) +
+            "&val_05=" + encodeURIComponent(val_05.value) +
+            "&val_06=" + encodeURIComponent(val_06.value) +
+            "&val_07=" + encodeURIComponent(val_01_child_01.value) +
+            "&val_08=" + encodeURIComponent(val_01_child_02.value);
+
+        // alert(Sending_value);
+
         $.ajax({
             url: "<?php echo $pth; ?>View-List/Main/Main_User_Login_Account_Create/New_Main_User_Login_Create.php",
             type: "POST",
             data: Sending_value,
             success: function(res) {
                 console.log(res);
+                alert(res);
 
                 try {
                     var json = JSON.parse(res);
@@ -49,6 +60,7 @@
                     if (json[0].error === "0") {
                         var sucessMsg = encodeURIComponent("User-Registration-Successful");
                         window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Successful-Page<?php echo $online_offline_extention ?>?message=" + sucessMsg;
+
 
                     } else {
 
@@ -120,14 +132,7 @@
         var option = document.createElement("option");
         option.value = json.id;
         option.textContent = json.type_of_access;
-        option.setAttribute('data-access-type', json.type_of_access);
 
         select.appendChild(option);
     }
-
-        function User_Registration_A_01_update_ac_type(selectObj) {
-            var accessTypeInput = document.getElementById('User_Registration_A_01_val_06');
-            var selectedOption = selectObj.options[selectObj.selectedIndex];
-            accessTypeInput.value = selectedOption ? selectedOption.getAttribute('data-access-type') || '' : '';
-        }
 </script>

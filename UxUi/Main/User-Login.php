@@ -11,67 +11,48 @@
         <title>Admin Portal | Login</title>
         <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="../../UxUi-Back/assets/css/erp-theme.css">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 
         <style>
-            /* ===== GLOBAL COLOR SYSTEM ===== */
+            /* ===== GLOBAL COLOR SYSTEM ===== ---------------------------------------------------colors and spacing*/
             :root {
-                /* Website Theme Colors */
-                --navy: #14204d;
-                --navy-2: #1c2b63;
-                --blue: #2563eb;
-                --blue-light: #eff6ff;
-                --blue-lighter: #f0f7ff;
-                --green: #38a169;
-                --green-bg: #e3f9ee;
-                --amber: #dd6b20;
-                --amber-bg: #fdf1dc;
-                --red: #e53e3e;
-                --red-bg: #fde8ec;
-                --ink: #1e293b;
-                --muted: #64748b;
-                --border: #e2e8f0;
-                --bg: #f8fafc;
-                --card: #ffffff;
-                --radius: 16px;
-                --shadow: 0 1px 3px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.06);
-
                 /* Primary ERP Brand Colors */
-                --erp-primary: #2563eb;
-                --erp-primary-dark: #1d4ed8;
-                --erp-primary-light: #eff6ff;
-                --erp-primary-subtle: #f0f7ff;
+                --erp-primary: #2c5282;
+                --erp-primary-dark: #1a365d;
+                --erp-primary-light: #4299e1;
+                --erp-primary-subtle: #ebf8ff;
 
                 /* Neutral Colors */
                 --erp-surface: #ffffff;
-                --erp-surface-alt: #f8fafc;
+                --erp-surface-alt: #f7fafc;
                 --erp-border: #e2e8f0;
-                --erp-border-dark: #cbd5e1;
-                --erp-text-primary: #1e293b;
+                --erp-border-dark: #cbd5e0;
+                --erp-text-primary: #2d3748;
                 --erp-text-secondary: #4a5568;
                 --erp-text-tertiary: #718096;
 
                 /* Accent Colors */
                 --erp-accent-success: #38a169;
-                --erp-accent-warning: #dd6b20;
+                --erp-accent-warning: #d69e2e;
                 --erp-accent-error: #e53e3e;
-                --erp-accent-info: #2563eb;
+                --erp-accent-info: #3182ce;
 
                 /* Social Brand Colors */
-                --erp-google: #ea4335;
+                --erp-google: #db4437;
                 --erp-microsoft: #00a4ef;
                 --erp-facebook: #1877f2;
 
                 /* Shadows */
-                --erp-shadow-sm: 0 1px 3px rgba(20, 25, 60, 0.05);
-                --erp-shadow-md: 0 4px 12px rgba(20, 25, 60, 0.08);
-                --erp-shadow-lg: 0 12px 32px rgba(20, 25, 60, 0.08);
+                --erp-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+                --erp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                --erp-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 
                 /* Border Radius */
-                --erp-radius-sm: 6px;
-                --erp-radius-md: 10px;
-                --erp-radius-lg: 16px;
+                --erp-radius-sm: 4px;
+                --erp-radius-md: 8px;
+                --erp-radius-lg: 12px;
 
                 /* Spacing Scale */
                 --erp-space-xs: 8px;
@@ -90,29 +71,30 @@
             }
 
             body {
-                font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-                background: radial-gradient(at 0% 0%, rgba(59, 91, 219, 0.07) 0px, transparent 50%),
-                            radial-gradient(at 100% 100%, rgba(20, 32, 77, 0.07) 0px, transparent 50%),
-                            var(--bg);
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+                background: linear-gradient(135deg, #f6f9fc 0%, #edf2f7 100%);
                 color: var(--erp-text-primary);
                 line-height: 1.5;
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: var(--erp-space-xl) var(--erp-space-md);
+                padding: var(--erp-space-xl);
             }
 
             /* ===== LAYOUT CONTAINERS ===== */
             .erp-container {
+
                 width: 100%;
                 max-width: 1200px;
                 margin: 0 auto;
                 padding: 0 var(--erp-space-md);
+                margin-top: 100px;
+                margin-bottom: 100px;
             }
 
             .erp-container--login {
-                max-width: 520px;
+                max-width: 600px;
             }
 
             /* ===== LOGIN CARD ===== */
@@ -121,52 +103,38 @@
                 background-color: var(--erp-surface);
                 border-radius: var(--erp-radius-lg);
                 box-shadow: var(--erp-shadow-lg);
-                border: 1px solid var(--erp-border);
                 overflow: hidden;
+                min-height: auto;
             }
 
             .erp-login-card__header {
-                background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 55%, #3648a0 100%);
+                background: linear-gradient(90deg, var(--erp-primary) 0%, var(--erp-primary-dark) 100%);
                 color: white;
-                padding: 28px 24px 22px;
+                padding: var(--erp-space-xl) var(--erp-space-xl) var(--erp-space-lg);
                 text-align: center;
                 position: relative;
-                overflow: hidden;
             }
 
-            .erp-login-card__header::before {
-                content: "";
-                position: absolute;
-                top: -60px; right: -40px;
-                width: 200px; height: 200px;
-                border-radius: 50%;
-                background: radial-gradient(circle, rgba(255,255,255,.12), transparent 70%);
-            }
-
-            .erp-login-card__brand {
-                display: flex;
-                justify-content: center;
-                margin-bottom: 12px;
-                position: relative;
+            .erp-login-card__logo {
+                font-size: 40px;
+                margin-bottom: var(--erp-space-sm);
+                color: white;
             }
 
             .erp-login-card__title {
-                font-size: 22px;
-                font-weight: 800;
-                margin-bottom: 4px;
-                letter-spacing: -0.3px;
-                position: relative;
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: var(--erp-space-xs);
             }
 
             .erp-login-card__subtitle {
-                font-size: 13.5px;
-                color: #c7d0f5;
-                font-weight: 500;
-                position: relative;
+                font-size: 14px;
+                opacity: 0.9;
+                font-weight: 400;
             }
 
             .erp-login-card__body {
-                padding: 28px 30px;
+                padding: var(--erp-space-xl);
             }
 
             /* ===== FORM COMPONENTS ===== */
@@ -496,12 +464,15 @@
         include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
         include_once '../../View-List/Main/Google-Login/Main_User_Google_Login_Config.php';
         include_once '../../View-List/Main/Microsoft-Login/Main_User_Microsoft_Login_Config.php';
+        include_once '../../UxUI-Back/Common/header.php';
         ?>
+
 
         <?php
         include_once '../../UxUI-Back/Main/Main_User_Login/JS/User_Login_A_01_JS.php';
         include_once '../../UxUI-Back/Main/Main_User_Login/User_Login_A_01.php';
         ?>
+        <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
     </body>
 
     </html>

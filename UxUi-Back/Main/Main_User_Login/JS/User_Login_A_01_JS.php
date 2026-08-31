@@ -26,17 +26,21 @@
 
 
                     if (json[0].error === "0") {
+
+
                         if (json[0].google_authentication === "1") {
                             var type = encodeURIComponent("Google-Authentication");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>OTP-Two-step-Verification<?php echo $online_offline_extention ?>?type=" + type;
+
+
                         } else if (json[0].is_two_factor_auth_enable === "1") {
                             var type = encodeURIComponent("Two-Factor-Authentication");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>OTP-Two-step-Verification<?php echo $online_offline_extention ?>?type=" + type;
-                        } else if (json[0].redirect_url && json[0].redirect_url !== "") {
-                            window.location.href = json[0].redirect_url;
+
                         } else {
                             var sucessMsg = encodeURIComponent("User-Login-Successful");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Successful-Page<?php echo $online_offline_extention ?>?message=" + sucessMsg;
+
                         }
 
 

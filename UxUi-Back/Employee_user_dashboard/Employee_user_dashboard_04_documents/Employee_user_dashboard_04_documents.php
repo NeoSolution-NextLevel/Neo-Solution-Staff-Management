@@ -372,7 +372,7 @@
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_cv" data-doc-id="0">
           <div>
             <div class="doc-card-head">
-              <h4>Curriculum Vitae (CV)</h4>
+              <h4>CV</h4>
               <span class="doc-status-tag not-uploaded" id="tag_cv">Not Uploaded</span>
             </div>
             <p class="doc-desc">Upload your updated resume or CV (PDF format).</p>
@@ -411,10 +411,10 @@
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_id" data-doc-id="0">
           <div>
             <div class="doc-card-head">
-              <h4>National ID / Passport (2 PNG)</h4>
+              <h4>National ID (2 PNG)</h4>
               <span class="doc-status-tag not-uploaded" id="tag_id">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload Front & Back PNG images of your NIC / Passport.</p>
+            <p class="doc-desc">Upload Front & Back PNG images of your NIC.</p>
 
             <input type="file" id="fileInput_id_front" accept=".png,.jpg,.jpeg" style="display:none;" onchange="previewDocFileSide(this, 'id', 'front')">
             <input type="file" id="fileInput_id_back" accept=".png,.jpg,.jpeg" style="display:none;" onchange="previewDocFileSide(this, 'id', 'back')">
@@ -513,7 +513,7 @@
               <h4>Grama Sevaka Certificate</h4>
               <span class="doc-status-tag not-uploaded" id="tag_grama">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload Grama Niladhari certificate (PDF format).</p>
+            <p class="doc-desc">Upload Grama Sevaka certificate (PDF format).</p>
 
             <input type="file" id="fileInput_grama" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'grama')">
 
@@ -549,10 +549,10 @@
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_police" data-doc-id="0" style="grid-column: 1 / -1;">
           <div>
             <div class="doc-card-head">
-              <h4>Police Clearance Report</h4>
+              <h4>Police Report</h4>
               <span class="doc-status-tag not-uploaded" id="tag_police">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload your valid Police Clearance Certificate (PDF format).</p>
+            <p class="doc-desc">Upload your valid Police Report (PDF format).</p>
 
             <input type="file" id="fileInput_police" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'police')">
 

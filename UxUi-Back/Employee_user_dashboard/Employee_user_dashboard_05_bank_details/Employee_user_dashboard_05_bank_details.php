@@ -1,550 +1,690 @@
 <style>
-  /* =========================================================
-     BANK DETAILS (RESPONSIVE FULL PAGE LAYOUT & AJAX BACKEND)
-  ========================================================= */
-  .bank-details-wrapper {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+  :root {
+    --navy: #14204d;
+    --navy-2: #1c2b63;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --blue-lighter: #f0f7ff;
+    --green: #10b981;
+    --green-bg: #ecfdf5;
+    --amber: #dd6b20;
+    --amber-bg: #fdf1dc;
+    --red: #e53e3e;
+    --red-bg: #fde8ec;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
   }
 
-  .bank-page-head {
+  /* Base Page Head */
+  .bank-page-header {
     margin-bottom: 20px;
   }
+  .bank-page-header p {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
 
-  .bank-page-head h1 {
-    font-size: 24px;
+  /* Bank & Salary Info Card */
+  .bank-info-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .bank-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--navy), var(--blue));
+  }
+
+  .bank-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .bank-card-header h3 {
+    font-size: 16px;
     font-weight: 800;
-    color: var(--navy, #14204d);
-    margin: 0 0 6px 0;
-    letter-spacing: -0.3px;
-  }
-
-  .bank-page-head p {
-    font-size: 14px;
-    color: #64748b;
+    color: var(--navy);
     margin: 0;
-    font-weight: 500;
-  }
-
-  .bank-card {
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid #e8eaf0;
-    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.04);
-    padding: 28px 32px;
-    box-sizing: border-box;
-    width: 100%;
-  }
-
-  .bank-info-badge {
-    background: #eff6ff;
-    border-radius: 12px;
-    padding: 16px 20px;
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 26px;
-    width: 100%;
-    box-sizing: border-box;
+    gap: 8px;
   }
-
-  .bank-info-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: #2563eb;
-    color: #ffffff;
-    display: flex;
+  .bank-active-badge {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
+    gap: 5px;
+    background: #dcfce7;
+    color: #15803d;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
   }
 
-  .bank-info-icon svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .bank-info-text strong {
-    display: block;
-    font-size: 15px;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 3px;
-  }
-
-  .bank-info-text span {
-    font-size: 13px;
-    color: #64748b;
-    font-weight: 500;
-  }
-
-  /* Form Fields Grid: 2 Columns on Desktop, 1 Column on Mobile */
-  .bank-form-grid {
+  /* Responsive Grid for Bank Account Info */
+  .bank-grid-details {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px 24px;
-    margin-bottom: 24px;
-    width: 100%;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
   }
 
-  .bank-form-group {
+  .bank-field-box {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    gap: 4px;
   }
-
-  .bank-form-group.full-width {
-    grid-column: 1 / -1;
-  }
-
-  .bank-form-group label {
-    display: block;
-    font-size: 13.5px;
+  .bank-field-box span {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
     font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 8px;
   }
-
-  .bank-form-control {
-    width: 100%;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 13px 16px;
+  .bank-field-box strong {
     font-size: 14px;
-    color: #1e293b;
-    box-sizing: border-box;
-    outline: none;
-    transition: all 0.2s ease;
-    font-family: inherit;
+    color: var(--ink);
+    word-break: break-word;
   }
 
-  .bank-form-control:focus {
-    background: #ffffff;
-    border-color: #3b5bdb;
-    box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.12);
-  }
-
-  .bank-form-control::placeholder {
-    color: #94a3b8;
-    font-size: 13.5px;
-  }
-
-  select.bank-form-control {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 16px;
-    padding-right: 40px;
-    cursor: pointer;
-  }
-
-  .bank-submit-btn {
-    width: 100%;
-    background: #14204d;
+  /* Monthly Salary Banner */
+  .salary-highlight-card {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #ffffff;
-    font-weight: 700;
-    font-size: 14.5px;
-    border: none;
-    border-radius: 10px;
-    padding: 14px 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 2px 6px rgba(20, 32, 77, 0.15);
-  }
-
-  .bank-submit-btn:hover {
-    background: #1c2b63;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 32, 77, 0.2);
-  }
-
-  .bank-submit-btn:active {
-    transform: translateY(0);
-  }
-
-  .bank-security-notice {
-    background: #fffbeb;
-    border: 1px solid #fef3c7;
     border-radius: 12px;
     padding: 16px 20px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-top: 20px;
-    box-sizing: border-box;
+    justify-content: space-between;
+    margin-top: 6px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .salary-highlight-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    font-weight: 700;
+  }
+  .salary-highlight-sub {
+    font-size: 12.5px;
+    color: #cbd5e1;
+    margin-top: 2px;
+  }
+  .salary-highlight-amount {
+    font-size: 22px;
+    font-weight: 900;
+    color: #34d399;
+    letter-spacing: -0.4px;
+  }
+
+  /* Receipts Card */
+  .receipts-list-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
     width: 100%;
+    box-sizing: border-box;
+  }
+  .receipts-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #fafbfd;
+  }
+  .receipts-list-header h3 {
+    margin: 0;
+    font-size: 15.5px;
+    font-weight: 800;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .receipts-count-badge {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+    background: #e2e8f0;
+    padding: 3px 10px;
+    border-radius: 999px;
   }
 
-  .bank-security-notice svg,
-  .bank-security-notice i {
-    color: #d97706;
-    font-size: 20px;
-    flex-shrink: 0;
+  .receipts-table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .bank-security-notice span {
+  table.emp-receipts-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+  }
+  table.emp-receipts-table thead th {
+    text-align: left;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-weight: 700;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    background: #f8fafc;
+  }
+  table.emp-receipts-table tbody td {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
     font-size: 13.5px;
-    color: #92400e;
-    font-weight: 500;
-    line-height: 1.4;
+    color: #334155;
+    white-space: nowrap;
+  }
+  table.emp-receipts-table tbody tr:last-child td { border-bottom: none; }
+  table.emp-receipts-table tbody tr:hover { background: #f8fafc; }
+
+  /* Mobile Card View for Receipts */
+  .receipts-mobile-grid {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+  }
+  .receipt-mobile-item {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
   }
 
-  /* Responsive Adjustments for Mobile / Tablet */
-  @media (max-width: 900px) {
-    .bank-card {
-      padding: 20px 18px;
-    }
+  .btn-view-receipt-png {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eff6ff;
+    color: var(--blue);
+    border: 1px solid #bfdbfe;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+  }
+  .btn-view-receipt-png:hover {
+    background: var(--blue);
+    color: #ffffff;
+    border-color: var(--blue);
+  }
 
-    .bank-form-grid {
+  /* Modal Layout */
+  .emp-receipt-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999999;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  .emp-receipt-modal-window {
+    background: #ffffff;
+    width: 100%;
+    max-width: 660px;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+    overflow: hidden;
+    margin: auto;
+    animation: empModalPop 0.22s ease-out;
+  }
+
+  @keyframes empModalPop {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .emp-receipt-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #fafbfd;
+  }
+  .emp-receipt-modal-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .emp-receipt-modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 2px 6px;
+    line-height: 1;
+    border-radius: 6px;
+  }
+
+  .emp-receipt-modal-content {
+    padding: 18px 20px;
+    max-height: 75vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .emp-receipt-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    background: #f8fafc;
+  }
+
+  /* Media Queries for full responsiveness */
+  @media (max-width: 1024px) {
+    .bank-grid-details {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bank-info-card {
+      padding: 16px;
+    }
+    .bank-grid-details {
       grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .bank-info-badge {
-      padding: 12px 14px;
       gap: 12px;
     }
-
-    .bank-security-notice {
+    .salary-highlight-card {
+      flex-direction: column;
+      align-items: flex-start;
       padding: 14px 16px;
-      gap: 10px;
+      gap: 8px;
+    }
+    .salary-highlight-amount {
+      font-size: 20px;
+    }
+
+    .receipts-table-responsive {
+      display: none !important;
+    }
+    .receipts-mobile-grid {
+      display: flex !important;
+    }
+
+    .emp-receipt-modal-backdrop {
+      padding: 8px;
+    }
+    .emp-receipt-modal-window {
+      border-radius: 12px;
+    }
+    .emp-receipt-modal-content {
+      padding: 14px;
+    }
+    .emp-receipt-modal-actions {
+      padding: 12px 14px;
     }
   }
 </style>
 
-<div id="Employee_user_dashboard_05_bank_details" class="w3-animate-opacity" style="display:none;">
+<div id="Employee_user_dashboard_05_bank_details" style="display:none;">
   <main class="main">
 
-    <!-- Topbar -->
+    <!-- Standard Topbar -->
     <div class="topbar">
       <div class="topbar-left">
-        <button class="menu-btn" id="menuBtn_05" aria-label="Open menu" onclick="if(typeof openEmployeeSidebar==='function'){ openEmployeeSidebar(); }">
+        <button class="menu-btn" id="menuBtn_05" aria-label="Open menu" onclick="typeof openEmployeeSidebar==='function'? openEmployeeSidebar() : null">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/>
           </svg>
         </button>
-        <h2>Bank Details</h2>
+        <h2>Bank Details & Payment Receipts</h2>
       </div>
 
       <div class="topbar-right">
-        <div class="icon-btn" onclick="if(typeof Employee_user_dashboard_09_OPEN==='function'){ Employee_user_dashboard_09_OPEN(); }" title="Notifications">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
-            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-          </svg>
+        <div class="icon-btn" onclick="typeof Employee_user_dashboard_09_OPEN === 'function' ? Employee_user_dashboard_09_OPEN() : null" title="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
           <span class="dot"></span>
         </div>
-
-        <div class="admin-pill" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); }">
-          <div class="avatar">AP</div>
-          <span>Amal</span>
+        <div class="admin-pill" onclick="typeof Employee_user_dashboard_02_OPEN === 'function' ? Employee_user_dashboard_02_OPEN() : null">
+          <div class="avatar" id="empTopBankAvatar">EM</div>
+          <span id="empTopBankName">Employee</span>
         </div>
       </div>
     </div>
 
-    <div class="bank-details-wrapper w3-container" style="padding: 0;">
+    <!-- Page Header Info -->
+    <div class="bank-page-header">
+      <p>View your verified bank account information, monthly compensation, and payment receipt PNG slips.</p>
+    </div>
 
-      <!-- Page Head -->
-      <div class="bank-page-head">
-        <p>Manage your salary payment bank information</p>
+    <!-- Bank Details & Monthly Salary Card -->
+    <div class="bank-info-card">
+      <div class="bank-card-header">
+        <h3><i class="fa-solid fa-building-columns" style="color:var(--blue);"></i> My Bank Account & Salary Information</h3>
+        <span class="bank-active-badge"><i class="fa-solid fa-circle-check"></i> Active</span>
       </div>
 
-      <!-- Main Form Card (Full Width) -->
-      <div class="bank-card w3-card w3-round-xlarge">
-
-        <!-- Top Information Badge Banner -->
-        <div class="bank-info-badge w3-round-large">
-          <div class="bank-info-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-            </svg>
-          </div>
-          <div class="bank-info-text">
-            <strong>Bank Account Information</strong>
-            <span id="bankAccountStatusText">Loading bank details...</span>
-          </div>
+      <div class="bank-grid-details">
+        <div class="bank-field-box">
+          <span>Account Holder</span>
+          <strong id="empBankHolderName">Loading...</strong>
+        </div>
+        <div class="bank-field-box">
+          <span>Bank Name</span>
+          <strong id="empBankName" style="color:var(--blue);">Loading...</strong>
+        </div>
+        <div class="bank-field-box">
+          <span>Branch</span>
+          <strong id="empBankBranch">Loading...</strong>
+        </div>
+        <div class="bank-field-box">
+          <span>Account Number</span>
+          <strong id="empBankAccNumber" style="font-family:monospace; font-size:14.5px; letter-spacing:0.04em;">••••••••</strong>
         </div>
 
-        <!-- Form Fields Grid -->
-        <form id="empBankDetailsForm" onsubmit="event.preventDefault(); saveEmployeeBankDetails();">
-          
-          <div class="bank-form-grid">
-            <div class="bank-form-group">
-              <label for="bankAccountHolderName">Account Holder Name</label>
-              <input type="text" id="bankAccountHolderName" class="bank-form-control w3-input w3-round" placeholder="Full name as on bank account" required>
-            </div>
-
-            <div class="bank-form-group">
-              <label for="bankSelectName">Bank Name</label>
-              <select id="bankSelectName" class="bank-form-control w3-select w3-round" required>
-                <option value="" disabled selected>Select bank</option>
-                <option value="Commercial Bank of Ceylon">Commercial Bank of Ceylon</option>
-                <option value="Bank of Ceylon (BOC)">Bank of Ceylon (BOC)</option>
-                <option value="People's Bank">People's Bank</option>
-                <option value="Hatton National Bank (HNB)">Hatton National Bank (HNB)</option>
-                <option value="Sampath Bank">Sampath Bank</option>
-                <option value="Seylan Bank">Seylan Bank</option>
-                <option value="National Development Bank (NDB)">National Development Bank (NDB)</option>
-                <option value="Nations Trust Bank (NTB)">Nations Trust Bank (NTB)</option>
-                <option value="DFCC Bank">DFCC Bank</option>
-                <option value="Pan Asia Bank">Pan Asia Bank</option>
-                <option value="Union Bank of Colombo">Union Bank of Colombo</option>
-                <option value="Standard Chartered Bank">Standard Chartered Bank</option>
-                <option value="HSBC Sri Lanka">HSBC Sri Lanka</option>
-              </select>
-            </div>
-
-            <div class="bank-form-group">
-              <label for="bankBranchName">Branch</label>
-              <input type="text" id="bankBranchName" class="bank-form-control w3-input w3-round" placeholder="e.g., Colombo 03" required>
-            </div>
-
-            <div class="bank-form-group">
-              <label for="bankAccountNumber">Bank Account Number</label>
-              <div style="position: relative; width: 100%;">
-                <input type="password" id="bankAccountNumber" class="bank-form-control w3-input w3-round" placeholder="e.g., 0012345678901" style="padding-right: 44px; letter-spacing: 1px;" required autocomplete="off">
-                <button type="button" id="toggleAccVisibilityBtn" onclick="toggleBankAccountVisibility()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748b; font-size: 16px; padding: 6px; display: flex; align-items: center; justify-content: center;" title="Show/Hide Account Number">
-                  <i class="fa-solid fa-eye-slash" id="accEyeIcon"></i>
-                </button>
-              </div>
-            </div>
+        <!-- Monthly Salary Banner -->
+        <div class="salary-highlight-card">
+          <div>
+            <div class="salary-highlight-label"><i class="fa-solid fa-coins" style="color:#f59e0b; margin-right:4px;"></i> My Monthly Salary</div>
+            <div class="salary-highlight-sub">Designated monthly compensation credited to your bank account</div>
           </div>
+          <div class="salary-highlight-amount" id="empFixedMonthlySalaryDisplay">LKR 0.00</div>
+        </div>
+      </div>
+    </div>
 
-          <button type="submit" class="bank-submit-btn w3-button w3-round-large" id="saveBankDetailsBtn">
-            <span>Save Bank Details</span>
-          </button>
-        </form>
-
+    <!-- Payment Receipts Card -->
+    <div class="receipts-list-card">
+      <div class="receipts-list-header">
+        <h3><i class="fa-solid fa-file-invoice-dollar" style="color:var(--blue);"></i> My Payment Receipts (PNG Slips)</h3>
+        <span class="receipts-count-badge" id="empReceiptsCount">0 receipts</span>
       </div>
 
-      <!-- Confidentiality / Security Notice Box -->
-      <div class="bank-security-notice w3-round-large">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="16" x2="12" y2="12"/>
-          <line x1="12" y1="8" x2="12.01" y2="8"/>
-        </svg>
-        <span>Your bank details are kept strictly confidential, securely masked, and used only for salary disbursement purposes.</span>
+      <!-- Desktop / Tablet Table View -->
+      <div class="receipts-table-responsive">
+        <table class="emp-receipts-table">
+          <thead>
+            <tr>
+              <th>Receipt #</th>
+              <th>Disbursement Date</th>
+              <th>Payment Period</th>
+              <th>Paid Amount</th>
+              <th>Status</th>
+              <th style="text-align:right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="empReceiptsTableBody">
+            <tr>
+              <td colspan="6" style="text-align:center; padding: 30px 20px; color: var(--muted);">Loading payment receipts...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
+      <!-- Mobile Cards View -->
+      <div class="receipts-mobile-grid" id="empReceiptsMobileContainer">
+        <div style="text-align:center; padding: 30px 16px; color: var(--muted);">Loading payment receipts...</div>
+      </div>
     </div>
 
   </main>
 </div>
 
+<!-- ================= MODAL: View PNG Receipt Modal ================= -->
+<div class="emp-receipt-modal-backdrop" id="empReceiptModalOverlay" onclick="if(event.target===this) closeEmpReceiptModal();">
+  <div class="emp-receipt-modal-window">
+    <div class="emp-receipt-modal-header">
+      <h3><i class="fa-solid fa-receipt" style="color:var(--blue);"></i> Payment Receipt Details & Slip</h3>
+      <button type="button" class="emp-receipt-modal-close-btn" onclick="closeEmpReceiptModal()">&times;</button>
+    </div>
+
+    <div class="emp-receipt-modal-content">
+      <!-- Receipt Summary Grid -->
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px 16px; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; font-size:13px;">
+        <div><span style="color:var(--muted);">Receipt #:</span> <strong id="empModalReceiptNo" style="color:var(--blue); font-family:monospace;">REC-202608-0001</strong></div>
+        <div><span style="color:var(--muted);">Disbursement Date:</span> <strong id="empModalReceiptDate">2026-08-30</strong></div>
+        <div><span style="color:var(--muted);">Employee:</span> <strong id="empModalEmpName">John Doe</strong></div>
+        <div><span style="color:var(--muted);">Payment Period:</span> <strong id="empModalPeriod" style="color:var(--navy);">August 2026</strong></div>
+        <div id="empModalAmountRow" style="grid-column: 1 / -1;"><span style="color:var(--muted);">Paid Salary:</span> <strong id="empModalAmount" style="color:#059669; font-size:15px;">LKR 0.00</strong></div>
+      </div>
+
+      <!-- PNG Preview -->
+      <div style="border:1px solid #cbd5e1; border-radius:12px; overflow:hidden; background:#ffffff; text-align:center; padding:10px;">
+        <img id="empReceiptModalAttachedImg" src="" alt="Payment Receipt PNG" style="max-width:100%; max-height:420px; object-fit:contain; cursor:pointer;" onclick="window.open(this.src, '_blank')" title="Click to open full resolution image">
+      </div>
+    </div>
+
+    <div class="emp-receipt-modal-actions">
+      <a id="empReceiptDownloadPngLink" href="#" download class="btn-view-receipt-png" style="padding:9px 16px;"><i class="fa-solid fa-download"></i> Download PNG</a>
+      <button type="button" class="btn-view-receipt-png" style="padding:9px 18px; background:var(--navy); color:#ffffff; border:none;" onclick="closeEmpReceiptModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  function populateBankFormFields(d) {
-    if (!d) return;
-    var holderInput = document.getElementById('bankAccountHolderName');
-    var selectBank = document.getElementById('bankSelectName');
-    var branchInput = document.getElementById('bankBranchName');
-    var accInput = document.getElementById('bankAccountNumber');
-    var icon = document.getElementById('accEyeIcon');
-    var statusText = document.getElementById('bankAccountStatusText');
-
-    var accNum = d.account_number || d.bank_account_number || '';
-    var bankName = d.bank_name || '';
-
-    // Update ONLY the Linked Banner badge at the top
-    if (statusText) {
-      if (accNum || bankName) {
-        var last4 = accNum.length > 4 ? accNum.slice(-4) : accNum;
-        var masked = last4 ? ('••••' + last4) : '••••';
-        statusText.innerHTML = '<span style="color: #12b76a; font-weight: 700;">Account linked:</span> ' + (bankName || 'Bank') + ' (' + masked + ')';
-      } else {
-        statusText.innerText = 'No bank account added yet';
-      }
-    }
-
-    // Keep all form input fields completely empty / clear (No pre-filling)
-    if (holderInput) holderInput.value = '';
-    if (selectBank) selectBank.selectedIndex = 0;
-    if (branchInput) branchInput.value = '';
-    if (accInput) {
-      accInput.value = '';
-      accInput.type = 'password';
-      if (icon) icon.className = 'fa-solid fa-eye-slash';
-    }
+(function() {
+  function initEmployeeBankDetails() {
+    fetchEmployeeBankDetails();
+    fetchEmployeeSalaryReceipts();
   }
 
-  // Load Bank Details strictly from Database on page load
-  document.addEventListener("DOMContentLoaded", function() {
-    loadEmployeeBankDetails();
-  });
-
-  window.toggleBankAccountVisibility = function() {
-    var inp = document.getElementById('bankAccountNumber');
-    var icon = document.getElementById('accEyeIcon');
-    if (!inp || !icon) return;
-    if (inp.type === 'password') {
-      inp.type = 'text';
-      inp.style.letterSpacing = 'normal';
-      icon.className = 'fa-solid fa-eye';
-    } else {
-      inp.type = 'password';
-      inp.style.letterSpacing = '1px';
-      icon.className = 'fa-solid fa-eye-slash';
-    }
-  };
-
-  function loadEmployeeBankDetails() {
+  function fetchEmployeeBankDetails() {
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
-    var empId = window.currentEmployeeId || "EMP-001";
-    var userId = window.currentUserId || 1;
+    var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : 'EMP-001';
 
     $.ajax({
-      url: pth + "UxUi-Back/Bank_Details/account_number.php",
+      url: pth + "UxUi-Back/Bank_Details/account_number.php?employee_id=" + encodeURIComponent(empId),
       type: "GET",
-      data: { employee_id: empId, user_id: userId },
       dataType: "json",
       success: function(response) {
-        var statusText = document.getElementById('bankAccountStatusText');
         var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
+        var data = resObj.data || {};
 
-        if (resObj.status === "success" && resObj.data) {
-          populateBankFormFields(resObj.data);
-        } else {
-          // No record in DB: keep clean empty form
-          if (statusText) {
-            statusText.innerText = 'No bank account added yet';
-          }
+        var empName = data.account_holder_name || data.holder_name || (window.userProfileData ? window.userProfileData.full_name : 'Employee');
+        var bankName = data.bank_name || '-';
+        var branch = data.branch || '-';
+        var rawAcc = data.account_number || data.bank_account_number || '-';
+        var maskedAcc = (rawAcc && rawAcc !== '-' && rawAcc.length > 4) ? (rawAcc.slice(-4).padStart(rawAcc.length, '•')) : rawAcc;
+        var fixedSal = parseFloat(data.net_salary || data.basic_salary || 0);
+
+        document.getElementById('empBankHolderName').innerText = empName;
+        document.getElementById('empBankName').innerText = bankName;
+        document.getElementById('empBankBranch').innerText = branch;
+        document.getElementById('empBankAccNumber').innerText = maskedAcc;
+        
+        var salDisplay = document.getElementById('empFixedMonthlySalaryDisplay');
+        if (salDisplay) {
+          salDisplay.innerText = fixedSal > 0 ? ('LKR ' + fixedSal.toLocaleString('en-US', { minimumFractionDigits: 2 })) : 'Not set';
+        }
+
+        var topName = document.getElementById('empTopBankName');
+        if (topName) topName.innerText = empName;
+        var topAvatar = document.getElementById('empTopBankAvatar');
+        if (topAvatar) {
+          topAvatar.innerText = empName.split(' ').map(function(n){ return n[0]; }).join('').substring(0,2).toUpperCase();
         }
       },
       error: function() {
-        $.ajax({
-          url: pth + "View-List/Bank_details/Fetch_Bank_Details.php",
-          type: "GET",
-          data: { employee_id: empId, user_id: userId },
-          dataType: "json",
-          success: function(response2) {
-            var statusText = document.getElementById('bankAccountStatusText');
-            var resObj2 = Array.isArray(response2) ? (response2[0] || {}) : (response2 || {});
-            if (resObj2.status === "success" && resObj2.data) {
-              populateBankFormFields(resObj2.data);
-            } else {
-              if (statusText) statusText.innerText = 'No bank account added yet';
-            }
-          },
-          error: function() {
-            var statusText = document.getElementById('bankAccountStatusText');
-            if (statusText) statusText.innerText = 'No bank account added yet';
-          }
-        });
+        document.getElementById('empBankHolderName').innerText = 'Employee';
+        document.getElementById('empBankName').innerText = '-';
+        document.getElementById('empBankBranch').innerText = '-';
+        document.getElementById('empBankAccNumber').innerText = '••••••••';
       }
     });
   }
 
-  function saveEmployeeBankDetails() {
-    var holder = document.getElementById('bankAccountHolderName').value.trim();
-    var bank = document.getElementById('bankSelectName').value;
-    var branch = document.getElementById('bankBranchName').value.trim();
-    var accNum = document.getElementById('bankAccountNumber').value.trim();
-    var empId = window.currentEmployeeId || "EMP-001";
-    var userId = window.currentUserId || 1;
+  function fetchEmployeeSalaryReceipts() {
+    var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
+    var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : '';
+    var empName = (typeof window.userProfileData !== 'undefined' && window.userProfileData.full_name) ? window.userProfileData.full_name : '';
+    var searchParam = empId ? ('?employee_id=' + encodeURIComponent(empId)) : (empName ? ('?employee_id=' + encodeURIComponent(empName)) : '');
 
-    if (!holder || !bank || !branch || !accNum) {
-      alert('Please fill in all bank details.');
+    $.ajax({
+      url: pth + "View-List/Salary_Payments/List_Salary_Payments.php" + searchParam,
+      type: "GET",
+      dataType: "json",
+      success: function(response) {
+        var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
+        var list = Array.isArray(resObj.data) ? resObj.data : [];
+
+        var countSpan = document.getElementById('empReceiptsCount');
+        if (countSpan) countSpan.innerText = list.length + ' receipt' + (list.length === 1 ? '' : 's');
+
+        renderEmployeeReceipts(list);
+      },
+      error: function() {
+        renderEmployeeReceipts([]);
+      }
+    });
+  }
+
+  function renderEmployeeReceipts(list) {
+    var tbody = document.getElementById('empReceiptsTableBody');
+    var mobContainer = document.getElementById('empReceiptsMobileContainer');
+
+    if (!list || list.length === 0) {
+      if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:32px 20px; color:var(--muted);"><i class="fa-solid fa-inbox" style="font-size:24px; color:#cbd5e1; margin-bottom:6px; display:block;"></i>No payment receipts uploaded yet. Once Admin uploads a payment receipt, it will appear here.</td></tr>';
+      if (mobContainer) mobContainer.innerHTML = '<div style="text-align:center; padding:30px 16px; color:var(--muted);"><i class="fa-solid fa-inbox" style="font-size:24px; color:#cbd5e1; margin-bottom:6px; display:block;"></i>No payment receipts uploaded yet.</div>';
       return;
     }
 
-    var btn = document.getElementById('saveBankDetailsBtn');
-    var originalText = btn ? btn.innerHTML : 'Save Bank Details';
-    if (btn) {
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-      btn.disabled = true;
-    }
+    if (tbody) tbody.innerHTML = '';
+    if (mobContainer) mobContainer.innerHTML = '';
 
-    var payload = {
-      account_holder_name: holder,
-      holder_name: holder,
-      bank_name: bank,
-      branch: branch,
-      account_number: accNum,
-      bank_account_number: accNum,
-      employee_id: empId,
-      employee_name: window.currentEmployeeName || holder,
-      user_id: userId
-    };
+    list.forEach(function(row) {
+      var recNo = row.receipt_no || ('REC-' + row.id);
+      var month = row.payment_month || '-';
+      var date = row.payment_date || '-';
+      var amount = parseFloat(row.net_salary || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+      var jsonPayload = encodeURIComponent(JSON.stringify(row));
 
-    var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
-    $.ajax({
-      url: pth + "UxUi-Back/Bank_Details/account_number.php",
-      type: "POST",
-      data: payload,
-      dataType: "json",
-      success: function(response) {
-        if (btn) {
-          btn.disabled = false;
-        }
-        var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
-        var isSuccess = (resObj.error === "0" || resObj.status === "success");
+      if (tbody) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><strong style="color:var(--blue); font-family:monospace;">' + recNo + '</strong></td>' +
+          '<td><span style="font-weight:700; color:#1e293b;"><i class="fa-solid fa-calendar-day" style="color:var(--blue); margin-right:4px;"></i>' + date + '</span></td>' +
+          '<td><strong>' + month + '</strong></td>' +
+          '<td><strong style="color:#059669;">LKR ' + amount + '</strong></td>' +
+          '<td><span class="bank-active-badge"><i class="fa-solid fa-circle-check"></i> Received</span></td>' +
+          '<td style="text-align:right;">' +
+            '<button type="button" class="btn-view-receipt-png" onclick="openEmpReceiptModal(\'' + jsonPayload + '\')">' +
+              '<i class="fa-solid fa-image"></i> <span>View PNG Receipt</span>' +
+            '</button>' +
+          '</td>';
+        tbody.appendChild(tr);
+      }
 
-        if (isSuccess) {
-          populateBankFormFields(payload);
-
-          if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Bank Details Saved';
-            btn.style.background = '#12b76a';
-            setTimeout(function() {
-              btn.innerHTML = originalText;
-              btn.style.background = '#14204d';
-            }, 2500);
-          }
-        } else {
-          alert('Error: ' + (resObj.message || resObj.error || 'Could not save bank details.'));
-          if (btn) {
-            btn.innerHTML = originalText;
-          }
-        }
-      },
-      error: function() {
-        // Fallback to View-List endpoint
-        $.ajax({
-          url: pth + "View-List/Bank_details/Save_Bank_Details.php",
-          type: "POST",
-          data: payload,
-          dataType: "json",
-          success: function(response2) {
-            if (btn) {
-              btn.disabled = false;
-            }
-            var resObj2 = Array.isArray(response2) ? (response2[0] || {}) : (response2 || {});
-            var isSuccess2 = (resObj2.error === "0" || resObj2.status === "success");
-            if (isSuccess2) {
-              populateBankFormFields(payload);
-              if (btn) {
-                btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Bank Details Saved';
-                btn.style.background = '#12b76a';
-                setTimeout(function() {
-                  btn.innerHTML = originalText;
-                  btn.style.background = '#14204d';
-                }, 2500);
-              }
-            } else {
-              alert('Error: ' + (resObj2.message || resObj2.error || 'Could not save bank details.'));
-              if (btn) btn.innerHTML = originalText;
-            }
-          },
-          error: function(xhr2) {
-            if (btn) {
-              btn.disabled = false;
-              btn.innerHTML = originalText;
-            }
-            alert('Failed to connect to the server. Please check your database connection.');
-          }
-        });
+      if (mobContainer) {
+        var card = document.createElement('div');
+        card.className = 'receipt-mobile-item';
+        card.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+          '<strong style="color:var(--blue); font-family:monospace; font-size:14px;">' + recNo + '</strong>' +
+          '<span class="bank-active-badge"><i class="fa-solid fa-circle-check"></i> Received</span>' +
+        '</div>' +
+        '<div style="font-size:13px; color:#475569; display:flex; flex-direction:column; gap:4px;">' +
+          '<div><span style="color:var(--muted);">Period:</span> <strong>' + month + '</strong></div>' +
+          '<div><span style="color:var(--muted);">Disbursement Date:</span> <strong>' + date + '</strong></div>' +
+          '<div><span style="color:var(--muted);">Paid Amount:</span> <strong style="color:#059669;">LKR ' + amount + '</strong></div>' +
+        '</div>' +
+        '<button type="button" class="btn-view-receipt-png" style="justify-content:center; padding:9px; margin-top:4px;" onclick="openEmpReceiptModal(\'' + jsonPayload + '\')">' +
+          '<i class="fa-solid fa-image"></i> <span>View PNG Receipt</span>' +
+        '</button>';
+        mobContainer.appendChild(card);
       }
     });
   }
+
+  window.openEmpReceiptModal = function(encodedJson) {
+    try {
+      var d = JSON.parse(decodeURIComponent(encodedJson));
+      var overlay = document.getElementById('empReceiptModalOverlay');
+      var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
+
+      document.getElementById('empModalReceiptNo').innerText = d.receipt_no || 'REC-001';
+      document.getElementById('empModalReceiptDate').innerText = d.payment_date || '<?php echo date("Y-m-d"); ?>';
+      document.getElementById('empModalEmpName').innerText = d.employee_name || 'Employee';
+      document.getElementById('empModalPeriod').innerText = d.payment_month || '-';
+
+      var amtSpan = document.getElementById('empModalAmount');
+      if (d.net_salary && parseFloat(d.net_salary) > 0) {
+        if (amtSpan) amtSpan.innerText = 'LKR ' + parseFloat(d.net_salary).toLocaleString('en-US', { minimumFractionDigits: 2 });
+      } else {
+        if (amtSpan) amtSpan.innerText = 'LKR 0.00';
+      }
+
+      var slipImg = document.getElementById('empReceiptModalAttachedImg');
+      var downloadLink = document.getElementById('empReceiptDownloadPngLink');
+      if (d.receipt_image && d.receipt_image.trim() !== '') {
+        var fullImgUrl = (d.receipt_image.startsWith('http') || d.receipt_image.startsWith('data:')) ? d.receipt_image : (pth + d.receipt_image);
+        if (slipImg) slipImg.src = fullImgUrl;
+        if (downloadLink) {
+          downloadLink.href = fullImgUrl;
+          downloadLink.download = (d.receipt_no || 'receipt') + '.png';
+        }
+      }
+
+      if (overlay) overlay.style.display = 'flex';
+    } catch(e) {}
+  };
+
+  window.closeEmpReceiptModal = function() {
+    var overlay = document.getElementById('empReceiptModalOverlay');
+    if (overlay) overlay.style.display = 'none';
+  };
+
+  document.addEventListener("DOMContentLoaded", initEmployeeBankDetails);
+  window.reloadEmployeeBankAndReceipts = initEmployeeBankDetails;
+  window.loadEmployeeBankDetails = initEmployeeBankDetails;
+})();
 </script>

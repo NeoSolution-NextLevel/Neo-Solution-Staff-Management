@@ -78,6 +78,11 @@ class bank_details_LIST
                 $decrypted = ($rawStored !== '-') ? Bank_Security::decrypt($rawStored) : '-';
                 $masked = ($decrypted !== '-') ? Bank_Security::mask($decrypted) : '-';
 
+                $basic = isset($row['basic_salary']) ? (float)$row['basic_salary'] : 0.00;
+                $allow = isset($row['allowances']) ? (float)$row['allowances'] : 0.00;
+                $deduct = isset($row['deductions']) ? (float)$row['deductions'] : 0.00;
+                $net = isset($row['net_salary']) && (float)$row['net_salary'] > 0 ? (float)$row['net_salary'] : ($basic + $allow - $deduct);
+
                 $list[] = [
                     'id' => (int)$row['id'],
                     'user_id' => isset($row['user_id']) ? (int)$row['user_id'] : 1,
@@ -90,6 +95,10 @@ class bank_details_LIST
                     'bank_account_number' => $decrypted,
                     'account_number' => $decrypted,
                     'masked_account_number' => $masked,
+                    'basic_salary' => $basic,
+                    'allowances' => $allow,
+                    'deductions' => $deduct,
+                    'net_salary' => $net,
                     'status' => !empty($row['status']) ? $row['status'] : 'Active',
                     'sdt' => !empty($row['sdt']) ? $row['sdt'] : date('Y-m-d H:i:s')
                 ];
