@@ -81,56 +81,12 @@
           if (el('pdJoinDate')) el('pdJoinDate').textContent = joined;
           if (el('pdEmpType')) el('pdEmpType').textContent = p.employment_type || 'Full-Time';
 
-          // Probation Start & End Date and Official Start Date
-          const probStart = p.probation_start_date || joined || '—';
-          const probEnd = p.probation_end_date || '—';
-          const offStart = p.official_start_date || '—';
-
-          if (el('pdProbationStartDate')) el('pdProbationStartDate').textContent = probStart;
-          if (el('pdProbationEndDate')) el('pdProbationEndDate').textContent = probEnd;
-          if (el('pdOfficialStartDate')) el('pdOfficialStartDate').textContent = offStart;
-
-          // Dynamic or Customized Probation Status & 15-Day Attendance Tracking
-          let attendedDays = 0;
-          const now = new Date();
-          if (p.attendance_days !== null && p.attendance_days !== undefined && p.attendance_days !== '') {
-            attendedDays = Math.min(15, Math.max(0, parseInt(p.attendance_days)));
-          } else if (joined && joined !== '—') {
-            const joinD = new Date(joined);
-            if (!isNaN(joinD.getTime())) {
-              const diffDays = Math.floor((now.getTime() - joinD.getTime()) / (1000 * 60 * 60 * 24));
-              attendedDays = Math.min(15, Math.max(0, diffDays));
-            }
-          }
-
-          const progressPercent = Math.round((attendedDays / 15) * 100);
-          const daysRemaining = 15 - attendedDays;
-
-          if (el('pdAttendanceDaysBadge')) {
-            el('pdAttendanceDaysBadge').textContent = `${attendedDays} / 15 Days Marked (${progressPercent}%)`;
-          }
-          if (el('pdAttendanceProgressBar')) {
-            el('pdAttendanceProgressBar').style.width = `${progressPercent}%`;
-          }
-
-          if (p.probation_status && p.probation_status.trim() !== '') {
-            if (el('pdProbationStatus')) {
-              el('pdProbationStatus').textContent = p.probation_status;
-              el('pdProbationStatus').style.color = p.probation_status.toLowerCase().includes('confirm') || p.probation_status.toLowerCase().includes('complet') ? '#16a34a' : '#2563eb';
-            }
-          } else {
-            if (attendedDays >= 15) {
-              if (el('pdProbationStatus')) {
-                el('pdProbationStatus').textContent = `Completed (Confirmed Staff)`;
-                el('pdProbationStatus').style.color = '#16a34a';
-              }
-            } else {
-              if (el('pdProbationStatus')) {
-                el('pdProbationStatus').textContent = `In Progress (${daysRemaining} days remaining)`;
-                el('pdProbationStatus').style.color = '#d97706';
-              }
-            }
-          }
+          // Work Schedule & Shift Timing in Card 4
+          if (el('pdWorkShift')) el('pdWorkShift').textContent = p.work_shift || '08:30 AM – 05:30 PM';
+          if (el('pdWorkingDays')) el('pdWorkingDays').textContent = p.working_days || 'Mon, Tue, Wed, Thu, Fri';
+          if (el('pdWorkMode')) el('pdWorkMode').textContent = p.work_mode || 'On-Site (Active)';
+          if (el('pdWorkLocation')) el('pdWorkLocation').textContent = p.work_location || 'Colombo HQ';
+          if (el('pdSchedulePeriod')) el('pdSchedulePeriod').textContent = p.schedule_start_date ? `Effective from ${p.schedule_start_date}` : 'Active Permanent Schedule';
         }
       })
       .catch(() => {});
@@ -159,11 +115,7 @@
     if (el('pdEditJoinDate')) el('pdEditJoinDate').value = p.join_date || '';
     if (el('pdEditLocation')) el('pdEditLocation').value = p.work_location || 'Colombo HQ';
     if (el('pdEditEmpType')) el('pdEditEmpType').value = p.employment_type || 'Full-Time';
-    if (el('pdEditProbationStatus')) el('pdEditProbationStatus').value = p.probation_status || 'In Progress';
-    if (el('pdEditOfficialStartDate')) el('pdEditOfficialStartDate').value = p.official_start_date || '';
-    if (el('pdEditProbationStartDate')) el('pdEditProbationStartDate').value = p.probation_start_date || p.join_date || '';
-    if (el('pdEditProbationEndDate')) el('pdEditProbationEndDate').value = p.probation_end_date || '';
-    if (el('pdEditAttendanceDays')) el('pdEditAttendanceDays').value = p.attendance_days !== undefined && p.attendance_days !== null ? p.attendance_days : (p.join_date ? Math.min(15, Math.max(0, Math.floor((new Date() - new Date(p.join_date)) / (1000 * 60 * 60 * 24)))) : 0);
+
 
     modal.classList.add('open');
   };
