@@ -190,6 +190,7 @@ CREATE TABLE `main_user_login_device` (
   `browser` varchar(45) DEFAULT NULL,
   `os` varchar(45) DEFAULT NULL,
   `ip_address` varchar(45) DEFAULT NULL,
+  `last_address` varchar(45) DEFAULT NULL,
   `last_activity` timestamp NULL DEFAULT NULL,
   `login_time` timestamp NULL DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT NULL,
