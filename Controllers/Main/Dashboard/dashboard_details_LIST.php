@@ -151,27 +151,50 @@ class dashboard_details_LIST
         $plans = [];
         $data_base_obj->get_result("CREATE TABLE IF NOT EXISTS `daily_employee_work_plans` (
             `id` int NOT NULL AUTO_INCREMENT, `user_id` int NOT NULL,
-            `employee_profile_id` int DEFAULT NULL, `plan_date` date NOT NULL,
+            `employee_profile_id` int DEFAULT NULL,
+            `employee_name` varchar(255) DEFAULT NULL,
+            `department` varchar(150) DEFAULT NULL,
+            `job_title` varchar(150) DEFAULT NULL,
+            `plan_date` date NOT NULL,
             `plan_text` text NOT NULL, `status` varchar(30) NOT NULL DEFAULT 'submitted',
             `started_at` datetime DEFAULT NULL, `submitted_at` datetime NOT NULL,
             `updated_at` datetime NOT NULL, PRIMARY KEY (`id`),
             UNIQUE KEY `unique_user_plan_date` (`user_id`, `plan_date`), KEY `idx_work_plan_date` (`plan_date`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
+        $today = date('Y-m-d');
         $query = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
-                w.submitted_at, w.updated_at, p.id AS profile_id,
-                COALESCE(NULLIF(p.full_name, ''), NULLIF(l.name_show, ''),
-                    NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name) AS full_name,
-                p.department, p.job_title
+                w.submitted_at, w.updated_at, w.plan_date,
+                COALESCE(NULLIF(w.employee_name, ''), NULLIF(p.full_name, ''), NULLIF(e.fullname, ''), NULLIF(l.name_show, ''),
+                    NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name, 'Employee') AS full_name,
+                COALESCE(NULLIF(w.department, ''), NULLIF(p.department, ''), NULLIF(e.departments, ''), '') AS department,
+                COALESCE(NULLIF(w.job_title, ''), NULLIF(p.job_title, ''), NULLIF(e.job_roles, ''), '') AS job_title,
+                COALESCE(p.id, e.id, w.employee_profile_id, w.user_id) AS profile_id
             FROM `daily_employee_work_plans` w
-            LEFT JOIN `employee_profiles` p ON p.id = w.employee_profile_id
-            INNER JOIN `main_user_login` l ON l.id = w.user_id
-            INNER JOIN `main_user_account_access_level_list` a
-                ON a.id = l.main_user_account_access_level_list_id
-            WHERE w.plan_date = CURDATE() AND l.account_active_state = 1
-                AND l.ast = 1 AND LOWER(a.type_of_access) = 'employee'
-            ORDER BY w.started_at IS NULL ASC, w.updated_at DESC";
+            LEFT JOIN `employee_profiles` p ON (p.id = w.employee_profile_id OR p.user_id = w.user_id)
+            LEFT JOIN `employees` e ON (e.id = w.employee_profile_id OR e.id = w.user_id OR e.main_user_login_id = w.user_id)
+            LEFT JOIN `main_user_login` l ON l.id = w.user_id
+            WHERE (w.plan_date = '{$today}' OR w.plan_date = CURDATE() OR DATE(w.updated_at) = '{$today}' OR DATE(w.updated_at) = CURDATE())
+            GROUP BY w.id
+            ORDER BY w.updated_at DESC, w.id DESC";
         $res = $data_base_obj->get_result($query);
+        if (!$res || $res->num_rows === 0) {
+            $fallbackQuery = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
+                    w.submitted_at, w.updated_at, w.plan_date,
+                    COALESCE(NULLIF(w.employee_name, ''), NULLIF(p.full_name, ''), NULLIF(e.fullname, ''), NULLIF(l.name_show, ''),
+                        NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name, 'Employee') AS full_name,
+                    COALESCE(NULLIF(w.department, ''), NULLIF(p.department, ''), NULLIF(e.departments, ''), '') AS department,
+                    COALESCE(NULLIF(w.job_title, ''), NULLIF(p.job_title, ''), NULLIF(e.job_roles, ''), '') AS job_title,
+                    COALESCE(p.id, e.id, w.employee_profile_id, w.user_id) AS profile_id
+                FROM `daily_employee_work_plans` w
+                LEFT JOIN `employee_profiles` p ON (p.id = w.employee_profile_id OR p.user_id = w.user_id)
+                LEFT JOIN `employees` e ON (e.id = w.employee_profile_id OR e.id = w.user_id OR e.main_user_login_id = w.user_id)
+                LEFT JOIN `main_user_login` l ON l.id = w.user_id
+                GROUP BY w.id
+                ORDER BY w.updated_at DESC, w.id DESC LIMIT 20";
+            $res = $data_base_obj->get_result($fallbackQuery);
+        }
+
         if ($res && $res->num_rows > 0) {
             while ($row = $res->fetch_assoc()) {
                 $plans[] = [
@@ -184,7 +207,8 @@ class dashboard_details_LIST
                     'status' => $row['status'] ?? 'submitted',
                     'started_at' => $row['started_at'] ?? '',
                     'submitted_at' => $row['submitted_at'] ?? '',
-                    'updated_at' => $row['updated_at'] ?? ''
+                    'updated_at' => $row['updated_at'] ?? '',
+                    'plan_date' => $row['plan_date'] ?? $today
                 ];
             }
         }
