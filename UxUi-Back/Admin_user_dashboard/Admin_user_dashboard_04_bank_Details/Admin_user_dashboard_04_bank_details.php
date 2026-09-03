@@ -631,7 +631,7 @@
     <div class="bank-tabs-nav">
       <button type="button" class="bank-tab-btn active" id="tabBtnAccounts" onclick="switchAdminBankTab('accounts')">
         <i class="fa-solid fa-building-columns"></i>
-        <span>Bank Accounts & Fixed Salaries</span>
+        <span>Bank Accounts</span>
         <span class="bank-tab-badge" id="bankAccountsCountBadge">0</span>
       </button>
       <button type="button" class="bank-tab-btn" id="tabBtnPayments" onclick="switchAdminBankTab('payments')">
@@ -666,7 +666,7 @@
                 <th>Bank & Branch</th>
                 <th>Account Number</th>
                 <th>Monthly Salary</th>
-                <th style="text-align:right;">Actions</th>
+                <th style="text-align:center;">Actions</th>
               </tr>
             </thead>
             <tbody id="bankTableBody">
@@ -711,7 +711,7 @@
                 <th>Disbursement Date</th>
                 <th>Payment Period</th>
                 <th>Paid Amount</th>
-                <th style="text-align:right;">Action</th>
+                <th style="text-align:center;">Action</th>
               </tr>
             </thead>
             <tbody id="adminPaymentsTableBody">
@@ -817,7 +817,7 @@
             <img id="uploadReceiptPreviewImg" class="receipt-image-preview-img" src="" alt="Receipt Preview">
             <div style="padding:8px 12px; background:#fff; display:flex; justify-content:space-between; align-items:center; font-size:12px; border-top:1px solid #e2e8f0;">
               <span id="uploadReceiptPreviewName" style="font-weight:700; color:#1e293b;">receipt.png</span>
-              <button type="button" class="view-acc-btn" style="padding:4px 10px; color:#dc2626; border-color:#fecaca;" onclick="clearUploadedReceiptFile(event)"><i class="fa-solid fa-trash"></i> Change</button>
+              <button type="button" class="view-acc-btn" style="padding:4px 10px; color:#475569; border-color:#cbd5e1;" onclick="clearUploadedReceiptFile(event)"><i class="fa-solid fa-arrow-rotate-right"></i> Change</button>
             </div>
           </div>
         </div>
@@ -1037,8 +1037,8 @@
       '<td><span style="font-weight:700; color:var(--blue);">' + bank + '</span><br><small style="color:#64748b;">' + branch + '</small></td>' +
       '<td><span class="acc-chip">' + accMasked + '</span></td>' +
       '<td><span class="salary-chip"><i class="fa-solid fa-coins"></i> LKR ' + fixedSal + '</span></td>' +
-      '<td style="text-align:right;">' +
-        '<div style="display:inline-flex; align-items:center; gap:6px;">' +
+      '<td style="text-align:center; vertical-align:middle;">' +
+        '<div style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">' +
           '<button type="button" class="table-pay-btn" onclick="openAdminUploadReceiptForEmp(\'' + jsonPayload + '\')"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Receipt</button>' +
         '</div>' +
       '</td>';
@@ -1127,8 +1127,8 @@
         '<td><span style="font-weight:700; color:#1e293b;"><i class="fa-solid fa-calendar-day" style="color:var(--blue); margin-right:4px;"></i>' + date + '</span></td>' +
         '<td><strong>' + month + '</strong></td>' +
         '<td><strong style="color:#059669;">LKR ' + amount + '</strong></td>' +
-        '<td>' +
-          (hasImg ? '<img src="' + imgUrl + '" style="height:36px; max-width:60px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; cursor:pointer;" onclick="openAdminViewReceiptModal(\'' + jsonPayload + '\')">' : '<span style="color:#94a3b8; font-size:12px;">No PNG</span>') +
+        '<td style="text-align:center; vertical-align:middle;">' +
+          (hasImg ? '<img src="' + imgUrl + '" style="height:36px; max-width:60px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; cursor:pointer; margin:0 auto; display:inline-block;" onclick="openAdminViewReceiptModal(\'' + jsonPayload + '\')">' : '<span style="color:#94a3b8; font-size:12px;">No PNG</span>') +
         '</td>'; 
         
       tbody.appendChild(tr);

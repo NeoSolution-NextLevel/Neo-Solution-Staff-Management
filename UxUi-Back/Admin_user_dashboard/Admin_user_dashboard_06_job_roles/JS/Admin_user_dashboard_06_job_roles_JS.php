@@ -41,18 +41,17 @@
         if (filtered.length > 0) {
           tableBody.innerHTML = filtered.map(r => `
             <tr data-id="${r.id}">
-              <td>
+              <td class="col-role-title">
                 <div class="job-cell">
                   <div class="role-icon">${iconBriefcase}</div>
                   <span class="job-title">${r.title}</span>
                 </div>
               </td>
-              <td class="dept-cell">${r.dept}</td>
-              <td><span class="employee-badge">${r.employees}</span></td>
-              <td>
-                <div class="action-group">
+              <td class="col-role-dept dept-cell">${r.dept}</td>
+              <td class="col-role-emp" style="text-align: center; vertical-align: middle;"><span class="employee-badge">${r.employees}</span></td>
+              <td class="col-role-actions" style="text-align: center; vertical-align: middle;">
+                <div class="action-group" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:8px;">
                   <button class="action-btn btn-edit" title="Edit Role" onclick="editJobRole(${r.id})">${iconEdit}</button>
-                  <button class="action-btn btn-delete" title="Delete Role" onclick="deleteJobRole(${r.id})">${iconDelete}</button>
                 </div>
               </td>
             </tr>
@@ -90,9 +89,6 @@
               <div class="mobile-role-actions">
                 <button type="button" class="btn-mobile-role-edit" onclick="editJobRole(${r.id})">
                   <i class="fa-solid fa-pen"></i> Edit
-                </button>
-                <button type="button" class="btn-mobile-role-del" onclick="deleteJobRole(${r.id})">
-                  <i class="fa-solid fa-trash"></i> Delete
                 </button>
               </div>
             </div>

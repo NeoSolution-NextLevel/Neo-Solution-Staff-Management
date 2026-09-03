@@ -54,51 +54,38 @@ if ($res && $res->num_rows > 0) {
             'message'              => 'You have already marked your attendance for today (' . date('M d, Y') . ')!',
             'already_marked_today' => true,
             'attendance_days'      => $currentDays,
-            'last_attendance_date' => $lastDate,
-            'progress_percent'     => min(100, round(($currentDays / 15) * 100))
+            'last_attendance_date' => $lastDate
         ]);
         exit;
     }
 
-    // Increment attendance days (capped at 15 for probation)
-    $newDays = min(15, $currentDays + 1);
+    // Increment attendance days
+    $newDays = $currentDays + 1;
     $profId = (int)$row['id'];
 
     $conn->query("UPDATE `employee_profiles` SET `attendance_days` = $newDays, `last_attendance_date` = '$today' WHERE `id` = $profId");
 
-    // Check if probation just completed
-    $probationComplete = ($newDays >= 15);
-    if ($probationComplete) {
-        $conn->query("UPDATE `employee_profiles` SET `probation_status` = 'Completed (Confirmed Staff - Started Active Job)' WHERE `id` = $profId");
-    }
-
     // Log notification
     if (class_exists('SystemNotifications')) {
-        $msg = $probationComplete 
-            ? "🎉 Congratulations $name! You have marked 15/15 attendance days and officially completed probation to start your full job!"
-            : "✓ $name marked daily attendance for " . date('M d, Y') . " ($newDays/15 probation days marked).";
+        $msg = "✓ $name marked daily attendance for " . date('M d, Y') . " (Total days attended: $newDays).";
         SystemNotifications::sendNotification('Attendance Marked', $msg, 'staff_attendance');
     }
 
     echo json_encode([
         'status'               => 'success',
-        'message'              => $probationComplete ? 'Congratulations! 15/15 Days completed. Active job started!' : 'Today\'s attendance marked successfully! (' . $newDays . ' / 15 Days)',
+        'message'              => 'Today\'s attendance marked successfully! (' . $newDays . ' days attended)',
         'already_marked_today' => true,
         'attendance_days'      => $newDays,
-        'last_attendance_date' => $today,
-        'probation_completed'  => $probationComplete,
-        'progress_percent'     => min(100, round(($newDays / 15) * 100))
+        'last_attendance_date' => $today
     ]);
 } else {
     // If no row exists, create initial row
     $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `attendance_days`, `last_attendance_date`, `created_at`) VALUES ('$userId', 'Employee', 1, '$today', NOW())");
     echo json_encode([
         'status'               => 'success',
-        'message'              => 'First day attendance marked successfully! (1 / 15 Days)',
+        'message'              => 'First day attendance marked successfully!',
         'already_marked_today' => true,
         'attendance_days'      => 1,
-        'last_attendance_date' => $today,
-        'probation_completed'  => false,
-        'progress_percent'     => round((1 / 15) * 100)
+        'last_attendance_date' => $today
     ]);
 }

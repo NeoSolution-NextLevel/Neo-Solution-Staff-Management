@@ -37,7 +37,7 @@
           const empName = r.employee || 'Employee';
 
           let actionCell = `
-            <div class="btn-actions-group">
+            <div class="btn-actions-group" style="display:flex; align-items:center; justify-content:center; margin:0 auto;">
               <button type="button" class="btn-action view" onclick="openLeaveDetails(${r.id})">
                 View
               </button>
@@ -46,7 +46,7 @@
 
           if (statusClass === 'pending') {
             actionCell = `
-              <div class="btn-actions-group">
+              <div class="btn-actions-group" style="display:flex; align-items:center; justify-content:center; margin:0 auto;">
                 <button type="button" class="btn-action approve" onclick="approveLeave(${r.id}, event)">
                   Approve
                 </button>
@@ -72,7 +72,7 @@
               <td>
                 <span class="status-tag ${statusClass}">${r.status || 'Pending'}</span>
               </td>
-              <td>${actionCell}</td>
+              <td class="col-actions" style="text-align: center; vertical-align: middle;">${actionCell}</td>
             </tr>
           `;
         }).join('');

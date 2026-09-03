@@ -155,7 +155,6 @@
                 </span>
                 <div class="card-actions">
                   <button class="action-btn action-edit" title="Edit Department" onclick="editDepartment(${d.id})">${iconEdit}</button>
-                  <button class="action-btn action-delete" title="Delete Department" onclick="deleteDepartment(${d.id})">${iconDelete}</button>
                 </div>
               </div>
             </div>

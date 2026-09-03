@@ -269,17 +269,14 @@ function renderAdminDocs(docs) {
         <td>
           <span style="color:#475569; font-weight:600; font-size:13px;">${uploadDate}</span>
         </td>
-        <td>
-          <div class="row-actions">
+        <td class="col-actions" style="text-align: center; vertical-align: middle;">
+          <div class="row-actions" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">
             <button type="button" class="action-btn view" title="View Document" onclick="triggerDocPreview(${id}, '${fileUrl}', '${escapeHtml(fileName)}', '${escapeHtml(docType)}', '${escapeHtml(empName)}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
             <a href="${fileUrl}" download="${fileName}" class="action-btn download" title="Download Document">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             </a>
-            <button type="button" class="action-btn delete" title="Delete Document" onclick="deleteAdminDocument(${id})">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            </button>
           </div>
         </td>
       `;
@@ -326,9 +323,6 @@ function renderAdminDocs(docs) {
           <a href="${fileUrl}" download="${fileName}" class="btn-mobile-action download">
             <i class="fa-solid fa-download"></i> Download
           </a>
-          <button type="button" class="btn-mobile-action delete" title="Delete" onclick="deleteAdminDocument(${id})">
-            <i class="fa-solid fa-trash"></i>
-          </button>
         </div>
       `;
       mobileCards.appendChild(cardDiv);

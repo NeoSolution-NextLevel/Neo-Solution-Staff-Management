@@ -200,12 +200,13 @@
   .col-period { width: 21%; }
   .col-reason { width: 17%; }
   .col-status { width: 11%; }
-  .col-actions { width: 19%; min-width: 175px; text-align: right; }
+  .col-actions { width: 19%; min-width: 175px; text-align: center; }
 
   table.leave-table th:last-child,
   table.leave-table td:last-child {
-    text-align: right;
-    padding-right: 22px !important;
+    text-align: center !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
   }
 
   /* Simple Status Tags */
@@ -224,9 +225,10 @@
 
   /* Modern Action Buttons */
   .btn-actions-group {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
+    margin: 0 auto;
     gap: 6px;
     white-space: nowrap;
   }
@@ -444,7 +446,7 @@
               <th class="col-period">Period & Days</th>
               <th class="col-reason">Reason</th>
               <th class="col-status">Status</th>
-              <th class="col-actions" style="text-align:right;">Actions</th>
+              <th class="col-actions" style="text-align:center;">Actions</th>
             </tr>
           </thead>
           <tbody id="leaveTableBody">

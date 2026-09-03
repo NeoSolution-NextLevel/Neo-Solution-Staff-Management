@@ -42,6 +42,8 @@ $probStart  = isset($_POST['probation_start_date']) ? trim($_POST['probation_sta
 $probEnd    = isset($_POST['probation_end_date']) ? trim($_POST['probation_end_date']) : '';
 $offStart   = isset($_POST['official_start_date']) ? trim($_POST['official_start_date']) : '';
 $attDays    = isset($_POST['attendance_days']) ? (int)$_POST['attendance_days'] : null;
+$source     = isset($_POST['source']) ? trim($_POST['source']) : '';
+$isEmployeeSelf = ($source === 'employee_self');
 
 // 0. Ensure columns exist
 @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `probation_start_date` DATE DEFAULT NULL");
@@ -77,12 +79,16 @@ if ($prof_check && $prof_check->num_rows > 0) {
     if (!empty($empCode))   $updates[] = "`employee_id_code` = '" . addslashes($empCode) . "'";
     if (!empty($empType))   $updates[] = "`employment_type` = '" . addslashes($empType) . "'";
     if (!empty($location))  $updates[] = "`work_location` = '" . addslashes($location) . "'";
-    if (!empty($workShift)) $updates[] = "`work_shift` = '" . addslashes($workShift) . "'";
-    if (!empty($workingDays))$updates[] = "`working_days` = '" . addslashes($workingDays) . "'";
-    if (!empty($weeklyRoster))$updates[] = "`weekly_roster` = '" . addslashes($weeklyRoster) . "'";
-    if (!empty($schedStart))$updates[] = "`schedule_start_date` = '" . addslashes($schedStart) . "'";
-    if (!empty($schedEnd))  $updates[] = "`schedule_end_date` = '" . addslashes($schedEnd) . "'";
-    if (!empty($workMode))  $updates[] = "`work_mode` = '" . addslashes($workMode) . "'";
+
+    // Work schedule & shift timing can ONLY be updated by Administrator, never by employee self-service
+    if (!$isEmployeeSelf) {
+        if (!empty($workShift))   $updates[] = "`work_shift` = '" . addslashes($workShift) . "'";
+        if (!empty($workingDays)) $updates[] = "`working_days` = '" . addslashes($workingDays) . "'";
+        if (!empty($weeklyRoster))$updates[] = "`weekly_roster` = '" . addslashes($weeklyRoster) . "'";
+        if (!empty($schedStart))  $updates[] = "`schedule_start_date` = '" . addslashes($schedStart) . "'";
+        if (!empty($schedEnd))    $updates[] = "`schedule_end_date` = '" . addslashes($schedEnd) . "'";
+        if (!empty($workMode))    $updates[] = "`work_mode` = '" . addslashes($workMode) . "'";
+    }
     if (!empty($probation)) $updates[] = "`probation_status` = '" . addslashes($probation) . "'";
     if (!empty($probStart)) $updates[] = "`probation_start_date` = '" . addslashes($probStart) . "'";
     if (!empty($probEnd))   $updates[] = "`probation_end_date` = '" . addslashes($probEnd) . "'";

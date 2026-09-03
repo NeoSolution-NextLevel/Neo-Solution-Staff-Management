@@ -488,53 +488,42 @@
         </div>
       </div>
 
-      <!-- Card 4: Probation Process & Career Lifecycle (Bottom-Right Card in 2x2 Bento Grid) -->
+      <!-- Card 4: Work Schedule & Shift Timing (Bottom-Right Card in 2x2 Bento Grid) -->
       <div class="pd-bento-card">
         <div class="pd-card-header">
           <div class="pd-card-icon blue">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
           <div>
-            <h3 class="pd-card-title">Probation Process & Career Milestones</h3>
-            <p class="pd-card-subtitle">Probation review timeline & confirmation</p>
+            <h3 class="pd-card-title">Work Schedule & Shift Timing</h3>
+            <p class="pd-card-subtitle">Active shift, schedule & assigned location</p>
           </div>
         </div>
 
-        <!-- 2x2 Internal Grid for 4 Probation Items -->
         <div class="pd-item-list">
-          <!-- 1. Probation Status -->
           <div class="pd-item-box">
-            <span class="pd-label">Probation Status</span>
-            <span class="pd-val" id="pdProbationStatus" style="color: #2563eb; font-weight: 700; margin-top:2px;">In Progress</span>
+            <span class="pd-label">Work Shift Hours</span>
+            <span class="pd-val" id="pdWorkShift" style="color: #1e293b; font-weight: 700; margin-top:2px;">08:30 AM – 05:30 PM</span>
           </div>
 
-          <!-- 2. Official Confirmed Start Date -->
           <div class="pd-item-box">
-            <span class="pd-label">Confirmed Start Date</span>
-            <span class="pd-val" id="pdOfficialStartDate" style="color: #16a34a; font-weight: 700;">—</span>
+            <span class="pd-label">Working Days</span>
+            <span class="pd-val" id="pdWorkingDays" style="color: #2563eb; font-weight: 700;">Mon, Tue, Wed, Thu, Fri</span>
           </div>
 
-          <!-- 3. Probation Start Date -->
           <div class="pd-item-box">
-            <span class="pd-label">Probation Start Date</span>
-            <span class="pd-val" id="pdProbationStartDate">—</span>
+            <span class="pd-label">General Work Mode</span>
+            <span class="pd-val" id="pdWorkMode" style="color: #16a34a; font-weight: 700;">On-Site (Active)</span>
           </div>
 
-          <!-- 4. Probation End Date -->
           <div class="pd-item-box">
-            <span class="pd-label">Probation End Date</span>
-            <span class="pd-val" id="pdProbationEndDate">—</span>
+            <span class="pd-label">Assigned Location</span>
+            <span class="pd-val" id="pdWorkLocation">Colombo HQ</span>
           </div>
 
-          <!-- 5. 15-Day Attendance Progress Tracker -->
           <div class="pd-item-box full-width" style="margin-top: 2px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
-              <span class="pd-label" style="font-weight:700;">15-Day Probation Attendance Tracking</span>
-              <span id="pdAttendanceDaysBadge" style="font-size:11.5px; font-weight:700; background:#eff6ff; color:#2563eb; padding:3px 10px; border-radius:6px;">0 / 15 Days Marked</span>
-            </div>
-            <div style="width:100%; height:8px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:6px;">
-              <div id="pdAttendanceProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #2563eb, #16a34a); border-radius:999px; transition: width 0.4s ease;"></div>
-            </div>
+            <span class="pd-label">Schedule Period</span>
+            <span class="pd-val" id="pdSchedulePeriod" style="font-weight:600; color:#475569;">Active Permanent Schedule</span>
           </div>
         </div>
       </div>
@@ -652,40 +641,7 @@
           </div>
         </div>
 
-        <!-- Section 4: Probation Lifecycle -->
-        <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 6px;">4. Probation Process & Lifecycle</div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-          <div class="pd-modal-form-group">
-            <label for="pdEditProbationStatus">Probation Status</label>
-            <select id="pdEditProbationStatus" name="probation_status" class="pd-modal-form-control">
-              <option value="In Progress">In Progress (Active Probation)</option>
-              <option value="Completed">Completed (Confirmed Staff)</option>
-              <option value="Extended">Extended</option>
-              <option value="Under Review">Under Review</option>
-            </select>
-          </div>
-          <div class="pd-modal-form-group">
-            <label for="pdEditOfficialStartDate">Official Confirmed Start Date</label>
-            <input type="date" id="pdEditOfficialStartDate" name="official_start_date" class="pd-modal-form-control" />
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-          <div class="pd-modal-form-group">
-            <label for="pdEditProbationStartDate">Probation Start Date</label>
-            <input type="date" id="pdEditProbationStartDate" name="probation_start_date" class="pd-modal-form-control" />
-          </div>
-          <div class="pd-modal-form-group">
-            <label for="pdEditProbationEndDate">Probation End Date</label>
-            <input type="date" id="pdEditProbationEndDate" name="probation_end_date" class="pd-modal-form-control" />
-          </div>
-        </div>
-
-        <div class="pd-modal-form-group">
-          <label for="pdEditAttendanceDays">Attended / Marked Days (out of 15)</label>
-          <input type="number" id="pdEditAttendanceDays" name="attendance_days" min="0" max="15" class="pd-modal-form-control" placeholder="0 - 15" />
-        </div>
       
       </div>
 

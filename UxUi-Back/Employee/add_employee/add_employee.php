@@ -30,14 +30,20 @@ $res = $add_obj->process_new_record();
 
 if ($res) {
     $new_emp_id = (int)$add_obj->get_id();
-    if (!empty($joined)) {
-        $db = new DataBase();
-        $conn = $db->get_data_base_connction();
-        $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `email`, `department`, `job_title`, `join_date`, `created_at`) 
-                      VALUES ('$new_emp_id', '" . addslashes($name) . "', '" . addslashes($email) . "', '" . addslashes($dept) . "', '" . addslashes($role) . "', '" . addslashes($joined) . "', NOW())
-                      ON DUPLICATE KEY UPDATE `join_date` = '" . addslashes($joined) . "'");
-        $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$new_emp_id' OR `user_name` = '" . addslashes($email) . "'");
-    }
+    $work_shift = isset($_POST['work_shift']) && !empty($_POST['work_shift']) ? trim($_POST['work_shift']) : '08:30 AM – 05:30 PM';
+    $working_days = isset($_POST['working_days']) && !empty($_POST['working_days']) ? trim($_POST['working_days']) : 'Mon,Tue,Wed,Thu,Fri';
+    $weekly_roster = isset($_POST['weekly_roster']) && !empty($_POST['weekly_roster']) ? trim($_POST['weekly_roster']) : '';
+
+    $db = new DataBase();
+    $conn = $db->get_data_base_connction();
+    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_shift` VARCHAR(100) DEFAULT '08:30 AM – 05:30 PM'");
+    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `working_days` VARCHAR(255) DEFAULT 'Mon,Tue,Wed,Thu,Fri'");
+    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `weekly_roster` TEXT DEFAULT NULL");
+
+    $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `email`, `department`, `job_title`, `join_date`, `work_shift`, `working_days`, `weekly_roster`, `created_at`) 
+                  VALUES ('$new_emp_id', '" . addslashes($name) . "', '" . addslashes($email) . "', '" . addslashes($dept) . "', '" . addslashes($role) . "', '" . addslashes($joined) . "', '" . addslashes($work_shift) . "', '" . addslashes($working_days) . "', '" . addslashes($weekly_roster) . "', NOW())
+                  ON DUPLICATE KEY UPDATE `join_date` = '" . addslashes($joined) . "', `work_shift` = '" . addslashes($work_shift) . "', `working_days` = '" . addslashes($working_days) . "', `weekly_roster` = '" . addslashes($weekly_roster) . "'");
+    $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$new_emp_id' OR `user_name` = '" . addslashes($email) . "'");
 
     echo json_encode([
         'status'  => 'success',

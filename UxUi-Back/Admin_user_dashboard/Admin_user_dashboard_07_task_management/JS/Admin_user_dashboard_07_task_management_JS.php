@@ -88,10 +88,9 @@
               <td class="col-deadline" data-label="Deadline">${t.deadline || '—'}</td>
               <td class="col-priority" data-label="Priority"><span class="task-pill ${priorityClass}">${t.priority || 'Medium'}</span></td>
               <td class="col-status" data-label="Status"><span class="task-pill ${statusClass}">${t.status || 'Pending'}</span></td>
-              <td class="col-actions" data-label="Actions" style="text-align: center;">
-                <div class="task-action-group">
+              <td class="col-actions" data-label="Actions" style="text-align: center; vertical-align: middle;">
+                <div class="task-action-group" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:8px;">
                   <button class="task-action-btn task-btn-edit" aria-label="Edit Task" title="Edit Task" onclick="editTask(${t.id})">${iconEdit}</button>
-                  <button class="task-action-btn task-btn-delete" aria-label="Delete Task" title="Delete Task" onclick="deleteTask(${t.id})">${iconDelete}</button>
                 </div>
               </td>
             </tr>

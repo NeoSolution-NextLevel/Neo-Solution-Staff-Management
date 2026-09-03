@@ -80,11 +80,10 @@
               <td>${e.role}</td>
               <td><span class="status-badge ${e.status}">${e.status === 'active' ? 'Active' : 'Inactive'}</span></td>
               <td>${e.joined}</td>
-              <td>
-                <div class="row-actions" style="display:flex; align-items:center; gap:6px;">
+              <td style="text-align: center; vertical-align: middle;">
+                <div class="row-actions" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">
                   <button class="action-btn view" title="View Profile" onclick="viewEmp(${e.id})">${iconEye}</button>
                   <button class="action-btn edit" title="Edit Employee" onclick="editEmp(${e.id})">${iconEdit}</button>
-                  <button class="action-btn remove" title="Remove" onclick="deleteEmp(${e.id})">${iconRemove}</button>
                 </div>
               </td>
             </tr>
@@ -129,9 +128,6 @@
                 </button>
                 <button type="button" class="btn-mobile-emp-edit" onclick="editEmp(${e.id})">
                   <i class="fa-solid fa-pen"></i> Edit
-                </button>
-                <button type="button" class="btn-mobile-emp-del" onclick="deleteEmp(${e.id})">
-                  <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
             </div>
@@ -233,11 +229,57 @@
       document.getElementById('editEmpRole').value = e.role;
       document.getElementById('editEmpStatus').value = e.status;
       document.getElementById('editEmpJoined').value = e.joined;
-      document.getElementById('editEmpWorkShift').value = e.work_shift || '';
-      document.getElementById('editEmpWorkingDays').value = e.working_days || '';
       document.getElementById('editEmpType').value = e.employment_type || 'Full-Time (Permanent)';
       document.getElementById('editEmpEmName').value = e.em_name || '';
       document.getElementById('editEmpEmPhone').value = e.em_phone || '';
+
+      // Initialize Work Shift selector
+      const currentShift = e.work_shift || '08:30 AM – 05:30 PM';
+      document.getElementById('editEmpWorkShift').value = currentShift;
+      const shiftSelect = document.getElementById('editEmpShiftSelect');
+      let matchedShift = false;
+      if (shiftSelect) {
+        for (let i = 0; i < shiftSelect.options.length; i++) {
+          if (shiftSelect.options[i].value === currentShift) {
+            shiftSelect.selectedIndex = i;
+            matchedShift = true;
+            break;
+          }
+        }
+        if (!matchedShift) {
+          shiftSelect.value = 'custom';
+          document.getElementById('editEmpCustomTimeGroup').style.display = 'block';
+          const times = currentShift.split(/[–\-]/);
+          if (times.length === 2) {
+            document.getElementById('editEmpCustomStart').value = parse12HourTo24(times[0].trim());
+            document.getElementById('editEmpCustomEnd').value = parse12HourTo24(times[1].trim());
+          }
+        } else {
+          document.getElementById('editEmpCustomTimeGroup').style.display = 'none';
+        }
+      }
+
+      // Initialize 7-Day Weekly Roster Selectors (On-Site, WFH, Leave)
+      let roster = { Mon: 'onsite', Tue: 'onsite', Wed: 'onsite', Thu: 'onsite', Fri: 'onsite', Sat: 'leave', Sun: 'leave' };
+      if (e.weekly_roster && e.weekly_roster.trim() !== '') {
+        try {
+          const parsed = JSON.parse(e.weekly_roster);
+          if (typeof parsed === 'object') roster = Object.assign(roster, parsed);
+        } catch (err) {}
+      } else if (e.working_days) {
+        const arr = e.working_days.split(',').map(d => d.trim());
+        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(d => {
+          roster[d] = arr.includes(d) ? 'onsite' : 'leave';
+        });
+      }
+
+      ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(day => {
+        const sel = document.getElementById(`editRoster_${day}`);
+        if (sel) sel.value = roster[day] || 'onsite';
+      });
+      if (typeof window.syncAdminRoster === 'function') {
+        window.syncAdminRoster('edit');
+      }
 
       // Populate department select dynamically
       const deptSelect = document.getElementById('editEmpDept');
@@ -275,6 +317,10 @@
     if (editEmpForm) {
       editEmpForm.addEventListener('submit', (ev) => {
         ev.preventDefault();
+        if (typeof window.syncAdminRoster === 'function') {
+          window.syncAdminRoster('edit');
+        }
+
         const id = document.getElementById('editEmpId').value;
         const name = document.getElementById('editEmpName').value.trim();
         const email = document.getElementById('editEmpEmail').value.trim();
@@ -284,6 +330,7 @@
         const joined = document.getElementById('editEmpJoined').value;
         const work_shift = document.getElementById('editEmpWorkShift').value.trim();
         const working_days = document.getElementById('editEmpWorkingDays').value.trim();
+        const weekly_roster = document.getElementById('editEmpWeeklyRoster')?.value || '';
         const employment_type = document.getElementById('editEmpType').value;
 
         const updateUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/update_profile/update_profile.php';
@@ -297,6 +344,7 @@
         formData.append('joined', joined);
         formData.append('work_shift', work_shift);
         formData.append('working_days', working_days);
+        formData.append('weekly_roster', weekly_roster);
         formData.append('employment_type', employment_type);
         formData.append('emergency_contact_name', document.getElementById('editEmpEmName').value.trim());
         formData.append('emergency_contact_phone', document.getElementById('editEmpEmPhone').value.trim());
@@ -372,6 +420,9 @@
     if (addEmpForm) {
       addEmpForm.addEventListener('submit', (ev) => {
         ev.preventDefault();
+        if (typeof window.syncAdminRoster === 'function') {
+          window.syncAdminRoster('add');
+        }
         const formData = new FormData(addEmpForm);
         const name = formData.get('name');
         const email = formData.get('email');
@@ -424,6 +475,156 @@
         });
       });
     }
+
+    // ---- Shift & Working Days Selection Helpers ----
+    function formatTimeTo12Hour(timeStr) {
+      if (!timeStr) return '';
+      const parts = timeStr.split(':');
+      const h = parseInt(parts[0], 10);
+      const m = parts[1] || '00';
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const hour12 = (h % 12) || 12;
+      return `${String(hour12).padStart(2, '0')}:${m} ${ampm}`;
+    }
+
+    function parse12HourTo24(str) {
+      if (!str) return '08:30';
+      const match = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!match) return '08:30';
+      let h = parseInt(match[1], 10);
+      const m = match[2];
+      const ampm = match[3].toUpperCase();
+      if (ampm === 'PM' && h < 12) h += 12;
+      if (ampm === 'AM' && h === 12) h = 0;
+      return `${String(h).padStart(2, '0')}:${m}`;
+    }
+
+    // Edit Employee Shift & Days Handlers
+    window.onEditEmpShiftChange = function (val) {
+      const customGroup = document.getElementById('editEmpCustomTimeGroup');
+      if (val === 'custom') {
+        if (customGroup) customGroup.style.display = 'block';
+        window.onEditEmpCustomTimeChange();
+      } else {
+        if (customGroup) customGroup.style.display = 'none';
+        document.getElementById('editEmpWorkShift').value = val;
+      }
+    };
+
+    window.onEditEmpCustomTimeChange = function () {
+      const s = document.getElementById('editEmpCustomStart')?.value || '08:30';
+      const e = document.getElementById('editEmpCustomEnd')?.value || '17:30';
+      const formatted = `${formatTimeTo12Hour(s)} – ${formatTimeTo12Hour(e)}`;
+      document.getElementById('editEmpWorkShift').value = formatted;
+    };
+
+    window.onEditEmpDaysPresetChange = function (preset) {
+      if (preset === 'custom') return;
+      const daysArr = preset.split(',');
+      document.querySelectorAll('#editEmpDayChips .day-chip').forEach(chip => {
+        const d = chip.getAttribute('data-day');
+        if (daysArr.includes(d)) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+      document.getElementById('editEmpWorkingDays').value = preset;
+    };
+
+    window.toggleEditEmpDay = function (chip) {
+      chip.classList.toggle('active');
+      const allDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const activeDays = allDays.filter(d => {
+        const c = document.querySelector('#editEmpDayChips .day-chip[data-day="' + d + '"]');
+        return c && c.classList.contains('active');
+      });
+      const val = activeDays.join(',');
+      document.getElementById('editEmpWorkingDays').value = val;
+
+      const presetSelect = document.getElementById('editEmpDaysPreset');
+      if (presetSelect) {
+        if (val === 'Mon,Tue,Wed,Thu,Fri') presetSelect.value = 'Mon,Tue,Wed,Thu,Fri';
+        else if (val === 'Mon,Tue,Wed,Thu,Fri,Sat') presetSelect.value = 'Mon,Tue,Wed,Thu,Fri,Sat';
+        else if (val === 'Mon,Tue,Wed,Thu,Fri,Sat,Sun') presetSelect.value = 'Mon,Tue,Wed,Thu,Fri,Sat,Sun';
+        else presetSelect.value = 'custom';
+      }
+    };
+
+    // Add Employee Shift & Days Handlers
+    window.onAddEmpShiftChange = function (val) {
+      const customGroup = document.getElementById('addEmpCustomTimeGroup');
+      if (val === 'custom') {
+        if (customGroup) customGroup.style.display = 'block';
+        window.onAddEmpCustomTimeChange();
+      } else {
+        if (customGroup) customGroup.style.display = 'none';
+        document.getElementById('addEmpWorkShift').value = val;
+      }
+    };
+
+    window.onAddEmpCustomTimeChange = function () {
+      const s = document.getElementById('addEmpCustomStart')?.value || '08:30';
+      const e = document.getElementById('addEmpCustomEnd')?.value || '17:30';
+      const formatted = `${formatTimeTo12Hour(s)} – ${formatTimeTo12Hour(e)}`;
+      document.getElementById('addEmpWorkShift').value = formatted;
+    };
+
+    window.onAddEmpDaysPresetChange = function (preset) {
+      if (preset === 'custom') return;
+      const daysArr = preset.split(',');
+      document.querySelectorAll('#addEmpDayChips .day-chip').forEach(chip => {
+        const d = chip.getAttribute('data-day');
+        if (daysArr.includes(d)) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+      document.getElementById('addEmpWorkingDays').value = preset;
+    };
+
+    window.toggleAddEmpDay = function (chip) {
+      chip.classList.toggle('active');
+      const allDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const activeDays = allDays.filter(d => {
+        const c = document.querySelector('#addEmpDayChips .day-chip[data-day="' + d + '"]');
+        return c && c.classList.contains('active');
+      });
+      const val = activeDays.join(',');
+      document.getElementById('addEmpWorkingDays').value = val;
+
+      const presetSelect = document.getElementById('addEmpDaysPreset');
+      if (presetSelect) {
+        if (val === 'Mon,Tue,Wed,Thu,Fri') presetSelect.value = 'Mon,Tue,Wed,Thu,Fri';
+        else if (val === 'Mon,Tue,Wed,Thu,Fri,Sat') presetSelect.value = 'Mon,Tue,Wed,Thu,Fri,Sat';
+        else if (val === 'Mon,Tue,Wed,Thu,Fri,Sat,Sun') presetSelect.value = 'Mon,Tue,Wed,Thu,Fri,Sat,Sun';
+        else presetSelect.value = 'custom';
+      }
+    // Synchronize 7-day Schedule (On-Site, WFH, Leave)
+    window.syncAdminRoster = function (prefix) {
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const rosterObj = {};
+      const workingDays = [];
+
+      days.forEach(day => {
+        const sel = document.getElementById(`${prefix}Roster_${day}`);
+        const val = sel ? sel.value : (day === 'Sat' || day === 'Sun' ? 'leave' : 'onsite');
+        rosterObj[day] = val;
+        if (val !== 'leave') {
+          workingDays.push(day);
+        }
+      });
+
+      const rosterJson = JSON.stringify(rosterObj);
+      const daysStr = workingDays.join(',');
+
+      const rosterInput = document.getElementById(prefix === 'add' ? 'addEmpWeeklyRoster' : 'editEmpWeeklyRoster');
+      const daysInput = document.getElementById(prefix === 'add' ? 'addEmpWorkingDays' : 'editEmpWorkingDays');
+
+      if (rosterInput) rosterInput.value = rosterJson;
+      if (daysInput) daysInput.value = daysStr;
+    };
 
     // Initial Load from Database
     window.fetchAdminEmployees();

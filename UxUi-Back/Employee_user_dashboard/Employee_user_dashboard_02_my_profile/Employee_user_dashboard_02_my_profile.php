@@ -376,9 +376,9 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
-  .roster-day-badge.onsite { background: #0f172a; color: #ffffff; border: 1px solid #0f172a; }
-  .roster-day-badge.wfh { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
-  .roster-day-badge.leave { background: #ffffff; color: #64748b; border: 1px dashed #cbd5e1; }
+  .roster-day-badge.onsite { background: #2563eb; color: #ffffff; border: 1px solid #2563eb; }
+  .roster-day-badge.wfh { background: #7c3aed; color: #ffffff; border: 1px solid #7c3aed; }
+  .roster-day-badge.leave { background: #f1f5f9; color: #64748b; border: 1px dashed #cbd5e1; }
 
   .roster-summary-row {
     display: flex;
@@ -665,15 +665,26 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               <span>Work Schedule & Shift Timing</span>
             </h3>
+            <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 3px 10px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+              <i class="fa-solid fa-shield-halved"></i> Set by Administrator
+            </span>
           </div>
           <div class="info-field-grid">
             <div class="info-field">
               <span class="info-field-label">Work Shift Hours</span>
-              <span class="info-field-val" id="viewWorkShift">08:30 AM – 05:30 PM</span>
+              <span class="info-field-val" id="viewWorkShift" style="font-weight: 700; color: #1e293b;">08:30 AM – 05:30 PM</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field-label">Working Days</span>
+              <span class="info-field-val" id="viewWorkingDays" style="font-weight: 700; color: #2563eb;">Mon, Tue, Wed, Thu, Fri</span>
             </div>
             <div class="info-field">
               <span class="info-field-label">General Work Mode</span>
-              <span class="info-field-val" id="viewWorkMode" style="color: #16a34a;">On-Site (Active)</span>
+              <span class="info-field-val" id="viewWorkMode" style="color: #16a34a; font-weight: 700;">On-Site (Active)</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field-label">Assigned Work Location</span>
+              <span class="info-field-val" id="viewWorkLocation">Colombo HQ</span>
             </div>
             <div class="info-field">
               <span class="info-field-label">Schedule Start Date</span>
@@ -683,61 +694,57 @@
               <span class="info-field-label">Schedule End Date</span>
               <span class="info-field-val" id="viewSchedEnd">—</span>
             </div>
-            <div class="info-field" style="grid-column: 1 / -1;">
-              <span class="info-field-label">Assigned Work Location</span>
-              <span class="info-field-val" id="viewWorkLocation">Colombo HQ</span>
-            </div>
           </div>
         </div>
 
-        <!-- Weekly Duty Roster (On-Site, WFH, Leave) Card -->
+        <!-- Weekly Duty Roster Card -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <span>Weekly Duty Roster (On-Site, WFH, Leave)</span>
+              <span>Weekly Duty Schedule</span>
             </h3>
           </div>
           <div>
-            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Day-by-day work arrangement according to active duty calendar:</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px;">Day-by-day weekly arrangement according to assigned working days:</div>
             
             <!-- 7-Day Visual Roster Grid -->
             <div class="roster-days-grid" id="viewRosterGrid">
               <div class="roster-day-box" id="dayBox_Mon">
                 <span class="roster-day-name">Mon</span>
-                <span class="roster-day-badge onsite" id="badge_Mon">On-Site</span>
+                <span class="roster-day-badge onsite" id="badge_Mon">Working</span>
               </div>
               <div class="roster-day-box" id="dayBox_Tue">
                 <span class="roster-day-name">Tue</span>
-                <span class="roster-day-badge onsite" id="badge_Tue">On-Site</span>
+                <span class="roster-day-badge onsite" id="badge_Tue">Working</span>
               </div>
               <div class="roster-day-box" id="dayBox_Wed">
                 <span class="roster-day-name">Wed</span>
-                <span class="roster-day-badge onsite" id="badge_Wed">On-Site</span>
+                <span class="roster-day-badge onsite" id="badge_Wed">Working</span>
               </div>
               <div class="roster-day-box" id="dayBox_Thu">
                 <span class="roster-day-name">Thu</span>
-                <span class="roster-day-badge onsite" id="badge_Thu">On-Site</span>
+                <span class="roster-day-badge onsite" id="badge_Thu">Working</span>
               </div>
               <div class="roster-day-box" id="dayBox_Fri">
                 <span class="roster-day-name">Fri</span>
-                <span class="roster-day-badge wfh" id="badge_Fri">WFH</span>
+                <span class="roster-day-badge onsite" id="badge_Fri">Working</span>
               </div>
               <div class="roster-day-box" id="dayBox_Sat">
                 <span class="roster-day-name">Sat</span>
-                <span class="roster-day-badge leave" id="badge_Sat">Leave</span>
+                <span class="roster-day-badge leave" id="badge_Sat">Off Day</span>
               </div>
               <div class="roster-day-box" id="dayBox_Sun">
                 <span class="roster-day-name">Sun</span>
-                <span class="roster-day-badge leave" id="badge_Sun">Leave</span>
+                <span class="roster-day-badge leave" id="badge_Sun">Off Day</span>
               </div>
             </div>
 
-            <!-- Dynamic Roster Summary Counters (Calculated from 7 days above) -->
-            <div class="roster-summary-row">
-              <span class="roster-stat-pill onsite" id="statOnsite">On-Site: 0 Days</span>
-              <span class="roster-stat-pill wfh" id="statWfh">WFH: 0 Days</span>
-              <span class="roster-stat-pill leave" id="statLeave">Leave: 0 Days</span>
+            <!-- Dynamic Roster Summary Counters -->
+            <div class="roster-summary-row" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9; display: flex; gap: 10px; flex-wrap: wrap;">
+              <span class="roster-stat-pill onsite" id="statOnsite">On-Site: 5 Days</span>
+              <span class="roster-stat-pill wfh" id="statWfh" style="background:#f5f3ff; color:#7c3aed; border:1px solid #ddd6fe;">WFH: 0 Days</span>
+              <span class="roster-stat-pill leave" id="statLeave">Leave / Off: 2 Days</span>
             </div>
           </div>
         </div>
@@ -817,7 +824,7 @@
     <div class="modal-header">
       <div style="display:flex; align-items:center; gap:8px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--blue);"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        <h3 style="margin:0; font-size:18px; font-weight:800; color:var(--navy);">Edit Profile & Duty Schedule</h3>
+        <h3 style="margin:0; font-size:18px; font-weight:800; color:var(--navy);">Edit Profile Details</h3>
       </div>
       <button type="button" class="modal-close-btn" onclick="closeEditProfileModal()">&times;</button>
     </div>
@@ -855,108 +862,53 @@
           </div>
         </div>
 
-        <!-- Section 2: Work Schedule & Shift Timing -->
-        <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 6px;">2. Schedule Dates & Shift Timings</div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-          <div class="modal-form-group">
-            <label for="editSchedStart">Schedule Effective Start Date</label>
-            <input type="date" id="editSchedStart" name="schedule_start_date" class="modal-form-control" />
-          </div>
-          <div class="modal-form-group">
-            <label for="editSchedEnd">Schedule Effective End Date</label>
-            <input type="date" id="editSchedEnd" name="schedule_end_date" class="modal-form-control" />
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-          <div class="modal-form-group">
-            <label for="editWorkShift">Work Shift Hours</label>
-            <input type="text" id="editWorkShift" name="work_shift" class="modal-form-control" placeholder="e.g. 08:30 AM – 05:30 PM" />
-          </div>
-          <div class="modal-form-group">
-            <label for="editWorkMode">Work Mode</label>
-            <select id="editWorkMode" name="work_mode" class="modal-form-control">
-              <option value="On-Site (Active)">On-Site (Active)</option>
-              <option value="Hybrid">Hybrid</option>
-              <option value="Remote">Remote</option>
-            </select>
-          </div>
-        </div>
-
         <div class="modal-form-group">
           <label for="editLocation">Work Location</label>
           <input type="text" id="editLocation" name="work_location" class="modal-form-control" placeholder="e.g. Colombo HQ" />
         </div>
 
-        <!-- Section 3: Daily Work Arrangement (On-Site / WFH / Leave) -->
-        <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 6px;">3. Weekly Duty Arrangement (On-Site, WFH, Leave)</div>
+        <!-- Section 2: Work Schedule (Assigned by Administrator) -->
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 10px;">
+          <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">2. Assigned Work Schedule & Shift</div>
+          <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 999px; font-weight: 700;">
+            <i class="fa-solid fa-lock"></i> Set by Administrator (View Only)
+          </span>
+        </div>
 
-        <input type="hidden" id="editWeeklyRosterHidden" name="weekly_roster" value="" />
-        
-        <div class="modal-roster-grid">
-          <!-- Mon -->
-          <div class="modal-day-card">
-            <span class="modal-day-card-title">Monday</span>
-            <select class="modal-day-select" id="rosterSel_Mon">
-              <option value="onsite">On-Site</option>
-              <option value="wfh">WFH</option>
-              <option value="leave">Leave</option>
-            </select>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Work Shift & Hours</div>
+              <div id="modalViewWorkShift" style="padding: 8px 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 700; color: #1e293b;">
+                08:30 AM – 05:30 PM
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Working Days</div>
+              <div id="modalViewWorkingDays" style="padding: 8px 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 700; color: #2563eb;">
+                Mon, Tue, Wed, Thu, Fri
+              </div>
+            </div>
           </div>
-          <!-- Tue -->
-          <div class="modal-day-card">
-            <span class="modal-day-card-title">Tuesday</span>
-            <select class="modal-day-select" id="rosterSel_Tue">
-              <option value="onsite">On-Site</option>
-              <option value="wfh">WFH</option>
-              <option value="leave">Leave</option>
-            </select>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Work Mode</div>
+              <div id="modalViewWorkMode" style="padding: 8px 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-weight: 600; color: #16a34a;">
+                On-Site (Active)
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Schedule Period</div>
+              <div id="modalViewSchedulePeriod" style="padding: 8px 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-weight: 600; color: #475569;">
+                Active / Permanent
+              </div>
+            </div>
           </div>
-          <!-- Wed -->
-          <div class="modal-day-card">
-            <span class="modal-day-card-title">Wednesday</span>
-            <select class="modal-day-select" id="rosterSel_Wed">
-              <option value="onsite">On-Site</option>
-              <option value="wfh">WFH</option>
-              <option value="leave">Leave</option>
-            </select>
-          </div>
-          <!-- Thu -->
-          <div class="modal-day-card">
-            <span class="modal-day-card-title">Thursday</span>
-            <select class="modal-day-select" id="rosterSel_Thu">
-              <option value="onsite">On-Site</option>
-              <option value="wfh">WFH</option>
-              <option value="leave">Leave</option>
-            </select>
-          </div>
-          <!-- Fri -->
-          <div class="modal-day-card">
-            <span class="modal-day-card-title">Friday</span>
-            <select class="modal-day-select" id="rosterSel_Fri">
-              <option value="onsite">On-Site</option>
-              <option value="wfh" selected>WFH</option>
-              <option value="leave">Leave</option>
-            </select>
-          </div>
-          <!-- Sat -->
-          <div class="modal-day-card">
-            <span class="modal-day-card-title">Saturday</span>
-            <select class="modal-day-select" id="rosterSel_Sat">
-              <option value="onsite">On-Site</option>
-              <option value="wfh">WFH</option>
-              <option value="leave" selected>Leave</option>
-            </select>
-          </div>
-          <!-- Sun -->
-          <div class="modal-day-card">
-            <span class="modal-day-card-title">Sunday</span>
-            <select class="modal-day-select" id="rosterSel_Sun">
-              <option value="onsite">On-Site</option>
-              <option value="wfh">WFH</option>
-              <option value="leave" selected>Leave</option>
-            </select>
+
+          <div style="font-size: 11.5px; color: #64748b; display: flex; align-items: center; gap: 6px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
+            <i class="fa-solid fa-circle-info" style="color: #0284c7;"></i>
+            <span>Work shift and working days are managed by the administrator and cannot be modified by employees.</span>
           </div>
         </div>
       

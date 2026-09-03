@@ -280,6 +280,10 @@
   }
   table.emp-table tbody tr:last-child td { border-bottom: none; }
   table.emp-table tbody tr:hover { background-color: #fafbfd; }
+  table.emp-table thead th:last-child,
+  table.emp-table tbody td:last-child {
+    text-align: center !important;
+  }
 
   .emp-cell { display: flex; align-items: center; gap: 12px; }
   .emp-avatar {
@@ -309,7 +313,7 @@
   .status-badge.active { background-color: var(--green-bg); color: var(--green); }
   .status-badge.inactive { background-color: var(--red-bg); color: var(--red); }
 
-  .row-actions { display: flex; align-items: center; gap: 6px; }
+  .row-actions { display: flex; align-items: center; justify-content: center; margin: 0 auto; gap: 6px; }
   .action-btn {
     width: 34px;
     height: 34px;
@@ -323,9 +327,40 @@
   }
   .action-btn svg { width: 16px; height: 16px; }
   .action-btn.view { background-color: var(--blue-lighter); color: var(--blue); }
-  .action-btn.edit { background-color: var(--green-bg); color: var(--green); }
-  .action-btn.remove { background-color: var(--red-bg); color: var(--red); }
   .action-btn:hover { filter: brightness(0.92); transform: translateY(-1px); }
+
+  /* Selectable Working Day Chips */
+  .day-chips-container {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .day-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    user-select: none;
+    transition: all 0.15s ease;
+  }
+  .day-chip:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+  .day-chip.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+  }
 
   /* Mobile Phone Cards View */
   .mobile-emp-cards {
@@ -678,7 +713,7 @@
 
     <div class="w3-page-head">
       <div>
-        <p id="empCount">5 total employees</p>
+        <p id="empCount">0 total employees</p>
       </div>
       <button class="w3-btn-primary" id="openAddEmpBtn" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -709,7 +744,7 @@
               <th>Job Role</th>
               <th>Status</th>
               <th>Joined</th>
-              <th>Actions</th>
+              <th style="text-align: center;">Actions</th>
             </tr>
           </thead>
           <tbody id="empTableBody"></tbody>
@@ -754,6 +789,7 @@
                 <select name="role" id="addJobRole" required>
                   <option value="">Select Job Roles...</option>
                 </select>
+              </div>
             </div>
             <div class="w3-form-row">
               <div class="w3-form-group">
@@ -766,6 +802,103 @@
               <div class="w3-form-group">
                 <label>Joined Date</label>
                 <input type="date" name="joined" value="<?php echo date('Y-m-d'); ?>">
+              </div>
+            </div>
+
+            <!-- Work Schedule Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px; border-top:1px solid #e2e8f0; padding-top:12px;">Work Schedule & Shift Timing</div>
+            
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Work Shift & Hours</label>
+                <select id="addEmpShiftSelect" onchange="onAddEmpShiftChange(this.value)">
+                  <option value="08:00 AM – 05:00 PM"selected>08:00 AM – 05:00 PM</option>
+                  <option value="08:30 AM – 05:30 PM">08:30 AM – 05:30 PM</option>
+                  <option value="09:00 AM – 06:00 PM">09:00 AM – 06:00 PM</option>
+                  <option value="custom">Custom Time Selection...</option>
+                </select>
+                <input type="hidden" name="work_shift" id="addEmpWorkShift" value="08:30 AM – 05:30 PM">
+              </div>
+              <div class="w3-form-group" id="addEmpCustomTimeGroup" style="display:none;">
+                <label>Custom Start & End Time</label>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <input type="time" id="addEmpCustomStart" value="08:30" onchange="onAddEmpCustomTimeChange()" style="flex:1;">
+                  <span style="font-weight:700; color:#64748b;">to</span>
+                  <input type="time" id="addEmpCustomEnd" value="17:30" onchange="onAddEmpCustomTimeChange()" style="flex:1;">
+                </div>
+              </div>
+            </div>
+
+            <div class="w3-form-group">
+              <label>Weekly Work Schedule (On-Site, WFH, Leave)</label>
+              <div style="font-size:11.5px; color:#64748b; margin-bottom:8px;">Choose On-Site, WFH, or Leave for each day:</div>
+              <input type="hidden" name="weekly_roster" id="addEmpWeeklyRoster" value='{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}'>
+              <input type="hidden" name="working_days" id="addEmpWorkingDays" value="Mon,Tue,Wed,Thu,Fri">
+              
+              <div class="roster-grid-admin" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap:6px;">
+                <!-- Mon -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Mon</span>
+                  <select id="addRoster_Mon" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Tue -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Tue</span>
+                  <select id="addRoster_Tue" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Wed -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Wed</span>
+                  <select id="addRoster_Wed" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Thu -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Thu</span>
+                  <select id="addRoster_Thu" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Fri -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Fri</span>
+                  <select id="addRoster_Fri" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Sat -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sat</span>
+                  <select id="addRoster_Sat" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
+                <!-- Sun -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sun</span>
+                  <select id="addRoster_Sun" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -946,22 +1079,109 @@
                 <input type="text" name="emergency_contact_phone" id="editEmpEmPhone" placeholder="e.g. 0771234567">
               </div>
             </div>
+            <!-- Work Schedule Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px;">Work Schedule & Shift Timing</div>
+            
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Work Shift</label>
-                <input type="text" name="work_shift" id="editEmpWorkShift" placeholder="e.g. 08:30 AM – 05:30 PM">
+                <label>Work Shift & Hours</label>
+                <select id="editEmpShiftSelect" onchange="onEditEmpShiftChange(this.value)">
+                  <option value="08:00 AM – 05:00 PM" selected>08:00 AM – 05:00 PM</option>
+                  <option value="08:30 AM – 05:30 PM">08:30 AM – 05:30 PM</option>
+                  <option value="09:00 AM – 06:00 PM">09:00 AM – 06:00 PM</option>
+                  <option value="custom">Custom Time Selection...</option>
+                </select>
+                <input type="hidden" name="work_shift" id="editEmpWorkShift" value="08:30 AM – 05:30 PM">
               </div>
-              <div class="w3-form-group">
-                <label>Working Days</label>
-                <input type="text" name="working_days" id="editEmpWorkingDays" placeholder="e.g. Mon,Tue,Wed,Thu,Fri">
+              <div class="w3-form-group" id="editEmpCustomTimeGroup" style="display:none;">
+                <label>Custom Start & End Time</label>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <input type="time" id="editEmpCustomStart" value="08:30" onchange="onEditEmpCustomTimeChange()" style="flex:1;">
+                  <span style="font-weight:700; color:#64748b;">to</span>
+                  <input type="time" id="editEmpCustomEnd" value="17:30" onchange="onEditEmpCustomTimeChange()" style="flex:1;">
+                </div>
+              </div>
+            </div>
+
+            <div class="w3-form-group">
+              <label>Weekly Work Schedule (On-Site, WFH, Leave)</label>
+              <div style="font-size:11.5px; color:#64748b; margin-bottom:8px;">Choose On-Site, WFH, or Leave for each day:</div>
+              <input type="hidden" name="weekly_roster" id="editEmpWeeklyRoster" value='{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}'>
+              <input type="hidden" name="working_days" id="editEmpWorkingDays" value="Mon,Tue,Wed,Thu,Fri">
+              
+              <div class="roster-grid-admin" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap:6px;">
+                <!-- Mon -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Mon</span>
+                  <select id="editRoster_Mon" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Tue -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Tue</span>
+                  <select id="editRoster_Tue" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Wed -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Wed</span>
+                  <select id="editRoster_Wed" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Thu -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Thu</span>
+                  <select id="editRoster_Thu" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Fri -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Fri</span>
+                  <select id="editRoster_Fri" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Sat -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sat</span>
+                  <select id="editRoster_Sat" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
+                <!-- Sun -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sun</span>
+                  <select id="editRoster_Sun" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="w3-form-group">
               <label>Employment Type</label>
               <select name="employment_type" id="editEmpType">
-                <option value="Full-Time">Full-Time</option>
+                <option value="Full-Time (Permanent)">Full-Time (Permanent)</option>
+                <option value="Part-Time">Part-Time</option>
+                <option value="Contract">Contract</option>
                 <option value="Internship">Internship</option>
-                <option value="Probation">Probation</option>
               </select>
             </div>
           </div>

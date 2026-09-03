@@ -257,6 +257,16 @@
 
   .role-table tr:last-child td { border-bottom: none; }
   .role-table tr:hover { background: #fafbfd; }
+  .role-table th:last-child,
+  .role-table td:last-child {
+    text-align: center !important;
+  }
+
+  /* Role Table Column Widths */
+  .col-role-title   { width: 38%; }
+  .col-role-dept    { width: 28%; }
+  .col-role-emp     { width: 18%; text-align: center !important; }
+  .col-role-actions { width: 16%; text-align: center !important; }
 
   .job-cell {
     display: flex;
@@ -303,6 +313,8 @@
   .action-group {
     display: flex;
     align-items: center;
+    justify-content: center;
+    margin: 0 auto;
     gap: 8px;
   }
 
@@ -510,10 +522,10 @@
           <table class="role-table">
             <thead>
               <tr>
-                <th>Job Title</th>
-                <th>Department</th>
-                <th>Employees</th>
-                <th>Actions</th>
+                <th class="col-role-title">Job Title</th>
+                <th class="col-role-dept">Department</th>
+                <th class="col-role-emp">Employees</th>
+                <th class="col-role-actions">Actions</th>
               </tr>
             </thead>
             <tbody id="jobRolesTableBody"></tbody>

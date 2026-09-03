@@ -331,7 +331,13 @@
   .col-type { width: 20%; }
   .col-file { width: 28%; }
   .col-date { width: 12%; }
-  .col-actions { width: 12%; text-align: right !important; }
+  .col-actions { width: 12%; text-align: center !important; }
+  table.doc-table thead th:last-child,
+  table.doc-table tbody td:last-child,
+  table.doc-table th.col-actions,
+  table.doc-table td.col-actions {
+    text-align: center !important;
+  }
 
   /* Cell Elements */
   .emp-cell {
@@ -470,7 +476,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    justify-content: flex-end;
+    justify-content: center;
+    margin: 0 auto;
   }
   .action-btn {
     width: 30px;
@@ -753,6 +760,7 @@
             <option value="Agreement">Employment Agreement</option>
             <option value="Certificate">Grama sevaka Certificate</option>
             <option value="Police Report">Police Report</option>
+            <option value="Other">Other Documents</option>
           </select>
         </div>
 
