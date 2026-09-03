@@ -1,21 +1,26 @@
 <?php
+ob_start();
 // =============================================================
 // Admin "Login as Employee" Impersonation Endpoint
 // =============================================================
-// Validates that the caller is an admin, then builds a valid
-// PHP session for the target employee — no password required.
-// Only accessible to users whose user_role contains 'admin'.
+// Validates that the caller is an admin (or already impersonating),
+// then builds a valid PHP session for the target employee.
+// Supports all employees registered in employee_profiles, employees,
+// or main_user_login.
 // =============================================================
 
-include_once '../../imports/need/session_setup.php';
-include_once '../../imports/need/DB.php';
-include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
-include_once '../../Controllers/Main/main_user_login/main_user_login_SINGLE_DATA.php';
-include_once '../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_SINGLE_DATA.php';
-include_once '../../Controllers/Main/Cook_Managment/Cook_Createing.php';
-include_once '../../Controllers/Main/main_user_login_device/main_user_login_device_ADD_UPDATE.php';
-include_once '../../Controllers/Main/main_user_login_device/main_user_login_device_LIST.php';
-include_once '../../Controllers/Main/User_Accout_Check_Device.php';
+include_once __DIR__ . '/../../imports/need/session_setup.php';
+include_once __DIR__ . '/../../imports/need/DB.php';
+include_once __DIR__ . '/../../imports/Company_Info/Company_Info_Variable_List.php';
+include_once __DIR__ . '/../../imports/security/encrypt_decrypt.php';
+include_once __DIR__ . '/../../imports/security/key_list.php';
+include_once __DIR__ . '/../../Controllers/Main/Cook_Managment/Cook_Createing.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login_device/main_user_login_device_ADD_UPDATE.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login_device/main_user_login_device_LIST.php';
+if (!isset($_SERVER['REMOTE_ADDR'])) {
+    $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+}
+include_once __DIR__ . '/../../Controllers/Main/User_Accout_Check_Device.php';
 
 header('Content-Type: application/json');
 
@@ -30,121 +35,155 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// ---- 2. Verify caller is an authenticated admin ----
-$caller_user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
-if ($caller_user_id === 0) {
-    $state['error'] = 'NOT_AUTHENTICATED';
-    $json[] = $state;
-    echo json_encode($json);
-    exit;
-}
-
-$caller_role = strtolower(trim(
+// ---- 2. Verify caller is an authenticated admin (or currently impersonating admin) ----
+$is_impersonating = !empty($_SESSION['admin_impersonating']) && $_SESSION['admin_impersonating'] === true;
+$caller_user_id   = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+$caller_role      = strtolower(trim(
     isset($_SESSION['user_role']) && $_SESSION['user_role'] !== ''
         ? $_SESSION['user_role']
         : (isset($_SESSION['ac_type']) ? $_SESSION['ac_type'] : '')
 ));
 
-if (strpos($caller_role, 'admin') === false) {
+$is_admin = (strpos($caller_role, 'admin') !== false) || $is_impersonating;
+
+if ($caller_user_id === 0 || !$is_admin) {
     $state['error'] = 'ACCESS_DENIED';
     $json[] = $state;
     echo json_encode($json);
     exit;
 }
 
-// ---- 3. Get target employee user_id ----
-$target_user_id = isset($_POST['employee_user_id']) ? (int)$_POST['employee_user_id'] : 0;
-if ($target_user_id === 0) {
+// ---- 3. Get target employee ID ----
+$target_id = isset($_POST['employee_user_id']) && (int)$_POST['employee_user_id'] > 0
+    ? (int)$_POST['employee_user_id']
+    : (isset($_POST['employee_id']) && (int)$_POST['employee_id'] > 0 ? (int)$_POST['employee_id'] : 0);
+
+if ($target_id === 0) {
     $state['error'] = 'INVALID_EMPLOYEE_ID';
     $json[] = $state;
     echo json_encode($json);
     exit;
 }
 
-// Prevent admin from impersonating themselves
-if ($target_user_id === $caller_user_id) {
-    $state['error'] = 'CANNOT_IMPERSONATE_SELF';
-    $json[] = $state;
-    echo json_encode($json);
-    exit;
+// ---- 4. Find the employee across available tables ----
+$db = new DataBase();
+
+$emp_profile_id = $target_id;
+$emp_user_id    = $target_id;
+$emp_name       = '';
+$emp_email      = '';
+$emp_code       = '';
+
+// 4a. Check employee_profiles first
+$prof_res = $db->get_result("SELECT * FROM `employee_profiles` WHERE `id` = '{$target_id}' OR `user_id` = '{$target_id}' LIMIT 1");
+if ($prof_res && $prof_res->num_rows > 0) {
+    $p = $prof_res->fetch_assoc();
+    $emp_profile_id = (int)$p['id'];
+    $emp_user_id    = !empty($p['user_id']) ? (int)$p['user_id'] : (int)$p['id'];
+    $emp_name       = !empty($p['full_name']) ? trim($p['full_name']) : '';
+    $emp_email      = !empty($p['email']) ? trim($p['email']) : '';
+    $emp_code       = !empty($p['employee_id_code']) ? trim($p['employee_id_code']) : ('EMP-' . str_pad($emp_profile_id, 3, '0', STR_PAD_LEFT));
 }
 
-// ---- 4. Load target employee's login record ----
-$emp_data = new main_user_login_SINGLE_DATA($target_user_id);
-if (!$emp_data->get_state()) {
+// 4b. Check employees table if name is still empty
+if (empty($emp_name)) {
+    $emp_res = $db->get_result("SELECT * FROM `employees` WHERE `id` = '{$target_id}' LIMIT 1");
+    if ($emp_res && $emp_res->num_rows > 0) {
+        $e = $emp_res->fetch_assoc();
+        $emp_profile_id = (int)$e['id'];
+        $emp_user_id    = (int)$e['id'];
+        $emp_name       = !empty($e['fullname']) ? trim($e['fullname']) : (!empty($e['name']) ? trim($e['name']) : '');
+        $emp_email      = !empty($e['email_address']) ? trim($e['email_address']) : (!empty($e['email']) ? trim($e['email']) : '');
+        $emp_code       = 'EMP-' . str_pad($emp_profile_id, 3, '0', STR_PAD_LEFT);
+    }
+}
+
+// 4c. Check main_user_login table if name is still empty
+if (empty($emp_name)) {
+    $login_res = $db->get_result("SELECT * FROM `main_user_login` WHERE `id` = '{$target_id}' AND `ast` = 1 LIMIT 1");
+    if ($login_res && $login_res->num_rows > 0) {
+        $u = $login_res->fetch_assoc();
+        $emp_profile_id = (int)$u['id'];
+        $emp_user_id    = (int)$u['id'];
+        $emp_name       = !empty($u['name_show']) ? trim($u['name_show']) : (trim($u['first_name'] . ' ' . $u['last_name']));
+        $emp_email      = !empty($u['user_name']) ? trim($u['user_name']) : '';
+        $emp_code       = 'EMP-' . str_pad($emp_profile_id, 3, '0', STR_PAD_LEFT);
+    }
+}
+
+if (empty($emp_name)) {
     $state['error'] = 'EMPLOYEE_NOT_FOUND';
     $json[] = $state;
     echo json_encode($json);
     exit;
 }
 
-// ---- 5. Save the admin's current session so they can return ----
-$_SESSION['admin_original_session'] = [
-    'user_id'                              => $_SESSION['user_id']                              ?? null,
-    'user_name'                            => $_SESSION['user_name']                            ?? null,
-    'session_token'                        => $_SESSION['session_token']                        ?? null,
-    'main_user_account_access_level_list_id' => $_SESSION['main_user_account_access_level_list_id'] ?? null,
-    'url_home'                             => $_SESSION['url_home']                             ?? null,
-    'user_role'                            => $_SESSION['user_role']                            ?? null,
-    'ac_type'                              => $_SESSION['ac_type']                              ?? null,
-    'user_main_cook_id'                    => $_SESSION['user_main_cook_id']                    ?? null,
-    'otp_pending'                          => $_SESSION['otp_pending']                          ?? null,
-];
+// ---- 5. Save original admin session (only if not already impersonating) ----
+if (empty($_SESSION['admin_original_session'])) {
+    $_SESSION['admin_original_session'] = [
+        'user_id'                                => $_SESSION['user_id']                                ?? 1,
+        'user_name'                              => $_SESSION['user_name']                              ?? 'Admin',
+        'session_token'                          => $_SESSION['session_token']                          ?? '',
+        'main_user_account_access_level_list_id'   => $_SESSION['main_user_account_access_level_list_id'] ?? 1,
+        'url_home'                               => $_SESSION['url_home']                               ?? 'UxUi/Admin_user_dashboard.php',
+        'user_role'                              => $_SESSION['user_role']                              ?? 'admin',
+        'ac_type'                                => $_SESSION['ac_type']                                ?? 'admin',
+        'user_main_cook_id'                      => $_SESSION['user_main_cook_id']                      ?? null,
+        'otp_pending'                            => $_SESSION['otp_pending']                            ?? false,
+    ];
+}
+
+$admin_display_name = !empty($_SESSION['admin_impersonating_name'])
+    ? $_SESSION['admin_impersonating_name']
+    : (isset($_SESSION['user_name']) && $_SESSION['user_name'] !== '' ? $_SESSION['user_name'] : 'Admin');
+
+// ---- 6. Switch session to the target employee ----
 $_SESSION['admin_impersonating']      = true;
-$_SESSION['admin_impersonating_name'] = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Admin';
+$_SESSION['admin_impersonating_name'] = $admin_display_name;
+$_SESSION['admin_target_emp_name']    = $emp_name;
+$_SESSION['admin_target_emp_code']    = $emp_code;
 
-// ---- 6. Build the employee session (same pattern as User_Login_Check.php) ----
-$emp_access_level_id = $emp_data->get_main_user_account_access_level_list_id();
-$url_home   = '';
-$user_role  = '';
+$_SESSION['user_id']                                = $emp_user_id;
+$_SESSION['main_user_login_id']                     = $emp_user_id;
+$_SESSION['employee_profile_id']                    = $emp_profile_id;
+$_SESSION['user_name']                              = $emp_email ?: $emp_name;
+$_SESSION['fullname']                               = $emp_name;
+$_SESSION['user_role']                              = 'Employee';
+$_SESSION['ac_type']                                = 'Employee';
+$_SESSION['main_user_account_access_level_list_id']  = 2;
+$_SESSION['url_home']                               = 'UxUi/Employee_user_dashboard.php';
+$_SESSION['otp_pending']                            = false;
 
-if (!empty($emp_access_level_id)) {
-    $acl = new main_user_account_access_level_list_SINGLE_DATA($emp_access_level_id);
-    if ($acl->get_state()) {
-        $url_home  = trim($acl->get_url_home());
-        $user_role = trim($acl->get_type_of_access());
+// Optional: Device token and cook_id
+$_SESSION['session_token'] = bin2hex(random_bytes(16));
+try {
+    if (class_exists('User_Accout_Check_Device')) {
+        $device_check = new User_Accout_Check_Device();
+        $device_check->set_main_user_login_id($emp_user_id);
+        $device_check->check_main_user_login_device();
+        $tok = $device_check->get_session_token();
+        if (!empty($tok)) $_SESSION['session_token'] = $tok;
     }
-}
+} catch (Throwable $ex) {}
 
-// Session token via device check
-$device_check = new User_Accout_Check_Device();
-$device_check->set_main_user_login_id($target_user_id);
-$device_check->check_main_user_login_device();
-$session_token = $device_check->get_session_token();
-
-// Cookie
-$cook_obj = new Cook_Createing($target_user_id);
-$cook_id  = $cook_obj->get_cook_id();
-
-// Overwrite session with employee values
-$_SESSION['user_id']                              = $target_user_id;
-$_SESSION['user_name']                            = $emp_data->get_user_name();
-$_SESSION['session_token']                        = $session_token;
-$_SESSION['main_user_account_access_level_list_id'] = $emp_access_level_id;
-$_SESSION['url_home']                             = $url_home;
-$_SESSION['user_role']                            = $user_role;
-$_SESSION['ac_type']                              = $user_role;
-$_SESSION['user_main_cook_id']                    = $cook_id;
-$_SESSION['otp_pending']                          = false;
-
-// Update last_login in DB
-$login_db = new DataBase();
-$login_db->get_result("UPDATE `main_user_login` SET `last_login` = NOW() WHERE `id` = " . $target_user_id);
-
-// ---- 7. Resolve the employee dashboard URL ----
-if (!empty($url_home)) {
-    if (stripos($url_home, 'http://') === 0 || stripos($url_home, 'https://') === 0) {
-        $redirect_url = $url_home;
-    } else {
-        $redirect_url = rtrim($home_page, '/') . '/' . ltrim($url_home, '/');
+try {
+    if (class_exists('Cook_Createing')) {
+        $cook_obj = new Cook_Createing($emp_user_id);
+        $_SESSION['user_main_cook_id'] = $cook_obj->get_cook_id();
     }
-} else {
-    // Default employee dashboard
-    $redirect_url = rtrim($home_page, '/') . '/UxUi/Employee_user_dashboard.php';
-}
+} catch (Throwable $ex) {}
+
+// ---- 7. Return redirect URL to employee dashboard ----
+$redirect_url = rtrim($home_page, '/') . '/UxUi/Employee_user_dashboard.php';
 
 $state['error']        = '0';
 $state['redirect_url'] = $redirect_url;
-$state['emp_name']     = $emp_data->get_name_show() ?: ($emp_data->get_first_name() . ' ' . $emp_data->get_last_name());
+$state['emp_name']     = $emp_name;
+$state['emp_code']     = $emp_code;
 $json[] = $state;
+
+if (ob_get_level() > 0) {
+    ob_clean();
+}
 echo json_encode($json);
+exit;

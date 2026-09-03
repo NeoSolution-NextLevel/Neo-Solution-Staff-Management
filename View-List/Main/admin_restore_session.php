@@ -7,7 +7,7 @@
 // was saved before impersonation started.
 // =============================================================
 
-include_once '../../imports/need/session_setup.php';
+include_once __DIR__ . '/../../imports/need/session_setup.php';
 
 header('Content-Type: application/json');
 
