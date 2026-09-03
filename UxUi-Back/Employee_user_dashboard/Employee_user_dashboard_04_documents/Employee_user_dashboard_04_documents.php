@@ -546,7 +546,7 @@
         </div>
 
         <!-- 5. Police Report (1 PDF) -->
-        <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_police" data-doc-id="0" style="grid-column: 1 / -1;">
+        <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_police" data-doc-id="0">
           <div>
             <div class="doc-card-head">
               <h4>Police Report</h4>
@@ -579,6 +579,45 @@
               <i class="fa-solid fa-eye"></i> <span>View</span>
             </button>
             <button type="button" class="btn-doc-delete" id="btnDelete_police" onclick="deleteEmployeeDoc('police', 'Police Report')" disabled>
+              <i class="fa-solid fa-trash"></i> <span>Delete</span>
+            </button>
+          </div>
+        </div>
+
+         <!-- 5. Other Documents -->
+        <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_other" data-doc-id="0">
+          <div>
+            <div class="doc-card-head">
+              <h4>Other Documents</h4>
+              <span class="doc-status-tag not-uploaded" id="tag_other">Not Uploaded</span>
+            </div>
+            <p class="doc-desc">Upload Other Documents.</p>
+
+            <input type="file" id="fileInput_other" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'other')">
+
+            <div class="doc-dropzone" id="dropzone_other" onclick="document.getElementById('fileInput_other').click();">
+              <div class="doc-drop-empty" id="empty_other">
+                <i class="fa-solid fa-stamp" style="font-size: 26px; color: #059669;"></i>
+                <span class="drop-title">Upload Document</span>
+                <span class="drop-hint">PDF only (Max 10MB)</span>
+              </div>
+              <div class="doc-drop-filled" id="filled_other">
+                <i class="fa-solid fa-file-circle-check doc-filled-icon" style="color: #059669;"></i>
+                <span class="doc-filled-name" id="name_other">other_doc.pdf</span>
+                <span class="doc-filled-size" id="size_other">950 KB</span>
+                <span class="doc-filled-change"><i class="fa-solid fa-arrows-rotate"></i> Change PDF</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="doc-actions-row">
+            <button type="button" class="btn-doc-save" id="btnSave_other" onclick="saveEmployeeDoc('other', 'Other Documents')">
+              <i class="fa-solid fa-floppy-disk"></i> <span>Save</span>
+            </button>
+            <button type="button" class="btn-doc-view" id="btnView_other" onclick="viewEmployeeDoc('other', 'Other Documents')" disabled>
+              <i class="fa-solid fa-eye"></i> <span>View</span>
+            </button>
+            <button type="button" class="btn-doc-delete" id="btnDelete_other" onclick="deleteEmployeeDoc('other', 'Other Documents')" disabled>
               <i class="fa-solid fa-trash"></i> <span>Delete</span>
             </button>
           </div>

@@ -308,6 +308,17 @@
     cursor: default;
   }
 
+  .daily-plan-panel { background:#fff; border:1px solid #e8eaf0; border-radius:16px; padding:20px 24px; margin-bottom:24px; box-shadow:0 1px 3px rgba(20,25,60,.04); }
+  .daily-plan-panel h3 { margin:0 0 5px; color:var(--navy); font-size:17px; }
+  .daily-plan-panel p { margin:0 0 12px; color:#64748b; font-size:13px; }
+  .daily-plan-input { width:100%; min-height:92px; resize:vertical; border:1px solid #e2e8f0; border-radius:10px; padding:12px; font:inherit; font-size:13px; outline:none; }
+  .daily-plan-input:focus { border-color:#2563eb; }
+  .daily-plan-actions { display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap; }
+  .start-work-btn { border:0; border-radius:10px; background:#16a34a; color:#fff; padding:11px 18px; font-weight:700; cursor:pointer; }
+  .start-work-btn.active { background:#dcfce7; color:#15803d; cursor:default; }
+  .save-plan-btn { border:1px solid #bfdbfe; border-radius:10px; background:#eff6ff; color:#2563eb; padding:10px 16px; font-weight:700; cursor:pointer; }
+  .daily-plan-status { color:#64748b; font-size:12px; }
+
   /* Responsive */
   @media (max-width: 768px) {
     .workplan-menu-btn { display: inline-flex !important; }
@@ -378,6 +389,17 @@
       </div>
     </div>
 
+    <section class="daily-plan-panel">
+      <h3>My Daily Work Plan</h3>
+      <p>Write what you plan to complete today, then select Start Work to become active for today.</p>
+      <textarea id="dailyWorkPlanText" class="daily-plan-input" placeholder="Example: Complete payroll review, respond to client emails, and update the project report..."></textarea>
+      <div class="daily-plan-actions">
+        <button type="button" id="saveDailyPlanBtn" class="save-plan-btn">Save Plan</button>
+        <button type="button" id="startWorkBtn" class="start-work-btn">Start Work — Active Today</button>
+        <span id="dailyPlanStatus" class="daily-plan-status"></span>
+      </div>
+    </section>
+
     <!-- Search & Filters Bar -->
     <div class="workplan-filters">
       <div class="search-pill-wrap">
@@ -415,6 +437,46 @@
 <script>
 (function () {
   let employeeTasks = [];
+
+  const dailyPlanUrl = () => (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/daily_work_plan/daily_work_plan.php';
+  const planText = document.getElementById('dailyWorkPlanText');
+  const planStatus = document.getElementById('dailyPlanStatus');
+  const startWorkBtn = document.getElementById('startWorkBtn');
+  const savePlanBtn = document.getElementById('saveDailyPlanBtn');
+
+  function loadDailyPlan() {
+    fetch(dailyPlanUrl(), { credentials: 'same-origin' })
+      .then(res => res.json())
+      .then(res => {
+        if (!res.data) return;
+        if (planText) planText.value = res.data.plan_text || '';
+        if (res.data.started_at && startWorkBtn) {
+          startWorkBtn.textContent = 'Active Today';
+          startWorkBtn.classList.add('active');
+          startWorkBtn.disabled = true;
+        }
+        if (planStatus) planStatus.textContent = res.data.updated_at ? `Updated ${res.data.updated_at}` : '';
+      }).catch(() => {});
+  }
+
+  function saveDailyPlan(startWork) {
+    const text = (planText?.value || '').trim();
+    if (!text) { if (planStatus) planStatus.textContent = 'Please enter your plan first.'; return; }
+    const body = new FormData();
+    body.append('plan_text', text);
+    body.append('start_work', startWork ? '1' : '0');
+    fetch(dailyPlanUrl(), { method:'POST', body, credentials:'same-origin' })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status !== 'success') throw new Error(res.message || 'Unable to save plan');
+        if (planStatus) planStatus.textContent = startWork ? 'Work started. You are active today.' : 'Daily plan saved.';
+        if (startWorkBtn && startWork) { startWorkBtn.textContent = 'Active Today'; startWorkBtn.classList.add('active'); startWorkBtn.disabled = true; }
+      }).catch(err => { if (planStatus) planStatus.textContent = err.message; });
+  }
+
+  savePlanBtn?.addEventListener('click', () => saveDailyPlan(false));
+  startWorkBtn?.addEventListener('click', () => saveDailyPlan(true));
+  loadDailyPlan();
 
   window.fetchEmployeeWorkplanTasks = function () {
     const pth = typeof window.pth !== 'undefined' ? window.pth : '../';

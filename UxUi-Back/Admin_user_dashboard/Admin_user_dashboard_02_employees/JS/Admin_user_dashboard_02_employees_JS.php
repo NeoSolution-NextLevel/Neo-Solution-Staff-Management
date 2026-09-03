@@ -28,7 +28,7 @@
     // ---- Fetch Employees from MySQL Database ----
     window.fetchAdminEmployees = function() {
       const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/fetch_employee/fetch_employee.php';
-      fetch(fetchUrl)
+      return fetch(fetchUrl)
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success' && Array.isArray(res.data)) {
@@ -601,6 +601,8 @@
         else if (val === 'Mon,Tue,Wed,Thu,Fri,Sat,Sun') presetSelect.value = 'Mon,Tue,Wed,Thu,Fri,Sat,Sun';
         else presetSelect.value = 'custom';
       }
+    };
+
     // Synchronize 7-day Schedule (On-Site, WFH, Leave)
     window.syncAdminRoster = function (prefix) {
       const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];

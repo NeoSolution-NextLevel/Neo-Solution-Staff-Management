@@ -112,6 +112,50 @@
 
     // ---- Recent Activities (Clickable Navigation to Relevant Tabs) ----
     const activitiesList = document.getElementById('dashboardActivitiesList');
+    const activeMembersList = document.getElementById('activeMembersList');
+    const activeMembersDate = document.getElementById('activeMembersDate');
+    const dailyWorkPlansList = document.getElementById('dailyWorkPlansList');
+
+    function renderActiveMembers(members) {
+      if (!activeMembersList) return;
+      if (!Array.isArray(members) || members.length === 0) {
+        activeMembersList.innerHTML = '<div style="padding:12px; color:#94a3b8; font-size:13px;">No employees have been active today.</div>';
+        return;
+      }
+      activeMembersList.innerHTML = members.map(member => {
+        const name = member.name || 'Employee';
+        const initials = name.split(/\s+/).map(word => word[0] || '').join('').slice(0, 2).toUpperCase();
+        const avatar = member.profile_pic ? `<img src="${escapeHtml((typeof window.pth !== 'undefined' ? window.pth : '../') + member.profile_pic)}" alt="">` : initials;
+        return `<div class="active-member-row">
+          <div class="active-member-avatar">${avatar}</div>
+          <div class="active-member-info"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(member.department || member.role || 'Employee')}</span></div>
+          <button class="active-member-view" type="button" onclick="openDashboardEmployeeProfile(${Number(member.profile_id)})">Profile</button>
+        </div>`;
+      }).join('');
+    }
+
+    window.openDashboardEmployeeProfile = function (profileId) {
+      if (typeof Admin_user_dashboard_02_OPEN === 'function') Admin_user_dashboard_02_OPEN();
+      const employeesLoaded = typeof window.fetchAdminEmployees === 'function'
+        ? window.fetchAdminEmployees()
+        : Promise.resolve();
+      Promise.resolve(employeesLoaded).then(() => {
+        if (typeof window.viewEmp === 'function') window.viewEmp(profileId);
+      });
+    };
+
+    function renderDailyWorkPlans(plans) {
+      if (!dailyWorkPlansList) return;
+      if (!Array.isArray(plans) || plans.length === 0) {
+        dailyWorkPlansList.innerHTML = '<div style="padding:12px; color:#94a3b8; font-size:13px;">No daily work plans submitted today.</div>';
+        return;
+      }
+      dailyWorkPlansList.innerHTML = `<table class="daily-plans-table"><thead><tr><th>Employee</th><th>Daily Plan</th><th>Started</th><th>Status</th><th></th></tr></thead><tbody>${plans.map(plan => {
+        const status = plan.started_at ? 'Active' : 'Submitted';
+        const started = plan.started_at ? escapeHtml(plan.started_at) : 'Not started';
+        return `<tr><td><div class="plan-name">${escapeHtml(plan.name)}</div><div class="plan-dept">${escapeHtml(plan.department || plan.role || '')}</div></td><td>${escapeHtml(plan.plan_text)}</td><td>${started}</td><td><span class="plan-status ${plan.started_at ? 'active' : ''}">${status}</span></td><td><button class="plan-profile-btn" type="button" onclick="openDashboardEmployeeProfile(${Number(plan.profile_id)})">Profile</button></td></tr>`;
+      }).join('')}</tbody></table>`;
+    }
     function renderActivities(customActs) {
       if (!activitiesList) return;
       if (!customActs || customActs.length === 0) {
@@ -196,6 +240,10 @@
               if (document.getElementById('kpiCompletedTasks')) document.getElementById('kpiCompletedTasks').textContent = kpi.completed_tasks;
               if (document.getElementById('kpiPendingLeaves')) document.getElementById('kpiPendingLeaves').textContent = kpi.pending_leaves;
             }
+
+            renderActiveMembers(d.active_members);
+            renderDailyWorkPlans(d.daily_work_plans);
+            if (activeMembersDate) activeMembersDate.textContent = 'Today';
 
             // Update Task Status Pie / Donut Chart purely from database
             renderTaskStatusPieChart(d.task_status, d.kpi);
