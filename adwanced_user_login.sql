@@ -199,6 +199,36 @@ CREATE TABLE `main_user_login_device` (
   `location` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+-- Daily employee activity. Employment status remains stored separately.
+CREATE TABLE `daily_employee_presence` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `employee_profile_id` int DEFAULT NULL,
+  `presence_date` date NOT NULL,
+  `first_seen_at` datetime NOT NULL,
+  `last_seen_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_presence_date` (`user_id`,`presence_date`),
+  KEY `idx_presence_date` (`presence_date`),
+  KEY `idx_presence_profile` (`employee_profile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Employee-authored daily work plan, one editable plan per employee per day.
+CREATE TABLE `daily_employee_work_plans` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `employee_profile_id` int DEFAULT NULL,
+  `plan_date` date NOT NULL,
+  `plan_text` text NOT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'submitted',
+  `started_at` datetime DEFAULT NULL,
+  `submitted_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_plan_date` (`user_id`,`plan_date`),
+  KEY `idx_work_plan_date` (`plan_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- --------------------------------------------------------
 
 --
