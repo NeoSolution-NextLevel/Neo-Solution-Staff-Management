@@ -337,7 +337,7 @@
         </div>
       </div>
 
-      <!-- 5. Probation Status -->
+      <!-- 5. Work Shift & Timing -->
       <div class="job-stat-box">
         <div class="job-stat-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -346,8 +346,8 @@
           </svg>
         </div>
         <div class="job-stat-content">
-          <span class="label">Probation Period</span>
-          <span class="value" id="jobProbationStatus">In Progress</span>
+          <span class="label">Work Shift</span>
+          <span class="value" id="jobWorkShift">08:30 AM – 05:30 PM</span>
         </div>
       </div>
 
@@ -379,14 +379,6 @@
           <div class="timeline-date" id="timelineJoinDate">—</div>
           <div class="timeline-title">Joined Organization</div>
           <div class="timeline-desc" id="timelineJoinDesc">Joined as staff member</div>
-        </div>
-
-        <!-- Event 2 (Dynamic Probation) -->
-        <div class="timeline-item">
-          <div class="timeline-dot" id="timelineProbationDot"></div>
-          <div class="timeline-date" id="timelineProbationDate">—</div>
-          <div class="timeline-title" id="timelineProbationTitle">Probation Period Review</div>
-          <div class="timeline-desc" id="timelineProbationDesc">15 days probation review and confirmation</div>
         </div>
 
         <!-- Event 3 -->
@@ -440,46 +432,8 @@
           if (el('timelineActiveTitle')) el('timelineActiveTitle').textContent = `Current Position (${empType})`;
           if (el('timelineActiveDesc')) el('timelineActiveDesc').textContent = `Active member of ${dept} team at ${location} (${role}).`;
 
-          // 3. Dynamic Probation Review Milestones
-          const probStatus = p.probation_status || 'In Progress';
-          const probStart = p.probation_start_date || joined || '';
-          const probEnd = p.probation_end_date || '';
-
-          if (el('jobProbationStatus')) {
-            el('jobProbationStatus').textContent = probStatus;
-            el('jobProbationStatus').style.color = probStatus.toLowerCase().includes('completed') || probStatus.toLowerCase().includes('confirmed') ? '#16a34a' : '#2563eb';
-          }
-
-          if (probEnd) {
-            if (el('timelineProbationDate')) el('timelineProbationDate').textContent = probEnd;
-            if (el('timelineProbationTitle')) el('timelineProbationTitle').textContent = `Probation Review (${probStatus})`;
-            if (el('timelineProbationDesc')) {
-              el('timelineProbationDesc').textContent = probStart ? `Probation evaluation scheduled from ${probStart} to ${probEnd}.` : `Probation evaluation target date: ${probEnd}.`;
-            }
-            if (el('timelineProbationDot')) {
-              el('timelineProbationDot').className = probStatus.toLowerCase().includes('completed') || probStatus.toLowerCase().includes('confirmed') ? 'timeline-dot filled' : 'timeline-dot';
-            }
-          } else if (joined && joined !== '—') {
-            const joinD = new Date(joined);
-            if (!isNaN(joinD.getTime())) {
-              const probD = new Date(joinD);
-              probD.setMonth(probD.getMonth() + 6);
-              const probStr = probD.toISOString().split('T')[0];
-              const now = new Date();
-
-              if (now < probD) {
-                if (el('timelineProbationDate')) el('timelineProbationDate').textContent = probStr;
-                if (el('timelineProbationTitle')) el('timelineProbationTitle').textContent = 'Probation Review (Scheduled)';
-                if (el('timelineProbationDesc')) el('timelineProbationDesc').textContent = `Performance evaluation scheduled on ${probStr}.`;
-                if (el('timelineProbationDot')) el('timelineProbationDot').className = 'timeline-dot';
-              } else {
-                if (el('timelineProbationDate')) el('timelineProbationDate').textContent = probStr;
-                if (el('timelineProbationTitle')) el('timelineProbationTitle').textContent = 'Probation Completed & Confirmed';
-                if (el('timelineProbationDesc')) el('timelineProbationDesc').textContent = `Successfully completed review period on ${probStr} with confirmation.`;
-                if (el('timelineProbationDot')) el('timelineProbationDot').className = 'timeline-dot filled';
-              }
-            }
-          }
+          // 3. Work Shift & Hours
+          if (el('jobWorkShift')) el('jobWorkShift').textContent = p.work_shift || '08:30 AM – 05:30 PM';
 
           const topAvatar = el('topAvatarJobPreview');
           if (topAvatar) {
