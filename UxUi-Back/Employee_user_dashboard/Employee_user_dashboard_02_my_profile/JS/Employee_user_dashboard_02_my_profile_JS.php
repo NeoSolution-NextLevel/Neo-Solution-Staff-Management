@@ -94,31 +94,28 @@
     if (el('viewSchedEnd')) el('viewSchedEnd').textContent = schedEnd;
     if (el('viewWorkMode')) {
       el('viewWorkMode').textContent = workMode;
-      el('viewWorkMode').style.color = '#1e293b';
+      el('viewWorkMode').style.color = '#16a34a';
     }
 
-    // Parse Weekly Roster (On-Site, WFH, Leave)
-    let roster = {
-      Mon: 'onsite',
-      Tue: 'onsite',
-      Wed: 'onsite',
-      Thu: 'onsite',
-      Fri: 'wfh',
-      Sat: 'leave',
-      Sun: 'leave'
-    };
+    // Working Days Synchronization
+    const rawWorkingDays = p.working_days || 'Mon,Tue,Wed,Thu,Fri';
+    const activeDaysArr = rawWorkingDays.split(',').map(d => d.trim()).filter(Boolean);
+    if (el('viewWorkingDays')) {
+      el('viewWorkingDays').textContent = activeDaysArr.join(', ');
+    }
 
+    // Parse Weekly Roster for On-Site, WFH, and Leave
+    let roster = { Mon: 'onsite', Tue: 'onsite', Wed: 'onsite', Thu: 'onsite', Fri: 'onsite', Sat: 'leave', Sun: 'leave' };
     if (p.weekly_roster && p.weekly_roster.trim() !== '') {
       try {
         const parsed = JSON.parse(p.weekly_roster);
         if (typeof parsed === 'object') roster = Object.assign(roster, parsed);
-      } catch (e) {
-        // Fallback for comma-separated key:value
-        p.weekly_roster.split(',').forEach(part => {
-          const [k, v] = part.split(':');
-          if (k && v && roster[k.trim()]) roster[k.trim()] = v.trim().toLowerCase();
-        });
-      }
+      } catch (err) {}
+    } else if (p.working_days) {
+      const arr = p.working_days.split(',').map(d => d.trim());
+      ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(d => {
+        roster[d] = arr.includes(d) ? 'onsite' : 'leave';
+      });
     }
 
     let countOnsite = 0;
@@ -129,27 +126,47 @@
     days.forEach(day => {
       const mode = (roster[day] || 'onsite').toLowerCase();
       const badge = el('badge_' + day);
-      if (badge) {
-        if (mode === 'onsite') {
+      const box = el('dayBox_' + day);
+
+      if (mode === 'onsite') {
+        countOnsite++;
+        if (box) {
+          box.style.background = '#ffffff';
+          box.style.borderColor = '#93c5fd';
+          box.style.opacity = '1';
+        }
+        if (badge) {
           badge.className = 'roster-day-badge onsite';
           badge.textContent = 'On-Site';
-          countOnsite++;
-        } else if (mode === 'wfh') {
+        }
+      } else if (mode === 'wfh') {
+        countWfh++;
+        if (box) {
+          box.style.background = '#ffffff';
+          box.style.borderColor = '#c084fc';
+          box.style.opacity = '1';
+        }
+        if (badge) {
           badge.className = 'roster-day-badge wfh';
           badge.textContent = 'WFH';
-          countWfh++;
-        } else {
+        }
+      } else {
+        countLeave++;
+        if (box) {
+          box.style.background = '#f8fafc';
+          box.style.borderColor = '#e2e8f0';
+          box.style.opacity = '0.85';
+        }
+        if (badge) {
           badge.className = 'roster-day-badge leave';
           badge.textContent = 'Leave';
-          countLeave++;
         }
       }
     });
 
-    // Dynamic count calculation from the 7 days above
     if (el('statOnsite')) el('statOnsite').textContent = `On-Site: ${countOnsite} ${countOnsite === 1 ? 'Day' : 'Days'}`;
     if (el('statWfh')) el('statWfh').textContent = `WFH: ${countWfh} ${countWfh === 1 ? 'Day' : 'Days'}`;
-    if (el('statLeave')) el('statLeave').textContent = `Leave: ${countLeave} ${countLeave === 1 ? 'Day' : 'Days'}`;
+    if (el('statLeave')) el('statLeave').textContent = `Leave / Off: ${countLeave} ${countLeave === 1 ? 'Day' : 'Days'}`;
 
     // Avatar / Profile Picture
     const picImg = el('myProfilePicImg');
@@ -185,37 +202,23 @@
     if (el('editPhone')) el('editPhone').value = userProfileData.phone || '';
     if (el('editDept')) el('editDept').value = userProfileData.department || 'Engineering';
     if (el('editJobRole')) el('editJobRole').value = userProfileData.job_title || 'Staff';
-    if (el('editSchedStart')) el('editSchedStart').value = userProfileData.schedule_start_date || '';
-    if (el('editSchedEnd')) el('editSchedEnd').value = userProfileData.schedule_end_date || '';
-    if (el('editWorkShift')) el('editWorkShift').value = userProfileData.work_shift || '08:30 AM – 05:30 PM';
     if (el('editLocation')) el('editLocation').value = userProfileData.work_location || 'Colombo HQ';
-    if (el('editWorkMode')) el('editWorkMode').value = userProfileData.work_mode || 'On-Site (Active)';
 
-    // Set day roster dropdowns
-    let roster = {
-      Mon: 'onsite',
-      Tue: 'onsite',
-      Wed: 'onsite',
-      Thu: 'onsite',
-      Fri: 'wfh',
-      Sat: 'leave',
-      Sun: 'leave'
-    };
+    // Populate Read-Only Assigned Work Schedule info card
+    if (el('modalViewWorkShift')) el('modalViewWorkShift').textContent = userProfileData.work_shift || '08:30 AM – 05:30 PM';
+    const activeDays = (userProfileData.working_days || 'Mon,Tue,Wed,Thu,Fri').split(',').map(d => d.trim()).join(', ');
+    if (el('modalViewWorkingDays')) el('modalViewWorkingDays').textContent = activeDays;
+    if (el('modalViewWorkMode')) el('modalViewWorkMode').textContent = userProfileData.work_mode || 'On-Site (Active)';
 
-    if (userProfileData.weekly_roster && userProfileData.weekly_roster.trim() !== '') {
-      try {
-        const parsed = JSON.parse(userProfileData.weekly_roster);
-        if (typeof parsed === 'object') roster = Object.assign(roster, parsed);
-      } catch (e) {}
+    const sStart = userProfileData.schedule_start_date;
+    const sEnd = userProfileData.schedule_end_date;
+    let periodText = 'Active / Permanent';
+    if (sStart && sEnd) {
+      periodText = `${sStart} – ${sEnd}`;
+    } else if (sStart) {
+      periodText = `Effective from ${sStart}`;
     }
-
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    days.forEach(day => {
-      const sel = el('rosterSel_' + day);
-      if (sel) {
-        sel.value = roster[day] || 'onsite';
-      }
-    });
+    if (el('modalViewSchedulePeriod')) el('modalViewSchedulePeriod').textContent = periodText;
 
     modal.classList.add('open');
   };
@@ -229,31 +232,12 @@
   window.saveProfileEdits = function (e) {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
-    // Compile active roster into JSON string
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const rosterObj = {};
-    const workingDaysArr = [];
-
-    days.forEach(day => {
-      const sel = document.getElementById('rosterSel_' + day);
-      const val = sel ? sel.value : 'onsite';
-      rosterObj[day] = val;
-      if (val !== 'leave') {
-        workingDaysArr.push(day);
-      }
-    });
-
-    const hiddenRoster = document.getElementById('editWeeklyRosterHidden');
-    if (hiddenRoster) {
-      hiddenRoster.value = JSON.stringify(rosterObj);
-    }
-
     const saveUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/update_profile/update_profile.php';
     const form = document.getElementById('editProfileForm');
     const formData = new FormData(form);
     const userId = userProfileData.id || userProfileData.user_id || 1;
     formData.append('user_id', userId);
-    formData.append('working_days', workingDaysArr.join(','));
+    formData.append('source', 'employee_self');
 
     const btn = document.getElementById('saveProfileBtn');
     if (btn) btn.disabled = true;
