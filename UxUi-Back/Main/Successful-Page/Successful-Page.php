@@ -1,3 +1,36 @@
+<?php
+$target_dashboard_url = $home_page . 'UxUi/Admin_user_dashboard' . $online_offline_extention;
+
+$logged_user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+
+if (!empty($logged_user_id)) {
+    include_once __DIR__ . '/../../../imports/need/DB.php';
+    include_once __DIR__ . '/../../../Controllers/Main/main_user_login/main_user_login_SINGLE_DATA.php';
+    include_once __DIR__ . '/../../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_SINGLE_DATA.php';
+
+    $access_level_id = isset($_SESSION['main_user_account_access_level_list_id']) ? $_SESSION['main_user_account_access_level_list_id'] : '';
+
+    if (empty($access_level_id)) {
+        $user_data = new main_user_login_SINGLE_DATA($logged_user_id);
+        if ($user_data->get_state()) {
+            $access_level_id = $user_data->get_main_user_account_access_level_list_id();
+        }
+    }
+
+    if (!empty($access_level_id)) {
+        $acl_data = new main_user_account_access_level_list_SINGLE_DATA($access_level_id);
+        if ($acl_data->get_state() && !empty($acl_data->get_url_home())) {
+            $raw_url = trim($acl_data->get_url_home());
+            if (stripos($raw_url, 'http://') === 0 || stripos($raw_url, 'https://') === 0) {
+                $target_dashboard_url = $raw_url;
+            } else {
+                $target_dashboard_url = rtrim($home_page, '/') . '/' . ltrim($raw_url, '/');
+            }
+        }
+    }
+}
+?>
+
   <div class="erp-container erp-container--login">
       <div class="erp-login-card">
           <!-- Header Section: Displays company branding and generic success title -->
@@ -150,7 +183,7 @@
 
           // Redirect after ripple animation
           setTimeout(() => {
-              window.location.href = 'dashboard.html'; //-----------------------------------------------------------------redirecting page
+              window.location.href = '<?php echo $target_dashboard_url ?>';
           }, 300);
       });
 
@@ -177,8 +210,8 @@
           subtitle = 'Your action has been completed successfully',
           message = 'Operation completed successfully. You will be redirected to the dashboard shortly.',
           buttonText = 'Continue to Dashboard',
-          redirectUrl = '<?php echo $home_page ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention ?>',
-          autoRedirectDelay = 5000,
+          redirectUrl = '<?php echo $target_dashboard_url ?>',
+          autoRedirectDelay = 3000,
           additionalLink = null,
           additionalLinkText = '',
           additionalLinkUrl = '#'
@@ -236,9 +269,6 @@
           createConfetti();
           createFooterParticles();
 
-          // Set default success page configuration
-          // customizeSuccess();
-
           const params = new URLSearchParams(window.location.search);
           const sucessType = params.get("message");
           if (sucessType === "User-Registration-Successful") {
@@ -248,15 +278,12 @@
                   'Welcome to the ERP System',
                   'Your account has been created successfully. You can now log in using your email and password.',
                   'Go to Login',
-                  '<?php echo $home_page ?><?php echo $User_login_url ?>User-Profile<?php echo $online_offline_extention ?>',
+                  '<?php echo $home_page ?><?php echo $User_login_url ?>User-Login<?php echo $online_offline_extention ?>',
                   3000,
                   true,
                   'Back to Home',
                   '<?php echo $home_page ?>'
               );
-
-
-
 
           } else if (sucessType === "User-Login-Successful") {
               customizeSuccess(
@@ -264,33 +291,29 @@
                   'Welcome back to the ERP System',
                   'Authentication successful. You are now logged in and your dashboard is loading.',
                   'Go to Dashboard',
-                  '<?php echo $home_page ?><?php echo $User_login_url ?>User-Profile<?php echo $online_offline_extention ?>',
+                  '<?php echo $target_dashboard_url ?>',
                   3000,
                   true,
                   'Back to Home',
                   '<?php echo $home_page ?>'
               );
-          } else if (sucessType === "<?php echo $_GET['message'] ?>") {
+          } else if (sucessType === "<?php echo isset($_GET['message']) ? htmlspecialchars($_GET['message']) : '' ?>") {
 
               <?php
                 $message_content = isset($_GET['message']) ? $_GET['message'] : 'Unknown-Message';
-
-                // replace dash with space
                 $message_content = str_replace('-', ' ', $message_content);
-
                 ?>
               customizeSuccess(
                   'Success!',
                   'Your action has been completed successfully',
-                  '<?php echo htmlspecialchars($message_content) ?>', // <-- your dynamic message here
+                  '<?php echo htmlspecialchars($message_content) ?>',
                   'Continue to Dashboard',
-                  '<?php echo $home_page ?><?php echo $User_login_url ?>User-Profile<?php echo $online_offline_extention ?>',
-                  5000,
+                  '<?php echo $target_dashboard_url ?>',
+                  3000,
                   null,
                   '',
                   '#'
               );
-
 
           } else {
               customizeSuccess();
