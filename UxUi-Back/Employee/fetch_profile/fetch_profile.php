@@ -69,7 +69,7 @@ try {
         ];
     } else {
         // 2. Fallback to employees table
-        $empCheck = $conn->query("SELECT * FROM `employees` WHERE `id` = '$userId' OR (`ast` = '1' OR `ast` IS NULL) ORDER BY `id` ASC LIMIT 1");
+        $empCheck = $conn->query("SELECT * FROM `employees` WHERE `id` = '$userId' LIMIT 1");
         if ($empCheck && $empCheck->num_rows > 0) {
             $e = $empCheck->fetch_assoc();
             $fullname = !empty($e['fullname']) ? $e['fullname'] : (!empty($e['name']) ? $e['name'] : 'Employee');

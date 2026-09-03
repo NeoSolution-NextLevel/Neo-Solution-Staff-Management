@@ -24,6 +24,7 @@
     const iconEye = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>`;
     const iconEdit = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>`;
     const iconRemove = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`;
+    const iconLoginAs = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8l2 2-2 2"/><path d="M17 10h4"/></svg>`;
 
     // ---- Fetch Employees from MySQL Database ----
     window.fetchAdminEmployees = function() {
@@ -68,7 +69,7 @@
           tableBody.innerHTML = rows.map(e => `
             <tr>
               <td>
-                <div class="emp-cell">
+                <div class="emp-cell" style="cursor: pointer;" onclick="viewEmp(${e.id})" title="Click to view ${e.name}'s profile">
                   ${getAvatarHtml(e)}
                   <div>
                     <div class="emp-name" style="font-weight:700; color:#1e293b;">${e.name}</div>
@@ -84,6 +85,8 @@
                 <div class="row-actions" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">
                   <button class="action-btn view" title="View Profile" onclick="viewEmp(${e.id})">${iconEye}</button>
                   <button class="action-btn edit" title="Edit Employee" onclick="editEmp(${e.id})">${iconEdit}</button>
+                  <button class="action-btn" title="Login as this Employee" onclick="loginAsEmp(${Number(e.id)}, ${JSON.stringify(e.name || '')})"
+                    style="background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:8px; width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(99,102,241,.35); transition:all .2s;" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">${iconLoginAs}</button>
                 </div>
               </td>
             </tr>
@@ -129,6 +132,10 @@
                 <button type="button" class="btn-mobile-emp-edit" onclick="editEmp(${e.id})">
                   <i class="fa-solid fa-pen"></i> Edit
                 </button>
+                <button type="button" onclick="loginAsEmp(${Number(e.id)}, ${JSON.stringify(e.name || '')})"
+                  style="flex:1; padding:9px 10px; border:none; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+                  <i class="fa-solid fa-right-to-bracket"></i> Login as
+                </button>
               </div>
             </div>
           `).join('');
@@ -157,10 +164,36 @@
     if (closeViewEmpModal) closeViewEmpModal.addEventListener('click', closeViewModal);
     if (cancelViewEmpModal) cancelViewEmpModal.addEventListener('click', closeViewModal);
 
-    window.viewEmp = function (id) {
-      const e = employees.find(emp => Number(emp.id) === Number(id));
-      if (!e || !viewEmpModal) return;
-      currentlyViewingEmpId = id;
+    window.switchEmpTab = function (tabId, btn) {
+      document.querySelectorAll('#viewEmpModal .emp-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.querySelectorAll('#viewEmpModal .emp-tab-pane').forEach(p => {
+        p.style.display = 'none';
+        p.classList.remove('active');
+      });
+      const target = document.getElementById(tabId);
+      if (target) {
+        target.style.display = 'block';
+        target.classList.add('active');
+      }
+    };
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function populateViewModal(data) {
+      if (!viewEmpModal) return;
+      const e = data.profile || data;
+      currentlyViewingEmpId = e.id;
+
+      // Reset to overview tab
+      window.switchEmpTab('tabOverview', document.getElementById('btnTabOverview'));
 
       const avatarWrap = document.getElementById('viewEmpAvatar');
       if (avatarWrap) {
@@ -168,36 +201,257 @@
           const pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + e.profile_pic;
           avatarWrap.innerHTML = `<img src="${pth}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
         } else {
-          avatarWrap.textContent = e.initials || 'EM';
+          avatarWrap.textContent = e.initials || ((e.full_name || e.name || 'EM').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase());
         }
       }
 
       const el = (id) => document.getElementById(id);
-      if (el('viewEmpName')) el('viewEmpName').textContent = e.name || '—';
-      if (el('viewEmpRole')) el('viewEmpRole').textContent = e.role || '—';
-      if (el('viewEmpDept')) el('viewEmpDept').textContent = e.dept || '—';
+      const name = e.full_name || e.name || '—';
+      if (el('viewEmpName')) el('viewEmpName').textContent = name;
+      if (el('viewEmpRole')) el('viewEmpRole').textContent = e.job_title || e.role || '—';
+      if (el('viewEmpDept')) el('viewEmpDept').textContent = e.department || e.dept || '—';
       if (el('viewEmpEmail')) el('viewEmpEmail').textContent = e.email || '—';
-      if (el('viewEmpJoined')) el('viewEmpJoined').textContent = e.joined || '—';
+      if (el('viewEmpJoined')) el('viewEmpJoined').textContent = e.join_date || e.joined || '—';
       if (el('viewEmpPhone')) el('viewEmpPhone').textContent = e.phone || '—';
-      if (el('viewEmpLocation')) el('viewEmpLocation').textContent = e.location || 'Colombo HQ';
+      if (el('viewEmpLocation')) el('viewEmpLocation').textContent = e.work_location || e.location || 'Colombo HQ';
       if (el('viewEmpNic')) el('viewEmpNic').textContent = e.nic || '—';
       if (el('viewEmpDob')) el('viewEmpDob').textContent = e.dob || '—';
       if (el('viewEmpGender')) el('viewEmpGender').textContent = e.gender || 'Male';
       if (el('viewEmpAddress')) el('viewEmpAddress').textContent = e.address || '—';
-      if (el('viewEmpCode')) el('viewEmpCode').textContent = e.emp_code || 'EMP-002';
-      if (el('viewEmpWorkShift')) el('viewEmpWorkShift').textContent = e.work_shift || '—';
-      if (el('viewEmpWorkingDays')) el('viewEmpWorkingDays').textContent = e.working_days || '—';
+      if (el('viewEmpCode')) el('viewEmpCode').textContent = e.employee_id_code || e.emp_code || ('EMP-' + String(e.id).padStart(3, '0'));
+      if (el('viewEmpWorkShift')) el('viewEmpWorkShift').textContent = e.work_shift || '08:30 AM – 05:30 PM';
+      if (el('viewEmpWorkingDays')) el('viewEmpWorkingDays').textContent = e.working_days || 'Mon,Tue,Wed,Thu,Fri';
       if (el('viewEmpType')) el('viewEmpType').textContent = e.employment_type || 'Full-Time';
-      if (el('viewEmpEmName')) el('viewEmpEmName').textContent = e.em_name || '—';
-      if (el('viewEmpEmPhone')) el('viewEmpEmPhone').textContent = e.em_phone || '—';
+      if (el('viewEmpEmName')) el('viewEmpEmName').textContent = e.emergency_contact_name || e.em_name || '—';
+      if (el('viewEmpEmPhone')) el('viewEmpEmPhone').textContent = e.emergency_contact_phone || e.em_phone || '—';
+
+      // 1. Render Weekly Roster Badges
+      const rosterWrap = el('viewEmpRosterWrap');
+      if (rosterWrap) {
+        rosterWrap.innerHTML = '';
+        let rosterObj = {};
+        if (e.weekly_roster) {
+          try {
+            rosterObj = typeof e.weekly_roster === 'string' ? JSON.parse(e.weekly_roster) : e.weekly_roster;
+          } catch(err) { rosterObj = {}; }
+        }
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        days.forEach(day => {
+          const mode = rosterObj[day] || 'onsite';
+          let bg = '#eff6ff', color = '#2563eb', border = '#bfdbfe', label = 'On-Site';
+          if (mode === 'wfh') {
+            bg = '#faf5ff'; color = '#7c3aed'; border = '#e9d5ff'; label = 'WFH';
+          } else if (mode === 'leave') {
+            bg = '#f8fafc'; color = '#94a3b8'; border = '#e2e8f0'; label = 'Leave';
+          }
+          const pill = document.createElement('div');
+          pill.style.cssText = `display:flex; flex-direction:column; align-items:center; padding:5px 8px; border-radius:8px; background:${bg}; border:1px solid ${border}; min-width:48px;`;
+          pill.innerHTML = `<span style="font-size:10.5px; font-weight:800; color:#475569;">${day}</span><span style="font-size:10px; font-weight:700; color:${color}; margin-top:2px;">${label}</span>`;
+          rosterWrap.appendChild(pill);
+        });
+      }
 
       const statusEl = el('viewEmpStatus');
       if (statusEl) {
-        statusEl.className = `status-badge ${e.status}`;
-        statusEl.textContent = e.status === 'active' ? 'Active' : 'Inactive';
+        const st = (e.status || 'active').toLowerCase();
+        statusEl.className = `status-badge ${st}`;
+        statusEl.textContent = st === 'active' ? 'Active' : 'Inactive';
+      }
+
+      // 2. Render Work Plans Tab
+      const wpWrap = el('viewEmpWorkPlanContent');
+      if (wpWrap) {
+        const plans = data.work_plans || [];
+        if (plans.length > 0) {
+          wpWrap.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              ${plans.map((p, idx) => `
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px 16px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <span style="font-weight:800; font-size:13.5px; color:#14204d;">${idx === 0 ? 'Today’s Work Plan' : 'Plan for ' + escapeHtml(p.plan_date)}</span>
+                      <span class="status-badge ${p.started_at ? 'active' : ''}" style="font-size:11px; padding:3px 9px;">${p.started_at ? 'Active Today' : 'Submitted'}</span>
+                    </div>
+                    <span style="font-size:11.5px; color:#64748b; font-weight:600;"><i class="fa-regular fa-clock"></i> ${escapeHtml(p.updated_at || p.submitted_at || p.plan_date)}</span>
+                  </div>
+                  <div style="font-size:13.5px; color:#334155; line-height:1.5; background:#ffffff; border:1px solid #f1f5f9; border-radius:8px; padding:10px 12px; white-space:pre-wrap;">${escapeHtml(p.plan_text)}</div>
+                  ${p.started_at ? `<div style="font-size:11.5px; color:#16a34a; font-weight:700; margin-top:6px;"><i class="fa-solid fa-circle-check"></i> Work started at ${escapeHtml(p.started_at)}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          wpWrap.innerHTML = `
+            <div style="text-align:center; padding:36px 16px; color:#94a3b8;">
+              <i class="fa-solid fa-list-check" style="font-size:32px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
+              <strong style="color:#475569; font-size:14px;">No Daily Work Plans Submitted</strong>
+              <p style="font-size:12px; margin:4px 0 0;">This employee hasn't submitted a daily work plan yet.</p>
+            </div>
+          `;
+        }
+      }
+
+      // 3. Render Bank Account Tab
+      const bankWrap = el('viewEmpBankContent');
+      if (bankWrap) {
+        const bank = data.bank;
+        if (bank) {
+          bankWrap.innerHTML = `
+            <div class="w3-emp-profile-details-grid">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Bank Name</span>
+                <strong class="w3-detail-val">${escapeHtml(bank.bank_name || '—')}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Branch</span>
+                <strong class="w3-detail-val">${escapeHtml(bank.branch || '—')}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Account Number</span>
+                <strong class="w3-detail-val" style="color:#2563eb; font-family:monospace; font-size:14px;">${escapeHtml(bank.bank_account_number || bank.account_number || '—')}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Account Holder Name</span>
+                <strong class="w3-detail-val">${escapeHtml(bank.holder_name || bank.employee_name || '—')}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Basic Salary</span>
+                <strong class="w3-detail-val">${bank.basic_salary ? 'LKR ' + Number(bank.basic_salary).toLocaleString() : '—'}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Net Salary</span>
+                <strong class="w3-detail-val" style="color:#16a34a;">${bank.net_salary ? 'LKR ' + Number(bank.net_salary).toLocaleString() : '—'}</strong>
+              </div>
+            </div>
+          `;
+        } else {
+          bankWrap.innerHTML = `
+            <div style="text-align:center; padding:36px 16px; color:#94a3b8;">
+              <i class="fa-solid fa-building-columns" style="font-size:32px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
+              <strong style="color:#475569; font-size:14px;">No Bank Account Registered</strong>
+              <p style="font-size:12px; margin:4px 0 0;">No banking or salary details recorded for this employee.</p>
+            </div>
+          `;
+        }
+      }
+
+      // 4. Render Documents Tab
+      const docsWrap = el('viewEmpDocsContent');
+      if (docsWrap) {
+        const docs = data.documents || [];
+        const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+        if (docs.length > 0) {
+          docsWrap.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              ${docs.map(doc => {
+                const docUrl = doc.file_path ? ((doc.file_path.indexOf('http') === 0) ? doc.file_path : (pth + doc.file_path)) : (pth + 'View-List/Documents/View_File.php?id=' + doc.id);
+                return `
+                  <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                      <div style="width:34px; height:34px; border-radius:8px; background:#e0e7ff; color:#3b5bdb; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <i class="fa-solid fa-file-lines"></i>
+                      </div>
+                      <div style="min-width:0;">
+                        <strong style="font-size:13px; color:#14204d; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${escapeHtml(doc.doc_type || 'Document')}</strong>
+                        <span style="font-size:11.5px; color:#64748b;">${escapeHtml(doc.file_name || 'file')} • ${escapeHtml(doc.file_size || '')} • ${escapeHtml((doc.uploaded_date || '').substring(0, 10))}</span>
+                      </div>
+                    </div>
+                    <div style="display:flex; gap:6px; flex-shrink:0;">
+                      <a href="${docUrl}" target="_blank" style="padding:6px 10px; background:#eff6ff; color:#2563eb; border-radius:6px; font-size:11.5px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                        <i class="fa-solid fa-eye"></i> View
+                      </a>
+                      <a href="${docUrl}" download style="padding:6px 10px; background:#ecfdf5; color:#059669; border-radius:6px; font-size:11.5px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                        <i class="fa-solid fa-download"></i>
+                      </a>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        } else {
+          docsWrap.innerHTML = `
+            <div style="text-align:center; padding:36px 16px; color:#94a3b8;">
+              <i class="fa-solid fa-folder-open" style="font-size:32px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
+              <strong style="color:#475569; font-size:14px;">No Documents Uploaded</strong>
+              <p style="font-size:12px; margin:4px 0 0;">This employee hasn't uploaded any personal documents yet.</p>
+            </div>
+          `;
+        }
+      }
+
+      // 5. Render Tasks & Leaves Tab
+      const tasksWrap = el('viewEmpTasksContent');
+      if (tasksWrap) {
+        const tasks = data.tasks || [];
+        const leaves = data.leaves || [];
+        tasksWrap.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div>
+              <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">
+                <i class="fa-solid fa-list-check" style="color:#2563eb;"></i> Assigned Tasks (${tasks.length})
+              </div>
+              ${tasks.length > 0 ? `
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  ${tasks.map(t => `
+                    <div style="padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                      <div>
+                        <strong style="font-size:13px; color:#14204d; display:block;">${escapeHtml(t.title)}</strong>
+                        <span style="font-size:11.5px; color:#64748b;">${escapeHtml(t.department || '')} • Mode: ${escapeHtml(t.mode || 'Online')} • Priority: ${escapeHtml(t.priority || 'Normal')}</span>
+                      </div>
+                      <span class="status-badge ${String(t.status || '').toLowerCase() === 'completed' ? 'active' : ''}" style="font-size:11px; padding:3px 9px;">${escapeHtml(t.status || 'Pending')}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : `
+                <div style="padding:16px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; text-align:center; color:#94a3b8; font-size:12px;">No active tasks assigned to this employee.</div>
+              `}
+            </div>
+
+            <div>
+              <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">
+                <i class="fa-solid fa-calendar-days" style="color:#d97706;"></i> Leave Requests (${leaves.length})
+              </div>
+              ${leaves.length > 0 ? `
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  ${leaves.map(l => `
+                    <div style="padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                      <div>
+                        <strong style="font-size:13px; color:#14204d; display:block;">${escapeHtml(l.leave_type || 'Leave')} (${l.days || 1} Day${Number(l.days) === 1 ? '' : 's'})</strong>
+                        <span style="font-size:11.5px; color:#64748b;">${escapeHtml(l.from_date || '')} to ${escapeHtml(l.to_date || '')} ${l.reason ? '• ' + escapeHtml(l.reason) : ''}</span>
+                      </div>
+                      <span class="status-badge ${String(l.status || '').toLowerCase() === 'approved' ? 'active' : ''}" style="font-size:11px; padding:3px 9px;">${escapeHtml(l.status || 'Pending')}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : `
+                <div style="padding:16px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; text-align:center; color:#94a3b8; font-size:12px;">No leave requests filed by this employee.</div>
+              `}
+            </div>
+          </div>
+        `;
       }
 
       viewEmpModal.classList.add('active');
+    }
+
+    window.viewEmp = function (id) {
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      fetch(pth + 'UxUi-Back/Admin_user_dashboard/Admin_user_dashboard_02_employees/fetch_full_employee_account.php?id=' + encodeURIComponent(id))
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success' && res.data) {
+            populateViewModal(res.data);
+          } else {
+            // Fallback to local array
+            const e = employees.find(emp => Number(emp.id) === Number(id) || Number(emp.account_id) === Number(id));
+            if (e) populateViewModal(e);
+          }
+        })
+        .catch(() => {
+          const e = employees.find(emp => Number(emp.id) === Number(id) || Number(emp.account_id) === Number(id));
+          if (e) populateViewModal(e);
+        });
     };
 
     window.editCurrentEmpFromView = function () {
@@ -205,6 +459,41 @@
         closeViewModal();
         window.editEmp(currentlyViewingEmpId);
       }
+    };
+
+    // ---- Login as Employee Handler ----
+    window.loginAsEmp = function (id, empName) {
+      const displayName = empName || 'this employee';
+      if (!confirm('\u26a0\ufe0f Login as "' + displayName + '"?\n\nYou will be redirected to their Employee Dashboard.\nUse the "Return to Admin" banner to come back.')) return;
+
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const formData = new FormData();
+      formData.append('employee_user_id', id);
+
+      // Show a brief loading state
+      const btn = document.activeElement;
+      if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+
+      fetch(pth + 'View-List/Main/admin_login_as_employee.php', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (Array.isArray(res) && res[0] && res[0].error === '0') {
+            // Redirect to employee dashboard
+            window.location.href = res[0].redirect_url || (pth + 'UxUi/Employee_user_dashboard.php');
+          } else {
+            const errCode = (res[0] && res[0].error) || 'UNKNOWN_ERROR';
+            alert('\u274c Could not log in as employee.\nReason: ' + errCode);
+            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+          }
+        })
+        .catch(() => {
+          alert('\u274c Network error. Please try again.');
+          if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+        });
     };
 
     // ---- Edit Employee Modal Handler ----

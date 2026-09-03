@@ -499,6 +499,30 @@
     position: relative;
   }
 
+  .emp-tab-btn {
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .emp-tab-btn:hover {
+    color: #1e293b;
+  }
+  .emp-tab-btn.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    background: rgba(37, 99, 235, 0.05);
+  }
+
   .w3-modal-header {
     display: flex;
     align-items: center;
@@ -913,8 +937,9 @@
     </div>
 
     <!-- View Employee Profile Details Card Modal -->
+    <!-- View Employee Full Account Details Modal -->
     <div class="w3-modal-overlay" id="viewEmpModal">
-      <div class="w3-modal-card w3-emp-profile-modal" style="max-width: 580px; width: 100%;">
+      <div class="w3-modal-card w3-emp-profile-modal" style="max-width: 760px; width: 95%;">
         <div class="w3-emp-profile-header" style="height: 100px; background: linear-gradient(135deg, #14204d 0%, #1c2b63 50%, #2e4cad 100%);">
           <button type="button" class="w3-modal-close" id="closeViewEmpModal" style="top:12px; right:16px;">&times;</button>
           <div class="w3-emp-profile-avatar-wrap" style="bottom:-32px;">
@@ -922,8 +947,8 @@
           </div>
         </div>
 
-        <div class="w3-emp-profile-body" style="padding: 40px 22px 18px; max-height: 70vh; overflow-y: auto;">
-          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+        <div style="padding: 38px 22px 0; background: #ffffff;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
             <div>
               <h2 class="w3-emp-profile-name" id="viewEmpName" style="font-size:22px; font-weight:800; color:#14204d; margin:0 0 2px;">Loading...</h2>
               <p class="w3-emp-profile-role" style="font-size:13.5px; font-weight:700; color:#2563eb; margin:0;"><span id="viewEmpRole">—</span> • <span id="viewEmpDept">—</span></p>
@@ -934,86 +959,146 @@
             </div>
           </div>
 
-          <!-- Section 1: Contact & Communication -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px;">Contact & Residence</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Email Address</span>
-              <strong class="w3-detail-val" id="viewEmpEmail" style="color:#2563eb;">—</strong>
+          <!-- Tab Navigation -->
+          <div class="emp-profile-tab-nav" style="display:flex; gap:6px; border-bottom:1px solid #e2e8f0; overflow-x:auto;">
+            <button type="button" class="emp-tab-btn active" id="btnTabOverview" onclick="switchEmpTab('tabOverview', this)">
+              <i class="fa-solid fa-user"></i> Overview
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabWorkPlan" onclick="switchEmpTab('tabWorkPlan', this)">
+              <i class="fa-solid fa-list-check"></i> Work Plan
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabBank" onclick="switchEmpTab('tabBank', this)">
+              <i class="fa-solid fa-building-columns"></i> Bank Account
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabDocs" onclick="switchEmpTab('tabDocs', this)">
+              <i class="fa-solid fa-folder-open"></i> Documents
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabTasks" onclick="switchEmpTab('tabTasks', this)">
+              <i class="fa-solid fa-clipboard-check"></i> Tasks & Leaves
+            </button>
+          </div>
+        </div>
+
+        <div class="w3-emp-profile-body" style="padding: 16px 22px 18px; max-height: 60vh; overflow-y: auto;">
+          
+          <!-- TAB 1: OVERVIEW -->
+          <div class="emp-tab-pane active" id="tabOverview">
+            <!-- Section 1: Contact & Communication -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:8px 0 8px;">Contact & Residence</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Email Address</span>
+                <strong class="w3-detail-val" id="viewEmpEmail" style="color:#2563eb;">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Phone Number</span>
+                <strong class="w3-detail-val" id="viewEmpPhone">—</strong>
+              </div>
+              <div class="w3-detail-box" style="grid-column: 1 / -1;">
+                <span class="w3-detail-label">Residential Address</span>
+                <strong class="w3-detail-val" id="viewEmpAddress">—</strong>
+              </div>
             </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Phone Number</span>
-              <strong class="w3-detail-val" id="viewEmpPhone">—</strong>
+
+            <!-- Section 2: Identity & Demographics -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Identity & Personal Information</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">NIC / Passport Number</span>
+                <strong class="w3-detail-val" id="viewEmpNic">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Date of Birth</span>
+                <strong class="w3-detail-val" id="viewEmpDob">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Gender</span>
+                <strong class="w3-detail-val" id="viewEmpGender">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Work Location</span>
+                <strong class="w3-detail-val" id="viewEmpLocation">—</strong>
+              </div>
             </div>
-            <div class="w3-detail-box" style="grid-column: 1 / -1;">
-              <span class="w3-detail-label">Residential Address</span>
-              <strong class="w3-detail-val" id="viewEmpAddress">—</strong>
+
+            <!-- Section 3: Emergency Contacts -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Emergency Contacts</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Emergency Contact Name</span>
+                <strong class="w3-detail-val" id="viewEmpEmName">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Emergency Contact Phone</span>
+                <strong class="w3-detail-val" id="viewEmpEmPhone">—</strong>
+              </div>
+            </div>
+
+            <!-- Section 4: Work Schedule -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Work Schedule & Duty Arrangement</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 10px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Work Shift</span>
+                <strong class="w3-detail-val" id="viewEmpWorkShift">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Working Days</span>
+                <strong class="w3-detail-val" id="viewEmpWorkingDays">—</strong>
+              </div>
+            </div>
+            <div id="viewEmpRosterWrap" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;"></div>
+
+            <!-- Section 5: Employment Information -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Employment Snapshot</div>
+            <div class="w3-emp-profile-details-grid">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Date Joined</span>
+                <strong class="w3-detail-val" id="viewEmpJoined">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Employment Type</span>
+                <strong class="w3-detail-val" id="viewEmpType">—</strong>
+              </div>
             </div>
           </div>
 
-          <!-- Section 2: Identity & Demographics -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Identity & Personal Information</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">NIC / Passport Number</span>
-              <strong class="w3-detail-val" id="viewEmpNic">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Date of Birth</span>
-              <strong class="w3-detail-val" id="viewEmpDob">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Gender</span>
-              <strong class="w3-detail-val" id="viewEmpGender">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Work Location</span>
-              <strong class="w3-detail-val" id="viewEmpLocation">—</strong>
+          <!-- TAB 2: DAILY WORK PLAN -->
+          <div class="emp-tab-pane" id="tabWorkPlan" style="display:none;">
+            <div id="viewEmpWorkPlanContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading work plans...</div>
             </div>
           </div>
 
-          <!-- Section 3: Emergency Contacts -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Emergency Contacts</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Emergency Contact Name</span>
-              <strong class="w3-detail-val" id="viewEmpEmName">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Emergency Contact Phone</span>
-              <strong class="w3-detail-val" id="viewEmpEmPhone">—</strong>
+          <!-- TAB 3: BANK ACCOUNT -->
+          <div class="emp-tab-pane" id="tabBank" style="display:none;">
+            <div id="viewEmpBankContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading bank details...</div>
             </div>
           </div>
 
-          <!-- Section 4: Work Schedule -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Work Schedule</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Work Shift</span>
-              <strong class="w3-detail-val" id="viewEmpWorkShift">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Working Days</span>
-              <strong class="w3-detail-val" id="viewEmpWorkingDays">—</strong>
+          <!-- TAB 4: DOCUMENTS -->
+          <div class="emp-tab-pane" id="tabDocs" style="display:none;">
+            <div id="viewEmpDocsContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading documents...</div>
             </div>
           </div>
 
-          <!-- Section 4: Employment Information -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Employment Snapshot</div>
-          <div class="w3-emp-profile-details-grid">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Date Joined</span>
-              <strong class="w3-detail-val" id="viewEmpJoined">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Employment Type</span>
-              <strong class="w3-detail-val" id="viewEmpType">—</strong>
+          <!-- TAB 5: TASKS & LEAVES -->
+          <div class="emp-tab-pane" id="tabTasks" style="display:none;">
+            <div id="viewEmpTasksContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading tasks and leaves...</div>
             </div>
           </div>
 
         </div>
         <div class="w3-modal-footer">
           <button type="button" class="w3-btn-cancel" id="cancelViewEmpModal">Close</button>
+          <button type="button" id="btnLoginAsEmpFromView" onclick="loginAsEmp(currentlyViewingEmpId)"
+            style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border:none; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,.3); transition:all .2s;"
+            onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8l2 2-2 2"/><path d="M17 10h4"/></svg>
+            Login as Employee
+          </button>
           <button type="button" class="w3-btn-save" id="btnEditFromViewModal" onclick="editCurrentEmpFromView()">Edit Employee</button>
         </div>
       </div>
