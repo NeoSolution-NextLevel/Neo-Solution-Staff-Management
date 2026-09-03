@@ -116,16 +116,14 @@ class User_Account_Check
                 $this->is_google_authentication_enable = $row['is_google_authentication_enable'];
                 $this->is_two_factor_auth_enable = $row['is_two_factor_auth_enable'];
                 $this->phone_number = $row['phone_number'];
-
+                $this->main_user_account_access_level_list_id = $row['main_user_account_access_level_list_id'] ?? '';
+                $this->ac_type = $row['ac_type'] ?? '';
 
                 $User_Accout_Check_Device_obj = new User_Accout_Check_Device();
                 $User_Accout_Check_Device_obj->set_main_user_login_id($this->user_id);
                 $User_Accout_Check_Device_obj->check_main_user_login_device();
                 $this->session_token = $User_Accout_Check_Device_obj->get_session_token();
-                if ($User_Accout_Check_Device_obj->get_config_main_user_login_device_state()) {
-                } else {
-                    echo " login device error ";
-                }
+
                 $this->account_login_state = true;
             }
 
@@ -205,5 +203,15 @@ class User_Account_Check
     public function get_google_authentication()
     {
         return $this->is_google_authentication_enable;
+    }
+
+    public function get_main_user_account_access_level_list_id()
+    {
+        return $this->main_user_account_access_level_list_id;
+    }
+
+    public function get_ac_type()
+    {
+        return $this->ac_type;
     }
 }
