@@ -49,6 +49,7 @@ class dashboard_details_LIST
         $stats = [
             'total_employees'   => 0,
             'active_employees'  => 0,
+            'inactive_today'    => 0,
             'pending_tasks'     => 0,
             'completed_tasks'   => 0,
             'in_progress_tasks' => 0,
@@ -61,7 +62,6 @@ class dashboard_details_LIST
         $res = $data_base_obj->get_result("SELECT COUNT(*) AS total, SUM(CASE WHEN LOWER(status) = 'active' OR status = '1' OR status IS NULL THEN 1 ELSE 0 END) AS active_cnt FROM `employees`");
         if ($res && $row = $res->fetch_assoc()) {
             $stats['total_employees'] = (int)($row['total'] ?? 0);
-            $stats['active_employees'] = (int)($row['active_cnt'] ?: $row['total']);
         }
         
         // Fallback to main_user_login if employees table is empty
@@ -69,9 +69,13 @@ class dashboard_details_LIST
             $res_user = $data_base_obj->get_result("SELECT COUNT(*) AS total, SUM(CASE WHEN account_active_state = 1 OR account_active_state IS NULL THEN 1 ELSE 0 END) AS active_cnt FROM `main_user_login`");
             if ($res_user && $row_user = $res_user->fetch_assoc()) {
                 $stats['total_employees'] = (int)($row_user['total'] ?? 0);
-                $stats['active_employees'] = (int)($row_user['active_cnt'] ?: $row_user['total']);
             }
         }
+
+        // Daily activity is based on a presence row created by the employee portal today.
+        $daily = $this->get_daily_active_members();
+        $stats['active_employees'] = count($daily);
+        $stats['inactive_today'] = max(0, $stats['total_employees'] - $stats['active_employees']);
 
         // 2. Tasks Count strictly from task_management table
         $res = $data_base_obj->get_result("SELECT 
@@ -104,6 +108,87 @@ class dashboard_details_LIST
         }
 
         return $stats;
+    }
+
+    public function get_daily_active_members()
+    {
+        $data_base_obj = new DataBase();
+        $members = [];
+        $query = "SELECT p.id AS profile_id, p.user_id, p.full_name, p.email, p.department,
+                p.job_title, p.profile_pic, d.first_seen_at, d.last_seen_at
+            FROM `daily_employee_presence` d
+            INNER JOIN `employee_profiles` p ON p.id = d.employee_profile_id
+            INNER JOIN `main_user_login` l ON l.id = d.user_id
+            INNER JOIN `main_user_account_access_level_list` a
+                ON a.id = l.main_user_account_access_level_list_id
+            WHERE d.presence_date = CURDATE()
+                AND l.account_active_state = 1 AND l.ast = 1
+                AND LOWER(a.type_of_access) = 'employee'
+            ORDER BY d.last_seen_at DESC, p.full_name ASC";
+
+        $res = $data_base_obj->get_result($query);
+        if ($res && $res->num_rows > 0) {
+            while ($row = $res->fetch_assoc()) {
+                $members[] = [
+                    'profile_id' => (int)$row['profile_id'],
+                    'user_id' => (int)$row['user_id'],
+                    'name' => $row['full_name'] ?? 'Employee',
+                    'email' => $row['email'] ?? '',
+                    'department' => $row['department'] ?? '',
+                    'role' => $row['job_title'] ?? '',
+                    'profile_pic' => $row['profile_pic'] ?? '',
+                    'first_seen_at' => $row['first_seen_at'] ?? '',
+                    'last_seen_at' => $row['last_seen_at'] ?? ''
+                ];
+            }
+        }
+        return $members;
+    }
+
+    public function get_daily_work_plans()
+    {
+        $data_base_obj = new DataBase();
+        $plans = [];
+        $data_base_obj->get_result("CREATE TABLE IF NOT EXISTS `daily_employee_work_plans` (
+            `id` int NOT NULL AUTO_INCREMENT, `user_id` int NOT NULL,
+            `employee_profile_id` int DEFAULT NULL, `plan_date` date NOT NULL,
+            `plan_text` text NOT NULL, `status` varchar(30) NOT NULL DEFAULT 'submitted',
+            `started_at` datetime DEFAULT NULL, `submitted_at` datetime NOT NULL,
+            `updated_at` datetime NOT NULL, PRIMARY KEY (`id`),
+            UNIQUE KEY `unique_user_plan_date` (`user_id`, `plan_date`), KEY `idx_work_plan_date` (`plan_date`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+        $query = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
+                w.submitted_at, w.updated_at, p.id AS profile_id,
+                COALESCE(NULLIF(p.full_name, ''), NULLIF(l.name_show, ''),
+                    NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name) AS full_name,
+                p.department, p.job_title
+            FROM `daily_employee_work_plans` w
+            LEFT JOIN `employee_profiles` p ON p.id = w.employee_profile_id
+            INNER JOIN `main_user_login` l ON l.id = w.user_id
+            INNER JOIN `main_user_account_access_level_list` a
+                ON a.id = l.main_user_account_access_level_list_id
+            WHERE w.plan_date = CURDATE() AND l.account_active_state = 1
+                AND l.ast = 1 AND LOWER(a.type_of_access) = 'employee'
+            ORDER BY w.started_at IS NULL ASC, w.updated_at DESC";
+        $res = $data_base_obj->get_result($query);
+        if ($res && $res->num_rows > 0) {
+            while ($row = $res->fetch_assoc()) {
+                $plans[] = [
+                    'id' => (int)$row['id'],
+                    'profile_id' => (int)$row['profile_id'],
+                    'name' => $row['full_name'] ?? 'Employee',
+                    'department' => $row['department'] ?? '',
+                    'role' => $row['job_title'] ?? '',
+                    'plan_text' => $row['plan_text'] ?? '',
+                    'status' => $row['status'] ?? 'submitted',
+                    'started_at' => $row['started_at'] ?? '',
+                    'submitted_at' => $row['submitted_at'] ?? '',
+                    'updated_at' => $row['updated_at'] ?? ''
+                ];
+            }
+        }
+        return $plans;
     }
 
     // --- Task Completion Statistics (12 Calendar Months strictly from database) ---
@@ -242,6 +327,8 @@ class dashboard_details_LIST
     {
         return [
             'kpi'           => $this->get_kpi_summary(),
+            'active_members'=> $this->get_daily_active_members(),
+            'daily_work_plans' => $this->get_daily_work_plans(),
             'monthly_tasks' => $this->get_task_completion_statistics(12),
             'task_status'   => $this->get_task_status_distribution(),
             'departments'   => $this->get_department_distribution(),

@@ -22,6 +22,8 @@ class User_Account_Check
 
     private $session_token;
     private $email;
+    private $main_user_account_access_level_list_id = '';
+    private $ac_type = '';
 
     public function __construct($user_name, $password)
     {
@@ -123,6 +125,11 @@ class User_Account_Check
                 $User_Accout_Check_Device_obj->set_main_user_login_id($this->user_id);
                 $User_Accout_Check_Device_obj->check_main_user_login_device();
                 $this->session_token = $User_Accout_Check_Device_obj->get_session_token();
+
+                // The daily presence helper records the employee's first portal request;
+                // keep the account's existing last-login field accurate as well.
+                $login_db = new DataBase();
+                $login_db->get_result("UPDATE `main_user_login` SET `last_login` = NOW() WHERE `id` = " . (int)$this->user_id);
 
                 $this->account_login_state = true;
             }
