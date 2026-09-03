@@ -1093,7 +1093,7 @@
         </div>
         <div class="w3-modal-footer">
           <button type="button" class="w3-btn-cancel" id="cancelViewEmpModal">Close</button>
-          <button type="button" id="btnLoginAsEmpFromView" onclick="loginAsEmp(currentlyViewingEmpId)"
+          <button type="button" id="btnLoginAsEmpFromView" onclick="loginAsCurrentEmp()"
             style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border:none; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,.3); transition:all .2s;"
             onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8l2 2-2 2"/><path d="M17 10h4"/></svg>

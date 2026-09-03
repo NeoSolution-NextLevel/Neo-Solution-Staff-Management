@@ -360,10 +360,30 @@
 
     <div class="docs-wrapper w3-container" style="padding: 0;">
 
+      <!-- ===== Pending Document Requests Panel ===== -->
+      <div id="pendingDocRequestsPanel" style="display:none; margin-bottom:20px; background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%); border-radius:14px; overflow:hidden; box-shadow:0 4px 18px rgba(79,70,229,.25);">
+        <div style="padding:14px 18px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px; flex:1;">
+            <div style="background:rgba(255,255,255,.2); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:17px;">📋</div>
+            <div>
+              <div style="color:#fff; font-size:13.5px; font-weight:800; letter-spacing:-0.2px;">Pending Document Requests</div>
+              <div style="color:rgba(255,255,255,.8); font-size:11.5px;" id="pendingReqSubtitle">Your admin has requested documents from you</div>
+            </div>
+          </div>
+          <button onclick="togglePendingReqs()" id="btnTogglePendingReqs" style="background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.5); color:#fff; padding:7px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
+            <i class="fa-solid fa-chevron-down" id="pendingReqChevron"></i> View Requests
+          </button>
+        </div>
+        <div id="pendingReqList" style="display:none; background:rgba(255,255,255,.06); padding:0 14px 14px;">
+          <div id="pendingReqCards" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+      </div>
+
       <!-- Page Head -->
       <div class="docs-page-head">
         <p>Upload and manage your required employment documents</p>
       </div>
+
 
       <!-- Grid of 5 Upload Cards -->
       <div class="docs-grid">
@@ -841,6 +861,7 @@
     var formData = new FormData();
     var empName = (typeof window.userProfileData !== 'undefined' && window.userProfileData.full_name) ? window.userProfileData.full_name : '';
     var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : 'EMP-001';
+    var currentUid = (typeof window.empSessionUserId !== 'undefined' && window.empSessionUserId > 0) ? window.empSessionUserId : 1;
 
     formData.append('doc_type', docType);
     formData.append('category', docType);
@@ -849,7 +870,10 @@
       formData.append('employee', empName);
     }
     formData.append('employee_id', empId);
-    formData.append('user_id', 1);
+    formData.append('user_id', currentUid);
+    if (window._pendingRequestId) {
+      formData.append('request_id', window._pendingRequestId);
+    }
 
     if (key === 'id') {
       var frontInput = document.getElementById('fileInput_id_front');
@@ -929,6 +953,11 @@
             file_path: savedUrl,
             url: savedUrl
           };
+
+          window._pendingRequestId = null;
+          if (typeof window.loadEmpPendingDocRequests === 'function') {
+            window.loadEmpPendingDocRequests();
+          }
 
           alert(docType + ' saved and uploaded to database successfully!');
         } else {

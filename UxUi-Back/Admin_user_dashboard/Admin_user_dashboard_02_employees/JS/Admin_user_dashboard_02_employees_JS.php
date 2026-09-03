@@ -13,6 +13,7 @@
     // ---- Employee State & Fetch ----
     let employees = [];
     let currentlyViewingEmpId = null;
+    let currentlyViewingAccountId = null;
 
     const tableBody = document.getElementById('empTableBody');
     const mobileCards = document.getElementById('mobileEmpCardsContainer');
@@ -85,7 +86,7 @@
                 <div class="row-actions" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">
                   <button class="action-btn view" title="View Profile" onclick="viewEmp(${e.id})">${iconEye}</button>
                   <button class="action-btn edit" title="Edit Employee" onclick="editEmp(${e.id})">${iconEdit}</button>
-                  <button class="action-btn" title="Login as this Employee" onclick="loginAsEmp(${Number(e.id)}, ${JSON.stringify(e.name || '')})"
+                  <button class="action-btn" title="Login as this Employee" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')})"
                     style="background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:8px; width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(99,102,241,.35); transition:all .2s;" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">${iconLoginAs}</button>
                 </div>
               </td>
@@ -132,7 +133,7 @@
                 <button type="button" class="btn-mobile-emp-edit" onclick="editEmp(${e.id})">
                   <i class="fa-solid fa-pen"></i> Edit
                 </button>
-                <button type="button" onclick="loginAsEmp(${Number(e.id)}, ${JSON.stringify(e.name || '')})"
+                <button type="button" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')})"
                   style="flex:1; padding:9px 10px; border:none; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
                   <i class="fa-solid fa-right-to-bracket"></i> Login as
                 </button>
@@ -191,6 +192,7 @@
       if (!viewEmpModal) return;
       const e = data.profile || data;
       currentlyViewingEmpId = e.id;
+      currentlyViewingAccountId = Number(e.user_id || e.account_id || e.id) || 0;
 
       // Reset to overview tab
       window.switchEmpTab('tabOverview', document.getElementById('btnTabOverview'));
@@ -462,13 +464,16 @@
     };
 
     // ---- Login as Employee Handler ----
-    window.loginAsEmp = function (id, empName) {
+    window.loginAsEmp = function (id, empName, profileId) {
       const displayName = empName || 'this employee';
       if (!confirm('\u26a0\ufe0f Login as "' + displayName + '"?\n\nYou will be redirected to their Employee Dashboard.\nUse the "Return to Admin" banner to come back.')) return;
 
       const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
       const formData = new FormData();
       formData.append('employee_user_id', id);
+      if (profileId) {
+        formData.append('employee_id', profileId);
+      }
 
       // Show a brief loading state
       const btn = document.activeElement;
@@ -494,6 +499,14 @@
           alert('\u274c Network error. Please try again.');
           if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
         });
+    };
+
+    window.loginAsCurrentEmp = function () {
+      const targetId = currentlyViewingEmpId || currentlyViewingAccountId;
+      if (targetId) {
+        const employee = employees.find(emp => Number(emp.id) === targetId || Number(emp.account_id || emp.user_id) === targetId);
+        window.loginAsEmp(targetId, employee ? employee.name : 'this employee', currentlyViewingEmpId);
+      }
     };
 
     // ---- Edit Employee Modal Handler ----

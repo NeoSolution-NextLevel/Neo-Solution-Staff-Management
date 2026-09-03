@@ -37,6 +37,8 @@ $employee_id   = isset($_POST['employee_id']) ? trim($_POST['employee_id']) : ''
 $employee_name = isset($_POST['employee_name']) ? trim($_POST['employee_name']) : (isset($_POST['employee']) ? trim($_POST['employee']) : (isset($_POST['name']) ? trim($_POST['name']) : ''));
 $doc_type      = isset($_POST['doc_type']) ? trim($_POST['doc_type']) : (isset($_POST['category']) ? trim($_POST['category']) : (isset($_POST['type']) ? trim($_POST['type']) : 'Document'));
 $status        = isset($_POST['status']) && !empty($_POST['status']) ? trim($_POST['status']) : 'Uploaded';
+// request_id links this upload to a document_request row
+$request_id    = isset($_POST['request_id']) && (int)$_POST['request_id'] > 0 ? (int)$_POST['request_id'] : 0;
 
 // If employee_name or employee_id is empty, lookup from employee_profiles or employees table
 if (empty($employee_name) || empty($employee_id)) {
@@ -177,11 +179,28 @@ foreach ($files_to_process as $idx => $item) {
 }
 
 if (!empty($uploaded_records)) {
+    // --- Link to document_request if request_id was provided ---
+    if ($request_id > 0 && $primary_id > 0) {
+        // Ensure controller class is loaded
+        $req_controller_path = __DIR__ . '/../../../Controllers/Main/Documents/document_requests_ADD_UPDATE.php';
+        if (file_exists($req_controller_path)) {
+            include_once $req_controller_path;
+            $reqUpd = new document_requests_ADD_UPDATE();
+            $reqUpd->set_id($request_id);
+            $reqUpd->set_status('Uploaded');
+            $reqUpd->set_document_id($primary_id);
+            $reqUpd->process_update();
+        } else {
+            // Fallback: direct SQL update
+            $db->get_result("UPDATE `document_requests` SET `status`='Uploaded', `document_id`='{$primary_id}' WHERE `id`='{$request_id}' AND `ast`='1'");
+        }
+    }
+
     // Trigger system notification for Admin
     if (class_exists('SystemNotifications')) {
         SystemNotifications::create(
             "New Document Uploaded",
-            "$employee_name ($employee_id) uploaded $doc_type (" . count($uploaded_records) . " file(s))",
+            "$employee_name ($employee_id) uploaded $doc_type (" . count($uploaded_records) . " file(s))" . ($request_id > 0 ? " [Request #$request_id]" : ""),
             "document_upload",
             "admin",
             "Admin"

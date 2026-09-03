@@ -1,5 +1,9 @@
 <script type="text/javascript">
+  // Expose session user_id for document request filtering
+  window.empSessionUserId = <?php echo isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0; ?>;
+
   function setEmployeeSidebarActive(pageName) {
+
     document.querySelectorAll('.sidebar-link').forEach(function(item){
       var isMatch = item.getAttribute('data-page') === pageName;
       item.classList.toggle('active', isMatch);

@@ -609,4 +609,336 @@ window.openAdminUploadModal = openAdminUploadModal;
 window.closeAdminUploadModal = closeAdminUploadModal;
 window.submitAdminDocUpload = submitAdminDocUpload;
 window.toggleAdminDocFileInputs = toggleAdminDocFileInputs;
+
+// =====================================================
+// DOCUMENT REQUESTS — Admin Side
+// =====================================================
+var _showingRequests = false;
+
+window.toggleRequestsView = function() {
+  _showingRequests = !_showingRequests;
+  var docsSection   = document.querySelector('.doc-table-wrap, .doc-main-card .doc-table-wrap');
+  var mobileSection = document.getElementById('mobileDocCardsContainer');
+  var reqSection    = document.getElementById('adminDocRequestsSection');
+  var docMainCard   = document.querySelector('#Admin_user_dashboard_03_documents .doc-main-card');
+  var btn           = document.getElementById('btnToggleRequests');
+
+  if (_showingRequests) {
+    // Hide uploaded docs, show requests
+    if (docMainCard) {
+      // Hide children except the toolbar and the requests section
+      Array.from(docMainCard.children).forEach(function(ch) {
+        if (ch.id !== 'adminDocRequestsSection' && !ch.classList.contains('doc-toolbar')) {
+          ch.style.display = 'none';
+        }
+      });
+    }
+    if (reqSection) reqSection.style.display = 'block';
+    if (btn) { btn.style.background = 'linear-gradient(135deg,#4f46e5,#6366f1)'; }
+    loadDocumentRequests();
+  } else {
+    if (docMainCard) {
+      Array.from(docMainCard.children).forEach(function(ch) {
+        if (ch.id !== 'adminDocRequestsSection') {
+          ch.style.display = '';
+        }
+      });
+    }
+    if (reqSection) reqSection.style.display = 'none';
+    if (btn) { btn.style.background = 'linear-gradient(135deg,#6366f1,#4f46e5)'; }
+  }
+};
+
+window.loadDocumentRequests = function() {
+  var pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+  var tbody = document.getElementById('reqTableBody');
+  var mobileCards = document.getElementById('reqMobileCards');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>';
+
+  $.ajax({
+    url: pth + 'View-List/Documents/Fetch_Document_Requests.php?for=admin',
+    type: 'GET',
+    dataType: 'json',
+    success: function(res) {
+      if (res && res.status === 'success' && Array.isArray(res.data)) {
+        renderDocumentRequests(res.data, pth);
+        // Update pending badge
+        var pending = res.data.filter(function(r){ return r.status === 'Pending' || r.status === 'Uploaded'; }).length;
+        var badge = document.getElementById('reqPendingBadge');
+        if (badge) {
+          badge.textContent = pending;
+          badge.style.display = pending > 0 ? 'inline-block' : 'none';
+        }
+      } else {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#64748b;">No requests found.</td></tr>';
+      }
+    },
+    error: function() {
+      if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#e53e3e;">Failed to load requests.</td></tr>';
+    }
+  });
+};
+
+function statusBadge(s) {
+  var map = {
+    'Pending':  { bg:'#fdf1dc', color:'#c27f0e', icon:'fa-clock' },
+    'Uploaded': { bg:'#dbe4ff', color:'#3b5bdb', icon:'fa-upload' },
+    'Approved': { bg:'#e3f9ee', color:'#12b76a', icon:'fa-circle-check' },
+    'Ignored':  { bg:'#f1f5f9', color:'#64748b', icon:'fa-ban' }
+  };
+  var m = map[s] || { bg:'#f1f5f9', color:'#64748b', icon:'fa-circle' };
+  return '<span style="display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px; background:'+m.bg+'; color:'+m.color+'; font-size:11.5px; font-weight:700;"><i class="fa-solid '+m.icon+'"></i> '+s+'</span>';
+}
+
+function reqActions(row, pth) {
+  var btns = '';
+  if (row.status === 'Uploaded' || row.status === 'Approved') {
+    var url = pth + (row.file_path || '');
+    btns += '<button onclick="triggerDocPreview(\''+url+'\', \''+row.doc_type+'\', \''+row.target_employee_name+'\')" style="padding:5px 10px; border:none; border-radius:6px; background:#eef2ff; color:#3b5bdb; font-size:11.5px; font-weight:700; cursor:pointer; margin-right:4px;" title="View File"><i class="fa-solid fa-eye"></i></button>';
+  }
+  if (row.status === 'Uploaded') {
+    btns += '<button onclick="approveDocRequest('+row.id+')" style="padding:5px 10px; border:none; border-radius:6px; background:#e3f9ee; color:#12b76a; font-size:11.5px; font-weight:700; cursor:pointer; margin-right:4px;" title="Approve"><i class="fa-solid fa-circle-check"></i> Approve</button>';
+    btns += '<button onclick="ignoreDocRequest('+row.id+')" style="padding:5px 10px; border:none; border-radius:6px; background:#f1f5f9; color:#64748b; font-size:11.5px; font-weight:700; cursor:pointer;" title="Ignore"><i class="fa-solid fa-ban"></i> Ignore</button>';
+  }
+  if (row.status === 'Pending') {
+    btns += '<button onclick="ignoreDocRequest('+row.id+')" style="padding:5px 10px; border:none; border-radius:6px; background:#f1f5f9; color:#64748b; font-size:11.5px; font-weight:700; cursor:pointer;" title="Cancel Request"><i class="fa-solid fa-xmark"></i> Cancel</button>';
+  }
+  return btns || '<span style="color:#94a3b8; font-size:11.5px;">—</span>';
+}
+
+function renderDocumentRequests(data, pth) {
+  var tbody = document.getElementById('reqTableBody');
+  var mobileCards = document.getElementById('reqMobileCards');
+  var isMobile = window.innerWidth <= 768;
+
+  if (!data || data.length === 0) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:48px; color:#64748b;"><div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><i class="fa-solid fa-inbox" style="font-size:28px; color:#cbd5e1;"></i><span>No document requests yet.</span></div></td></tr>';
+    if (mobileCards) mobileCards.innerHTML = '<div style="text-align:center; padding:30px; background:#fff; border-radius:12px; color:#64748b;">No requests found.</div>';
+    return;
+  }
+
+  // Desktop
+  if (tbody) {
+    tbody.innerHTML = data.map(function(r) {
+      var dl = r.deadline ? r.deadline.slice(0,10) : '—';
+      return '<tr>' +
+        '<td><div style="font-weight:700; color:#1e293b; font-size:12.5px;">'+r.target_employee_name+'</div><div style="font-size:11px; color:#64748b;">by '+r.requested_by_name+'</div></td>' +
+        '<td><span style="font-weight:600; color:#1e293b; font-size:12.5px;">'+r.doc_type+'</span></td>' +
+        '<td style="font-size:12px; color:#64748b;">'+r.sdt.slice(0,10)+'</td>' +
+        '<td style="font-size:12px; color:'+(r.deadline?'#c27f0e':'#94a3b8')+';">'+dl+'</td>' +
+        '<td>'+statusBadge(r.status)+'</td>' +
+        '<td><div style="display:flex; align-items:center; gap:4px; flex-wrap:wrap;">'+reqActions(r, pth)+'</div></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  // Mobile cards
+  if (mobileCards) {
+    mobileCards.innerHTML = data.map(function(r) {
+      return '<div style="background:#fff; border-radius:12px; border:1px solid #e2e8f0; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.04);">' +
+        '<div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px;">' +
+          '<div><div style="font-weight:800; color:#1e293b; font-size:13.5px;">'+r.target_employee_name+'</div>' +
+          '<div style="font-size:11.5px; color:#64748b; margin-top:2px;">'+r.doc_type+' — Requested by '+r.requested_by_name+'</div></div>' +
+          statusBadge(r.status) +
+        '</div>' +
+        (r.notes ? '<div style="background:#f8fafc; border-radius:8px; padding:8px 10px; font-size:12px; color:#64748b; margin-bottom:8px; font-style:italic;">"'+r.notes+'"</div>' : '') +
+        (r.deadline ? '<div style="font-size:11.5px; color:#c27f0e; margin-bottom:8px;"><i class="fa-regular fa-calendar"></i> Deadline: '+r.deadline.slice(0,10)+'</div>' : '') +
+        '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">'+reqActions(r, pth)+'</div>' +
+        '</div>';
+    }).join('');
+    mobileCards.style.display = 'flex';
+  }
+}
+
+window.approveDocRequest = function(id) {
+  if (!confirm('✅ Approve this document submission?')) return;
+  var pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+  var fd = new FormData();
+  fd.append('request_id', id);
+  fd.append('action', 'approve');
+  fetch(pth + 'View-List/Documents/Approve_Document_Request.php', { method:'POST', body:fd, credentials:'same-origin' })
+    .then(function(r){ return r.json(); })
+    .then(function(res) {
+      if (res && res.status === 'success') { loadDocumentRequests(); }
+      else { alert('❌ ' + (res.message || 'Failed to approve.')); }
+    });
+};
+
+window.ignoreDocRequest = function(id) {
+  if (!confirm('Cancel / Ignore this request?')) return;
+  var pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+  var fd = new FormData();
+  fd.append('request_id', id);
+  fd.append('action', 'ignore');
+  fetch(pth + 'View-List/Documents/Approve_Document_Request.php', { method:'POST', body:fd, credentials:'same-origin' })
+    .then(function(r){ return r.json(); })
+    .then(function(res) {
+      if (res && res.status === 'success') { loadDocumentRequests(); }
+      else { alert('❌ ' + (res.message || 'Failed.')); }
+    });
+};
+
+window.toggleReqTargetFields = function() {
+  var ttype = document.getElementById('reqTargetType') ? document.getElementById('reqTargetType').value : 'employee';
+  var empGroup  = document.getElementById('reqEmpGroup');
+  var deptGroup = document.getElementById('reqDeptGroup');
+  var allNotice = document.getElementById('reqAllNotice');
+
+  if (empGroup)  empGroup.style.display  = (ttype === 'employee') ? 'block' : 'none';
+  if (deptGroup) deptGroup.style.display = (ttype === 'department') ? 'block' : 'none';
+  if (allNotice) allNotice.style.display = (ttype === 'all') ? 'block' : 'none';
+};
+
+window.openDocRequestModal = function() {
+  var modal = document.getElementById('reqDocModal');
+  if (modal) modal.style.display = 'flex';
+
+  var ttype = document.getElementById('reqTargetType');
+  if (ttype) ttype.value = 'employee';
+  toggleReqTargetFields();
+
+  var pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+
+  // 1. Populate employee dropdown
+  var sel = document.getElementById('reqEmpSelect');
+  if (sel) {
+    sel.innerHTML = '<option value="">-- Select Employee --</option>';
+    $.ajax({
+      url: pth + 'UxUi-Back/Employee/fetch_employee/fetch_employee.php',
+      type: 'GET', dataType: 'json',
+      success: function(res) {
+        var data = Array.isArray(res) ? res : (res && Array.isArray(res.data) ? res.data : []);
+        data.forEach(function(e) {
+          var name = e.name || e.fullname || e.full_name || e.user_name || 'Employee';
+          var uid  = e.account_id || e.user_id || e.id || '';
+          var empCode = e.emp_code ? ' (' + e.emp_code + ')' : '';
+          var dept = e.dept ? ' • ' + e.dept : '';
+          if (uid) sel.innerHTML += '<option value="'+uid+'" data-name="'+name+'">'+name + empCode + dept +'</option>';
+        });
+        if (sel.options.length <= 1) sel.innerHTML += '<option disabled>No employees found</option>';
+      },
+      error: function() {
+        sel.innerHTML = '<option value="">Failed to load employees</option>';
+      }
+    });
+  }
+
+  // 2. Populate departments dropdown
+  var deptSel = document.getElementById('reqDeptSelect');
+  if (deptSel) {
+    deptSel.innerHTML = '<option value="">-- Select Department --</option>';
+    $.ajax({
+      url: pth + 'UxUi-Back/Departments/fetch_department/fetch_department.php',
+      type: 'GET', dataType: 'json',
+      success: function(res) {
+        var data = Array.isArray(res) ? res : (res && Array.isArray(res.data) ? res.data : []);
+        data.forEach(function(d) {
+          var dName = d.name || d.department || '';
+          if (dName) deptSel.innerHTML += '<option value="'+dName+'">'+dName+'</option>';
+        });
+        if (deptSel.options.length <= 1) {
+          deptSel.innerHTML += '<option value="Engineering">Engineering</option><option value="HR">HR</option><option value="Operations">Operations</option>';
+        }
+      },
+      error: function() {
+        deptSel.innerHTML = '<option value="Engineering">Engineering</option><option value="HR">HR</option><option value="Operations">Operations</option>';
+      }
+    });
+  }
+};
+
+window.closeDocRequestModal = function() {
+  var modal = document.getElementById('reqDocModal');
+  if (modal) modal.style.display = 'none';
+  var err = document.getElementById('reqModalError');
+  if (err) err.style.display = 'none';
+};
+
+window.submitDocumentRequest = function() {
+  var ttype    = document.getElementById('reqTargetType') ? document.getElementById('reqTargetType').value : 'employee';
+  var sel      = document.getElementById('reqEmpSelect');
+  var deptSel  = document.getElementById('reqDeptSelect');
+  var docType  = document.getElementById('reqDocType');
+  var deadline = document.getElementById('reqDeadline');
+  var notes    = document.getElementById('reqNotes');
+  var errDiv   = document.getElementById('reqModalError');
+  var btn      = document.getElementById('btnSubmitDocReq');
+
+  var empId   = '';
+  var empName = '';
+
+  if (ttype === 'employee') {
+    empId   = sel ? sel.value : '';
+    empName = sel && sel.selectedOptions[0] ? sel.selectedOptions[0].getAttribute('data-name') : '';
+    if (!empId) {
+      errDiv.textContent = 'Please select an employee.';
+      errDiv.style.display = 'block';
+      return;
+    }
+  } else if (ttype === 'department') {
+    empName = deptSel ? deptSel.value : '';
+    if (!empName) {
+      errDiv.textContent = 'Please select a department.';
+      errDiv.style.display = 'block';
+      return;
+    }
+  } else if (ttype === 'all') {
+    empName = 'All Employees';
+  }
+
+  var dType = docType ? docType.value : '';
+  if (!dType) {
+    errDiv.textContent = 'Please select a document type.';
+    errDiv.style.display = 'block';
+    return;
+  }
+  errDiv.style.display = 'none';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...'; }
+
+  var pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+  var fd = new FormData();
+  fd.append('target_type', ttype);
+  fd.append('target_employee_user_id', empId);
+  fd.append('target_employee_name', empName);
+  fd.append('doc_type', dType);
+  fd.append('deadline', deadline ? deadline.value : '');
+  fd.append('notes', notes ? notes.value : '');
+
+  fetch(pth + 'View-List/Documents/Create_Document_Request.php', { method:'POST', body:fd, credentials:'same-origin' })
+    .then(function(r){ return r.json(); })
+    .then(function(res) {
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Request'; }
+      if (res && res.status === 'success') {
+        closeDocRequestModal();
+        if (!_showingRequests) toggleRequestsView();
+        else loadDocumentRequests();
+        if (notes) notes.value = '';
+        if (deadline) deadline.value = '';
+      } else {
+        errDiv.textContent = res.message || 'Failed to send request.';
+        errDiv.style.display = 'block';
+      }
+    })
+    .catch(function() {
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Request'; }
+      errDiv.textContent = 'Network error. Please try again.';
+    });
+};
+
+// Auto-load pending badge count on page load
+document.addEventListener('DOMContentLoaded', function() {
+  var pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+  $.ajax({
+    url: pth + 'View-List/Documents/Fetch_Document_Requests.php?for=admin',
+    type: 'GET', dataType: 'json',
+    success: function(res) {
+      if (res && res.status === 'success' && Array.isArray(res.data)) {
+        var pending = res.data.filter(function(r){ return r.status === 'Pending' || r.status === 'Uploaded'; }).length;
+        var badge = document.getElementById('reqPendingBadge');
+        if (badge && pending > 0) { badge.textContent = pending; badge.style.display = 'inline-block'; }
+      }
+    }
+  });
+});
+
 </script>
