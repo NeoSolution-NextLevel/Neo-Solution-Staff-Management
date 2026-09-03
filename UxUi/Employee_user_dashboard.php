@@ -427,6 +427,14 @@ include_once '../imports/need/session_setup.php';
         document.addEventListener("DOMContentLoaded", function() {
             Employee_user_dashboard_close_all();
             Employee_user_dashboard_01_OPEN();
+
+            // Keep the employee's daily presence fresh while the portal is open.
+            const presenceHeartbeat = () => fetch('../UxUi-Back/Employee/heartbeat/heartbeat.php', {
+                credentials: 'same-origin',
+                cache: 'no-store'
+            }).catch(() => {});
+            presenceHeartbeat();
+            window.setInterval(presenceHeartbeat, 120000);
         });
     </script>
 
