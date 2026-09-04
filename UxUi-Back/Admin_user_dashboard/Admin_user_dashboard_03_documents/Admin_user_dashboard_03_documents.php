@@ -217,6 +217,67 @@
     background: #ffffff;
   }
 
+  .doc-subnav-tabs {
+    display: inline-flex;
+    align-items: center;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 10px;
+    gap: 4px;
+    border: 1px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .doc-tab-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .doc-tab-pill:hover {
+    color: #1e293b;
+    background: rgba(255,255,255,0.7);
+  }
+  .doc-tab-pill.active {
+    background: #14204d;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(20,32,77,0.18);
+  }
+  .doc-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    background: #e2e8f0;
+    color: #475569;
+    min-width: 18px;
+    line-height: 1.3;
+    transition: all 0.2s ease;
+  }
+  .doc-tab-pill.active .doc-tab-badge {
+    background: rgba(255,255,255,0.25);
+    color: #ffffff;
+  }
+  .doc-tab-badge.req-count {
+    background: #fee2e2;
+    color: #ef4444;
+  }
+  .doc-tab-pill.active .doc-tab-badge.req-count {
+    background: #f0576a;
+    color: #ffffff;
+  }
+
   .doc-toolbar-right {
     display: flex;
     align-items: center;
@@ -745,77 +806,133 @@
     <!-- Main Container Card (Fills Remaining Viewport Exactly) -->
     <div class="doc-main-card">
       
-      <!-- Filter Toolbar -->
+      <!-- Filter Toolbar with Tabs (Search & Filters on Left, Navigation Tabs & Action on Right) -->
       <div class="doc-toolbar">
-        <div class="doc-toolbar-left">
-          <div class="doc-search-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="docSearchInput" class="doc-search-input" placeholder="Search by employee, file name, or ID..." oninput="filterAdminDocs();">
+        <!-- 1. Left: Search + Filter Controls -->
+        <div class="doc-toolbar-left" style="display:flex; align-items:center; gap:10px; flex:1; max-width:540px; min-width:0;">
+          <!-- Documents Filters (shown when on All Documents) -->
+          <div id="docsFilterGroup" style="display:flex; align-items:center; gap:10px; width:100%;">
+            <div class="doc-search-box" style="flex:1; min-width:220px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="docSearchInput" class="doc-search-input" placeholder="Search by employee, file name, or ID..." oninput="filterAdminDocs();">
+            </div>
+
+            <select id="docTypeFilter" class="doc-select" onchange="filterAdminDocs();" style="width:180px; flex-shrink:0;">
+              <option value="all">All Document Types</option>
+              <option value="CV">CV</option>
+              <option value="National ID">National ID</option>
+              <option value="Agreement">Employment Agreement</option>
+              <option value="Certificate">Grama Sevaka Certificate</option>
+              <option value="Police Report">Police Report</option>
+              <option value="Salary Slip">Salary Slip / Receipts</option>
+              <option value="Other">Other Documents</option>
+            </select>
           </div>
 
-          <select id="docTypeFilter" class="doc-select" onchange="filterAdminDocs();">
-            <option value="all">All Document Types</option>
-            <option value="CV">CV</option>
-            <option value="National ID">National ID</option>
-            <option value="Agreement">Employment Agreement</option>
-            <option value="Certificate">Grama sevaka Certificate</option>
-            <option value="Police Report">Police Report</option>
-            <option value="Other">Other Documents</option>
-          </select>
+          <!-- Requests Filters (shown when on Document Requests) -->
+          <div id="reqsFilterGroup" style="display:none; align-items:center; gap:10px; width:100%;">
+            <div class="doc-search-box" style="flex:1; min-width:220px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="reqSearchInput" class="doc-search-input" placeholder="Search requests by employee, doc type..." oninput="filterDocRequests();">
+            </div>
+
+            <select id="reqStatusFilter" class="doc-select" onchange="filterDocRequests();" style="width:170px; flex-shrink:0;">
+              <option value="all">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Uploaded">Uploaded (Ready)</option>
+              <option value="Approved">Approved</option>
+              <option value="Ignored">Cancelled</option>
+            </select>
+          </div>
         </div>
 
-        <div class="doc-toolbar-right">
-          <div class="doc-count-badge" id="docCountBadge">
-            <i class="fa-solid fa-folder-closed"></i> <span id="docCountText">0 Documents</span>
+        <!-- 2. Right: Segmented Navigation Tabs + Request Doc Action -->
+        <div class="doc-toolbar-right" style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+          <div class="doc-subnav-tabs">
+            <button type="button" class="doc-tab-pill active" id="tabBtnAllDocs" onclick="switchAdminDocTab('documents');">
+              <i class="fa-solid fa-folder-open"></i> All Documents
+              <span class="doc-tab-badge" id="tabDocsCountBadge">0</span>
+            </button>
+            <button type="button" class="doc-tab-pill" id="tabBtnRequests" onclick="switchAdminDocTab('requests');">
+              <i class="fa-solid fa-clipboard-list"></i> Document Requests
+              <span class="doc-tab-badge req-count" id="reqPendingBadge">0</span>
+            </button>
           </div>
 
-      
-
-          <button type="button" class="doc-btn-refresh" onclick="loadAdminDocuments();" title="Refresh Document List">
-            <i class="fa-solid fa-rotate-right"></i> Refresh
-          </button>
-          <button type="button" id="btnToggleRequests" onclick="toggleRequestsView();"
-            style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border:none; border-radius:8px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(99,102,241,.3); transition:all .2s;">
-            <i class="fa-solid fa-clipboard-list"></i> Requests <span id="reqPendingBadge" style="display:none; background:#f0576a; color:#fff; border-radius:999px; padding:1px 6px; font-size:10.5px; margin-left:2px;">0</span>
-          </button>
+          <!-- Primary Action Button: Request Doc -->
           <button type="button" id="btnOpenReqModal" onclick="openDocRequestModal();"
-            style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border:none; border-radius:8px; background:#14204d; color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; transition:all .2s;">
+            style="display:inline-flex; align-items:center; gap:7px; padding:8.5px 16px; border:none; border-radius:8px; background:#14204d; color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(20,32,77,0.15); transition:all .15s ease;">
             <i class="fa-solid fa-plus"></i> Request Doc
           </button>
         </div>
       </div>
 
-      <!-- 1. Desktop & Tablet Table View (No Horizontal Scroll, Clean Vertical Scroll) -->
-      <div class="doc-table-wrap">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th class="col-emp">Employee</th>
-              <th class="col-type">Document Type</th>
-              <th class="col-file">File Name</th>
-              <th class="col-date">Upload Date</th>
-              <th class="col-actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="docTableBody">
-            <tr>
-              <td colspan="5" style="text-align:center; padding: 48px 20px; color: #64748b;">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                  <i class="fa-solid fa-spinner fa-spin" style="font-size: 22px; color: #3b5bdb;"></i>
-                  <span>Loading documents...</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- VIEW 1: All Uploaded Documents Section -->
+      <div id="adminAllDocsSection">
+        <!-- 1. Desktop & Tablet Table View (No Horizontal Scroll, Clean Vertical Scroll) -->
+        <div class="doc-table-wrap">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th class="col-emp">Employee</th>
+                <th class="col-type">Document Type</th>
+                <th class="col-file">File Name</th>
+                <th class="col-date">Upload Date</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="docTableBody">
+              <tr>
+                <td colspan="5" style="text-align:center; padding: 48px 20px; color: #64748b;">
+                  <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 22px; color: #3b5bdb;"></i>
+                    <span>Loading documents...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2. Mobile Responsive Cards View (Screens <= 768px) -->
+        <div class="mobile-doc-cards" id="mobileDocCardsContainer">
+          <div style="text-align:center; padding: 30px 16px; color: #64748b; background:#fff; border-radius:10px;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 18px; color: #3b5bdb; margin-bottom: 6px;"></i>
+            <div>Loading documents...</div>
+          </div>
+        </div>
       </div>
 
-      <!-- 2. Mobile Responsive Cards View (Screens <= 768px) -->
-      <div class="mobile-doc-cards" id="mobileDocCardsContainer">
-        <div style="text-align:center; padding: 30px 16px; color: #64748b; background:#fff; border-radius:10px;">
-          <i class="fa-solid fa-spinner fa-spin" style="font-size: 18px; color: #3b5bdb; margin-bottom: 6px;"></i>
-          <div>Loading documents...</div>
+      <!-- VIEW 2: Document Requests Section (Cleanly nested inside doc-main-card) -->
+      <div id="adminDocRequestsSection" style="display:none; padding:18px 20px; overflow-y:auto; flex:1;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h3 style="font-size:16px; font-weight:800; color:#14204d; margin:0;"><i class="fa-solid fa-clipboard-list" style="color:#6366f1;"></i> Document Requests</h3>
+            <p style="font-size:12.5px; color:#64748b; margin:4px 0 0;">Track requests sent to employees and review their uploaded files</p>
+          </div>
         </div>
+
+        <!-- Desktop Requests Table -->
+        <div class="doc-table-wrap" id="reqTableWrap" style="border:1px solid var(--border); border-radius:10px;">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Doc Type</th>
+                <th>Requested</th>
+                <th>Deadline</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reqTableBody">
+              <tr><td colspan="6" style="text-align:center; padding:40px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Loading requests...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Requests Cards -->
+        <div id="reqMobileCards" style="display:none; flex-direction:column; gap:12px; margin-top:12px;"></div>
       </div>
 
     </div>
@@ -878,42 +995,7 @@
       </div>
     </div>
 
-    <!-- 4. Document Requests Section (toggled) -->
-    <div id="adminDocRequestsSection" style="display:none;">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
-        <div>
-          <h3 style="font-size:16px; font-weight:800; color:#14204d; margin:0;"><i class="fa-solid fa-clipboard-list" style="color:#6366f1;"></i> Document Requests</h3>
-          <p style="font-size:12.5px; color:#64748b; margin:4px 0 0;">Track requests sent to employees and review their uploaded files</p>
-        </div>
-        <button type="button" onclick="loadDocumentRequests()" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border:none; border-radius:8px; background:#eef2ff; color:#4f46e5; font-size:12.5px; font-weight:700; cursor:pointer;">
-          <i class="fa-solid fa-rotate-right"></i> Refresh
-        </button>
-      </div>
-
-      <!-- Desktop Table -->
-      <div class="doc-table-wrap" id="reqTableWrap">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th>Employee</th>
-              <th>Doc Type</th>
-              <th>Requested</th>
-              <th>Deadline</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="reqTableBody">
-            <tr><td colspan="6" style="text-align:center; padding:40px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Mobile Cards -->
-      <div id="reqMobileCards" style="display:none; flex-direction:column; gap:12px;"></div>
-    </div>
-
-    <!-- 5. Request Document Modal -->
+    <!-- 4. Request Document Modal -->
     <div id="reqDocModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,.7); z-index:999999; align-items:center; justify-content:center; padding:12px; box-sizing:border-box; backdrop-filter:blur(4px);">
       <div style="background:#fff; border-radius:16px; width:100%; max-width:500px; box-shadow:0 25px 60px rgba(0,0,0,.3); overflow:hidden;">
         <div style="background:linear-gradient(135deg,#4f46e5,#6366f1); padding:18px 22px; display:flex; align-items:center; justify-content:space-between;">
@@ -981,62 +1063,6 @@
             </button>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="doc-modal-overlay" id="viewDocModal">
-      <div class="doc-modal-box">
-        
-        <!-- Header -->
-        <div class="doc-modal-header">
-          <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
-            <div id="viewDocTypeIcon" style="width: 34px; height: 34px; border-radius: 8px; background: #eef2ff; color: #3b5bdb; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
-              <i class="fa-solid fa-file-lines"></i>
-            </div>
-            <div style="overflow: hidden;">
-              <h3 id="viewDocHeaderTitle" style="font-size: 14px; font-weight: 800; color: #1e293b; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Document Viewer</h3>
-              <span id="viewDocSubTitle" style="font-size: 11.5px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">Document preview</span>
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
-            <a id="viewDocOpenTab" href="#" target="_blank" style="background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; border: 1px solid #e2e8f0;">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i> <span class="hide-on-mobile">Open Tab</span>
-            </a>
-            <a id="viewDocDownloadBtn" href="#" download style="background: #e6f4ea; color: #12b76a; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; border: 1px solid #cbf0d8;">
-              <i class="fa-solid fa-download"></i> <span class="hide-on-mobile">Download</span>
-            </a>
-            <button type="button" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b; padding: 0 4px; line-height: 1; display:flex; align-items:center;" onclick="closeDocumentViewer()">&times;</button>
-          </div>
-        </div>
-
-        <!-- Body with Image & Canvas PDF Viewer -->
-        <div class="doc-modal-body">
-          
-          <!-- Loading state -->
-          <div id="docViewerLoader" style="display:none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-            <i class="fa-solid fa-spinner fa-spin" style="font-size: 34px; color: #3b5bdb; margin-bottom: 10px;"></i>
-            <div style="font-size: 13.5px; font-weight: 700; color: #475569;">Rendering document preview...</div>
-          </div>
-
-          <!-- Image Container (PNG / JPG / WEBP) -->
-          <div id="imageViewerContainer" style="display: none; width: 100%; min-height: 100%; padding: 8px; box-sizing: border-box; align-items: center; justify-content: center;">
-            <img id="docImagePreview" src="" alt="Document Preview" style="max-width: 100%; max-height: 68vh; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); object-fit: contain; background: #fff;">
-          </div>
-
-          <!-- PDF Canvas Pages Container -->
-          <div id="pdfCanvasPagesContainer" style="display: none; width: 100%; padding: 8px; box-sizing: border-box; flex-direction: column; align-items: center; gap: 14px;"></div>
-
-          <!-- Fallback direct embed iframe -->
-          <iframe id="cvIframeViewer" src="" style="display:none; width: 100%; height: 100%; min-height: 480px; border: none; background: #fff; border-radius: 8px;"></iframe>
-
-        </div>
-
-        <!-- Footer -->
-        <div class="doc-modal-footer">
-          <span id="viewDocMetaFooter" style="font-size: 11.5px; color: #64748b; font-weight: 600;">Office Document System</span>
-          <button type="button" style="background: #e2e8f0; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; color: #475569; font-size: 12.5px;" onclick="closeDocumentViewer()">Close</button>
-        </div>
-
       </div>
     </div>
 

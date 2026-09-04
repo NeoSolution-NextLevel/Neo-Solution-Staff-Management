@@ -121,12 +121,14 @@ function updateDocStats(docs) {
   var idEl = document.getElementById('statIdDocs');
   var empEl = document.getElementById('statEmpDocs');
   var countTextEl = document.getElementById('docCountText');
+  var tabBadge = document.getElementById('tabDocsCountBadge');
 
   if (totalEl) totalEl.textContent = total;
   if (cvEl) cvEl.textContent = cvCount;
   if (idEl) idEl.textContent = idCount;
   if (empEl) empEl.textContent = Object.keys(employeesMap).length;
   if (countTextEl) countTextEl.textContent = total + ' Document' + (total === 1 ? '' : 's');
+  if (tabBadge) tabBadge.textContent = total;
 }
 
 function filterAdminDocs() {
@@ -611,42 +613,81 @@ window.submitAdminDocUpload = submitAdminDocUpload;
 window.toggleAdminDocFileInputs = toggleAdminDocFileInputs;
 
 // =====================================================
-// DOCUMENT REQUESTS — Admin Side
+// DOCUMENT REQUESTS & TABS — Admin Side
 // =====================================================
+var _currentDocTab = 'documents';
 var _showingRequests = false;
+var allDocRequests = [];
 
-window.toggleRequestsView = function() {
-  _showingRequests = !_showingRequests;
-  var docsSection   = document.querySelector('.doc-table-wrap, .doc-main-card .doc-table-wrap');
-  var mobileSection = document.getElementById('mobileDocCardsContainer');
-  var reqSection    = document.getElementById('adminDocRequestsSection');
-  var docMainCard   = document.querySelector('#Admin_user_dashboard_03_documents .doc-main-card');
-  var btn           = document.getElementById('btnToggleRequests');
+window.switchAdminDocTab = function(tabName) {
+  _currentDocTab = (tabName === 'requests') ? 'requests' : 'documents';
+  _showingRequests = (_currentDocTab === 'requests');
 
-  if (_showingRequests) {
-    // Hide uploaded docs, show requests
-    if (docMainCard) {
-      // Hide children except the toolbar and the requests section
-      Array.from(docMainCard.children).forEach(function(ch) {
-        if (ch.id !== 'adminDocRequestsSection' && !ch.classList.contains('doc-toolbar')) {
-          ch.style.display = 'none';
-        }
-      });
-    }
-    if (reqSection) reqSection.style.display = 'block';
-    if (btn) { btn.style.background = 'linear-gradient(135deg,#4f46e5,#6366f1)'; }
+  var docsTabBtn      = document.getElementById('tabBtnAllDocs');
+  var reqsTabBtn      = document.getElementById('tabBtnRequests');
+  var docsSection     = document.getElementById('adminAllDocsSection');
+  var reqsSection     = document.getElementById('adminDocRequestsSection');
+  var docsFilterGroup = document.getElementById('docsFilterGroup');
+  var reqsFilterGroup = document.getElementById('reqsFilterGroup');
+  var btnRequestDoc   = document.getElementById('btnOpenReqModal');
+
+  if (_currentDocTab === 'requests') {
+    if (docsTabBtn) docsTabBtn.classList.remove('active');
+    if (reqsTabBtn) reqsTabBtn.classList.add('active');
+    if (docsSection) docsSection.style.display = 'none';
+    if (reqsSection) reqsSection.style.display = 'block';
+    if (docsFilterGroup) docsFilterGroup.style.display = 'none';
+    if (reqsFilterGroup) reqsFilterGroup.style.display = 'flex';
+    if (btnRequestDoc) btnRequestDoc.style.display = 'inline-flex';
     loadDocumentRequests();
   } else {
-    if (docMainCard) {
-      Array.from(docMainCard.children).forEach(function(ch) {
-        if (ch.id !== 'adminDocRequestsSection') {
-          ch.style.display = '';
-        }
-      });
-    }
-    if (reqSection) reqSection.style.display = 'none';
-    if (btn) { btn.style.background = 'linear-gradient(135deg,#6366f1,#4f46e5)'; }
+    if (docsTabBtn) docsTabBtn.classList.add('active');
+    if (reqsTabBtn) reqsTabBtn.classList.remove('active');
+    if (docsSection) docsSection.style.display = 'block';
+    if (reqsSection) reqsSection.style.display = 'none';
+    if (docsFilterGroup) docsFilterGroup.style.display = 'flex';
+    if (reqsFilterGroup) reqsFilterGroup.style.display = 'none';
+    loadAdminDocuments();
   }
+};
+
+window.refreshCurrentDocTab = function() {
+  if (_currentDocTab === 'requests') {
+    loadDocumentRequests();
+  } else {
+    loadAdminDocuments();
+  }
+};
+
+window.toggleRequestsView = function() {
+  switchAdminDocTab(_showingRequests ? 'documents' : 'requests');
+};
+
+window.filterDocRequests = function() {
+  var searchInput = document.getElementById('reqSearchInput');
+  var statusSelect = document.getElementById('reqStatusFilter');
+
+  var term = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  var statusFilter = statusSelect ? statusSelect.value : 'all';
+
+  var filtered = allDocRequests.filter(function(r) {
+    var matchSearch = true;
+    if (term) {
+      var emp = (r.target_employee_name || '').toLowerCase();
+      var reqBy = (r.requested_by_name || '').toLowerCase();
+      var type = (r.doc_type || '').toLowerCase();
+      var notes = (r.notes || '').toLowerCase();
+      matchSearch = (emp.indexOf(term) > -1 || reqBy.indexOf(term) > -1 || type.indexOf(term) > -1 || notes.indexOf(term) > -1);
+    }
+    var matchStatus = true;
+    if (statusFilter !== 'all') {
+      matchStatus = (r.status === statusFilter);
+    }
+    return matchSearch && matchStatus;
+  });
+
+  var pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+  renderDocumentRequests(filtered, pth);
 };
 
 window.loadDocumentRequests = function() {
@@ -661,19 +702,22 @@ window.loadDocumentRequests = function() {
     dataType: 'json',
     success: function(res) {
       if (res && res.status === 'success' && Array.isArray(res.data)) {
-        renderDocumentRequests(res.data, pth);
+        allDocRequests = res.data;
+        renderDocumentRequests(allDocRequests, pth);
         // Update pending badge
         var pending = res.data.filter(function(r){ return r.status === 'Pending' || r.status === 'Uploaded'; }).length;
         var badge = document.getElementById('reqPendingBadge');
         if (badge) {
           badge.textContent = pending;
-          badge.style.display = pending > 0 ? 'inline-block' : 'none';
+          badge.style.display = pending > 0 ? 'inline-flex' : 'none';
         }
       } else {
+        allDocRequests = [];
         if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#64748b;">No requests found.</td></tr>';
       }
     },
     error: function() {
+      allDocRequests = [];
       if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#e53e3e;">Failed to load requests.</td></tr>';
     }
   });
