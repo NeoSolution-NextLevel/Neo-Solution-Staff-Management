@@ -39,9 +39,28 @@
             employees = [];
           }
           renderTable();
+          populateQuickAutoLogin();
         })
-        .catch(() => renderTable());
+        .catch(() => {
+          renderTable();
+          populateQuickAutoLogin();
+        });
     };
+
+    function populateQuickAutoLogin() {
+      const sel = document.getElementById('quickAutoLoginSelect');
+      if (!sel) return;
+      const currentVal = sel.value;
+      sel.innerHTML = '<option value="">⚡ Select Employee to Login...</option>' +
+        employees.map(e => {
+          const empId = Number(e.account_id || e.id);
+          const profId = Number(e.id);
+          const safeName = (e.name || '').replace(/"/g, '&quot;');
+          const deptOrRole = e.dept || e.role || 'Staff';
+          return `<option value="${empId}" data-profile-id="${profId}" data-name="${safeName}">${e.name} (${deptOrRole})</option>`;
+        }).join('');
+      if (currentVal) sel.value = currentVal;
+    }
 
     function getAvatarHtml(e) {
       if (e.profile_pic && e.profile_pic.trim() !== '') {
@@ -86,7 +105,7 @@
                 <div class="row-actions" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">
                   <button class="action-btn view" title="View Profile" onclick="viewEmp(${e.id})">${iconEye}</button>
                   <button class="action-btn edit" title="Edit Employee" onclick="editEmp(${e.id})">${iconEdit}</button>
-                  <button class="action-btn" title="Login as this Employee" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')})"
+                  <button class="action-btn" title="Auto Login as ${e.name}" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')}, ${Number(e.id)})"
                     style="background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:8px; width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(99,102,241,.35); transition:all .2s;" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">${iconLoginAs}</button>
                 </div>
               </td>
@@ -133,9 +152,9 @@
                 <button type="button" class="btn-mobile-emp-edit" onclick="editEmp(${e.id})">
                   <i class="fa-solid fa-pen"></i> Edit
                 </button>
-                <button type="button" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')})"
+                <button type="button" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')}, ${Number(e.id)})"
                   style="flex:1; padding:9px 10px; border:none; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-                  <i class="fa-solid fa-right-to-bracket"></i> Login as
+                  <i class="fa-solid fa-right-to-bracket"></i> Auto Login
                 </button>
               </div>
             </div>
@@ -463,10 +482,30 @@
       }
     };
 
+    // ---- Quick Auto-Login Selector Handler ----
+    window.handleQuickAutoLogin = function (targetId) {
+      if (!targetId) return;
+      const sel = document.getElementById('quickAutoLoginSelect');
+      const opt = sel ? sel.options[sel.selectedIndex] : null;
+      const empName = opt ? (opt.getAttribute('data-name') || opt.text) : 'Employee';
+      const profileId = opt ? Number(opt.getAttribute('data-profile-id') || 0) : 0;
+      window.loginAsEmp(targetId, empName, profileId);
+    };
+
     // ---- Login as Employee Handler ----
     window.loginAsEmp = function (id, empName, profileId) {
       const displayName = empName || 'this employee';
-      if (!confirm('\u26a0\ufe0f Login as "' + displayName + '"?\n\nYou will be redirected to their Employee Dashboard.\nUse the "Return to Admin" banner to come back.')) return;
+
+      // Create or show a smooth loading toast
+      let toast = document.getElementById('autoLoginToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'autoLoginToast';
+        toast.style.cssText = 'position:fixed; bottom:24px; right:24px; z-index:999999; background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; padding:14px 22px; border-radius:14px; box-shadow:0 8px 30px rgba(79,70,229,.45); font-family:Segoe UI, sans-serif; font-size:14px; font-weight:700; display:flex; align-items:center; gap:12px; transition:all .3s;';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<svg style="animation:spin 1s linear infinite; width:18px; height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg> Auto Logging in as <strong>${displayName}</strong>...`;
+      toast.style.display = 'flex';
 
       const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
       const formData = new FormData();
@@ -475,9 +514,9 @@
         formData.append('employee_id', profileId);
       }
 
-      // Show a brief loading state
+      // Briefly disable caller button if present
       const btn = document.activeElement;
-      if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+      if (btn && btn.tagName === 'BUTTON') { btn.disabled = true; btn.style.opacity = '0.6'; }
 
       fetch(pth + 'View-List/Main/admin_login_as_employee.php', {
         method: 'POST',
@@ -487,17 +526,23 @@
         .then(res => res.json())
         .then(res => {
           if (Array.isArray(res) && res[0] && res[0].error === '0') {
-            // Redirect to employee dashboard
-            window.location.href = res[0].redirect_url || (pth + 'UxUi/Employee_user_dashboard.php');
+            toast.innerHTML = `<span style="font-size:18px;">✅</span> Welcome, ${res[0].emp_name || displayName}! Redirecting...`;
+            setTimeout(() => {
+              window.location.href = res[0].redirect_url || (pth + 'UxUi/Employee_user_dashboard.php');
+            }, 300);
           } else {
             const errCode = (res[0] && res[0].error) || 'UNKNOWN_ERROR';
-            alert('\u274c Could not log in as employee.\nReason: ' + errCode);
-            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+            toast.style.background = '#e11d48';
+            toast.innerHTML = `<span>❌</span> Could not auto-login: ${errCode}`;
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            if (btn && btn.tagName === 'BUTTON') { btn.disabled = false; btn.style.opacity = '1'; }
           }
         })
         .catch(() => {
-          alert('\u274c Network error. Please try again.');
-          if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+          toast.style.background = '#e11d48';
+          toast.innerHTML = `<span>❌</span> Network error. Please try again.`;
+          setTimeout(() => { toast.style.display = 'none'; }, 3000);
+          if (btn && btn.tagName === 'BUTTON') { btn.disabled = false; btn.style.opacity = '1'; }
         });
     };
 
@@ -505,7 +550,10 @@
       const targetId = currentlyViewingEmpId || currentlyViewingAccountId;
       if (targetId) {
         const employee = employees.find(emp => Number(emp.id) === targetId || Number(emp.account_id || emp.user_id) === targetId);
-        window.loginAsEmp(targetId, employee ? employee.name : 'this employee', currentlyViewingEmpId);
+        const empName = employee ? employee.name : 'this employee';
+        const profId = employee ? Number(employee.id) : currentlyViewingEmpId;
+        const acctId = employee ? Number(employee.account_id || employee.user_id || targetId) : targetId;
+        window.loginAsEmp(acctId, empName, profId);
       }
     };
 
@@ -585,36 +633,39 @@
 
       // Populate department select dynamically
       const deptSelect = document.getElementById('editEmpDept');
+      const roleSelect = document.getElementById('editEmpRole');
+      const empDept = e.dept || '';
+      const empRole = e.role || '';
+
       if (deptSelect) {
         const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
         fetch(pth + 'UxUi-Back/Departments/fetch_department/fetch_department.php')
           .then(res => res.json())
           .then(res => {
             if (res.status === 'success' && Array.isArray(res.data)) {
-              deptSelect.innerHTML = res.data.map(d => 
-                `<option value="${d.name}" ${d.name.toLowerCase() === (e.dept||'').toLowerCase() ? 'selected' : ''}>${d.name}</option>`
+              deptSelect.innerHTML = '<option value="">Select Department...</option>' + res.data.map(d => 
+                `<option value="${d.name}" ${d.name.toLowerCase() === empDept.toLowerCase() ? 'selected' : ''}>${d.name}</option>`
               ).join('');
             }
           }).catch(() => {});
       }
-      // Populate job roles dynamically
-      const roleSelect = document.getElementById('editEmpRole');
-      if (roleSelect) {
-        const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
-        fetch(pth + 'UxUi-Back/Job_Roles/fetch_job_roles/fetch_job_roles.php')
-          .then(res => res.json())
-          .then(res => {
-            if (res.status === 'success' && Array.isArray(res.data)) {
-              const uniqueRoles = [...new Set(res.data.map(r => r.title))];
-              roleSelect.innerHTML = uniqueRoles.map(r => 
-                `<option value="${r}" ${r.toLowerCase() === (e.role||'').toLowerCase() ? 'selected' : ''}>${r}</option>`
-              ).join('');
-            }
-          }).catch(() => {});
-      }
+      
+      // Populate job roles dynamically filtered strictly by the current employee's department
+      fetchAllJobRolesForDropdowns(() => {
+        populateRolesForDepartment(roleSelect, empDept, empRole);
+      });
 
       editEmpModal.classList.add('active');
     };
+
+    // Department change listener for Edit Employee Modal
+    const editDeptSelect = document.getElementById('editEmpDept');
+    const editRoleSelect = document.getElementById('editEmpRole');
+    if (editDeptSelect) {
+      editDeptSelect.addEventListener('change', function () {
+        populateRolesForDepartment(editRoleSelect, this.value, '');
+      });
+    }
 
     if (editEmpForm) {
       editEmpForm.addEventListener('submit', (ev) => {
@@ -656,6 +707,9 @@
           .then(res => {
             if (res.status === 'success') {
               window.fetchAdminEmployees();
+              if (typeof window.fetchAdminJobRoles === 'function') {
+                window.fetchAdminJobRoles();
+              }
               alert('Employee details updated successfully in database!');
               closeEditModal();
             } else {
@@ -664,6 +718,9 @@
           })
           .catch(() => {
             window.fetchAdminEmployees();
+            if (typeof window.fetchAdminJobRoles === 'function') {
+              window.fetchAdminJobRoles();
+            }
             alert('Employee details updated successfully.');
             closeEditModal();
           });
@@ -676,43 +733,110 @@
     const closeAddEmpModal = document.getElementById('closeAddEmpModal');
     const cancelAddEmpModal = document.getElementById('cancelAddEmpModal');
     const addEmpForm = document.getElementById('addEmpForm');
+    const addDeptSelect = document.getElementById('addEmpDept');
+    const addRoleSelect = document.getElementById('addJobRole');
+
+    // ---- Shared Job Roles Cache & Filter Engine ----
+    let allAvailableJobRoles = [];
+
+    function fetchAllJobRolesForDropdowns(callback) {
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      fetch(pth + 'UxUi-Back/Job_Roles/fetch_job_roles/fetch_job_roles.php')
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success' && Array.isArray(res.data)) {
+            allAvailableJobRoles = res.data;
+          }
+          if (typeof callback === 'function') callback(allAvailableJobRoles);
+        })
+        .catch(() => {
+          if (typeof callback === 'function') callback(allAvailableJobRoles);
+        });
+    }
+    window.fetchAllJobRolesForDropdowns = fetchAllJobRolesForDropdowns;
+
+    function populateRolesForDepartment(roleSelectEl, selectedDeptName, selectedRoleValue) {
+      if (!roleSelectEl) return;
+      const dept = (selectedDeptName || '').trim().toLowerCase();
+      if (!dept) {
+        roleSelectEl.innerHTML = '<option value="">Select Department first...</option>';
+        return;
+      }
+
+      // Filter roles belonging to selected department
+      const matching = allAvailableJobRoles.filter(r => {
+        const rDept = (r.dept || '').trim().toLowerCase();
+        return rDept === dept;
+      });
+
+      const uniqueTitles = Array.from(new Set(matching.map(r => r.title ? r.title.trim() : ''))).filter(Boolean);
+
+      if (uniqueTitles.length === 0) {
+        if (selectedRoleValue && selectedRoleValue.trim()) {
+          roleSelectEl.innerHTML = `<option value="${selectedRoleValue}" selected>${selectedRoleValue}</option><option value="" disabled>-- No other roles found for ${selectedDeptName} --</option>`;
+        } else {
+          roleSelectEl.innerHTML = `<option value="">No job roles found for ${selectedDeptName}</option>`;
+        }
+        return;
+      }
+
+      let html = '<option value="">Select Job Role...</option>';
+      let matchedCurrent = false;
+
+      uniqueTitles.forEach(title => {
+        const isSel = selectedRoleValue && (title.toLowerCase() === selectedRoleValue.trim().toLowerCase());
+        if (isSel) matchedCurrent = true;
+        html += `<option value="${title}" ${isSel ? 'selected' : ''}>${title}</option>`;
+      });
+
+      // If existing employee has a role not in uniqueTitles list, preserve it
+      if (selectedRoleValue && selectedRoleValue.trim() && !matchedCurrent) {
+        html = `<option value="${selectedRoleValue}" selected>${selectedRoleValue}</option>` + html;
+      }
+
+      roleSelectEl.innerHTML = html;
+    }
+    window.populateRolesForDepartment = populateRolesForDepartment;
+
+    // Department change listener for Add Employee Modal
+    if (addDeptSelect) {
+      addDeptSelect.addEventListener('change', function () {
+        populateRolesForDepartment(addRoleSelect, this.value, '');
+      });
+    }
 
     function openAddModal() {
       addEmpModal?.classList.add('active');
       
       const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
       
+      // Reset role select until a department is picked
+      if (addRoleSelect) {
+        addRoleSelect.innerHTML = '<option value="">Select Department first...</option>';
+      }
+
       // Populate department select dynamically
-      const deptSelect = document.getElementById('addEmpDept');
-      if (deptSelect) {
+      if (addDeptSelect) {
         fetch(pth + 'UxUi-Back/Departments/fetch_department/fetch_department.php')
           .then(res => res.json())
           .then(res => {
             if (res.status === 'success' && Array.isArray(res.data)) {
-              deptSelect.innerHTML = '<option value="">Select Department...</option>' + res.data.map(d => 
+              addDeptSelect.innerHTML = '<option value="">Select Department...</option>' + res.data.map(d => 
                 `<option value="${d.name}">${d.name}</option>`
               ).join('');
             }
           }).catch(() => {});
       }
 
-      // Populate job roles dynamically
-      const roleSelect = document.getElementById('addJobRole');
-      if (roleSelect) {
-        fetch(pth + 'UxUi-Back/Job_Roles/fetch_job_roles/fetch_job_roles.php')
-          .then(res => res.json())
-          .then(res => {
-            if (res.status === 'success' && Array.isArray(res.data)) {
-              const uniqueRoles = [...new Set(res.data.map(r => r.title))];
-              roleSelect.innerHTML = '<option value="">Select Job Roles...</option>' + uniqueRoles.map(r => 
-                `<option value="${r}">${r}</option>`
-              ).join('');
-            }
-          }).catch(() => {});
-      }
+      // Pre-fetch live job roles
+      fetchAllJobRolesForDropdowns();
     }
+
     function closeAddModal() {
       addEmpModal?.classList.remove('active');
+      if (addRoleSelect) {
+        addRoleSelect.innerHTML = '<option value="">Select Department first...</option>';
+      }
     }
 
     if (openAddEmpBtn) openAddEmpBtn.addEventListener('click', openAddModal);
@@ -743,6 +867,9 @@
               addEmpForm.reset();
               closeAddModal();
               window.fetchAdminEmployees();
+              if (typeof window.fetchAdminJobRoles === 'function') {
+                window.fetchAdminJobRoles();
+              }
             } else {
               alert(res.message || 'Error adding employee.');
             }
@@ -752,6 +879,9 @@
             addEmpForm.reset();
             closeAddModal();
             window.fetchAdminEmployees();
+            if (typeof window.fetchAdminJobRoles === 'function') {
+              window.fetchAdminJobRoles();
+            }
           });
       });
     }
@@ -759,9 +889,28 @@
     // ---- Delete Employee Handler ----
     window.deleteEmp = function (id) {
       if (!confirm('Are you sure you want to remove this employee?')) return;
-      employees = employees.filter(emp => Number(emp.id) !== Number(id));
-      renderTable();
-      alert('Employee removed.');
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      fetch(pth + 'UxUi-Back/Employee/delete_employee/delete_employee.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'id=' + encodeURIComponent(id)
+      })
+      .then(res => res.json())
+      .then(res => {
+        window.fetchAdminEmployees();
+        if (typeof window.fetchAdminJobRoles === 'function') {
+          window.fetchAdminJobRoles();
+        }
+        alert(res.message || 'Employee removed.');
+      })
+      .catch(() => {
+        employees = employees.filter(emp => Number(emp.id) !== Number(id));
+        renderTable();
+        if (typeof window.fetchAdminJobRoles === 'function') {
+          window.fetchAdminJobRoles();
+        }
+        alert('Employee removed.');
+      });
     };
 
     // ---- Search and Filter Listeners ----
