@@ -4,8 +4,10 @@ header('Content-Type: application/json; charset=utf-8');
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../Controllers/Main/Leave_Requests/leave_requests_ADD_UPDATE.php';
 include_once __DIR__ . '/../../../imports/need/SystemNotifications.php';
+include_once __DIR__ . '/../../../imports/email/Email_Send.php';
 
 $id = isset($_POST['id']) ? (int)$_POST['id'] : (isset($_GET['id']) ? (int)$_GET['id'] : 0);
+$admin_comment = isset($_POST['comment']) ? trim($_POST['comment']) : '';
 
 if ($id > 0) {
     $db = new DataBase();
@@ -24,7 +26,7 @@ if ($id > 0) {
     $res = $leave_obj->process_update();
 
     if ($res) {
-        // Trigger notification for Employee
+        // 1. In-app notification for Employee
         SystemNotifications::create(
             "Leave Request Approved",
             "Your $leave_type request has been approved by Admin.",
@@ -32,6 +34,11 @@ if ($id > 0) {
             "employee",
             $emp_name
         );
+
+        // 2. Email notification to Employee via imports/email/Email_Send.php
+        try {
+            Email::send_leave_status_notification($id, 'Approved', $admin_comment);
+        } catch (Exception $mailEx) {}
 
         echo json_encode([
             'status'  => 'success',
