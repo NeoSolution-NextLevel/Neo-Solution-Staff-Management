@@ -58,21 +58,17 @@ class dashboard_details_LIST
             'total_job_roles'   => 0
         ];
 
-        // 1. Employees Count from employees or main_user_login table
-        $res = $data_base_obj->get_result("SELECT COUNT(*) AS total, SUM(CASE WHEN LOWER(status) = 'active' OR status = '1' OR status IS NULL THEN 1 ELSE 0 END) AS active_cnt FROM `employees`");
+        // 1. Employees Count matching employee list (employees & employee_profiles)
+        $res = $data_base_obj->get_result("SELECT COUNT(*) AS total FROM `employees`");
         if ($res && $row = $res->fetch_assoc()) {
             $stats['total_employees'] = (int)($row['total'] ?? 0);
         }
-        
-        // Fallback to main_user_login if employees table is empty
-        if ($stats['total_employees'] === 0) {
-            $res_user = $data_base_obj->get_result("SELECT COUNT(*) AS total, SUM(CASE WHEN account_active_state = 1 OR account_active_state IS NULL THEN 1 ELSE 0 END) AS active_cnt FROM `main_user_login`");
-            if ($res_user && $row_user = $res_user->fetch_assoc()) {
-                $stats['total_employees'] = (int)($row_user['total'] ?? 0);
-            }
+        $res_p = $data_base_obj->get_result("SELECT COUNT(*) AS total FROM `employee_profiles`");
+        if ($res_p && $row_p = $res_p->fetch_assoc()) {
+            $stats['total_employees'] = max($stats['total_employees'], (int)($row_p['total'] ?? 0));
         }
 
-        // Daily activity is based on a presence row created by the employee portal today.
+        // Daily activity is based on presence / work plan activity today
         $daily = $this->get_daily_active_members();
         $stats['active_employees'] = count($daily);
         $stats['inactive_today'] = max(0, $stats['total_employees'] - $stats['active_employees']);
@@ -114,17 +110,72 @@ class dashboard_details_LIST
     {
         $data_base_obj = new DataBase();
         $members = [];
-        $query = "SELECT p.id AS profile_id, p.user_id, p.full_name, p.email, p.department,
-                p.job_title, p.profile_pic, d.first_seen_at, d.last_seen_at
+
+        // Ensure daily_employee_presence table exists
+        $data_base_obj->get_result("CREATE TABLE IF NOT EXISTS `daily_employee_presence` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `user_id` int NOT NULL,
+            `employee_profile_id` int DEFAULT NULL,
+            `presence_date` date NOT NULL,
+            `first_seen_at` datetime NOT NULL,
+            `last_seen_at` datetime NOT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `unique_user_presence_date` (`user_id`, `presence_date`),
+            KEY `idx_presence_date` (`presence_date`),
+            KEY `idx_presence_profile` (`employee_profile_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+        // 1. Auto-sync today's submitted work plans into presence table
+        $data_base_obj->get_result("INSERT INTO `daily_employee_presence` (`user_id`, `employee_profile_id`, `presence_date`, `first_seen_at`, `last_seen_at`)
+            SELECT 
+                COALESCE(w.user_id, p.user_id, e.main_user_login_id, 0),
+                COALESCE(p.id, w.employee_profile_id, e.id),
+                CURDATE(),
+                COALESCE(w.started_at, w.submitted_at, w.updated_at, NOW()),
+                COALESCE(w.updated_at, w.submitted_at, NOW())
+            FROM `daily_employee_work_plans` w
+            LEFT JOIN `employee_profiles` p ON (p.id = w.employee_profile_id OR p.user_id = w.user_id)
+            LEFT JOIN `employees` e ON (e.id = w.employee_profile_id OR e.id = w.user_id OR e.main_user_login_id = w.user_id)
+            WHERE (w.plan_date = CURDATE() OR DATE(w.updated_at) = CURDATE() OR DATE(w.submitted_at) = CURDATE())
+            ON DUPLICATE KEY UPDATE 
+                `last_seen_at` = VALUES(`last_seen_at`),
+                `employee_profile_id` = VALUES(`employee_profile_id`)");
+
+        // 2. Auto-sync today's active device logins into presence table
+        $data_base_obj->get_result("INSERT INTO `daily_employee_presence` (`user_id`, `employee_profile_id`, `presence_date`, `first_seen_at`, `last_seen_at`)
+            SELECT 
+                d.main_user_login_id,
+                COALESCE(p.id, e.id),
+                CURDATE(),
+                d.last_activity,
+                d.last_activity
+            FROM `main_user_login_device` d
+            INNER JOIN `main_user_login` l ON l.id = d.main_user_login_id AND l.main_user_account_access_level_list_id = 2
+            LEFT JOIN `employee_profiles` p ON p.user_id = d.main_user_login_id
+            LEFT JOIN `employees` e ON e.main_user_login_id = d.main_user_login_id
+            WHERE DATE(d.last_activity) = CURDATE()
+            ON DUPLICATE KEY UPDATE 
+                `last_seen_at` = VALUES(`last_seen_at`),
+                `employee_profile_id` = VALUES(`employee_profile_id`)");
+
+        // 3. Query active members for today using flexible joins
+        $query = "SELECT 
+                COALESCE(p.id, e.id, d.employee_profile_id, d.user_id) AS profile_id,
+                COALESCE(d.user_id, p.user_id, e.main_user_login_id, 0) AS user_id,
+                COALESCE(NULLIF(p.full_name, ''), NULLIF(e.fullname, ''), NULLIF(l.name_show, ''), NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name, 'Employee') AS full_name,
+                COALESCE(NULLIF(p.email, ''), NULLIF(e.email_address, ''), NULLIF(l.user_name, ''), '') AS email,
+                COALESCE(NULLIF(p.department, ''), NULLIF(e.departments, ''), '') AS department,
+                COALESCE(NULLIF(p.job_title, ''), NULLIF(e.job_roles, ''), '') AS job_title,
+                COALESCE(p.profile_pic, '') AS profile_pic,
+                d.first_seen_at,
+                d.last_seen_at
             FROM `daily_employee_presence` d
-            INNER JOIN `employee_profiles` p ON p.id = d.employee_profile_id
-            INNER JOIN `main_user_login` l ON l.id = d.user_id
-            INNER JOIN `main_user_account_access_level_list` a
-                ON a.id = l.main_user_account_access_level_list_id
+            LEFT JOIN `employee_profiles` p ON (p.id = d.employee_profile_id OR p.user_id = d.user_id)
+            LEFT JOIN `employees` e ON (e.id = d.employee_profile_id OR e.id = d.user_id OR e.main_user_login_id = d.user_id)
+            LEFT JOIN `main_user_login` l ON (l.id = d.user_id OR l.id = p.user_id OR l.id = e.main_user_login_id)
             WHERE d.presence_date = CURDATE()
-                AND l.account_active_state = 1 AND l.ast = 1
-                AND LOWER(a.type_of_access) = 'employee'
-            ORDER BY d.last_seen_at DESC, p.full_name ASC";
+            GROUP BY COALESCE(p.id, e.id, d.employee_profile_id, d.user_id)
+            ORDER BY d.last_seen_at DESC, full_name ASC";
 
         $res = $data_base_obj->get_result($query);
         if ($res && $res->num_rows > 0) {
@@ -237,7 +288,6 @@ class dashboard_details_LIST
                     OR deadline LIKE '%-$m_num-%' 
                     OR deadline LIKE '%/$m_num/%'
                     OR deadline LIKE '%$m_str%'
-                    OR ((deadline IS NULL OR deadline = '') AND MONTH(sdt) = $m_int AND YEAR(sdt) = $currentYear)
                 )";
 
             $res = $data_base_obj->get_result($query);
