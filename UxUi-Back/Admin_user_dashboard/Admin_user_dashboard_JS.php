@@ -45,8 +45,22 @@ function Admin_user_dashboard_02_OPEN() {
     var el = document.getElementById("Admin_user_dashboard_03_documents");
     if (el) el.style.display = "";
     setSidebarActive('documents');
-    if (typeof window.loadAdminDocuments === 'function') {
+    if (typeof window.switchAdminDocTab === 'function') {
+      window.switchAdminDocTab('documents');
+    } else if (typeof window.loadAdminDocuments === 'function') {
       window.loadAdminDocuments();
+    }
+  }
+
+  function Admin_user_dashboard_03_REQUESTS_OPEN() {
+    Admin_user_dashboard_close_all();
+    var el = document.getElementById("Admin_user_dashboard_03_documents");
+    if (el) el.style.display = "";
+    setSidebarActive('documents');
+    if (typeof window.switchAdminDocTab === 'function') {
+      window.switchAdminDocTab('requests');
+    } else if (typeof window.loadDocumentRequests === 'function') {
+      window.loadDocumentRequests();
     }
   }
 
