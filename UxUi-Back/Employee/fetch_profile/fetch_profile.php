@@ -10,10 +10,16 @@ include_once __DIR__ . '/../../../imports/need/DB.php';
 $db = new DataBase();
 $conn = $db->get_data_base_connction();
 
-$userId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 1;
-if (isset($_SESSION['main_user_login_id']) && !empty($_SESSION['main_user_login_id'])) {
-    $userId = (int)$_SESSION['main_user_login_id'];
+$userId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
+if ($userId === 0 && isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
+    $userId = (int)$_SESSION['user_id'];
 }
+$mainUserId = isset($_SESSION['main_user_login_id']) && !empty($_SESSION['main_user_login_id'])
+    ? (int)$_SESSION['main_user_login_id']
+    : $userId;
+$empProfileId = isset($_SESSION['employee_profile_id']) ? (int)$_SESSION['employee_profile_id'] : 0;
+$userEmail = isset($_SESSION['user_name']) ? trim((string)$_SESSION['user_name']) : '';
+$safeEmail = addslashes($userEmail);
 
 $profile = null;
 
@@ -31,7 +37,14 @@ try {
     @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_mode` VARCHAR(100) DEFAULT 'On-Site (Active)'");
 
     // 1. Try to find in employee_profiles table
-    $check = $conn->query("SELECT * FROM `employee_profiles` WHERE `user_id` = '$userId' OR `id` = '$userId' LIMIT 1");
+    $whereClauses = [];
+    if ($empProfileId > 0)  $whereClauses[] = "`id` = '{$empProfileId}'";
+    if ($mainUserId > 0)    $whereClauses[] = "`user_id` = '{$mainUserId}'";
+    if ($userId > 0)        $whereClauses[] = "(`user_id` = '{$userId}' OR `id` = '{$userId}')";
+    if (!empty($safeEmail)) $whereClauses[] = "`email` = '{$safeEmail}'";
+
+    $whereSql = !empty($whereClauses) ? implode(' OR ', $whereClauses) : "`id` = 1";
+    $check = $conn->query("SELECT * FROM `employee_profiles` WHERE {$whereSql} LIMIT 1");
     if ($check && $check->num_rows > 0) {
         $p = $check->fetch_assoc();
         $name = !empty($p['full_name']) ? $p['full_name'] : '';
@@ -69,7 +82,13 @@ try {
         ];
     } else {
         // 2. Fallback to employees table
-        $empCheck = $conn->query("SELECT * FROM `employees` WHERE `id` = '$userId' LIMIT 1");
+        $empWhereClauses = [];
+        if ($empProfileId > 0)  $empWhereClauses[] = "`id` = '{$empProfileId}'";
+        if ($userId > 0)        $empWhereClauses[] = "`id` = '{$userId}'";
+        if (!empty($safeEmail)) $empWhereClauses[] = "(`email_address` = '{$safeEmail}' OR `email` = '{$safeEmail}')";
+
+        $empWhereSql = !empty($empWhereClauses) ? implode(' OR ', $empWhereClauses) : "`id` = '{$userId}'";
+        $empCheck = $conn->query("SELECT * FROM `employees` WHERE {$empWhereSql} LIMIT 1");
         if ($empCheck && $empCheck->num_rows > 0) {
             $e = $empCheck->fetch_assoc();
             $fullname = !empty($e['fullname']) ? $e['fullname'] : (!empty($e['name']) ? $e['name'] : 'Employee');
