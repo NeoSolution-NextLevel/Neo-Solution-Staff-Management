@@ -169,6 +169,9 @@
     if (el) el.style.display = "";
     setEmployeeSidebarActive('daily_work_plan');
     window.syncGlobalEmployeeData();
+    if (typeof window.loadDailyPlan === 'function') {
+      window.loadDailyPlan();
+    }
     if (typeof window.fetchEmployeeWorkplanTasks === 'function') {
       window.fetchEmployeeWorkplanTasks();
     }
