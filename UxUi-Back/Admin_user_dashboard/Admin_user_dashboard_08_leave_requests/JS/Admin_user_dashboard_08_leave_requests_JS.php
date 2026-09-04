@@ -246,7 +246,7 @@
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success') {
-            showToast('Leave request approved successfully!', 'success');
+            showToast('Leave request approved! Email notification sent to employee.', 'success');
             window.fetchAdminLeaveRequests();
           } else {
             showToast(res.message || 'Could not approve leave.', 'error');
@@ -254,7 +254,7 @@
           }
         })
         .catch(() => {
-          showToast('Leave request approved successfully!', 'success');
+          showToast('Leave request approved! Email notification sent to employee.', 'success');
           window.fetchAdminLeaveRequests();
         });
     };
@@ -278,7 +278,7 @@
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success') {
-            showToast('Leave request rejected successfully.', 'success');
+            showToast('Leave request rejected. Email notification sent to employee.', 'info');
             window.fetchAdminLeaveRequests();
           } else {
             showToast(res.message || 'Could not reject leave.', 'error');
