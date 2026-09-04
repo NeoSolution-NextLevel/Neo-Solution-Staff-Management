@@ -617,6 +617,7 @@
 
       const formData = new FormData();
       formData.append('employee', currentEmployee);
+      formData.append('email', window.currentEmployeeEmail || '');
       formData.append('type', type);
       formData.append('from', from);
       formData.append('to', to);
@@ -679,7 +680,7 @@
         .then(res => {
           if (btn) btn.disabled = false;
           if (res.status === 'success') {
-            showEmpToast('Leave request submitted to Admin successfully!', 'success');
+            showEmpToast('Leave request submitted! Email notification sent to Admin.', 'success');
             form.reset();
             window.fetchEmpLeaveHistory();
           } else {
@@ -703,6 +704,7 @@
       .then(res => {
         if (res.status === 'success' && res.data) {
           const name = res.data.full_name || res.data.fullname || res.data.name || 'Employee';
+          window.currentEmployeeEmail = res.data.email || res.data.email_address || '';
           const nameEl = document.getElementById('topEmpLeaveName');
           const avatarEl = document.getElementById('topAvatarLeavePreview');
           if (nameEl) nameEl.textContent = name;
