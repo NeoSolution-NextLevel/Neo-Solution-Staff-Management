@@ -267,6 +267,8 @@
       transition: all 0.15s ease;
     }
 
+    .task-btn-view { background: #f0fdf4; color: #16a34a; }
+    .task-btn-view:hover { background: #dcfce7; color: #15803d; transform: translateY(-1px); }
     .task-btn-edit { background: #eff6ff; color: #2563eb; }
     .task-btn-edit:hover { background: #dbeafe; color: #1d4ed8; transform: translateY(-1px); }
     .task-btn-delete { background: #fef2f2; color: #ef4444; }
@@ -709,6 +711,56 @@
             <button type="submit" class="w3-btn-save">Update Task</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- View Task Modal -->
+    <div class="w3-modal-overlay" id="viewTaskModal">
+      <div class="w3-modal-card" style="max-width: 580px;">
+        <div class="w3-modal-header">
+          <h3>Task Details</h3>
+          <button type="button" class="w3-modal-close" id="closeViewTaskModal">&times;</button>
+        </div>
+        <div class="w3-modal-body" style="gap: 16px;">
+          <div>
+            <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">Task Title</div>
+            <h4 id="viewTaskTitle" style="margin: 0; font-size: 17px; font-weight: 800; color: #14204d; line-height: 1.35;"></h4>
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <span id="viewTaskStatusPill" class="task-pill pill-pending">Pending</span>
+            <span id="viewTaskPriorityPill" class="task-pill pill-medium">Medium</span>
+            <span id="viewTaskModePill" class="task-pill pill-online">Online</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #f8fafc; padding: 12px 14px; border-radius: 10px; border: 1px solid #f1f5f9;">
+            <div>
+              <span style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Assigned Employee</span>
+              <span id="viewTaskEmployee" style="font-size: 13.5px; font-weight: 700; color: #1e293b;"></span>
+            </div>
+            <div>
+              <span style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Department</span>
+              <span id="viewTaskDept" style="font-size: 13.5px; font-weight: 700; color: #1e293b;"></span>
+            </div>
+            <div>
+              <span style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Deadline</span>
+              <span id="viewTaskDeadline" style="font-size: 13.5px; font-weight: 700; color: #1e293b;"></span>
+            </div>
+            <div>
+              <span style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Task ID</span>
+              <span id="viewTaskId" style="font-size: 13.5px; font-weight: 700; color: #1e293b;"></span>
+            </div>
+          </div>
+
+          <div id="viewTaskDescSection">
+            <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px;">Description & Work Plan</div>
+            <div id="viewTaskDesc" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; color: #334155; line-height: 1.5; white-space: pre-wrap;"></div>
+          </div>
+        </div>
+        <div class="w3-modal-footer">
+          <button type="button" class="w3-btn-cancel" id="closeViewTaskModalBtn">Close</button>
+          <button type="button" class="w3-btn-save" id="editFromViewModalBtn" style="background-color: #2563eb;">Edit Task</button>
+        </div>
       </div>
     </div>
 

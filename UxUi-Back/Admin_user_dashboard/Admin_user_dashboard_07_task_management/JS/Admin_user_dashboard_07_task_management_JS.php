@@ -80,7 +80,7 @@
           return `
             <tr data-id="${t.id}">
               <td class="col-task" data-label="Task">
-                <div class="task-title-text">${t.title}</div>
+                <div class="task-title-text" style="cursor: pointer; transition: color 0.15s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#14204d'" onclick="viewTask(${t.id})" title="Click to view task details">${t.title}</div>
                 <div class="task-dept-text">${t.dept || t.department || 'General'}</div>
               </td>
               <td class="col-employee" data-label="Assigned To" style="font-weight:600; color:#14204d;">${t.employee || t.assigned_to || 'Staff'}</td>
@@ -90,6 +90,10 @@
               <td class="col-status" data-label="Status"><span class="task-pill ${statusClass}">${t.status || 'Pending'}</span></td>
               <td class="col-actions" data-label="Actions" style="text-align: center; vertical-align: middle;">
                 <div class="task-action-group" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:8px;">
+                  <button class="task-action-btn task-btn-view" aria-label="View Task" title="View Task" onclick="viewTask(${t.id})" style="display:inline-flex; align-items:center; gap:5px; padding: 6px 11px; border-radius: 8px; font-size: 12px; font-weight: 700; width: auto; height: auto;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span>View</span>
+                  </button>
                   <button class="task-action-btn task-btn-edit" aria-label="Edit Task" title="Edit Task" onclick="editTask(${t.id})">${iconEdit}</button>
                 </div>
               </td>
@@ -236,8 +240,60 @@
     function closeEditModal() { editTaskModal?.classList.remove('active'); editTaskForm?.reset(); }
 
     if (closeEditTaskModal) closeEditTaskModal.addEventListener('click', closeEditModal);
-    if (cancelEditTaskModal) cancelEditTaskModal.addEventListener('click', closeEditModal);
-    editTaskModal?.addEventListener('click', (e) => { if (e.target === editTaskModal) closeEditModal(); });
+    // ---- View Task Modal Handler ----
+    function closeViewTaskModal() {
+      document.getElementById('viewTaskModal')?.classList.remove('active');
+    }
+    document.getElementById('closeViewTaskModal')?.addEventListener('click', closeViewTaskModal);
+    document.getElementById('closeViewTaskModalBtn')?.addEventListener('click', closeViewTaskModal);
+    document.getElementById('viewTaskModal')?.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('viewTaskModal')) closeViewTaskModal();
+    });
+
+    window.viewTask = function (id) {
+      const task = tasks.find(t => Number(t.id) === Number(id));
+      if (!task) return;
+
+      const el = id => document.getElementById(id);
+      if (el('viewTaskTitle')) el('viewTaskTitle').textContent = task.title || 'Untitled Task';
+      if (el('viewTaskEmployee')) el('viewTaskEmployee').textContent = task.employee || task.assigned_to || 'Staff';
+      if (el('viewTaskDept')) el('viewTaskDept').textContent = task.dept || task.department || 'General';
+      if (el('viewTaskDeadline')) el('viewTaskDeadline').textContent = task.deadline || '—';
+      if (el('viewTaskId')) el('viewTaskId').textContent = '#' + (task.id || '—');
+
+      const statusPill = el('viewTaskStatusPill');
+      if (statusPill) {
+        statusPill.textContent = task.status || 'Pending';
+        statusPill.className = 'task-pill ' + (task.status === 'Completed' ? 'pill-completed' : (task.status === 'In Progress' ? 'pill-progress' : 'pill-pending'));
+      }
+
+      const priorityPill = el('viewTaskPriorityPill');
+      if (priorityPill) {
+        priorityPill.textContent = (task.priority || 'Medium') + ' Priority';
+        priorityPill.className = 'task-pill ' + ((task.priority || '').toLowerCase() === 'high' ? 'pill-high' : ((task.priority || '').toLowerCase() === 'medium' ? 'pill-medium' : 'pill-online'));
+      }
+
+      const modePill = el('viewTaskModePill');
+      if (modePill) {
+        modePill.textContent = task.mode || 'Online';
+        modePill.className = 'task-pill ' + ((task.mode || '').toLowerCase() === 'online' ? 'pill-online' : 'pill-onsite');
+      }
+
+      const descEl = el('viewTaskDesc');
+      if (descEl) {
+        descEl.textContent = task.description || 'No additional details provided.';
+      }
+
+      const editBtn = el('editFromViewModalBtn');
+      if (editBtn) {
+        editBtn.onclick = () => {
+          closeViewTaskModal();
+          window.editTask(task.id);
+        };
+      }
+
+      document.getElementById('viewTaskModal')?.classList.add('active');
+    };
 
     window.editTask = function (id) {
       const task = tasks.find(t => Number(t.id) === Number(id));
