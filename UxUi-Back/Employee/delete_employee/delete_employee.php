@@ -13,6 +13,13 @@ if ($id > 0) {
     $res = $del_obj->delete_record();
 
     if ($res) {
+        $db = new DataBase();
+        $conn = $db->get_data_base_connction();
+        if ($conn) {
+            include_once __DIR__ . '/../../Job_Roles/sync_job_roles_count.php';
+            sync_job_role_employee_counts($conn);
+        }
+
         echo json_encode([
             'status'  => 'success',
             'message' => 'Employee deleted successfully from database.'
