@@ -125,6 +125,10 @@ if (!empty($joined)) {
     $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$userId' OR `user_name` = '" . addslashes($email) . "'");
 }
 
+// Sync job roles employee count according to department
+include_once __DIR__ . '/../../Job_Roles/sync_job_roles_count.php';
+sync_job_role_employee_counts($conn);
+
 // 4. Trigger Notification
 $targetName = !empty($fullName) ? $fullName : 'Employee';
 SystemNotifications::create(
