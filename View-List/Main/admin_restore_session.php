@@ -41,7 +41,9 @@ if (empty($_SESSION['admin_original_session'])) {
 $orig = $_SESSION['admin_original_session'];
 
 $_SESSION['user_id']                              = $orig['user_id'];
+$_SESSION['main_user_login_id']                   = $orig['main_user_login_id'] ?? $orig['user_id'];
 $_SESSION['user_name']                            = $orig['user_name'];
+$_SESSION['fullname']                             = $orig['fullname'] ?? $orig['user_name'];
 $_SESSION['session_token']                        = $orig['session_token'];
 $_SESSION['main_user_account_access_level_list_id'] = $orig['main_user_account_access_level_list_id'];
 $_SESSION['url_home']                             = $orig['url_home'];
@@ -54,6 +56,9 @@ $_SESSION['otp_pending']                          = $orig['otp_pending'];
 unset(
     $_SESSION['admin_impersonating'],
     $_SESSION['admin_impersonating_name'],
+    $_SESSION['admin_target_emp_name'],
+    $_SESSION['admin_target_emp_code'],
+    $_SESSION['employee_profile_id'],
     $_SESSION['admin_original_session']
 );
 

@@ -16,7 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $assigned_employee = isset($_POST['assigned_employee']) ? $_POST['assigned_employee'] : (isset($_POST['val_03']) ? $_POST['val_03'] : '');
     $work_mode = isset($_POST['work_mode']) ? $_POST['work_mode'] : (isset($_POST['val_04']) ? $_POST['val_04'] : 'Onsite');
     $deadline = isset($_POST['deadline']) ? $_POST['deadline'] : (isset($_POST['val_05']) ? $_POST['val_05'] : '');
-    $priority = isset($_POST['priority']) ? $_POST['priority'] : (isset($_POST['val_06']) ? $_POST['val_06'] : 'Medium');
     $status = isset($_POST['status']) ? $_POST['status'] : (isset($_POST['val_07']) ? $_POST['val_07'] : 'Pending');
 
     $obj = new task_management_ADD_UPDATE();
@@ -36,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    $obj->set_data($task_title, $department, $assigned_employee, $work_mode, $deadline, $priority, $status);
+    $obj->set_data($task_title, $department, $assigned_employee, $work_mode, $deadline, $status);
 
     // Update
     if (isset($_POST['id']) && !empty($_POST['id'])) {

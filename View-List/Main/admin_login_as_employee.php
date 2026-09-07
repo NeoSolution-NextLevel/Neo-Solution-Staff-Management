@@ -79,7 +79,7 @@ $prof_res = $db->get_result("SELECT * FROM `employee_profiles` WHERE `id` = '{$t
 if ($prof_res && $prof_res->num_rows > 0) {
     $p = $prof_res->fetch_assoc();
     $emp_profile_id = (int)$p['id'];
-    $emp_user_id    = !empty($p['user_id']) ? (int)$p['user_id'] : (int)$p['id'];
+    $emp_user_id    = !empty($p['user_id']) ? (int)$p['user_id'] : 0;
     $emp_name       = !empty($p['full_name']) ? trim($p['full_name']) : '';
     $emp_email      = !empty($p['email']) ? trim($p['email']) : '';
     $emp_code       = !empty($p['employee_id_code']) ? trim($p['employee_id_code']) : ('EMP-' . str_pad($emp_profile_id, 3, '0', STR_PAD_LEFT));
@@ -91,7 +91,7 @@ if (empty($emp_name)) {
     if ($emp_res && $emp_res->num_rows > 0) {
         $e = $emp_res->fetch_assoc();
         $emp_profile_id = (int)$e['id'];
-        $emp_user_id    = (int)$e['id'];
+        $emp_user_id    = 0;
         $emp_name       = !empty($e['fullname']) ? trim($e['fullname']) : (!empty($e['name']) ? trim($e['name']) : '');
         $emp_email      = !empty($e['email_address']) ? trim($e['email_address']) : (!empty($e['email']) ? trim($e['email']) : '');
         $emp_code       = 'EMP-' . str_pad($emp_profile_id, 3, '0', STR_PAD_LEFT);
@@ -118,11 +118,89 @@ if (empty($emp_name)) {
     exit;
 }
 
+// 4d. Ensure target has a genuine employee account in main_user_login (level 2)
+$valid_login = false;
+if ($emp_user_id > 0) {
+    $uChk = $db->get_result("SELECT id, main_user_account_access_level_list_id FROM `main_user_login` WHERE `id` = '{$emp_user_id}' LIMIT 1");
+    if ($uChk && ($uRow = $uChk->fetch_assoc())) {
+        if ((int)$uRow['main_user_account_access_level_list_id'] === 2) {
+            $valid_login = true;
+        }
+    }
+}
+
+if (!$valid_login && !empty($emp_email)) {
+    $safeEmail = addslashes($emp_email);
+    $uChk2 = $db->get_result("SELECT id FROM `main_user_login` WHERE `user_name` = '{$safeEmail}' AND `main_user_account_access_level_list_id` = 2 LIMIT 1");
+    if ($uChk2 && ($uRow2 = $uChk2->fetch_assoc())) {
+        $emp_user_id = (int)$uRow2['id'];
+        $valid_login = true;
+        if ($emp_profile_id > 0) {
+            $db->get_result("UPDATE `employee_profiles` SET `user_id` = '{$emp_user_id}' WHERE `id` = '{$emp_profile_id}'");
+        }
+    }
+}
+
+// Auto-create login account on the fly if missing
+if (!$valid_login) {
+    $login_uname = $emp_email ?: ('emp_' . str_pad($emp_profile_id, 3, '0', STR_PAD_LEFT) . '@neosolution.com');
+    $chkAdmin = $db->get_result("SELECT id FROM `main_user_login` WHERE `user_name` = '" . addslashes($login_uname) . "' AND `main_user_account_access_level_list_id` = 1 LIMIT 1");
+    if ($chkAdmin && $chkAdmin->num_rows > 0) {
+        $parts = explode('@', $login_uname);
+        $login_uname = $parts[0] . '.emp@' . ($parts[1] ?? 'neosolution.com');
+    }
+
+    $name_parts = explode(' ', $emp_name);
+    $first_name = array_shift($name_parts);
+    $last_name  = implode(' ', $name_parts);
+    $sec = new Advance_Security();
+    $raw_pass = 'NeoEmp@' . date('Y');
+    $enc_pass = $sec->get_data_encrypt($login_uname, $raw_pass);
+
+    $safeUser  = addslashes($login_uname);
+    $safeName  = addslashes($emp_name);
+    $safeFirst = addslashes($first_name ?: 'Employee');
+    $safeLast  = addslashes($last_name ?: '');
+    $safePass  = addslashes($enc_pass);
+
+    $insSql = "INSERT INTO `main_user_login` (
+        `company_id`, `user_name`, `password`, `name_show`, `first_name`, `last_name`,
+        `main_user_account_access_level_list_id`, `ac_type`, `ast`,
+        `account_active_state`, `email_verify`, `sdt`
+    ) VALUES (
+        1, '{$safeUser}', '{$safePass}', '{$safeName}', '{$safeFirst}', '{$safeLast}',
+        2, 'Employee', 1, 1, 1, NOW()
+    )";
+    if ($db->get_result($insSql)) {
+        $conn = $db->get_data_base_connction();
+        $emp_user_id = (int)$conn->insert_id;
+        if ($emp_profile_id > 0) {
+            $db->get_result("UPDATE `employee_profiles` SET `user_id` = '{$emp_user_id}' WHERE `id` = '{$emp_profile_id}'");
+        }
+    }
+}
+
+// 4e. Ensure employee_profiles record exists and is linked
+$epChk = $db->get_result("SELECT id FROM `employee_profiles` WHERE `user_id` = '{$emp_user_id}' OR `id` = '{$emp_profile_id}' LIMIT 1");
+if (!$epChk || $epChk->num_rows === 0) {
+    $safeName = addslashes($emp_name);
+    $safeEmail = addslashes($emp_email);
+    $db->get_result("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `email`, `department`, `job_title`, `status`, `created_at`)
+                     VALUES ('{$emp_user_id}', '{$safeName}', '{$safeEmail}', 'Engineering', 'Staff', 'active', NOW())");
+    $conn = $db->get_data_base_connction();
+    $emp_profile_id = (int)$conn->insert_id;
+} else {
+    $epRow = $epChk->fetch_assoc();
+    $emp_profile_id = (int)$epRow['id'];
+}
+
 // ---- 5. Save original admin session (only if not already impersonating) ----
 if (empty($_SESSION['admin_original_session'])) {
     $_SESSION['admin_original_session'] = [
         'user_id'                                => $_SESSION['user_id']                                ?? 1,
+        'main_user_login_id'                     => $_SESSION['main_user_login_id']                     ?? ($_SESSION['user_id'] ?? 1),
         'user_name'                              => $_SESSION['user_name']                              ?? 'Admin',
+        'fullname'                               => $_SESSION['fullname']                               ?? ($_SESSION['user_name'] ?? 'Admin'),
         'session_token'                          => $_SESSION['session_token']                          ?? '',
         'main_user_account_access_level_list_id'   => $_SESSION['main_user_account_access_level_list_id'] ?? 1,
         'url_home'                               => $_SESSION['url_home']                               ?? 'UxUi/Admin_user_dashboard.php',
@@ -172,6 +250,12 @@ try {
         $_SESSION['user_main_cook_id'] = $cook_obj->get_cook_id();
     }
 } catch (Throwable $ex) {}
+
+// Record daily presence for this employee
+include_once __DIR__ . '/../../imports/need/daily_presence.php';
+if (function_exists('update_daily_employee_presence')) {
+    update_daily_employee_presence();
+}
 
 // ---- 7. Return redirect URL to employee dashboard ----
 $redirect_url = rtrim($home_page, '/') . '/UxUi/Employee_user_dashboard.php';

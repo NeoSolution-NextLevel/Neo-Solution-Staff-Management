@@ -64,6 +64,20 @@ if ($User_Account_Check_obj->check_user_name()) {
             $user_role = trim($acl_obj->get_type_of_access());
         }
 
+        if (empty($user_role)) {
+            $user_role = $User_Account_Check_obj->get_ac_type();
+        }
+
+        if (empty($url_home)) {
+            if (strtolower($user_role) === 'admin' || (int)$access_level_id === 1) {
+                $url_home = 'UxUi/Admin_user_dashboard.php';
+                $user_role = 'admin';
+            } else {
+                $url_home = 'UxUi/Employee_user_dashboard.php';
+                $user_role = 'Employee';
+            }
+        }
+
         $_SESSION['main_user_account_access_level_list_id'] = $access_level_id;
         $_SESSION['url_home'] = $url_home;
         $_SESSION['user_role'] = $user_role;
