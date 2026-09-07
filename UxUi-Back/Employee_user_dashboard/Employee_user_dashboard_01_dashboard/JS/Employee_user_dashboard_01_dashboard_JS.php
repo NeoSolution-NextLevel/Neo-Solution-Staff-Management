@@ -43,6 +43,11 @@
             if (el('dashWelcomeSubtitle')) el('dashWelcomeSubtitle').textContent = `Here's your work overview for today in ${dept}.`;
             if (el('dashTopEmpName')) el('dashTopEmpName').textContent = firstName;
 
+            // Work Schedule & Shift Timing Visibility
+            if (el('dashWorkShift')) el('dashWorkShift').textContent = p.work_shift || '08:30 AM – 05:30 PM';
+            if (el('dashWorkingDays')) el('dashWorkingDays').textContent = p.working_days || 'Mon,Tue,Wed,Thu,Fri';
+            if (el('dashWorkMode')) el('dashWorkMode').textContent = p.work_mode || 'On-Site (Active)';
+
             const topAvatar = el('dashTopAvatar');
             if (topAvatar) {
               if (p.profile_pic && p.profile_pic.trim() !== '') {

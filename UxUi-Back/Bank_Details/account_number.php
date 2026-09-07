@@ -32,6 +32,10 @@ function ensureBankDetailsTable() {
             `branch` VARCHAR(255) DEFAULT '',
             `bank_account_number` TEXT,
             `account_number` TEXT,
+            `basic_salary` DECIMAL(12,2) DEFAULT 0.00,
+            `allowances` DECIMAL(12,2) DEFAULT 0.00,
+            `deductions` DECIMAL(12,2) DEFAULT 0.00,
+            `net_salary` DECIMAL(12,2) DEFAULT 0.00,
             `status` VARCHAR(50) DEFAULT 'Active',
             `ast` VARCHAR(10) DEFAULT '1',
             `sdt` DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -41,6 +45,10 @@ function ensureBankDetailsTable() {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     ";
     $db->get_result($create_table_sql);
+    @$db->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `basic_salary` DECIMAL(12,2) DEFAULT 0.00");
+    @$db->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `allowances` DECIMAL(12,2) DEFAULT 0.00");
+    @$db->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `deductions` DECIMAL(12,2) DEFAULT 0.00");
+    @$db->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `net_salary` DECIMAL(12,2) DEFAULT 0.00");
 }
 
 try {
@@ -57,13 +65,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $user_id        = isset($_POST['val_06']) ? trim($_POST['val_06']) : (isset($_POST['user_id']) ? trim($_POST['user_id']) : "1");
     $employee_name  = isset($_POST['employee_name']) ? trim($_POST['employee_name']) : $holder_name;
 
+    $basic_salary   = isset($_POST['basic_salary']) ? (float)$_POST['basic_salary'] : 0.00;
+    $allowances     = isset($_POST['allowances']) ? (float)$_POST['allowances'] : 0.00;
+    $deductions     = isset($_POST['deductions']) ? (float)$_POST['deductions'] : 0.00;
+    $net_salary     = isset($_POST['net_salary']) ? (float)$_POST['net_salary'] : ($basic_salary + $allowances - $deductions);
+
     if (empty($holder_name) || empty($bank_name) || empty($branch) || empty($raw_account_no)) {
         $state['error'] = "Missing required bank details.";
         $state['status'] = "error";
         $state['message'] = "Please fill in all required bank fields.";
         $json[] = $state;
     } else {
-        // Plain unencrypted bank account number
         $masked_acc = Bank_Security::mask($raw_account_no);
 
         $bank_details_ADD_UPDATE_obj = new bank_details_ADD_UPDATE();
@@ -80,7 +92,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $bank_name,
             $branch,
             $raw_account_no,
-            "Active"
+            "Active",
+            $basic_salary,
+            $allowances,
+            $deductions,
+            $net_salary
         );
 
         $existing_id = 0;
@@ -103,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($bank_details_ADD_UPDATE_obj->process_update()) {
                 $state['error'] = "0";
                 $state['status'] = "success";
-                $state['message'] = "Bank details updated and encrypted successfully.";
+                $state['message'] = "Bank details and custom salary updated successfully.";
                 $state['id'] = $existing_id;
                 $state['data'] = [
                     'id' => $existing_id,
@@ -114,6 +130,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     'account_number' => $masked_acc,
                     'bank_account_number' => $masked_acc,
                     'masked_account_number' => $masked_acc,
+                    'basic_salary' => $basic_salary,
+                    'allowances' => $allowances,
+                    'deductions' => $deductions,
+                    'net_salary' => $net_salary,
                     'employee_id' => $employee_id,
                     'user_id' => $user_id
                 ];
@@ -126,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($bank_details_ADD_UPDATE_obj->process_new_record()) {
                 $state['error'] = "0";
                 $state['status'] = "success";
-                $state['message'] = "Bank details saved and encrypted successfully.";
+                $state['message'] = "Bank details and custom salary saved successfully.";
                 $state['id'] = $bank_details_ADD_UPDATE_obj->get_id();
                 $state['data'] = [
                     'id' => $bank_details_ADD_UPDATE_obj->get_id(),
@@ -137,6 +157,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     'account_number' => $masked_acc,
                     'bank_account_number' => $masked_acc,
                     'masked_account_number' => $masked_acc,
+                    'basic_salary' => $basic_salary,
+                    'allowances' => $allowances,
+                    'deductions' => $deductions,
+                    'net_salary' => $net_salary,
                     'employee_id' => $employee_id,
                     'user_id' => $user_id
                 ];
@@ -172,6 +196,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             'account_number' => $decrypted_acc,
             'bank_account_number' => $decrypted_acc,
             'masked_account_number' => $masked_acc,
+            'basic_salary' => isset($row['basic_salary']) ? (float)$row['basic_salary'] : 0.00,
+            'allowances' => isset($row['allowances']) ? (float)$row['allowances'] : 0.00,
+            'deductions' => isset($row['deductions']) ? (float)$row['deductions'] : 0.00,
+            'net_salary' => isset($row['net_salary']) ? (float)$row['net_salary'] : 0.00,
             'employee_id' => isset($row['employee_id']) ? $row['employee_id'] : 'EMP-001',
             'status' => isset($row['status']) ? $row['status'] : 'Active'
         ];

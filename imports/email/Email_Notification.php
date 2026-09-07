@@ -15,7 +15,7 @@ class Email_Notification {
     private $company_variable_list;
     private $get_department_key;
     private $email_sending_obj;
-//    ------------------database------------------
+
     private $get_db_email_save_id;
 
     public function __construct($get_subject, $get_html_data, $get_department_key) {

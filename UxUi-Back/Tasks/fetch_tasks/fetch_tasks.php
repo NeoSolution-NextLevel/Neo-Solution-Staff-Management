@@ -31,7 +31,6 @@ if ($result && $result->num_rows > 0) {
             'employee'    => $row['assigned_to'],
             'assigned_to' => $row['assigned_to'],
             'mode'        => $row['mode'],
-            'priority'    => $row['priority'],
             'status'      => $row['status'],
             'deadline'    => $row['deadline'] ? $row['deadline'] : '',
             'progress'    => (int)$row['progress'],

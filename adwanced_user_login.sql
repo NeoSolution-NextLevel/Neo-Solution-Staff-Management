@@ -190,6 +190,7 @@ CREATE TABLE `main_user_login_device` (
   `browser` varchar(45) DEFAULT NULL,
   `os` varchar(45) DEFAULT NULL,
   `ip_address` varchar(45) DEFAULT NULL,
+  `last_address` varchar(45) DEFAULT NULL,
   `last_activity` timestamp NULL DEFAULT NULL,
   `login_time` timestamp NULL DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT NULL,
@@ -197,6 +198,36 @@ CREATE TABLE `main_user_login_device` (
   `session_token` varchar(4500) DEFAULT NULL,
   `location` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Daily employee activity. Employment status remains stored separately.
+CREATE TABLE `daily_employee_presence` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `employee_profile_id` int DEFAULT NULL,
+  `presence_date` date NOT NULL,
+  `first_seen_at` datetime NOT NULL,
+  `last_seen_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_presence_date` (`user_id`,`presence_date`),
+  KEY `idx_presence_date` (`presence_date`),
+  KEY `idx_presence_profile` (`employee_profile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Employee-authored daily work plan, one editable plan per employee per day.
+CREATE TABLE `daily_employee_work_plans` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `employee_profile_id` int DEFAULT NULL,
+  `plan_date` date NOT NULL,
+  `plan_text` text NOT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'submitted',
+  `started_at` datetime DEFAULT NULL,
+  `submitted_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_plan_date` (`user_id`,`plan_date`),
+  KEY `idx_work_plan_date` (`plan_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -494,7 +525,6 @@ CREATE TABLE IF NOT EXISTS `task_management` (
   `assigned_employee` varchar(255) DEFAULT '',
   `work_mode` varchar(50) DEFAULT 'Onsite',
   `deadline` varchar(100) DEFAULT '',
-  `priority` varchar(50) DEFAULT 'Medium',
   `status` varchar(50) DEFAULT 'Pending',
   `ast` varchar(10) DEFAULT '1',
   `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -602,6 +632,44 @@ CREATE TABLE IF NOT EXISTS `employee_profiles` (
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `salary_payments`
+--
+
+CREATE TABLE IF NOT EXISTS `salary_payments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `receipt_no` varchar(50) NOT NULL,
+  `employee_id` varchar(50) DEFAULT 'EMP-001',
+  `user_id` int DEFAULT 1,
+  `employee_name` varchar(255) DEFAULT '',
+  `department` varchar(100) DEFAULT 'General',
+  `job_title` varchar(100) DEFAULT 'Staff',
+  `bank_name` varchar(255) DEFAULT '',
+  `branch` varchar(255) DEFAULT '',
+  `account_number` varchar(100) DEFAULT '',
+  `basic_salary` decimal(12,2) DEFAULT 0.00,
+  `allowances` decimal(12,2) DEFAULT 0.00,
+  `deductions` decimal(12,2) DEFAULT 0.00,
+  `epf_employee` decimal(12,2) DEFAULT 0.00,
+  `net_salary` decimal(12,2) DEFAULT 0.00,
+  `payment_month` varchar(50) DEFAULT '',
+  `payment_date` date DEFAULT NULL,
+  `payment_method` varchar(50) DEFAULT 'Bank Transfer',
+  `reference_no` varchar(100) DEFAULT '',
+  `notes` text DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Paid',
+  `paid_by` varchar(100) DEFAULT 'Admin',
+  `ast` varchar(10) DEFAULT '1',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_receipt_no` (`receipt_no`),
+  KEY `idx_emp_id` (`employee_id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_pay_month` (`payment_month`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 COMMIT;

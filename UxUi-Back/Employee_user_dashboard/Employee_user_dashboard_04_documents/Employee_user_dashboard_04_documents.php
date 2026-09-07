@@ -360,10 +360,30 @@
 
     <div class="docs-wrapper w3-container" style="padding: 0;">
 
+      <!-- ===== Pending Document Requests Panel ===== -->
+      <div id="pendingDocRequestsPanel" style="display:none; margin-bottom:20px; background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%); border-radius:14px; overflow:hidden; box-shadow:0 4px 18px rgba(79,70,229,.25);">
+        <div style="padding:14px 18px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px; flex:1;">
+            <div style="background:rgba(255,255,255,.2); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:17px;">📋</div>
+            <div>
+              <div style="color:#fff; font-size:13.5px; font-weight:800; letter-spacing:-0.2px;">Pending Document Requests</div>
+              <div style="color:rgba(255,255,255,.8); font-size:11.5px;" id="pendingReqSubtitle">Your admin has requested documents from you</div>
+            </div>
+          </div>
+          <button onclick="togglePendingReqs()" id="btnTogglePendingReqs" style="background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.5); color:#fff; padding:7px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
+            <i class="fa-solid fa-chevron-down" id="pendingReqChevron"></i> View Requests
+          </button>
+        </div>
+        <div id="pendingReqList" style="display:none; background:rgba(255,255,255,.06); padding:0 14px 14px;">
+          <div id="pendingReqCards" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+      </div>
+
       <!-- Page Head -->
       <div class="docs-page-head">
         <p>Upload and manage your required employment documents</p>
       </div>
+
 
       <!-- Grid of 5 Upload Cards -->
       <div class="docs-grid">
@@ -372,7 +392,7 @@
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_cv" data-doc-id="0">
           <div>
             <div class="doc-card-head">
-              <h4>Curriculum Vitae (CV)</h4>
+              <h4>CV</h4>
               <span class="doc-status-tag not-uploaded" id="tag_cv">Not Uploaded</span>
             </div>
             <p class="doc-desc">Upload your updated resume or CV (PDF format).</p>
@@ -411,10 +431,10 @@
         <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_id" data-doc-id="0">
           <div>
             <div class="doc-card-head">
-              <h4>National ID / Passport (2 PNG)</h4>
+              <h4>National ID (2 PNG)</h4>
               <span class="doc-status-tag not-uploaded" id="tag_id">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload Front & Back PNG images of your NIC / Passport.</p>
+            <p class="doc-desc">Upload Front & Back PNG images of your NIC.</p>
 
             <input type="file" id="fileInput_id_front" accept=".png,.jpg,.jpeg" style="display:none;" onchange="previewDocFileSide(this, 'id', 'front')">
             <input type="file" id="fileInput_id_back" accept=".png,.jpg,.jpeg" style="display:none;" onchange="previewDocFileSide(this, 'id', 'back')">
@@ -513,7 +533,7 @@
               <h4>Grama Sevaka Certificate</h4>
               <span class="doc-status-tag not-uploaded" id="tag_grama">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload Grama Niladhari certificate (PDF format).</p>
+            <p class="doc-desc">Upload Grama Sevaka certificate (PDF format).</p>
 
             <input type="file" id="fileInput_grama" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'grama')">
 
@@ -546,13 +566,13 @@
         </div>
 
         <!-- 5. Police Report (1 PDF) -->
-        <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_police" data-doc-id="0" style="grid-column: 1 / -1;">
+        <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_police" data-doc-id="0">
           <div>
             <div class="doc-card-head">
-              <h4>Police Clearance Report</h4>
+              <h4>Police Report</h4>
               <span class="doc-status-tag not-uploaded" id="tag_police">Not Uploaded</span>
             </div>
-            <p class="doc-desc">Upload your valid Police Clearance Certificate (PDF format).</p>
+            <p class="doc-desc">Upload your valid Police Report (PDF format).</p>
 
             <input type="file" id="fileInput_police" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'police')">
 
@@ -579,6 +599,45 @@
               <i class="fa-solid fa-eye"></i> <span>View</span>
             </button>
             <button type="button" class="btn-doc-delete" id="btnDelete_police" onclick="deleteEmployeeDoc('police', 'Police Report')" disabled>
+              <i class="fa-solid fa-trash"></i> <span>Delete</span>
+            </button>
+          </div>
+        </div>
+
+         <!-- 5. Other Documents -->
+        <div class="doc-upload-card w3-card w3-round-xlarge" id="docCard_other" data-doc-id="0">
+          <div>
+            <div class="doc-card-head">
+              <h4>Other Documents</h4>
+              <span class="doc-status-tag not-uploaded" id="tag_other">Not Uploaded</span>
+            </div>
+            <p class="doc-desc">Upload Other Documents.</p>
+
+            <input type="file" id="fileInput_other" accept=".pdf" style="display:none;" onchange="previewDocFile(this, 'other')">
+
+            <div class="doc-dropzone" id="dropzone_other" onclick="document.getElementById('fileInput_other').click();">
+              <div class="doc-drop-empty" id="empty_other">
+                <i class="fa-solid fa-stamp" style="font-size: 26px; color: #059669;"></i>
+                <span class="drop-title">Upload Document</span>
+                <span class="drop-hint">PDF only (Max 10MB)</span>
+              </div>
+              <div class="doc-drop-filled" id="filled_other">
+                <i class="fa-solid fa-file-circle-check doc-filled-icon" style="color: #059669;"></i>
+                <span class="doc-filled-name" id="name_other">other_doc.pdf</span>
+                <span class="doc-filled-size" id="size_other">950 KB</span>
+                <span class="doc-filled-change"><i class="fa-solid fa-arrows-rotate"></i> Change PDF</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="doc-actions-row">
+            <button type="button" class="btn-doc-save" id="btnSave_other" onclick="saveEmployeeDoc('other', 'Other Documents')">
+              <i class="fa-solid fa-floppy-disk"></i> <span>Save</span>
+            </button>
+            <button type="button" class="btn-doc-view" id="btnView_other" onclick="viewEmployeeDoc('other', 'Other Documents')" disabled>
+              <i class="fa-solid fa-eye"></i> <span>View</span>
+            </button>
+            <button type="button" class="btn-doc-delete" id="btnDelete_other" onclick="deleteEmployeeDoc('other', 'Other Documents')" disabled>
               <i class="fa-solid fa-trash"></i> <span>Delete</span>
             </button>
           </div>
@@ -802,6 +861,7 @@
     var formData = new FormData();
     var empName = (typeof window.userProfileData !== 'undefined' && window.userProfileData.full_name) ? window.userProfileData.full_name : '';
     var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : 'EMP-001';
+    var currentUid = (typeof window.empSessionUserId !== 'undefined' && window.empSessionUserId > 0) ? window.empSessionUserId : 1;
 
     formData.append('doc_type', docType);
     formData.append('category', docType);
@@ -810,7 +870,10 @@
       formData.append('employee', empName);
     }
     formData.append('employee_id', empId);
-    formData.append('user_id', 1);
+    formData.append('user_id', currentUid);
+    if (window._pendingRequestId) {
+      formData.append('request_id', window._pendingRequestId);
+    }
 
     if (key === 'id') {
       var frontInput = document.getElementById('fileInput_id_front');
@@ -890,6 +953,11 @@
             file_path: savedUrl,
             url: savedUrl
           };
+
+          window._pendingRequestId = null;
+          if (typeof window.loadEmpPendingDocRequests === 'function') {
+            window.loadEmpPendingDocRequests();
+          }
 
           alert(docType + ' saved and uploaded to database successfully!');
         } else {

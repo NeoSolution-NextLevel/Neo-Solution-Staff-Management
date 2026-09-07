@@ -21,6 +21,7 @@ if ($prof_res && $prof_res->num_rows > 0) {
 
         $employees[] = [
             'id'              => (int)$p['id'],
+            'account_id'      => (int)($p['user_id'] ?? 0),
             'initials'        => $initials,
             'name'            => $name,
             'email'           => !empty($p['email']) ? $p['email'] : '',
@@ -98,6 +99,73 @@ if ($result && $result->num_rows > 0) {
             'working_days'    => 'Mon,Tue,Wed,Thu,Fri',
             'weekly_roster'   => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"wfh","Sat":"leave","Sun":"leave"}',
             'employment_type' => 'Full-Time',
+            'em_name'         => '',
+            'em_phone'        => ''
+        ];
+    }
+}
+
+// 3. Include every employee login account, including accounts without a profile yet.
+$account_res = $db->get_result("SELECT l.id, l.user_name, l.account_active_state, l.ast,
+        l.name_show, l.first_name, l.last_name, l.phone_number,
+        l.main_user_account_access_level_list_id
+    FROM `main_user_login` l
+    INNER JOIN `main_user_account_access_level_list` a
+        ON a.id = l.main_user_account_access_level_list_id
+    WHERE LOWER(a.type_of_access) = 'employee'
+    ORDER BY l.id ASC");
+
+if ($account_res && $account_res->num_rows > 0) {
+    while ($account = $account_res->fetch_assoc()) {
+        $accountName = trim((string)($account['name_show'] ?? ''));
+        if ($accountName === '') {
+            $accountName = trim((string)($account['first_name'] ?? '') . ' ' . (string)($account['last_name'] ?? ''));
+        }
+        if ($accountName === '') $accountName = (string)($account['user_name'] ?? 'Employee');
+        $accountEmail = (string)($account['user_name'] ?? '');
+
+        // Existing profile/employee rows are already displayed above.
+        $exists = false;
+        foreach ($employees as $employee) {
+            if ((int)($employee['account_id'] ?? 0) === (int)$account['id'] ||
+                ((int)($employee['account_id'] ?? 0) === 0 &&
+                    ((!empty($accountEmail) && strtolower($employee['email']) === strtolower($accountEmail)) ||
+                    (!empty($accountName) && strtolower($employee['name']) === strtolower($accountName))))) {
+                $exists = true;
+                break;
+            }
+        }
+        if ($exists) continue;
+
+        $initials = '';
+        foreach (explode(' ', $accountName) as $word) {
+            if ($word !== '') $initials .= strtoupper($word[0]);
+        }
+        $initials = substr($initials, 0, 2) ?: 'EM';
+        $accountActive = $account['account_active_state'] === null || (int)$account['account_active_state'] === 1;
+
+        $employees[] = [
+            'id'              => (int)$account['id'],
+            'account_id'      => (int)$account['id'],
+            'initials'        => $initials,
+            'name'            => $accountName,
+            'email'           => $accountEmail,
+            'dept'            => '',
+            'role'            => 'Employee Account',
+            'status'          => $accountActive ? 'active' : 'inactive',
+            'joined'          => '',
+            'phone'           => (string)($account['phone_number'] ?? ''),
+            'nic'             => '',
+            'dob'             => '',
+            'gender'          => '',
+            'address'         => '',
+            'profile_pic'     => '',
+            'emp_code'        => 'ACCOUNT-' . str_pad((int)$account['id'], 3, '0', STR_PAD_LEFT),
+            'location'        => '',
+            'work_shift'      => '',
+            'working_days'    => '',
+            'weekly_roster'   => '',
+            'employment_type' => 'Employee Account',
             'em_name'         => '',
             'em_phone'        => ''
         ];

@@ -2,12 +2,6 @@
     <div class="erp-login-card">
         <!-- Header Section: Displays company branding and change password title -->
         <div class="erp-login-card__header">
-            <div class="erp-login-card__brand" style="display: flex; justify-content: center; margin-bottom: 16px;">
-                <img src="../../UxUi-Back/assets/neo_solution_official.png" 
-                     onerror="this.src='/UxUi-Back/assets/neo_solution_official.png'; this.onerror=function(){this.src='../../imports/img/logo.png';}" 
-                     alt="NEO Solution" 
-                     style="height: 52px; width: auto; max-width: 220px; object-fit: contain; display: block; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));">
-            </div>
             <h1 class="erp-login-card__title">Change Password</h1>
             <p class="erp-login-card__subtitle">Update your account password securely</p>
         </div>

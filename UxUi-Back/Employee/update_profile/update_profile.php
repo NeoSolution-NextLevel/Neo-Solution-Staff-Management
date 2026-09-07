@@ -42,6 +42,16 @@ $probStart  = isset($_POST['probation_start_date']) ? trim($_POST['probation_sta
 $probEnd    = isset($_POST['probation_end_date']) ? trim($_POST['probation_end_date']) : '';
 $offStart   = isset($_POST['official_start_date']) ? trim($_POST['official_start_date']) : '';
 $attDays    = isset($_POST['attendance_days']) ? (int)$_POST['attendance_days'] : null;
+$source     = isset($_POST['source']) ? trim($_POST['source']) : '';
+$isEmployeeSelf = ($source === 'employee_self');
+
+// Bank details extraction
+$bankName   = isset($_POST['bank_name']) ? trim($_POST['bank_name']) : '';
+$branch     = isset($_POST['branch']) ? trim($_POST['branch']) : '';
+$accNumber  = isset($_POST['account_number']) ? trim($_POST['account_number']) : (isset($_POST['bank_account_number']) ? trim($_POST['bank_account_number']) : '');
+$holderName = isset($_POST['holder_name']) ? trim($_POST['holder_name']) : (isset($_POST['account_holder_name']) ? trim($_POST['account_holder_name']) : $fullName);
+$basicSal   = isset($_POST['basic_salary']) ? (float)$_POST['basic_salary'] : 0.00;
+$netSal     = isset($_POST['net_salary']) ? (float)$_POST['net_salary'] : $basicSal;
 
 // 0. Ensure columns exist
 @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `probation_start_date` DATE DEFAULT NULL");
@@ -77,12 +87,16 @@ if ($prof_check && $prof_check->num_rows > 0) {
     if (!empty($empCode))   $updates[] = "`employee_id_code` = '" . addslashes($empCode) . "'";
     if (!empty($empType))   $updates[] = "`employment_type` = '" . addslashes($empType) . "'";
     if (!empty($location))  $updates[] = "`work_location` = '" . addslashes($location) . "'";
-    if (!empty($workShift)) $updates[] = "`work_shift` = '" . addslashes($workShift) . "'";
-    if (!empty($workingDays))$updates[] = "`working_days` = '" . addslashes($workingDays) . "'";
-    if (!empty($weeklyRoster))$updates[] = "`weekly_roster` = '" . addslashes($weeklyRoster) . "'";
-    if (!empty($schedStart))$updates[] = "`schedule_start_date` = '" . addslashes($schedStart) . "'";
-    if (!empty($schedEnd))  $updates[] = "`schedule_end_date` = '" . addslashes($schedEnd) . "'";
-    if (!empty($workMode))  $updates[] = "`work_mode` = '" . addslashes($workMode) . "'";
+
+    // Work schedule & shift timing can ONLY be updated by Administrator, never by employee self-service
+    if (!$isEmployeeSelf) {
+        if (!empty($workShift))   $updates[] = "`work_shift` = '" . addslashes($workShift) . "'";
+        if (!empty($workingDays)) $updates[] = "`working_days` = '" . addslashes($workingDays) . "'";
+        if (!empty($weeklyRoster))$updates[] = "`weekly_roster` = '" . addslashes($weeklyRoster) . "'";
+        if (!empty($schedStart))  $updates[] = "`schedule_start_date` = '" . addslashes($schedStart) . "'";
+        if (!empty($schedEnd))    $updates[] = "`schedule_end_date` = '" . addslashes($schedEnd) . "'";
+        if (!empty($workMode))    $updates[] = "`work_mode` = '" . addslashes($workMode) . "'";
+    }
     if (!empty($probation)) $updates[] = "`probation_status` = '" . addslashes($probation) . "'";
     if (!empty($probStart)) $updates[] = "`probation_start_date` = '" . addslashes($probStart) . "'";
     if (!empty($probEnd))   $updates[] = "`probation_end_date` = '" . addslashes($probEnd) . "'";
@@ -117,6 +131,41 @@ if (!empty($emp_updates)) {
 // 3. Sync with main_user_login table
 if (!empty($joined)) {
     $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$userId' OR `user_name` = '" . addslashes($email) . "'");
+}
+
+// Sync job roles employee count according to department
+include_once __DIR__ . '/../../Job_Roles/sync_job_roles_count.php';
+sync_job_role_employee_counts($conn);
+
+// 3.5 Sync with bank_details table if bank information provided
+if (!empty($bankName) || !empty($accNumber)) {
+    include_once __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
+    $encAcc = !empty($accNumber) ? Bank_Security::encrypt($accNumber) : '';
+    $bCheck = $conn->query("SELECT id, bank_account_number, account_number FROM `bank_details` WHERE `user_id` = '$userId' OR `employee_id` = '" . addslashes($empCode) . "' OR `employee_name` = '" . addslashes($fullName) . "' ORDER BY `id` DESC LIMIT 1");
+    if ($bCheck && $bCheck->num_rows > 0) {
+        $bRow = $bCheck->fetch_assoc();
+        $bId = (int)$bRow['id'];
+        $bUpdates = [];
+        if (!empty($bankName)) $bUpdates[] = "`bank_name` = '" . addslashes($bankName) . "'";
+        if (!empty($branch)) $bUpdates[] = "`branch` = '" . addslashes($branch) . "'";
+        if (!empty($encAcc)) {
+            $bUpdates[] = "`bank_account_number` = '" . addslashes($encAcc) . "'";
+            $bUpdates[] = "`account_number` = '" . addslashes($encAcc) . "'";
+        }
+        if (!empty($holderName)) $bUpdates[] = "`holder_name` = '" . addslashes($holderName) . "'";
+        if (!empty($fullName)) $bUpdates[] = "`employee_name` = '" . addslashes($fullName) . "'";
+        if (!empty($empCode)) $bUpdates[] = "`employee_id` = '" . addslashes($empCode) . "'";
+        if ($basicSal > 0) $bUpdates[] = "`basic_salary` = " . (float)$basicSal;
+        if ($netSal > 0) $bUpdates[] = "`net_salary` = " . (float)$netSal;
+        if (!empty($bUpdates)) {
+            $conn->query("UPDATE `bank_details` SET " . implode(", ", $bUpdates) . " WHERE `id` = '$bId'");
+        }
+    } else if (!empty($bankName) && !empty($encAcc)) {
+        $conn->query("INSERT INTO `bank_details` 
+            (`user_id`, `employee_id`, `employee_name`, `holder_name`, `bank_name`, `branch`, `bank_account_number`, `account_number`, `basic_salary`, `net_salary`, `status`, `ast`, `sdt`) 
+            VALUES 
+            ('$userId', '" . addslashes($empCode ?: ('EMP-' . $userId)) . "', '" . addslashes($fullName) . "', '" . addslashes($holderName ?: $fullName) . "', '" . addslashes($bankName) . "', '" . addslashes($branch) . "', '" . addslashes($encAcc) . "', '" . addslashes($encAcc) . "', " . (float)$basicSal . ", " . (float)$netSal . ", 'Active', '1', NOW())");
+    }
 }
 
 // 4. Trigger Notification

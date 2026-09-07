@@ -1,8 +1,7 @@
 <?php
-        include_once __DIR__ . '/../../../imports/need/DB.php';
-        include_once __DIR__ . '/../../../database.php';
+include_once __DIR__ . '/../../../imports/need/DB.php';
+include_once __DIR__ . '/../../../database.php';
 
-    
 class bank_details_ADD_UPDATE
 {
     private $id;
@@ -14,6 +13,10 @@ class bank_details_ADD_UPDATE
     private $branch = "";
     private $bank_account_number = "";
     private $account_number = "";
+    private $basic_salary = 0.00;
+    private $allowances = 0.00;
+    private $deductions = 0.00;
+    private $net_salary = 0.00;
     private $status = "Active";
     private $ast = "1";
     private $sdt;
@@ -34,7 +37,11 @@ class bank_details_ADD_UPDATE
         $get_bank_name,
         $get_branch,
         $get_bank_account_number,
-        $get_status = "Active"
+        $get_status = "Active",
+        $get_basic_salary = 0.00,
+        $get_allowances = 0.00,
+        $get_deductions = 0.00,
+        $get_net_salary = 0.00
     ) {
         $this->user_id             = $get_user_id;
         $this->employee_id         = $get_employee_id;
@@ -45,6 +52,10 @@ class bank_details_ADD_UPDATE
         $this->bank_account_number = $get_bank_account_number;
         $this->account_number      = $get_bank_account_number;
         $this->status              = $get_status;
+        $this->basic_salary        = (float)$get_basic_salary;
+        $this->allowances          = (float)$get_allowances;
+        $this->deductions          = (float)$get_deductions;
+        $this->net_salary          = (float)$get_net_salary;
 
         $this->sql_update_query =
             ", user_id = '" . $this->user_id . "'"
@@ -55,6 +66,10 @@ class bank_details_ADD_UPDATE
             . ", branch = '" . $this->branch . "'"
             . ", bank_account_number = '" . $this->bank_account_number . "'"
             . ", account_number = '" . $this->account_number . "'"
+            . ", basic_salary = '" . $this->basic_salary . "'"
+            . ", allowances = '" . $this->allowances . "'"
+            . ", deductions = '" . $this->deductions . "'"
+            . ", net_salary = '" . $this->net_salary . "'"
             . ", status = '" . $this->status . "'";
     }
 
@@ -101,11 +116,12 @@ class bank_details_ADD_UPDATE
         $this->sql_update_query .= ", bank_account_number = '" . $this->bank_account_number . "', account_number = '" . addslashes($this->account_number) . "'";
     }
 
-    public function set_account_number($get_account_number)
-    {
-        $this->account_number = $get_account_number;
-        $this->bank_account_number = $get_account_number;
-        $this->sql_update_query .= ", account_number = '" . $this->account_number . "', bank_account_number = '" . addslashes($this->bank_account_number) . "'";
+    public function set_salary($basic, $allowance, $deduct, $net) {
+        $this->basic_salary = (float)$basic;
+        $this->allowances = (float)$allowance;
+        $this->deductions = (float)$deduct;
+        $this->net_salary = (float)$net;
+        $this->sql_update_query .= ", basic_salary = '" . $this->basic_salary . "', allowances = '" . $this->allowances . "', deductions = '" . $this->deductions . "', net_salary = '" . $this->net_salary . "'";
     }
 
     public function set_status($get_status)
@@ -161,6 +177,10 @@ class bank_details_ADD_UPDATE
                 `branch` VARCHAR(255) DEFAULT '',
                 `bank_account_number` TEXT,
                 `account_number` TEXT,
+                `basic_salary` DECIMAL(12,2) DEFAULT 0.00,
+                `allowances` DECIMAL(12,2) DEFAULT 0.00,
+                `deductions` DECIMAL(12,2) DEFAULT 0.00,
+                `net_salary` DECIMAL(12,2) DEFAULT 0.00,
                 `status` VARCHAR(50) DEFAULT 'Active',
                 `ast` VARCHAR(10) DEFAULT '1',
                 `sdt` DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -170,6 +190,10 @@ class bank_details_ADD_UPDATE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ";
         $data_base_obj->get_result($create_sql);
+        @$data_base_obj->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `basic_salary` DECIMAL(12,2) DEFAULT 0.00");
+        @$data_base_obj->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `allowances` DECIMAL(12,2) DEFAULT 0.00");
+        @$data_base_obj->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `deductions` DECIMAL(12,2) DEFAULT 0.00");
+        @$data_base_obj->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `net_salary` DECIMAL(12,2) DEFAULT 0.00");
 
         $get_sql_query = "
             INSERT INTO bank_details
@@ -183,6 +207,10 @@ class bank_details_ADD_UPDATE
             branch,
             bank_account_number,
             account_number,
+            basic_salary,
+            allowances,
+            deductions,
+            net_salary,
             status)
             VALUES
             ('" . $this->ast . "',
@@ -195,6 +223,10 @@ class bank_details_ADD_UPDATE
             '" . $this->branch . "',
             '" . $this->bank_account_number . "',
             '" . $this->account_number . "',
+            '" . $this->basic_salary . "',
+            '" . $this->allowances . "',
+            '" . $this->deductions . "',
+            '" . $this->net_salary . "',
             '" . $this->status . "'
             )";
 
@@ -207,6 +239,11 @@ class bank_details_ADD_UPDATE
     public function process_update()
     {
         $data_base_obj = new DataBase();
+        @$data_base_obj->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `basic_salary` DECIMAL(12,2) DEFAULT 0.00");
+        @$data_base_obj->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `allowances` DECIMAL(12,2) DEFAULT 0.00");
+        @$data_base_obj->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `deductions` DECIMAL(12,2) DEFAULT 0.00");
+        @$data_base_obj->get_result("ALTER TABLE `bank_details` ADD COLUMN IF NOT EXISTS `net_salary` DECIMAL(12,2) DEFAULT 0.00");
+
         $get_sql_query = "UPDATE bank_details SET ast='" . $this->ast . "'" . $this->sql_update_query . " WHERE id='" . (int)$this->id . "'";
 
         $res = $data_base_obj->get_result($get_sql_query);

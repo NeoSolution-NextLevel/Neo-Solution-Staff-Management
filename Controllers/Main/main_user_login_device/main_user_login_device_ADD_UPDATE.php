@@ -53,7 +53,7 @@ class main_user_login_device_ADD_UPDATE
 
 
         $this->sql_update_query .=
-            ", device_type = '" . $this->device_type . "'"
+            " device_type = '" . $this->device_type . "'"
             . ", browser = '" . $this->browser . "'"
             . ", os = '" . $this->os . "'"
             . ", ip_address = '" . $this->ip_address . "'"
@@ -200,7 +200,7 @@ class main_user_login_device_ADD_UPDATE
 
         $data_base_obj->get_result($get_sql_query);
 
-        $this->error_msg = $data_base_obj->get_error();
+        $this->error_msg = $data_base_obj->get_error_state_boolean();
         $this->id = $data_base_obj->get_id();
         return $data_base_obj->get_error_state_boolean();
     }
@@ -215,7 +215,7 @@ class main_user_login_device_ADD_UPDATE
             WHERE id='" . $this->id . "'";
 
         $data_base_obj->get_result($get_sql_query);
-        $this->error_msg = $data_base_obj->get_error();
+        $this->error_msg = $data_base_obj->get_error_state_boolean();
         return $data_base_obj->get_error_state_boolean();
     }
 }

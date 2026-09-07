@@ -34,11 +34,6 @@ class task_management_details_LIST
         $this->sql_search_data .= " AND assigned_employee LIKE '%" . addslashes($emp) . "%'";
     }
 
-    public function filter_by_priority($priority)
-    {
-        $this->sql_search_data .= " AND priority='" . addslashes($priority) . "'";
-    }
-
     public function filter_by_search($get_search)
     {
         $s = addslashes($get_search);

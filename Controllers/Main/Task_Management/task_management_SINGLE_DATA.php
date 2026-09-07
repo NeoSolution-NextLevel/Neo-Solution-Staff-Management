@@ -15,7 +15,6 @@ class task_management_SINGLE_DATA
     private $assigned_employee;
     private $work_mode;
     private $deadline;
-    private $priority;
     private $status;
     private $state_of_data = false;
 
@@ -38,7 +37,6 @@ class task_management_SINGLE_DATA
                 $this->assigned_employee = $row['assigned_employee'];
                 $this->work_mode         = $row['work_mode'];
                 $this->deadline          = $row['deadline'];
-                $this->priority          = $row['priority'];
                 $this->status            = $row['status'];
             }
         }
@@ -79,11 +77,6 @@ class task_management_SINGLE_DATA
         return $this->deadline;
     }
 
-    public function get_priority()
-    {
-        return $this->priority;
-    }
-
     public function get_status()
     {
         return $this->status;
@@ -98,7 +91,6 @@ class task_management_SINGLE_DATA
             'assigned_employee' => $this->assigned_employee,
             'work_mode'         => $this->work_mode,
             'deadline'          => $this->deadline,
-            'priority'          => $this->priority,
             'status'            => $this->status
         ];
     }

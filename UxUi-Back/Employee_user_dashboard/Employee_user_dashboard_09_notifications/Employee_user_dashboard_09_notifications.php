@@ -272,7 +272,9 @@
       const type = (n.type || '').toLowerCase();
       let iconHtml = '<div class="emp-notif-icon" style="background:#eff6ff; color:#2563eb;"><i class="fa-solid fa-bell"></i></div>';
 
-      if (type.includes('approved') || type.includes('complete') || type.includes('success')) {
+      if (type.includes('payment') || type.includes('receipt') || type.includes('salary')) {
+        iconHtml = '<div class="emp-notif-icon" style="background:#ecfdf5; color:#059669;"><i class="fa-solid fa-file-invoice-dollar"></i></div>';
+      } else if (type.includes('approved') || type.includes('complete') || type.includes('success')) {
         iconHtml = '<div class="emp-notif-icon" style="background:#ecfdf5; color:#059669;"><i class="fa-solid fa-check"></i></div>';
       } else if (type.includes('reject') || type.includes('error')) {
         iconHtml = '<div class="emp-notif-icon" style="background:#fef2f2; color:#dc2626;"><i class="fa-solid fa-xmark"></i></div>';
@@ -344,7 +346,9 @@
     renderEmpNotifs();
 
     const t = (type || '').toLowerCase();
-    if (t.includes('leave')) {
+    if (t.includes('pay') || t.includes('receipt') || t.includes('salary')) {
+      if (typeof Employee_user_dashboard_05_OPEN === 'function') Employee_user_dashboard_05_OPEN();
+    } else if (t.includes('leave')) {
       if (typeof Employee_user_dashboard_08_OPEN === 'function') Employee_user_dashboard_08_OPEN();
     } else if (t.includes('doc')) {
       if (typeof Employee_user_dashboard_04_OPEN === 'function') Employee_user_dashboard_04_OPEN();

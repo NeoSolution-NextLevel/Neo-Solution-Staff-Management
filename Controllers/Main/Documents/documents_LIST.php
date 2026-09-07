@@ -60,11 +60,7 @@ class documents_LIST
         $this->pagination_data_result = " ORDER BY id DESC LIMIT " . (int)$start_point . ", " . (int)$per_page_data_count;
     }
 
-    public function remove_list()
-    {
-        $this->ast_state = "0";
-    }
-
+   
     public function get_result()
     {
         $data_base_obj = new DataBase();

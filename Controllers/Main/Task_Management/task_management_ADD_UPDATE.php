@@ -15,7 +15,6 @@ class task_management_ADD_UPDATE
     private $assigned_employee;
     private $work_mode = "Onsite";
     private $deadline;
-    private $priority = "Medium";
     private $status = "Pending";
     private $ast = "1";
     private $error_msg = "";
@@ -41,7 +40,6 @@ class task_management_ADD_UPDATE
         $assigned_employee,
         $work_mode = "Onsite",
         $deadline = "",
-        $priority = "Medium",
         $status = "Pending"
     ) {
         $this->task_title        = addslashes($task_title);
@@ -49,7 +47,6 @@ class task_management_ADD_UPDATE
         $this->assigned_employee = addslashes($assigned_employee);
         $this->work_mode         = addslashes($work_mode);
         $this->deadline          = addslashes($deadline);
-        $this->priority          = addslashes($priority);
         $this->status            = addslashes($status);
 
         $this->sql_update_query .=
@@ -58,7 +55,6 @@ class task_management_ADD_UPDATE
             ", assigned_employee='" . $this->assigned_employee . "'" .
             ", work_mode='" . $this->work_mode . "'" .
             ", deadline='" . $this->deadline . "'" .
-            ", priority='" . $this->priority . "'" .
             ", status='" . $this->status . "'";
     }
 
@@ -90,12 +86,6 @@ class task_management_ADD_UPDATE
     {
         $this->deadline = addslashes($deadline);
         $this->sql_update_query .= ", deadline='" . $this->deadline . "'";
-    }
-
-    public function set_priority($priority)
-    {
-        $this->priority = addslashes($priority);
-        $this->sql_update_query .= ", priority='" . $this->priority . "'";
     }
 
     public function set_status($status)
@@ -135,7 +125,6 @@ class task_management_ADD_UPDATE
                 assigned_employee,
                 work_mode,
                 deadline,
-                priority,
                 status
             )
             VALUES (
@@ -145,7 +134,6 @@ class task_management_ADD_UPDATE
                 '" . $this->assigned_employee . "',
                 '" . $this->work_mode . "',
                 '" . $this->deadline . "',
-                '" . $this->priority . "',
                 '" . $this->status . "'
             )";
 
@@ -163,7 +151,7 @@ class task_management_ADD_UPDATE
         } else {
             $update_part = ltrim($this->sql_update_query, ',');
             if (empty($update_part)) {
-                $update_part = "task_title='" . $this->task_title . "', department='" . $this->department . "', assigned_employee='" . $this->assigned_employee . "', work_mode='" . $this->work_mode . "', deadline='" . $this->deadline . "', priority='" . $this->priority . "', status='" . $this->status . "'";
+                $update_part = "task_title='" . $this->task_title . "', department='" . $this->department . "', assigned_employee='" . $this->assigned_employee . "', work_mode='" . $this->work_mode . "', deadline='" . $this->deadline . "', status='" . $this->status . "'";
             }
             $get_sql_query = "UPDATE task_management SET " . $update_part . " WHERE id='" . $this->id . "'";
         }

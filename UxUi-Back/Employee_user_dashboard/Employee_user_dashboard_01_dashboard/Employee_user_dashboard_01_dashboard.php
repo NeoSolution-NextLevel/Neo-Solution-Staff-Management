@@ -355,6 +355,22 @@
 
       <h3 id="dashWelcomeTitle" style="margin:0 0 4px 0;">Welcome back, Amal</h3>
       <p id="dashWelcomeSubtitle" style="margin:0;">Here's your work overview for today.</p>
+
+      <!-- Work Schedule & Shift Strip for Employee Visibility -->
+      <div style="display:flex; align-items:center; gap:16px; margin-top:12px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.18); border-radius:10px; padding:8px 14px; font-size:12.5px; color:#ffffff; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span><strong>Shift:</strong> <span id="dashWorkShift">08:30 AM – 05:30 PM</span></span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span><strong>Working Days:</strong> <span id="dashWorkingDays">Mon,Tue,Wed,Thu,Fri</span></span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span><strong>Mode:</strong> <span id="dashWorkMode">On-Site (Active)</span></span>
+        </div>
+      </div>
     </section>
 
     <!-- 4 Stat Cards (Clickable Navigation) -->

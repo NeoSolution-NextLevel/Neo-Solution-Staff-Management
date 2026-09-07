@@ -3,11 +3,15 @@ include_once '../../../imports/need/session_setup.php';
 include_once '../../../imports/need/DB.php';
 include_once '../../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_LIST.php';
 
-@header('Content-Type: application/json; charset=utf-8');
+
+
 
 $json = array();
 
+
+
 $main_user_account_access_level_list_LIST_obj = new main_user_account_access_level_list_LIST();
+
 $get_result = $main_user_account_access_level_list_LIST_obj->get_result();
 
 

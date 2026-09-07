@@ -8,6 +8,26 @@
     box-sizing: border-box;
   }
 
+  @media (min-width: 769px) {
+    #Employee_user_dashboard_07_daily_work_plan {
+      margin-left: 250px !important;
+      width: calc(100% - 250px) !important;
+      max-width: calc(100% - 250px) !important;
+      padding: 0 24px 80px !important;
+      box-sizing: border-box !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #Employee_user_dashboard_07_daily_work_plan {
+      margin-left: 0 !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      padding: 0 12px 80px !important;
+      box-sizing: border-box !important;
+    }
+  }
+
   .workplan-container {
     width: 100%;
     max-width: 100%;
@@ -308,6 +328,365 @@
     cursor: default;
   }
 
+  /* Step-by-Step Cards */
+  .workplan-step-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 26px;
+  }
+
+  .workplan-step-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.04);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+  }
+
+  .workplan-step-card:hover {
+    box-shadow: 0 4px 14px rgba(20, 25, 60, 0.06);
+  }
+
+  .workplan-step-card.step-1-card {
+    border-left: 5px solid #f59e0b;
+  }
+
+  .workplan-step-card.step-2-card {
+    border-left: 5px solid #2563eb;
+  }
+
+  .step-header-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .step-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .step-badge.step-1 {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+  }
+
+  .step-badge.step-2 {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+  }
+
+  .step-header-wrap h3 {
+    margin: 0;
+    color: var(--navy, #14204d);
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .step-subtext {
+    margin: 0 0 14px 0;
+    color: #64748b;
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+
+  .daily-plan-input {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 13px 15px;
+    font: inherit;
+    font-size: 13.5px;
+    line-height: 1.5;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: #ffffff;
+    color: #1e293b;
+  }
+
+  .daily-plan-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .daily-plan-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .start-work-btn {
+    border: 0;
+    border-radius: 10px;
+    background: #16a34a;
+    color: #ffffff;
+    padding: 11px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13.5px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .start-work-btn:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+  }
+
+  .start-work-btn.active {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    cursor: default;
+    transform: none;
+  }
+
+  .save-plan-btn {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #334155;
+    padding: 11px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13.5px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .save-plan-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+
+  .daily-plan-status {
+    color: #64748b;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+
+  /* Morning Plan Reference Box in Step 2 */
+  .plan-ref-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #3b82f6;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+
+  .plan-ref-title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #475569;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .plan-ref-content {
+    font-size: 13.5px;
+    color: #1e293b;
+    font-weight: 600;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+
+  /* Evening Status Badges */
+  .shift-wrapup-badge {
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .shift-wrapup-badge.completed {
+    background: #dcfce7;
+    color: #15803d;
+    border-color: rgba(21, 128, 61, 0.25);
+  }
+
+  .shift-wrapup-badge.pending {
+    background: #fef3c7;
+    color: #b45309;
+    border-color: rgba(180, 83, 9, 0.25);
+  }
+
+  .shift-ctrls-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .shift-end-submit-btn {
+    padding: 11px 24px;
+    border-radius: 10px;
+    border: 0;
+    background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+  }
+
+  .shift-end-submit-btn:hover {
+    background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+  }
+
+  .shift-status-alert {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .shift-status-alert.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+  }
+  .shift-view-task-btn {
+    padding: 11px 20px;
+    border-radius: 10px;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .shift-view-task-btn:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+    transform: translateY(-1px);
+  }
+
+  /* Employee Task Details Modal */
+  .emp-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  .emp-modal-overlay.active {
+    display: flex !important;
+  }
+  .emp-modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+  }
+  .emp-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .emp-modal-header h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #14204d;
+    margin: 0;
+  }
+  .emp-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .emp-modal-body {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .emp-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 14px 22px;
+    border-top: 1px solid #f1f5f9;
+    background: #ffffff;
+    flex-shrink: 0;
+  }
+
   /* Responsive */
   @media (max-width: 768px) {
     .workplan-menu-btn { display: inline-flex !important; }
@@ -315,10 +694,12 @@
     .workplan-tasks-grid { grid-template-columns: 1fr !important; gap: 14px; }
     .task-card { padding: 18px 16px; }
     .search-pill-wrap { max-width: 100%; }
+    .shift-ctrls-row { flex-direction: column; align-items: stretch; }
+    .shift-end-submit-btn { width: 100%; justify-content: center; }
   }
 </style>
 
-<div id="Employee_user_dashboard_07_daily_work_plan" class="emp-main" style="display:none; padding:0;">
+<div id="Employee_user_dashboard_07_daily_work_plan" style="display:none;">
   <div class="workplan-container">
 
     <!-- Topbar -->
@@ -348,14 +729,92 @@
       </div>
     </div>
 
-    <!-- Page Head with View Switcher -->
+    <div class="workplan-step-container">
+      
+      <section class="workplan-step-card step-1-card">
+        <div class="step-header-wrap">
+          <div class="step-title-group">
+            <span class="step-badge step-1">Step 1</span>
+            <h3>Plan Today's Work</h3>
+          </div>
+          <span id="morningPlanStatusBadge" class="shift-wrapup-badge pending">Shift Not Started</span>
+        </div>
+        <p class="step-subtext">Write down the tasks you plan to accomplish today. Click <b>Start Work</b> to activate your shift for the day.</p>
+        
+        <textarea id="dailyWorkPlanText" class="daily-plan-input" placeholder="Enter today's planned tasks:"></textarea>
+        
+        <div class="daily-plan-actions">
+          <button type="button" id="saveDailyPlanBtn" class="save-plan-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span>Save Plan</span>
+          </button>
+          <button type="button" id="startWorkBtn" class="start-work-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Start Work — Active Today</span>
+          </button>
+          <span id="dailyPlanStatus" class="daily-plan-status"></span>
+        </div>
+      </section>
+
+      <section class="workplan-step-card step-2-card">
+        <div class="step-header-wrap">
+          <div class="step-title-group">
+            <span class="step-badge step-2">Step 2</span>
+            <h3>Update on Planned Work</h3>
+          </div>
+          <span class="shift-wrapup-badge" id="shiftStatusBadge"> Shift In Progress</span>
+        </div>
+        <p class="step-subtext">When ending your shift, review your plan below and provide an update on what was accomplished:</p>
+
+        <div class="plan-ref-box">
+          <div class="plan-ref-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Today's Plan:
+          </div>
+          <div id="morningPlanPreviewText" class="plan-ref-content">No plan entered yet. Write your plan in Step 1 above.</div>
+        </div>
+
+        <label style="font-size:13px; font-weight:700; color:#334155; display:block; margin-bottom:6px;">
+          What did you complete from this plan?:
+        </label>
+        <textarea id="shiftEndNotes" class="daily-plan-input" placeholder="Write what you finished from the morning plan, what remains pending, or any end-of-shift notes..."></textarea>
+
+        <div class="shift-ctrls-row">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="font-size: 13px; font-weight: 700; color: #334155;">Work Status:</label>
+            <select id="shiftEndTaskStatus" class="filter-pill-select" style="min-width: 150px; font-weight: 700;">
+              <option value="Completed" selected>Completed</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+
+          <button type="button" id="submitShiftEndBtn" class="shift-end-submit-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span>Submit Update</span>
+          </button>
+
+          <button type="button" id="viewShiftTaskBtn" class="shift-view-task-btn" style="display: none;" onclick="openShiftWorkTaskModal()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span>View Task</span>
+          </button>
+        </div>
+
+        <div id="shiftEndStatusMsg" class="shift-status-alert success" style="display: none;"></div>
+      </section>
+
+    </div>
+
     <div class="workplan-header-row">
       <div class="workplan-head-left">
-        <h1>My Assigned Tasks</h1>
+        <h1>My Assigned & Daily Tasks</h1>
         <p id="empActiveTasksCount">Loading tasks from database...</p>
       </div>
 
-      <!-- Grid & List Switcher -->
       <div class="view-switcher">
         <button class="view-btn active" title="Grid view" onclick="setWorkplanView('grid', this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -378,7 +837,6 @@
       </div>
     </div>
 
-    <!-- Search & Filters Bar -->
     <div class="workplan-filters">
       <div class="search-pill-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -402,19 +860,388 @@
       </select>
     </div>
 
-    <!-- Tasks Grid (2 Column Desktop / 1 Column Mobile) -->
     <div class="workplan-tasks-grid" id="workplanTasksGrid">
       <div style="text-align:center; padding: 40px 16px; color:#64748b; background:#fff; border-radius:16px; grid-column: 1 / -1; border:1px solid #e8eaf0;">
-        Loading your tasks from database...
+        Loading your tasks...
       </div>
     </div>
 
   </div>
+
+  <div class="emp-modal-overlay" id="workplanTaskDetailsModal" style="display:none;">
+    <div class="emp-modal-card">
+      <div class="emp-modal-header">
+        <h3>Task Details</h3>
+        <button type="button" class="emp-modal-close" onclick="closeWorkplanTaskModal()">&times;</button>
+      </div>
+      <div class="emp-modal-body">
+        <div>
+          <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">Task Title</div>
+          <h4 id="modalTaskTitle" style="margin: 0; font-size: 17px; font-weight: 800; color: #14204d; line-height: 1.35;"></h4>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <span id="modalTaskStatusPill" class="status-pill done">Completed</span>
+          <span id="modalTaskModePill" class="tag-pill online">Online</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; padding: 12px 14px; border-radius: 10px; border: 1px solid #f1f5f9;">
+          <div>
+            <span style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Department</span>
+            <span id="modalTaskDept" style="font-size: 13.5px; font-weight: 700; color: #1e293b;"></span>
+          </div>
+          <div>
+            <span style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Deadline</span>
+            <span id="modalTaskDeadline" style="font-size: 13.5px; font-weight: 700; color: #1e293b;"></span>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px;">Description / Work Plan Details</div>
+          <div id="modalTaskDesc" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; color: #334155; line-height: 1.5; white-space: pre-wrap; max-height: 220px; overflow-y: auto;"></div>
+        </div>
+      </div>
+      <div class="emp-modal-footer">
+        <button type="button" class="save-plan-btn" onclick="closeWorkplanTaskModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
 (function () {
   let employeeTasks = [];
+
+  const dailyPlanUrl = () => (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/daily_work_plan/daily_work_plan.php';
+  const planText = document.getElementById('dailyWorkPlanText');
+  const planStatus = document.getElementById('dailyPlanStatus');
+  const startWorkBtn = document.getElementById('startWorkBtn');
+  const savePlanBtn = document.getElementById('saveDailyPlanBtn');
+  const morningPlanPreview = document.getElementById('morningPlanPreviewText');
+  const morningStatusBadge = document.getElementById('morningPlanStatusBadge');
+
+  const shiftEndNotes = document.getElementById('shiftEndNotes');
+  const shiftEndTaskStatus = document.getElementById('shiftEndTaskStatus');
+  const submitShiftEndBtn = document.getElementById('submitShiftEndBtn');
+  const shiftEndStatusMsg = document.getElementById('shiftEndStatusMsg');
+  const shiftStatusBadge = document.getElementById('shiftStatusBadge');
+
+  function formatTimeStr(dtStr) {
+    if (!dtStr) return '';
+    try {
+      const parts = dtStr.split(' ');
+      if (parts.length >= 2) {
+        const timeParts = parts[1].split(':');
+        let hours = parseInt(timeParts[0], 10);
+        const mins = timeParts[1];
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        return `${hours}:${mins} ${ampm}`;
+      }
+      return dtStr;
+    } catch (e) {
+      return dtStr;
+    }
+  }
+
+  planText?.addEventListener('input', function () {
+    updatePlanPreviewText(this.value);
+  });
+
+  function updatePlanPreviewText(text) {
+    if (!morningPlanPreview) return;
+    const clean = (text || '').trim();
+    if (clean) {
+      morningPlanPreview.textContent = clean;
+      morningPlanPreview.style.color = '#1e293b';
+      morningPlanPreview.style.fontStyle = 'normal';
+    } else {
+      morningPlanPreview.textContent = 'No plan entered yet. Write your plan in Step 1 above.';
+      morningPlanPreview.style.color = '#94a3b8';
+      morningPlanPreview.style.fontStyle = 'italic';
+    }
+  }
+
+  function loadDailyPlan() {
+    fetch(dailyPlanUrl(), { credentials: 'same-origin' })
+      .then(res => res.json())
+      .then(res => {
+        if (!res.data) {
+          updatePlanPreviewText('');
+          if (morningStatusBadge) {
+            morningStatusBadge.className = 'shift-wrapup-badge pending';
+            morningStatusBadge.textContent = '⚪ Shift Not Started';
+          }
+          if (shiftStatusBadge) {
+            shiftStatusBadge.className = 'shift-wrapup-badge';
+            shiftStatusBadge.textContent = '⏳ Shift Not Started';
+          }
+          return;
+        }
+
+        const currentPlan = res.data.plan_text || '';
+        if (planText) planText.value = currentPlan;
+        updatePlanPreviewText(currentPlan);
+
+        if (res.data.started_at && startWorkBtn) {
+          startWorkBtn.textContent = 'Active Today';
+          startWorkBtn.classList.add('active');
+          startWorkBtn.disabled = true;
+          if (morningStatusBadge) {
+            morningStatusBadge.className = 'shift-wrapup-badge completed';
+            morningStatusBadge.innerHTML = '🟢 Active Shift (' + formatTimeStr(res.data.started_at) + ')';
+          }
+        } else if (morningStatusBadge) {
+          morningStatusBadge.className = 'shift-wrapup-badge pending';
+          morningStatusBadge.textContent = '⚪ Shift Not Started';
+        }
+
+        if (planStatus) {
+          planStatus.textContent = res.data.updated_at ? `Updated ${formatTimeStr(res.data.updated_at)}` : '';
+        }
+
+        const viewShiftTaskBtn = document.getElementById('viewShiftTaskBtn');
+        if (shiftEndNotes && res.data.evening_update) {
+          shiftEndNotes.value = res.data.evening_update;
+        }
+        if (shiftEndTaskStatus && res.data.task_status) {
+          shiftEndTaskStatus.value = res.data.task_status;
+        }
+
+        if (res.data.task_id && viewShiftTaskBtn) {
+          viewShiftTaskBtn.style.display = 'inline-flex';
+          viewShiftTaskBtn.setAttribute('data-task-id', res.data.task_id);
+        } else if (viewShiftTaskBtn && !res.data.shift_ended_at) {
+          viewShiftTaskBtn.style.display = 'none';
+        }
+
+        if (res.data.shift_ended_at) {
+          const endedTime = formatTimeStr(res.data.shift_ended_at);
+          const stVal = res.data.task_status || 'Completed';
+          if (viewShiftTaskBtn) {
+            viewShiftTaskBtn.style.display = 'inline-flex';
+            if (res.data.task_id) viewShiftTaskBtn.setAttribute('data-task-id', res.data.task_id);
+          }
+          if (shiftStatusBadge) {
+            shiftStatusBadge.textContent = `Shift Ended (${endedTime})`;
+            shiftStatusBadge.className = 'shift-wrapup-badge ' + (stVal === 'Completed' ? 'completed' : 'pending');
+          }
+          if (shiftEndStatusMsg) {
+            shiftEndStatusMsg.style.display = 'flex';
+            shiftEndStatusMsg.className = 'shift-status-alert success';
+            shiftEndStatusMsg.innerHTML = `
+              <div style="flex:1;">Shift ended at <b>${endedTime}</b> (Status: <b>${stVal}</b> — Synced to Tasks)</div>
+              <button type="button" class="shift-view-task-btn" style="padding: 6px 14px; font-size: 12px; margin-left: auto;" onclick="openShiftWorkTaskModal()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>View Task</span>
+              </button>
+            `;
+          }
+        } else if (res.data.started_at) {
+          if (shiftStatusBadge) {
+            shiftStatusBadge.className = 'shift-wrapup-badge';
+            shiftStatusBadge.textContent = '⏳ Shift In Progress';
+          }
+        }
+      }).catch(() => {});
+  }
+
+  function saveDailyPlan(startWork) {
+    const text = (planText?.value || '').trim();
+    if (!text) {
+      if (planStatus) {
+        planStatus.style.color = '#dc2626';
+        planStatus.textContent = 'Please enter your daily plan first.';
+      }
+      return;
+    }
+
+    const body = new FormData();
+    body.append('plan_text', text);
+    body.append('start_work', startWork ? '1' : '0');
+
+    fetch(dailyPlanUrl(), { method: 'POST', body, credentials: 'same-origin' })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status !== 'success') throw new Error(res.message || 'Unable to save plan');
+        if (planStatus) {
+          planStatus.style.color = '#15803d';
+          planStatus.textContent = startWork ? 'Work started! You are active today.' : 'Daily plan saved.';
+        }
+        if (startWorkBtn && startWork) {
+          startWorkBtn.textContent = 'Active Today';
+          startWorkBtn.classList.add('active');
+          startWorkBtn.disabled = true;
+          if (morningStatusBadge) {
+            morningStatusBadge.className = 'shift-wrapup-badge completed';
+            morningStatusBadge.innerHTML = '🟢 Active Shift Today';
+          }
+          if (shiftStatusBadge) {
+            shiftStatusBadge.className = 'shift-wrapup-badge';
+            shiftStatusBadge.textContent = '⏳ Shift In Progress';
+          }
+        }
+        updatePlanPreviewText(text);
+      }).catch(err => {
+        if (planStatus) {
+          planStatus.style.color = '#dc2626';
+          planStatus.textContent = err.message;
+        }
+      });
+  }
+
+  function submitShiftEndUpdate() {
+    const notes = (shiftEndNotes?.value || '').trim();
+    const statusVal = shiftEndTaskStatus?.value || 'Completed';
+
+    if (!notes && !(planText?.value || '').trim()) {
+      if (shiftEndStatusMsg) {
+        shiftEndStatusMsg.style.display = 'flex';
+        shiftEndStatusMsg.className = 'shift-status-alert error';
+        shiftEndStatusMsg.textContent = 'Please enter your shift update notes first.';
+      }
+      return;
+    }
+
+    if (submitShiftEndBtn) {
+      submitShiftEndBtn.disabled = true;
+      submitShiftEndBtn.style.opacity = '0.7';
+    }
+
+    const body = new FormData();
+    body.append('action', 'shift_end_update');
+    body.append('evening_update', notes);
+    body.append('task_status', statusVal);
+
+    fetch(dailyPlanUrl(), { method: 'POST', body, credentials: 'same-origin' })
+      .then(res => res.json())
+      .then(res => {
+        if (submitShiftEndBtn) {
+          submitShiftEndBtn.disabled = false;
+          submitShiftEndBtn.style.opacity = '1';
+        }
+        if (res.status !== 'success') {
+          throw new Error(res.message || 'Unable to submit shift update');
+        }
+
+        const viewShiftTaskBtn = document.getElementById('viewShiftTaskBtn');
+        if (viewShiftTaskBtn) {
+          viewShiftTaskBtn.style.display = 'inline-flex';
+          if (res.task_id) viewShiftTaskBtn.setAttribute('data-task-id', res.task_id);
+        }
+
+        if (shiftEndStatusMsg) {
+          shiftEndStatusMsg.style.display = 'flex';
+          shiftEndStatusMsg.className = 'shift-status-alert success';
+          shiftEndStatusMsg.innerHTML = `
+            <div style="flex:1;">🎉 <b>${res.message}</b> Added to your tasks as <b>${statusVal}</b>!</div>
+            <button type="button" class="shift-view-task-btn" style="padding: 6px 14px; font-size: 12px; margin-left: auto;" onclick="openShiftWorkTaskModal()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>View Task</span>
+            </button>
+          `;
+        }
+
+        if (shiftStatusBadge) {
+          shiftStatusBadge.textContent = 'Shift Ended (' + statusVal + ')';
+          shiftStatusBadge.className = 'shift-wrapup-badge ' + (statusVal === 'Completed' ? 'completed' : 'pending');
+        }
+
+        // Immediately reload task list below
+        if (typeof window.fetchEmployeeWorkplanTasks === 'function') {
+          window.fetchEmployeeWorkplanTasks();
+        }
+      })
+      .catch(err => {
+        if (submitShiftEndBtn) {
+          submitShiftEndBtn.disabled = false;
+          submitShiftEndBtn.style.opacity = '1';
+        }
+        if (shiftEndStatusMsg) {
+          shiftEndStatusMsg.style.display = 'flex';
+          shiftEndStatusMsg.className = 'shift-status-alert error';
+          shiftEndStatusMsg.textContent = err.message || 'Error submitting shift update.';
+        }
+      });
+  }
+
+  window.closeWorkplanTaskModal = function() {
+    const modal = document.getElementById('workplanTaskDetailsModal');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.style.display = 'none';
+    }
+  };
+
+  window.openWorkplanTaskDetails = function(taskId) {
+    const task = employeeTasks.find(t => Number(t.id) === Number(taskId));
+    if (!task) return;
+
+    const el = id => document.getElementById(id);
+    if (el('modalTaskTitle')) el('modalTaskTitle').textContent = task.title || 'Task Details';
+    if (el('modalTaskDept')) el('modalTaskDept').textContent = task.department || task.dept || 'Engineering';
+    if (el('modalTaskDeadline')) el('modalTaskDeadline').textContent = task.deadline || '—';
+
+    const statusPill = el('modalTaskStatusPill');
+    if (statusPill) {
+      statusPill.textContent = task.status || 'Pending';
+      statusPill.className = 'status-pill ' + (task.status === 'Completed' ? 'done' : (task.status === 'In Progress' ? 'in-progress' : 'pending'));
+    }
+
+    const modePill = el('modalTaskModePill');
+    if (modePill) {
+      modePill.textContent = task.mode || 'Online';
+      modePill.className = 'tag-pill ' + ((task.mode || '').toLowerCase() === 'online' ? 'online' : 'onsite');
+    }
+
+    const descEl = el('modalTaskDesc');
+    if (descEl) {
+      descEl.textContent = task.description || 'No additional work plan details.';
+    }
+
+    const modal = document.getElementById('workplanTaskDetailsModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.add('active');
+    }
+  };
+
+  window.openShiftWorkTaskModal = function() {
+    const btn = document.getElementById('viewShiftTaskBtn');
+    let targetTaskId = btn ? btn.getAttribute('data-task-id') : null;
+
+    let targetTask = null;
+    if (targetTaskId) {
+      targetTask = employeeTasks.find(t => Number(t.id) === Number(targetTaskId));
+    }
+    if (!targetTask && employeeTasks.length > 0) {
+      targetTask = employeeTasks[0];
+    }
+
+    if (targetTask) {
+      window.openWorkplanTaskDetails(targetTask.id);
+      const grid = document.getElementById('workplanTasksGrid');
+      if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      window.fetchEmployeeWorkplanTasks();
+      setTimeout(() => {
+        if (employeeTasks.length > 0) {
+          window.openWorkplanTaskDetails(employeeTasks[0].id);
+        }
+      }, 500);
+    }
+  };
+
+  savePlanBtn?.addEventListener('click', () => saveDailyPlan(false));
+  startWorkBtn?.addEventListener('click', () => saveDailyPlan(true));
+  submitShiftEndBtn?.addEventListener('click', submitShiftEndUpdate);
+  
+  window.loadDailyPlan = loadDailyPlan;
+  loadDailyPlan();
+
+
+
 
   window.fetchEmployeeWorkplanTasks = function () {
     const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
@@ -469,7 +1296,6 @@
       if (t.status === 'In Progress') statusPillClass = 'in-progress';
       if (t.status === 'Completed') statusPillClass = 'done';
 
-      let prioClass = (t.priority || '').toLowerCase() === 'high' ? 'high' : ((t.priority || '').toLowerCase() === 'medium' ? 'medium' : 'low');
       let modeClass = (t.mode || '').toLowerCase() === 'online' ? 'online' : 'onsite';
 
       let actionBtnHtml = '';
@@ -491,7 +1317,6 @@
             <p class="task-card-desc">${t.description || 'Assigned task for ' + (t.department || 'the department')}</p>
             
             <div class="task-tags-row">
-              <span class="tag-pill ${prioClass}">${t.priority}</span>
               <span class="tag-pill ${modeClass}">${t.mode}</span>
             </div>
 
@@ -507,7 +1332,15 @@
             </div>
           </div>
 
-          ${actionBtnHtml}
+          <div style="display: flex; gap: 8px; margin-top: 14px;">
+            <button type="button" class="task-action-btn" style="flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; color: #334155;" onclick="openWorkplanTaskDetails(${t.id})">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>View Task</span>
+            </button>
+            <div style="flex: 1.2;">
+              ${actionBtnHtml}
+            </div>
+          </div>
         </div>
       `;
     }).join('');

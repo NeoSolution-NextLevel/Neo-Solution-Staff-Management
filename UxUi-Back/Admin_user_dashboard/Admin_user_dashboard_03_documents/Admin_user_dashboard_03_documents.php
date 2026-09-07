@@ -217,6 +217,67 @@
     background: #ffffff;
   }
 
+  .doc-subnav-tabs {
+    display: inline-flex;
+    align-items: center;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 10px;
+    gap: 4px;
+    border: 1px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .doc-tab-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .doc-tab-pill:hover {
+    color: #1e293b;
+    background: rgba(255,255,255,0.7);
+  }
+  .doc-tab-pill.active {
+    background: #14204d;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(20,32,77,0.18);
+  }
+  .doc-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    background: #e2e8f0;
+    color: #475569;
+    min-width: 18px;
+    line-height: 1.3;
+    transition: all 0.2s ease;
+  }
+  .doc-tab-pill.active .doc-tab-badge {
+    background: rgba(255,255,255,0.25);
+    color: #ffffff;
+  }
+  .doc-tab-badge.req-count {
+    background: #fee2e2;
+    color: #ef4444;
+  }
+  .doc-tab-pill.active .doc-tab-badge.req-count {
+    background: #f0576a;
+    color: #ffffff;
+  }
+
   .doc-toolbar-right {
     display: flex;
     align-items: center;
@@ -331,7 +392,13 @@
   .col-type { width: 20%; }
   .col-file { width: 28%; }
   .col-date { width: 12%; }
-  .col-actions { width: 12%; text-align: right !important; }
+  .col-actions { width: 12%; text-align: center !important; }
+  table.doc-table thead th:last-child,
+  table.doc-table tbody td:last-child,
+  table.doc-table th.col-actions,
+  table.doc-table td.col-actions {
+    text-align: center !important;
+  }
 
   /* Cell Elements */
   .emp-cell {
@@ -470,7 +537,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    justify-content: flex-end;
+    justify-content: center;
+    margin: 0 auto;
   }
   .action-btn {
     width: 30px;
@@ -715,7 +783,7 @@
 <div id="Admin_user_dashboard_03_documents" style="display:none;">
   <main class="main">
 
-    <!-- Compact Fixed Topbar Header -->
+    <!-- Compact Topbar Header -->
     <div class="topbar">
       <div class="topbar-left">
         <button class="menu-btn" id="menuBtn" aria-label="Open menu" onclick="typeof openAdminSidebar === 'function' ? openAdminSidebar() : null">
@@ -738,72 +806,133 @@
     <!-- Main Container Card (Fills Remaining Viewport Exactly) -->
     <div class="doc-main-card">
       
-      <!-- Filter Toolbar -->
+      <!-- Filter Toolbar with Tabs (Search & Filters on Left, Navigation Tabs & Action on Right) -->
       <div class="doc-toolbar">
-        <div class="doc-toolbar-left">
-          <div class="doc-search-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="docSearchInput" class="doc-search-input" placeholder="Search by employee, file name, or ID..." oninput="filterAdminDocs();">
+        <!-- 1. Left: Search + Filter Controls -->
+        <div class="doc-toolbar-left" style="display:flex; align-items:center; gap:10px; flex:1; max-width:540px; min-width:0;">
+          <!-- Documents Filters (shown when on All Documents) -->
+          <div id="docsFilterGroup" style="display:flex; align-items:center; gap:10px; width:100%;">
+            <div class="doc-search-box" style="flex:1; min-width:220px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="docSearchInput" class="doc-search-input" placeholder="Search by employee, file name, or ID..." oninput="filterAdminDocs();">
+            </div>
+
+            <select id="docTypeFilter" class="doc-select" onchange="filterAdminDocs();" style="width:180px; flex-shrink:0;">
+              <option value="all">All Document Types</option>
+              <option value="CV">CV</option>
+              <option value="National ID">National ID</option>
+              <option value="Agreement">Employment Agreement</option>
+              <option value="Certificate">Grama Sevaka Certificate</option>
+              <option value="Police Report">Police Report</option>
+              <option value="Salary Slip">Salary Slip / Receipts</option>
+              <option value="Other">Other Documents</option>
+            </select>
           </div>
 
-          <select id="docTypeFilter" class="doc-select" onchange="filterAdminDocs();">
-            <option value="all">All Document Types</option>
-            <option value="CV">CV / Resume</option>
-            <option value="National ID">National ID</option>
-            <option value="Police Report">Police Report</option>
-            <option value="Certificate">Certificate</option>
-            <option value="Agreement">Agreement</option>
-            <option value="Bank">Bank Document</option>
-            <option value="Other">Other</option>
-          </select>
+          <!-- Requests Filters (shown when on Document Requests) -->
+          <div id="reqsFilterGroup" style="display:none; align-items:center; gap:10px; width:100%;">
+            <div class="doc-search-box" style="flex:1; min-width:220px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="reqSearchInput" class="doc-search-input" placeholder="Search requests by employee, doc type..." oninput="filterDocRequests();">
+            </div>
+
+            <select id="reqStatusFilter" class="doc-select" onchange="filterDocRequests();" style="width:170px; flex-shrink:0;">
+              <option value="all">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Uploaded">Uploaded (Ready)</option>
+              <option value="Approved">Approved</option>
+              <option value="Ignored">Cancelled</option>
+            </select>
+          </div>
         </div>
 
-        <div class="doc-toolbar-right">
-          <div class="doc-count-badge" id="docCountBadge">
-            <i class="fa-solid fa-folder-closed"></i> <span id="docCountText">0 Documents</span>
+        <!-- 2. Right: Segmented Navigation Tabs + Request Doc Action -->
+        <div class="doc-toolbar-right" style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+          <div class="doc-subnav-tabs">
+            <button type="button" class="doc-tab-pill active" id="tabBtnAllDocs" onclick="switchAdminDocTab('documents');">
+              <i class="fa-solid fa-folder-open"></i> All Documents
+              <span class="doc-tab-badge" id="tabDocsCountBadge">0</span>
+            </button>
+            <button type="button" class="doc-tab-pill" id="tabBtnRequests" onclick="switchAdminDocTab('requests');">
+              <i class="fa-solid fa-clipboard-list"></i> Document Requests
+              <span class="doc-tab-badge req-count" id="reqPendingBadge">0</span>
+            </button>
           </div>
 
-          <button type="button" class="doc-btn-refresh" onclick="openAdminUploadModal();" style="background: #14204d; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px;" title="Upload Document">
-            <i class="fa-solid fa-plus"></i> Upload Document
-          </button>
-
-          <button type="button" class="doc-btn-refresh" onclick="loadAdminDocuments();" title="Refresh Document List">
-            <i class="fa-solid fa-rotate-right"></i> Refresh
+          <!-- Primary Action Button: Request Doc -->
+          <button type="button" id="btnOpenReqModal" onclick="openDocRequestModal();"
+            style="display:inline-flex; align-items:center; gap:7px; padding:8.5px 16px; border:none; border-radius:8px; background:#14204d; color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(20,32,77,0.15); transition:all .15s ease;">
+            <i class="fa-solid fa-plus"></i> Request Doc
           </button>
         </div>
       </div>
 
-      <!-- 1. Desktop & Tablet Table View (No Horizontal Scroll, Clean Vertical Scroll) -->
-      <div class="doc-table-wrap">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th class="col-emp">Employee</th>
-              <th class="col-type">Document Type</th>
-              <th class="col-file">File Name</th>
-              <th class="col-date">Upload Date</th>
-              <th class="col-actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="docTableBody">
-            <tr>
-              <td colspan="5" style="text-align:center; padding: 48px 20px; color: #64748b;">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                  <i class="fa-solid fa-spinner fa-spin" style="font-size: 22px; color: #3b5bdb;"></i>
-                  <span>Loading documents...</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- VIEW 1: All Uploaded Documents Section -->
+      <div id="adminAllDocsSection">
+        <!-- 1. Desktop & Tablet Table View (No Horizontal Scroll, Clean Vertical Scroll) -->
+        <div class="doc-table-wrap">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th class="col-emp">Employee</th>
+                <th class="col-type">Document Type</th>
+                <th class="col-file">File Name</th>
+                <th class="col-date">Upload Date</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="docTableBody">
+              <tr>
+                <td colspan="5" style="text-align:center; padding: 48px 20px; color: #64748b;">
+                  <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 22px; color: #3b5bdb;"></i>
+                    <span>Loading documents...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2. Mobile Responsive Cards View (Screens <= 768px) -->
+        <div class="mobile-doc-cards" id="mobileDocCardsContainer">
+          <div style="text-align:center; padding: 30px 16px; color: #64748b; background:#fff; border-radius:10px;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 18px; color: #3b5bdb; margin-bottom: 6px;"></i>
+            <div>Loading documents...</div>
+          </div>
+        </div>
       </div>
 
-      <!-- 2. Mobile Responsive Cards View (Screens <= 768px) -->
-      <div class="mobile-doc-cards" id="mobileDocCardsContainer">
-        <div style="text-align:center; padding: 30px 16px; color: #64748b; background:#fff; border-radius:10px;">
-          <i class="fa-solid fa-spinner fa-spin" style="font-size: 18px; color: #3b5bdb; margin-bottom: 6px;"></i>
-          <div>Loading documents...</div>
+      <!-- VIEW 2: Document Requests Section (Cleanly nested inside doc-main-card) -->
+      <div id="adminDocRequestsSection" style="display:none; padding:18px 20px; overflow-y:auto; flex:1;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h3 style="font-size:16px; font-weight:800; color:#14204d; margin:0;"><i class="fa-solid fa-clipboard-list" style="color:#6366f1;"></i> Document Requests</h3>
+            <p style="font-size:12.5px; color:#64748b; margin:4px 0 0;">Track requests sent to employees and review their uploaded files</p>
+          </div>
         </div>
+
+        <!-- Desktop Requests Table -->
+        <div class="doc-table-wrap" id="reqTableWrap" style="border:1px solid var(--border); border-radius:10px;">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Doc Type</th>
+                <th>Requested</th>
+                <th>Deadline</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reqTableBody">
+              <tr><td colspan="6" style="text-align:center; padding:40px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Loading requests...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Requests Cards -->
+        <div id="reqMobileCards" style="display:none; flex-direction:column; gap:12px; margin-top:12px;"></div>
       </div>
 
     </div>
@@ -866,57 +995,78 @@
       </div>
     </div>
 
-    <!-- 4. Admin Upload Document Modal -->
-    <div class="doc-modal-overlay" id="adminUploadDocModal">
-      <div class="doc-modal-box" style="max-width: 520px; height: auto; max-height: 90vh;">
-        <div class="doc-modal-header">
-          <h3 style="font-size: 16px; font-weight: 800; color: #14204d; margin: 0;">Upload Employee Document</h3>
-          <button type="button" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b;" onclick="closeAdminUploadModal()">&times;</button>
-        </div>
-        <form id="adminUploadDocForm" onsubmit="submitAdminDocUpload(event)" style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; padding: 18px 22px; gap: 14px; box-sizing: border-box;">
-          <div style="display: flex; flex-direction: column; gap: 4px;">
-            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Employee Name / ID</label>
-            <input type="text" name="employee_name" id="adminUploadEmpName" required placeholder="e.g. John Doe" style="padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; outline: none; width: 100%; box-sizing: border-box;">
+    <!-- 4. Request Document Modal -->
+    <div id="reqDocModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,.7); z-index:999999; align-items:center; justify-content:center; padding:12px; box-sizing:border-box; backdrop-filter:blur(4px);">
+      <div style="background:#fff; border-radius:16px; width:100%; max-width:500px; box-shadow:0 25px 60px rgba(0,0,0,.3); overflow:hidden;">
+        <div style="background:linear-gradient(135deg,#4f46e5,#6366f1); padding:18px 22px; display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <h3 style="color:#fff; font-size:15px; font-weight:800; margin:0;"><i class="fa-solid fa-clipboard-list"></i> Request a Document</h3>
+            <p style="color:rgba(255,255,255,.8); font-size:11.5px; margin:4px 0 0;">Ask an employee to upload a specific document</p>
           </div>
-          <div style="display: flex; flex-direction: column; gap: 4px;">
-            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Document Type</label>
-            <select name="category" id="adminUploadCategory" required onchange="toggleAdminDocFileInputs(this.value)" style="padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; outline: none; background: #fff; width: 100%; box-sizing: border-box;">
-              <option value="CV">CV / Resume (1 PDF)</option>
-              <option value="National ID">National ID / Passport (2 PNG)</option>
-              <option value="Agreement">Employment Agreement (1 PDF)</option>
-              <option value="Certificate">Grama Sevaka Certificate (1 PDF)</option>
-              <option value="Police Report">Police Clearance Report (1 PDF)</option>
-              <option value="Other">Other Document (1 PDF)</option>
+          <button onclick="closeDocRequestModal()" style="background:rgba(255,255,255,.2); border:none; color:#fff; border-radius:50%; width:30px; height:30px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&times;</button>
+        </div>
+        <div style="padding:22px;">
+          <!-- Target Type Selector -->
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12.5px; font-weight:700; color:#1e293b; display:block; margin-bottom:5px;">Send Request To *</label>
+            <select id="reqTargetType" onchange="toggleReqTargetFields()" style="width:100%; padding:10px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:13px; color:#1e293b; background:#fff; font-weight:600;">
+              <option value="employee">Specific Employee</option>
+              <option value="department">Specific Department</option>
+              <option value="all">All Employees</option>
             </select>
           </div>
 
-          <!-- Single PDF Upload Section -->
-          <div id="adminSinglePdfWrap" style="display: flex; flex-direction: column; gap: 4px;">
-            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Select Document (1 PDF only)</label>
-            <input type="file" name="document_file" id="adminUploadFile" accept=".pdf" style="padding: 8px 0; font-size: 13px;">
-            <span style="font-size: 11.5px; color: #64748b;">Accepted format: PDF only (Max 10MB)</span>
+          <!-- Specific Employee Group -->
+          <div id="reqEmpGroup" style="margin-bottom:14px;">
+            <label style="font-size:12.5px; font-weight:700; color:#1e293b; display:block; margin-bottom:5px;">Select Employee *</label>
+            <select id="reqEmpSelect" style="width:100%; padding:10px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:13px; color:#1e293b; background:#fff;">
+              <option value="">Loading employees...</option>
+            </select>
           </div>
 
-          <!-- Dual PNG Upload Section for National ID -->
-          <div id="adminNationalIdPngWrap" style="display: none; flex-direction: column; gap: 10px;">
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-              <label style="font-size: 12.5px; font-weight: 700; color: #2563eb;">Front Side (PNG)</label>
-              <input type="file" name="document_file_front" id="adminUploadFileFront" accept=".png,.jpg,.jpeg" style="padding: 6px 0; font-size: 13px;">
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-              <label style="font-size: 12.5px; font-weight: 700; color: #0284c7;">Back Side (PNG)</label>
-              <input type="file" name="document_file_back" id="adminUploadFileBack" accept=".png,.jpg,.jpeg" style="padding: 6px 0; font-size: 13px;">
-            </div>
-            <span style="font-size: 11.5px; color: #64748b;">Accepted format: PNG only (Max 5MB each)</span>
+          <!-- Specific Department Group -->
+          <div id="reqDeptGroup" style="display:none; margin-bottom:14px;">
+            <label style="font-size:12.5px; font-weight:700; color:#1e293b; display:block; margin-bottom:5px;">Select Department *</label>
+            <select id="reqDeptSelect" style="width:100%; padding:10px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:13px; color:#1e293b; background:#fff;">
+              <option value="">Loading departments...</option>
+            </select>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 14px;">
-            <button type="button" onclick="closeAdminUploadModal()" style="padding: 9px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #64748b; font-weight: 600; font-size: 13px; cursor: pointer;">Cancel</button>
-            <button type="submit" id="btnAdminUploadSubmit" style="padding: 9px 18px; border-radius: 8px; border: none; background: #14204d; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer;">Upload & Save</button>
+          <!-- All Employees Notice -->
+          <div id="reqAllNotice" style="display:none; margin-bottom:14px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 12px; font-size:12px; color:#1e40af;">
+            <i class="fa-solid fa-users"></i> This request will be delivered to <strong>all employees</strong> in the organization.
           </div>
-        </form>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12.5px; font-weight:700; color:#1e293b; display:block; margin-bottom:5px;">Document Type *</label>
+            <select id="reqDocType" style="width:100%; padding:10px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:13px; color:#1e293b; background:#fff;">
+              <option value="CV">CV</option>
+              <option value="National ID">National ID</option>
+              <option value="Agreement">Employment Agreement</option>
+              <option value="Certificate">Grama Sevaka Certificate</option>
+              <option value="Police Report">Police Report</option>
+              <option value="Other">Other Document</option>
+            </select>
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12.5px; font-weight:700; color:#1e293b; display:block; margin-bottom:5px;">Deadline (optional)</label>
+            <input type="date" id="reqDeadline" style="width:100%; padding:10px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:13px; color:#1e293b;">
+          </div>
+          <div style="margin-bottom:18px;">
+            <label style="font-size:12.5px; font-weight:700; color:#1e293b; display:block; margin-bottom:5px;">Note to Employee (optional)</label>
+            <textarea id="reqNotes" rows="3" placeholder="e.g. Please upload a recent police report..." style="width:100%; padding:10px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:13px; color:#1e293b; resize:vertical; box-sizing:border-box;"></textarea>
+          </div>
+          <div id="reqModalError" style="display:none; background:#fde8ec; color:#c0192e; padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:600; margin-bottom:12px;"></div>
+          <div style="display:flex; gap:10px;">
+            <button type="button" onclick="closeDocRequestModal()" style="flex:1; padding:10px; border:1.5px solid #e2e8f0; border-radius:8px; background:#fff; color:#64748b; font-size:13px; font-weight:700; cursor:pointer;">Cancel</button>
+            <button type="button" id="btnSubmitDocReq" onclick="submitDocumentRequest()" style="flex:2; padding:10px; border:none; border-radius:8px; background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; font-size:13px; font-weight:700; cursor:pointer;">
+              <i class="fa-solid fa-paper-plane"></i> Send Request
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+
+  
 
   </main>
 </div>

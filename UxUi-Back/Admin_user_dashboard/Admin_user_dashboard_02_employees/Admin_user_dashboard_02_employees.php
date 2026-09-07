@@ -280,6 +280,10 @@
   }
   table.emp-table tbody tr:last-child td { border-bottom: none; }
   table.emp-table tbody tr:hover { background-color: #fafbfd; }
+  table.emp-table thead th:last-child,
+  table.emp-table tbody td:last-child {
+    text-align: center !important;
+  }
 
   .emp-cell { display: flex; align-items: center; gap: 12px; }
   .emp-avatar {
@@ -309,7 +313,7 @@
   .status-badge.active { background-color: var(--green-bg); color: var(--green); }
   .status-badge.inactive { background-color: var(--red-bg); color: var(--red); }
 
-  .row-actions { display: flex; align-items: center; gap: 6px; }
+  .row-actions { display: flex; align-items: center; justify-content: center; margin: 0 auto; gap: 6px; }
   .action-btn {
     width: 34px;
     height: 34px;
@@ -323,9 +327,40 @@
   }
   .action-btn svg { width: 16px; height: 16px; }
   .action-btn.view { background-color: var(--blue-lighter); color: var(--blue); }
-  .action-btn.edit { background-color: var(--green-bg); color: var(--green); }
-  .action-btn.remove { background-color: var(--red-bg); color: var(--red); }
   .action-btn:hover { filter: brightness(0.92); transform: translateY(-1px); }
+
+  /* Selectable Working Day Chips */
+  .day-chips-container {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .day-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    user-select: none;
+    transition: all 0.15s ease;
+  }
+  .day-chip:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+  .day-chip.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+  }
 
   /* Mobile Phone Cards View */
   .mobile-emp-cards {
@@ -462,6 +497,30 @@
     overflow: hidden;
     margin: auto;
     position: relative;
+  }
+
+  .emp-tab-btn {
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .emp-tab-btn:hover {
+    color: #1e293b;
+  }
+  .emp-tab-btn.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    background: rgba(37, 99, 235, 0.05);
   }
 
   .w3-modal-header {
@@ -678,7 +737,7 @@
 
     <div class="w3-page-head">
       <div>
-        <p id="empCount">5 total employees</p>
+        <p id="empCount">0 total employees</p>
       </div>
       <button class="w3-btn-primary" id="openAddEmpBtn" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -686,15 +745,29 @@
       </button>
     </div>
 
-    <div class="w3-toolbar">
-      <div class="w3-search-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="searchInput" placeholder="Search employees...">
+    <div class="w3-toolbar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; flex:1; min-width:280px;">
+        <div class="w3-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="searchInput" placeholder="Search employees...">
+        </div>
+        <div class="w3-filter-pills" id="filterPills">
+          <div class="w3-pill active" data-filter="all">All</div>
+          <div class="w3-pill" data-filter="active">Active</div>
+          <div class="w3-pill" data-filter="inactive">Inactive</div>
+        </div>
       </div>
-      <div class="w3-filter-pills" id="filterPills">
-        <div class="w3-pill active" data-filter="all">All</div>
-        <div class="w3-pill" data-filter="active">Active</div>
-        <div class="w3-pill" data-filter="inactive">Inactive</div>
+
+      <!-- Quick Auto-Login as Employee Dropdown -->
+      <div class="quick-login-wrap" style="display:inline-flex; align-items:center; gap:8px; background:#f5f3ff; border:1.5px solid #ddd6fe; padding:4px 12px; border-radius:12px;">
+        <span style="font-size:12.5px; font-weight:800; color:#6366f1; display:inline-flex; align-items:center; gap:6px; white-space:nowrap;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8l2 2-2 2"/><path d="M17 10h4"/></svg>
+          Auto Login:
+        </span>
+        <select id="quickAutoLoginSelect" onchange="if(typeof handleQuickAutoLogin==='function'){handleQuickAutoLogin(this.value);}"
+          style="padding:6px 10px; border-radius:8px; border:1px solid #c7d2fe; background:#ffffff; font-size:12.5px; font-weight:700; color:#312e81; cursor:pointer; outline:none; max-width:240px; box-shadow:0 1px 2px rgba(99,102,241,.1);">
+          <option value="">⚡ Select Employee to Login...</option>
+        </select>
       </div>
     </div>
 
@@ -709,7 +782,7 @@
               <th>Job Role</th>
               <th>Status</th>
               <th>Joined</th>
-              <th>Actions</th>
+              <th style="text-align: center;">Actions</th>
             </tr>
           </thead>
           <tbody id="empTableBody"></tbody>
@@ -749,12 +822,11 @@
                 </select>
               </div>
               <div class="w3-form-group">
-                <div class="w3-form-group">
                 <label>Job Role</label>
                 <select name="role" id="addJobRole" required>
-                  <option value="">Select Job Roles...</option>
+                  <option value="">Select Department first...</option>
                 </select>
-            </div>
+              </div>
             <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Status</label>
@@ -766,6 +838,103 @@
               <div class="w3-form-group">
                 <label>Joined Date</label>
                 <input type="date" name="joined" value="<?php echo date('Y-m-d'); ?>">
+              </div>
+            </div>
+
+            <!-- Work Schedule Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px; border-top:1px solid #e2e8f0; padding-top:12px;">Work Schedule & Shift Timing</div>
+            
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Work Shift & Hours</label>
+                <select id="addEmpShiftSelect" onchange="onAddEmpShiftChange(this.value)">
+                  <option value="08:00 AM – 05:00 PM"selected>08:00 AM – 05:00 PM</option>
+                  <option value="08:30 AM – 05:30 PM">08:30 AM – 05:30 PM</option>
+                  <option value="09:00 AM – 06:00 PM">09:00 AM – 06:00 PM</option>
+                  <option value="custom">Custom Time Selection...</option>
+                </select>
+                <input type="hidden" name="work_shift" id="addEmpWorkShift" value="08:30 AM – 05:30 PM">
+              </div>
+              <div class="w3-form-group" id="addEmpCustomTimeGroup" style="display:none;">
+                <label>Custom Start & End Time</label>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <input type="time" id="addEmpCustomStart" value="08:30" onchange="onAddEmpCustomTimeChange()" style="flex:1;">
+                  <span style="font-weight:700; color:#64748b;">to</span>
+                  <input type="time" id="addEmpCustomEnd" value="17:30" onchange="onAddEmpCustomTimeChange()" style="flex:1;">
+                </div>
+              </div>
+            </div>
+
+            <div class="w3-form-group">
+              <label>Weekly Work Schedule (On-Site, WFH, Leave)</label>
+              <div style="font-size:11.5px; color:#64748b; margin-bottom:8px;">Choose On-Site, WFH, or Leave for each day:</div>
+              <input type="hidden" name="weekly_roster" id="addEmpWeeklyRoster" value='{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}'>
+              <input type="hidden" name="working_days" id="addEmpWorkingDays" value="Mon,Tue,Wed,Thu,Fri">
+              
+              <div class="roster-grid-admin" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap:6px;">
+                <!-- Mon -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Mon</span>
+                  <select id="addRoster_Mon" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Tue -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Tue</span>
+                  <select id="addRoster_Tue" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Wed -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Wed</span>
+                  <select id="addRoster_Wed" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Thu -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Thu</span>
+                  <select id="addRoster_Thu" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Fri -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Fri</span>
+                  <select id="addRoster_Fri" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Sat -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sat</span>
+                  <select id="addRoster_Sat" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
+                <!-- Sun -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sun</span>
+                  <select id="addRoster_Sun" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -780,8 +949,9 @@
     </div>
 
     <!-- View Employee Profile Details Card Modal -->
+    <!-- View Employee Full Account Details Modal -->
     <div class="w3-modal-overlay" id="viewEmpModal">
-      <div class="w3-modal-card w3-emp-profile-modal" style="max-width: 580px; width: 100%;">
+      <div class="w3-modal-card w3-emp-profile-modal" style="max-width: 760px; width: 95%;">
         <div class="w3-emp-profile-header" style="height: 100px; background: linear-gradient(135deg, #14204d 0%, #1c2b63 50%, #2e4cad 100%);">
           <button type="button" class="w3-modal-close" id="closeViewEmpModal" style="top:12px; right:16px;">&times;</button>
           <div class="w3-emp-profile-avatar-wrap" style="bottom:-32px;">
@@ -789,8 +959,8 @@
           </div>
         </div>
 
-        <div class="w3-emp-profile-body" style="padding: 40px 22px 18px; max-height: 70vh; overflow-y: auto;">
-          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+        <div style="padding: 38px 22px 0; background: #ffffff;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
             <div>
               <h2 class="w3-emp-profile-name" id="viewEmpName" style="font-size:22px; font-weight:800; color:#14204d; margin:0 0 2px;">Loading...</h2>
               <p class="w3-emp-profile-role" style="font-size:13.5px; font-weight:700; color:#2563eb; margin:0;"><span id="viewEmpRole">—</span> • <span id="viewEmpDept">—</span></p>
@@ -801,86 +971,146 @@
             </div>
           </div>
 
-          <!-- Section 1: Contact & Communication -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px;">Contact & Residence</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Email Address</span>
-              <strong class="w3-detail-val" id="viewEmpEmail" style="color:#2563eb;">—</strong>
+          <!-- Tab Navigation -->
+          <div class="emp-profile-tab-nav" style="display:flex; gap:6px; border-bottom:1px solid #e2e8f0; overflow-x:auto;">
+            <button type="button" class="emp-tab-btn active" id="btnTabOverview" onclick="switchEmpTab('tabOverview', this)">
+              <i class="fa-solid fa-user"></i> Overview
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabWorkPlan" onclick="switchEmpTab('tabWorkPlan', this)">
+              <i class="fa-solid fa-list-check"></i> Work Plan
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabBank" onclick="switchEmpTab('tabBank', this)">
+              <i class="fa-solid fa-building-columns"></i> Bank Account
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabDocs" onclick="switchEmpTab('tabDocs', this)">
+              <i class="fa-solid fa-folder-open"></i> Documents
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabTasks" onclick="switchEmpTab('tabTasks', this)">
+              <i class="fa-solid fa-clipboard-check"></i> Tasks & Leaves
+            </button>
+          </div>
+        </div>
+
+        <div class="w3-emp-profile-body" style="padding: 16px 22px 18px; max-height: 60vh; overflow-y: auto;">
+          
+          <!-- TAB 1: OVERVIEW -->
+          <div class="emp-tab-pane active" id="tabOverview">
+            <!-- Section 1: Contact & Communication -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:8px 0 8px;">Contact & Residence</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Email Address</span>
+                <strong class="w3-detail-val" id="viewEmpEmail" style="color:#2563eb;">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Phone Number</span>
+                <strong class="w3-detail-val" id="viewEmpPhone">—</strong>
+              </div>
+              <div class="w3-detail-box" style="grid-column: 1 / -1;">
+                <span class="w3-detail-label">Residential Address</span>
+                <strong class="w3-detail-val" id="viewEmpAddress">—</strong>
+              </div>
             </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Phone Number</span>
-              <strong class="w3-detail-val" id="viewEmpPhone">—</strong>
+
+            <!-- Section 2: Identity & Demographics -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Identity & Personal Information</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">NIC / Passport Number</span>
+                <strong class="w3-detail-val" id="viewEmpNic">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Date of Birth</span>
+                <strong class="w3-detail-val" id="viewEmpDob">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Gender</span>
+                <strong class="w3-detail-val" id="viewEmpGender">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Work Location</span>
+                <strong class="w3-detail-val" id="viewEmpLocation">—</strong>
+              </div>
             </div>
-            <div class="w3-detail-box" style="grid-column: 1 / -1;">
-              <span class="w3-detail-label">Residential Address</span>
-              <strong class="w3-detail-val" id="viewEmpAddress">—</strong>
+
+            <!-- Section 3: Emergency Contacts -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Emergency Contacts</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Emergency Contact Name</span>
+                <strong class="w3-detail-val" id="viewEmpEmName">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Emergency Contact Phone</span>
+                <strong class="w3-detail-val" id="viewEmpEmPhone">—</strong>
+              </div>
+            </div>
+
+            <!-- Section 4: Work Schedule -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Work Schedule & Duty Arrangement</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 10px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Work Shift</span>
+                <strong class="w3-detail-val" id="viewEmpWorkShift">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Working Days</span>
+                <strong class="w3-detail-val" id="viewEmpWorkingDays">—</strong>
+              </div>
+            </div>
+            <div id="viewEmpRosterWrap" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;"></div>
+
+            <!-- Section 5: Employment Information -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Employment Snapshot</div>
+            <div class="w3-emp-profile-details-grid">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Date Joined</span>
+                <strong class="w3-detail-val" id="viewEmpJoined">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Employment Type</span>
+                <strong class="w3-detail-val" id="viewEmpType">—</strong>
+              </div>
             </div>
           </div>
 
-          <!-- Section 2: Identity & Demographics -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Identity & Personal Information</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">NIC / Passport Number</span>
-              <strong class="w3-detail-val" id="viewEmpNic">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Date of Birth</span>
-              <strong class="w3-detail-val" id="viewEmpDob">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Gender</span>
-              <strong class="w3-detail-val" id="viewEmpGender">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Work Location</span>
-              <strong class="w3-detail-val" id="viewEmpLocation">—</strong>
+          <!-- TAB 2: DAILY WORK PLAN -->
+          <div class="emp-tab-pane" id="tabWorkPlan" style="display:none;">
+            <div id="viewEmpWorkPlanContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading work plans...</div>
             </div>
           </div>
 
-          <!-- Section 3: Emergency Contacts -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Emergency Contacts</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Emergency Contact Name</span>
-              <strong class="w3-detail-val" id="viewEmpEmName">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Emergency Contact Phone</span>
-              <strong class="w3-detail-val" id="viewEmpEmPhone">—</strong>
+          <!-- TAB 3: BANK ACCOUNT -->
+          <div class="emp-tab-pane" id="tabBank" style="display:none;">
+            <div id="viewEmpBankContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading bank details...</div>
             </div>
           </div>
 
-          <!-- Section 4: Work Schedule -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Work Schedule</div>
-          <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Work Shift</span>
-              <strong class="w3-detail-val" id="viewEmpWorkShift">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Working Days</span>
-              <strong class="w3-detail-val" id="viewEmpWorkingDays">—</strong>
+          <!-- TAB 4: DOCUMENTS -->
+          <div class="emp-tab-pane" id="tabDocs" style="display:none;">
+            <div id="viewEmpDocsContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading documents...</div>
             </div>
           </div>
 
-          <!-- Section 4: Employment Information -->
-          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Employment Snapshot</div>
-          <div class="w3-emp-profile-details-grid">
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Date Joined</span>
-              <strong class="w3-detail-val" id="viewEmpJoined">—</strong>
-            </div>
-            <div class="w3-detail-box">
-              <span class="w3-detail-label">Employment Type</span>
-              <strong class="w3-detail-val" id="viewEmpType">—</strong>
+          <!-- TAB 5: TASKS & LEAVES -->
+          <div class="emp-tab-pane" id="tabTasks" style="display:none;">
+            <div id="viewEmpTasksContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading tasks and leaves...</div>
             </div>
           </div>
 
         </div>
         <div class="w3-modal-footer">
           <button type="button" class="w3-btn-cancel" id="cancelViewEmpModal">Close</button>
+          <button type="button" id="btnLoginAsEmpFromView" onclick="loginAsCurrentEmp()"
+            style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border:none; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,.3); transition:all .2s;"
+            onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8l2 2-2 2"/><path d="M17 10h4"/></svg>
+            Login as Employee
+          </button>
           <button type="button" class="w3-btn-save" id="btnEditFromViewModal" onclick="editCurrentEmpFromView()">Edit Employee</button>
         </div>
       </div>
@@ -946,24 +1176,156 @@
                 <input type="text" name="emergency_contact_phone" id="editEmpEmPhone" placeholder="e.g. 0771234567">
               </div>
             </div>
+            <!-- Work Schedule Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px;">Work Schedule & Shift Timing</div>
+            
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Work Shift</label>
-                <input type="text" name="work_shift" id="editEmpWorkShift" placeholder="e.g. 08:30 AM – 05:30 PM">
+                <label>Work Shift & Hours</label>
+                <select id="editEmpShiftSelect" onchange="onEditEmpShiftChange(this.value)">
+                  <option value="08:00 AM – 05:00 PM" selected>08:00 AM – 05:00 PM</option>
+                  <option value="08:30 AM – 05:30 PM">08:30 AM – 05:30 PM</option>
+                  <option value="09:00 AM – 06:00 PM">09:00 AM – 06:00 PM</option>
+                  <option value="custom">Custom Time Selection...</option>
+                </select>
+                <input type="hidden" name="work_shift" id="editEmpWorkShift" value="08:30 AM – 05:30 PM">
               </div>
-              <div class="w3-form-group">
-                <label>Working Days</label>
-                <input type="text" name="working_days" id="editEmpWorkingDays" placeholder="e.g. Mon,Tue,Wed,Thu,Fri">
+              <div class="w3-form-group" id="editEmpCustomTimeGroup" style="display:none;">
+                <label>Custom Start & End Time</label>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <input type="time" id="editEmpCustomStart" value="08:30" onchange="onEditEmpCustomTimeChange()" style="flex:1;">
+                  <span style="font-weight:700; color:#64748b;">to</span>
+                  <input type="time" id="editEmpCustomEnd" value="17:30" onchange="onEditEmpCustomTimeChange()" style="flex:1;">
+                </div>
+              </div>
+            </div>
+
+            <div class="w3-form-group">
+              <label>Weekly Work Schedule (On-Site, WFH, Leave)</label>
+              <div style="font-size:11.5px; color:#64748b; margin-bottom:8px;">Choose On-Site, WFH, or Leave for each day:</div>
+              <input type="hidden" name="weekly_roster" id="editEmpWeeklyRoster" value='{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}'>
+              <input type="hidden" name="working_days" id="editEmpWorkingDays" value="Mon,Tue,Wed,Thu,Fri">
+              
+              <div class="roster-grid-admin" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap:6px;">
+                <!-- Mon -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Mon</span>
+                  <select id="editRoster_Mon" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Tue -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Tue</span>
+                  <select id="editRoster_Tue" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Wed -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Wed</span>
+                  <select id="editRoster_Wed" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Thu -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Thu</span>
+                  <select id="editRoster_Thu" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Fri -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Fri</span>
+                  <select id="editRoster_Fri" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Sat -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sat</span>
+                  <select id="editRoster_Sat" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
+                <!-- Sun -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sun</span>
+                  <select id="editRoster_Sun" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="w3-form-group">
               <label>Employment Type</label>
               <select name="employment_type" id="editEmpType">
-                <option value="Full-Time">Full-Time</option>
+                <option value="Full-Time (Permanent)">Full-Time (Permanent)</option>
+                <option value="Part-Time">Part-Time</option>
+                <option value="Contract">Contract</option>
                 <option value="Internship">Internship</option>
-                <option value="Probation">Probation</option>
               </select>
             </div>
+
+            <!-- Bank & Compensation Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between;">
+              <span><i class="fa-solid fa-building-columns" style="color:#2563eb; margin-right:4px;"></i> Bank Account & Compensation</span>
+              <span style="font-size:11px; font-weight:600; color:#10b981; text-transform:none;"><i class="fa-solid fa-shield-halved"></i> AES-256 Encrypted</span>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Account Holder Name</label>
+                <input type="text" name="holder_name" id="editEmpHolderName" placeholder="e.g. Kasun Kalhara">
+              </div>
+              <div class="w3-form-group">
+                <label>Bank Name</label>
+                <input type="text" name="bank_name" id="editEmpBankName" list="sriLankaBanksList" placeholder="e.g. Commercial Bank of Ceylon">
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Branch Name</label>
+                <input type="text" name="branch" id="editEmpBranch" placeholder="e.g. Colombo Fort">
+              </div>
+              <div class="w3-form-group">
+                <label>Account Number</label>
+                <div style="position:relative; display:flex; align-items:center;">
+                  <input type="text" name="account_number" id="editEmpAccNumber" placeholder="e.g. 100012345678" style="width:100%; font-family:monospace; padding-right:38px;">
+                  <button type="button" onclick="toggleAccVisibility('editEmpAccNumber', this)" style="position:absolute; right:8px; background:none; border:none; color:#64748b; cursor:pointer; font-size:14px;" title="Show/Hide">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Basic Salary (LKR)</label>
+                <input type="number" step="0.01" name="basic_salary" id="editEmpBasicSalary" placeholder="0.00">
+              </div>
+              <div class="w3-form-group">
+                <label>Net Salary (LKR)</label>
+                <input type="number" step="0.01" name="net_salary" id="editEmpNetSalary" placeholder="0.00">
+              </div>
+            </div>
+
           </div>
           <div class="w3-modal-footer">
             <button type="button" class="w3-btn-cancel" id="cancelEditEmpModal">Cancel</button>
@@ -972,6 +1334,42 @@
         </form>
       </div>
     </div>
+
+    <!-- Reusable Sri Lanka Banks Datalist -->
+    <datalist id="sriLankaBanksList">
+      <!-- Licensed Commercial Banks (Domestic) -->
+      <option value="Commercial Bank of Ceylon">
+      <option value="Bank of Ceylon (BOC)">
+      <option value="People's Bank">
+      <option value="Sampath Bank">
+      <option value="Hatton National Bank (HNB)">
+      <option value="Nations Trust Bank (NTB)">
+      <option value="Seylan Bank">
+      <option value="National Development Bank (NDB)">
+      <option value="DFCC Bank">
+      <option value="Pan Asia Banking Corporation (Pan Asia Bank)">
+      <option value="Union Bank of Colombo">
+      <option value="Amana Bank">
+      <option value="Cargills Bank">
+      <!-- Licensed Specialized Banks (Savings & Development) -->
+      <option value="National Savings Bank (NSB)">
+      <option value="Regional Development Bank (RDB)">
+      <option value="Sanasa Development Bank (SDB bank)">
+      <option value="HDFC Bank of Sri Lanka">
+      <option value="State Mortgage & Investment Bank (SMIB)">
+      <option value="Sri Lanka Savings Bank">
+      <!-- Licensed Foreign Commercial Banks -->
+      <option value="HSBC Sri Lanka (Hongkong and Shanghai Banking Corp)">
+      <option value="Standard Chartered Bank">
+      <option value="Citibank N.A.">
+      <option value="Deutsche Bank AG">
+      <option value="State Bank of India (SBI)">
+      <option value="Indian Bank">
+      <option value="Indian Overseas Bank">
+      <option value="Habib Bank Ltd">
+      <option value="MCB Bank Ltd">
+      <option value="Public Bank Berhad">
+    </datalist>
 </div>
   </main>
 </div>

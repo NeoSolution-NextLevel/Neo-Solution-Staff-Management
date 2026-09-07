@@ -83,7 +83,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
         $state['error'] = "0";
-        $state['redirect_url'] = isset($_SESSION['login_redirect_url']) ? $_SESSION['login_redirect_url'] : "";
         echo json_encode([$state]);
         exit;
     } else {

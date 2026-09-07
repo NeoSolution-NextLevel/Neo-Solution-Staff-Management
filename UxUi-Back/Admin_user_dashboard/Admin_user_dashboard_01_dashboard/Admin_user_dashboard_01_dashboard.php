@@ -618,6 +618,27 @@
     border-radius: 5px;
   }
 
+  .active-members-card { margin-bottom: 20px; }
+  .active-members-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+  .active-member-row { display:flex; align-items:center; gap:10px; padding:10px; border:1px solid var(--border); border-radius:10px; background:#f8fafc; }
+  .active-member-avatar { width:36px; height:36px; border-radius:50%; background:var(--green-bg); color:var(--green); display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0; overflow:hidden; }
+  .active-member-avatar img { width:100%; height:100%; object-fit:cover; }
+  .active-member-info { flex:1; min-width:0; }
+  .active-member-info strong, .active-member-info span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .active-member-info strong { font-size:13px; color:var(--ink); }
+  .active-member-info span { font-size:11px; color:var(--muted); }
+  .active-member-view { border:0; background:var(--blue-light); color:var(--blue); border-radius:7px; padding:6px 8px; cursor:pointer; font-size:11px; font-weight:700; }
+  .daily-plans-card { margin-bottom:20px; }
+  .daily-plans-table-wrap { overflow-x:auto; }
+  .daily-plans-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  .daily-plans-table th { text-align:left; color:var(--muted); font-size:11px; text-transform:uppercase; padding:9px 8px; border-bottom:1px solid var(--border); }
+  .daily-plans-table td { padding:10px 8px; border-bottom:1px solid #f1f5f9; vertical-align:top; }
+  .daily-plans-table .plan-name { font-weight:800; color:var(--ink); }
+  .daily-plans-table .plan-dept { color:var(--muted); font-size:11px; margin-top:2px; }
+  .plan-status { display:inline-block; border-radius:999px; padding:4px 9px; font-size:11px; font-weight:700; background:#eff6ff; color:#2563eb; white-space:nowrap; }
+  .plan-status.active { background:#dcfce7; color:#15803d; }
+  .plan-profile-btn { border:0; background:transparent; color:var(--blue); font-weight:700; cursor:pointer; }
+
   /* ---------- Responsive ---------- */
   @media (max-width: 1200px) {
     .stats {
@@ -701,7 +722,7 @@
           </svg>
         </div>
         <div class="stat-value" id="kpiActiveEmployees">0</div>
-        <div class="stat-label">Active Staff</div>
+        <div class="stat-label">Active Today</div>
       </div>
 
       <!-- Pending Tasks -> Task Management -->
@@ -795,6 +816,26 @@
         </div>
       </div>
 
+    </section>
+
+    <section class="card active-members-card">
+      <div class="card-header-row">
+        <h4>Active Members Today</h4>
+        <span class="card-header-link" id="activeMembersDate">Loading...</span>
+      </div>
+      <div class="active-members-list" id="activeMembersList">
+        <div style="padding: 12px; color:#94a3b8; font-size:13px;">Loading active members...</div>
+      </div>
+    </section>
+
+    <section class="card daily-plans-card">
+      <div class="card-header-row">
+        <h4>Today’s Daily Work Plans</h4>
+        <span class="card-header-link">Employee submissions</span>
+      </div>
+      <div class="daily-plans-table-wrap" id="dailyWorkPlansList">
+        <div style="padding:12px; color:#94a3b8; font-size:13px;">Loading daily work plans...</div>
+      </div>
     </section>
 
   </main>

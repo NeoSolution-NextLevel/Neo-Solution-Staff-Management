@@ -31,7 +31,6 @@ if ($res && $res->num_rows > 0) {
             'employee'  => $row['assigned_employee'],
             'mode'      => $row['work_mode'],
             'deadline'  => $row['deadline'],
-            'priority'  => $row['priority'],
             'status'    => $row['status']
         ];
     }

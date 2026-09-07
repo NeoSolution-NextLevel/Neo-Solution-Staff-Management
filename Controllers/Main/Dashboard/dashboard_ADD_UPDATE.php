@@ -48,11 +48,7 @@ class dashboard_ADD_UPDATE
 
     // --- Utility and Getter Methods ---
 
-    public function remove()
-    {
-        $this->ast = "0";
-    }
-
+   
     public function get_id()
     {
         return $this->id;

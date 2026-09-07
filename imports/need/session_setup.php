@@ -1,5 +1,7 @@
 <?php
 
+include_once __DIR__ . '/daily_presence.php';
+
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     $timeout_duration = 3600 * 24; 
     @ini_set('session.gc_maxlifetime', $timeout_duration);
@@ -67,5 +69,10 @@ $_SESSION['pth_php'] = $pth_php;
 
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : "0";
 $user_main_cook_id = isset($_SESSION['user_main_cook_id']) ? $_SESSION['user_main_cook_id'] : "0";
+
+// Record one presence row per employee per calendar day on authenticated requests.
+if ($user_id !== "0" && !empty($_SESSION['user_role'])) {
+    update_daily_employee_presence();
+}
 
 //----------------------company data--------------------------------

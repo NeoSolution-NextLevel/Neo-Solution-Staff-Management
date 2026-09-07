@@ -82,7 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     if ($main_user_login_ADD_UPDATE_obj->process_update()) {
                         $state['error']   = "0";
                         $state['message'] = "OTP-Verified-Successfully";
-                        $state['redirect_url'] = isset($_SESSION['login_redirect_url']) ? $_SESSION['login_redirect_url'] : "";
                     } else {
                         $state['error']   = "1";
                         $state['message'] = "User-Update-failed";
@@ -94,7 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             } else {
                 $state['error']   = "0";
                 $state['message'] = "OTP-Verified-Successfully";
-                $state['redirect_url'] = isset($_SESSION['login_redirect_url']) ? $_SESSION['login_redirect_url'] : "";
             }
         } else {
             $state['error']   = "1";

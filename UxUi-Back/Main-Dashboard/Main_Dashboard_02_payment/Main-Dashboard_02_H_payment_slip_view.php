@@ -322,10 +322,10 @@ $payment_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
               <tr><th>Reason</th><th class="payment-slip-col-amount">Amount - LKR</th></tr>
             </thead>
             <tbody id="payment-slip-items">
-              <tr><td>Zakath</td><td class="payment-slip-col-amount">788.00</td></tr>
+              <tr><td>Zakath</td><td class="payment-slip-col-amount"></td></tr>
             </tbody>
             <tfoot>
-              <tr><td>Total Paid Amount</td><td class="payment-slip-col-amount" id="payment-slip-total">788.00</td></tr>
+              <tr><td>Total Paid Amount</td><td class="payment-slip-col-amount" id="payment-slip-total"></td></tr>
             </tfoot>
           </table>
 
