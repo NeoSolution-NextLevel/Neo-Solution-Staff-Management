@@ -12,8 +12,12 @@ function update_daily_employee_presence()
         return false;
     }
 
+    $is_admin_impersonating = !empty($_SESSION['admin_impersonating']);
     $role = strtolower(trim((string)($_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? '')));
-    if ($role === '' || strpos($role, 'admin') !== false || strpos($role, 'employee') === false) {
+    $access_level = (int)($_SESSION['main_user_account_access_level_list_id'] ?? 0);
+
+    // Allow if impersonating an employee OR if logged in user is employee
+    if (!$is_admin_impersonating && $access_level !== 2 && strpos($role, 'employee') === false) {
         return false;
     }
 
@@ -37,9 +41,22 @@ function update_daily_employee_presence()
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
     $profileId = 0;
-    $profileResult = $db->get_result("SELECT id FROM `employee_profiles` WHERE user_id = {$userId} LIMIT 1");
-    if ($profileResult && ($profile = $profileResult->fetch_assoc())) {
-        $profileId = (int)$profile['id'];
+    if (!empty($_SESSION['employee_profile_id'])) {
+        $profileId = (int)$_SESSION['employee_profile_id'];
+    }
+
+    if ($profileId <= 0) {
+        $profileResult = $db->get_result("SELECT id FROM `employee_profiles` WHERE user_id = {$userId} LIMIT 1");
+        if ($profileResult && ($profile = $profileResult->fetch_assoc())) {
+            $profileId = (int)$profile['id'];
+        }
+    }
+
+    if ($profileId <= 0) {
+        $empResult = $db->get_result("SELECT id FROM `employees` WHERE main_user_login_id = {$userId} OR id = {$userId} LIMIT 1");
+        if ($empResult && ($emp = $empResult->fetch_assoc())) {
+            $profileId = (int)$emp['id'];
+        }
     }
 
     $now = date('Y-m-d H:i:s');
