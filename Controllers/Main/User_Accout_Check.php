@@ -25,12 +25,15 @@ class User_Account_Check
     private $main_user_account_access_level_list_id = '';
     private $ac_type = '';
 
+    private $raw_password = "";
+
     public function __construct($user_name, $password)
     {
-        $this->user_name = $user_name;
+        $this->user_name = trim($user_name);
+        $this->raw_password = (string)$password;
 
         $advance_security_check = new Advance_Security();
-        $this->password = $advance_security_check->get_data_encrypt($this->user_name, $password);
+        $this->password = $advance_security_check->get_data_encrypt($this->user_name, $this->raw_password);
     }
 
     public function check_user_name()
@@ -41,15 +44,14 @@ class User_Account_Check
         $main_user_login_LIST_obj->filter_by_ast(1);
         $main_user_login_LIST_obj->filter_by_user_name($this->user_name);
 
-
         $result = $main_user_login_LIST_obj->get_result();
 
         if ($result && $result->num_rows > 0) {
 
             while ($row = $result->fetch_assoc()) {
                 $this->user_id = $row['id'];
-                $this->wrong_login_count = $row['wrong_login_count'];
-                $this->temp_lock = $row['temp_lock'];
+                $this->wrong_login_count = (int)$row['wrong_login_count'];
+                $this->temp_lock = (int)$row['temp_lock'];
             }
 
             $this->account_login_state = true;
@@ -63,8 +65,7 @@ class User_Account_Check
 
     public function check_temp_lock_state()
     {
-
-        if ($this->temp_lock == "1") {
+        if ($this->temp_lock == "1" || $this->temp_lock === 1) {
             $this->temp_lock_state = true;
         } else {
             $this->temp_lock_state = false;
@@ -103,37 +104,62 @@ class User_Account_Check
         $main_user_login_LIST_obj = new main_user_login_LIST();
         $main_user_login_LIST_obj->filter_by_ast(1);
         $main_user_login_LIST_obj->filter_by_user_name($this->user_name);
-        $main_user_login_LIST_obj->filter_by_password($this->password);
         $result = $main_user_login_LIST_obj->get_result();
 
-        $main_user_login_ADD_UPDATE_obj = new main_user_login_ADD_UPDATE();
-        $main_user_login_ADD_UPDATE_obj->set_id($this->user_id);
-
+        $advance_security_check = new Advance_Security();
+        $matched_row = null;
 
         if ($result && $result->num_rows > 0) {
-
             while ($row = $result->fetch_assoc()) {
-                $this->user_id = $row['id'];
-                $this->email = $row['user_name'];
-                $this->is_google_authentication_enable = $row['is_google_authentication_enable'];
-                $this->is_two_factor_auth_enable = $row['is_two_factor_auth_enable'];
-                $this->phone_number = $row['phone_number'];
-                $this->main_user_account_access_level_list_id = $row['main_user_account_access_level_list_id'] ?? '';
-                $this->ac_type = $row['ac_type'] ?? '';
+                $stored_pwd = $row['password'];
 
-                $User_Accout_Check_Device_obj = new User_Accout_Check_Device();
-                $User_Accout_Check_Device_obj->set_main_user_login_id($this->user_id);
-                $User_Accout_Check_Device_obj->check_main_user_login_device();
-                $this->session_token = $User_Accout_Check_Device_obj->get_session_token();
+                // 1. Direct match with encrypted hash
+                if ($stored_pwd === $this->password) {
+                    $matched_row = $row;
+                    break;
+                }
 
-                // The daily presence helper records the employee's first portal request;
-                // keep the account's existing last-login field accurate as well.
-                $login_db = new DataBase();
-                $login_db->get_result("UPDATE `main_user_login` SET `last_login` = NOW() WHERE `id` = " . (int)$this->user_id);
+                // 2. Direct match with plaintext password
+                if ($stored_pwd === $this->raw_password) {
+                    $matched_row = $row;
+                    // Auto upgrade plaintext password to encrypted
+                    $login_db = new DataBase();
+                    $safe_enc = addslashes($this->password);
+                    $login_db->get_result("UPDATE `main_user_login` SET `password` = '{$safe_enc}' WHERE `id` = " . (int)$row['id']);
+                    break;
+                }
 
-                $this->account_login_state = true;
+                // 3. Match via decryption if format permits
+                try {
+                    $decrypted = $advance_security_check->get_data_decrypt($this->user_name, $stored_pwd);
+                    if ($decrypted === $this->raw_password) {
+                        $matched_row = $row;
+                        break;
+                    }
+                } catch (Exception $e) {}
             }
+        }
 
+        if ($matched_row) {
+            $row = $matched_row;
+            $this->user_id = $row['id'];
+            $this->email = $row['user_name'];
+            $this->is_google_authentication_enable = $row['is_google_authentication_enable'];
+            $this->is_two_factor_auth_enable = $row['is_two_factor_auth_enable'];
+            $this->phone_number = $row['phone_number'];
+            $this->main_user_account_access_level_list_id = $row['main_user_account_access_level_list_id'] ?? '';
+            $this->ac_type = $row['ac_type'] ?? '';
+
+            $User_Accout_Check_Device_obj = new User_Accout_Check_Device();
+            $User_Accout_Check_Device_obj->set_main_user_login_id($this->user_id);
+            $User_Accout_Check_Device_obj->check_main_user_login_device();
+            $this->session_token = $User_Accout_Check_Device_obj->get_session_token();
+
+            // Reset failed login counter and clear any temp lock
+            $login_db = new DataBase();
+            $login_db->get_result("UPDATE `main_user_login` SET `last_login` = NOW(), `wrong_login_count` = 0, `temp_lock` = 0 WHERE `id` = " . (int)$this->user_id);
+
+            $this->account_login_state = true;
             $this->passworg_state = false;
         } else {
             $this->wrong_login_count  = $this->wrong_login_count + 1;
