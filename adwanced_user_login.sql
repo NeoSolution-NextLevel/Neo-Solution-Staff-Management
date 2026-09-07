@@ -525,7 +525,6 @@ CREATE TABLE IF NOT EXISTS `task_management` (
   `assigned_employee` varchar(255) DEFAULT '',
   `work_mode` varchar(50) DEFAULT 'Onsite',
   `deadline` varchar(100) DEFAULT '',
-  `priority` varchar(50) DEFAULT 'Medium',
   `status` varchar(50) DEFAULT 'Pending',
   `ast` varchar(10) DEFAULT '1',
   `sdt` datetime DEFAULT CURRENT_TIMESTAMP,
