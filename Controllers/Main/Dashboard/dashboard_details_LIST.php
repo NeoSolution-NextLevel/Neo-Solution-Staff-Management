@@ -58,27 +58,82 @@ class dashboard_details_LIST
             'total_job_roles'   => 0
         ];
 
-        // 1. Employees Count matching employee list (employees & employee_profiles)
-        $res = $data_base_obj->get_result("SELECT COUNT(*) AS total FROM `employees`");
-        if ($res && $row = $res->fetch_assoc()) {
-            $stats['total_employees'] = (int)($row['total'] ?? 0);
+        // 1. Employees Count matching employee list (employee_profiles + employees + employee accounts deduplicated)
+        $emp_emails = [];
+        $emp_names = [];
+        $emp_user_ids = [];
+        $total_emp = 0;
+
+        $prof_res = $data_base_obj->get_result("SELECT id, user_id, full_name, email FROM `employee_profiles`");
+        if ($prof_res && $prof_res->num_rows > 0) {
+            while ($p = $prof_res->fetch_assoc()) {
+                $name = trim($p['full_name'] ?? '');
+                if (empty($name)) continue;
+                $total_emp++;
+                if (!empty($p['user_id'])) $emp_user_ids[(int)$p['user_id']] = true;
+                if (!empty($p['email'])) $emp_emails[strtolower(trim($p['email']))] = true;
+                $emp_names[strtolower($name)] = true;
+            }
         }
-        $res_p = $data_base_obj->get_result("SELECT COUNT(*) AS total FROM `employee_profiles`");
-        if ($res_p && $row_p = $res_p->fetch_assoc()) {
-            $stats['total_employees'] = max($stats['total_employees'], (int)($row_p['total'] ?? 0));
+
+        $emp_res = $data_base_obj->get_result("SELECT id, main_user_login_id, fullname, email_address FROM `employees`");
+        if ($emp_res && $emp_res->num_rows > 0) {
+            while ($row = $emp_res->fetch_assoc()) {
+                $name = trim($row['fullname'] ?? '');
+                $email = trim($row['email_address'] ?? '');
+                $uid = (int)($row['main_user_login_id'] ?? 0);
+                if (empty($name) && empty($email)) continue;
+                if ($uid > 0 && isset($emp_user_ids[$uid])) continue;
+                if (!empty($email) && isset($emp_emails[strtolower($email)])) continue;
+                if (!empty($name) && isset($emp_names[strtolower($name)])) continue;
+                $total_emp++;
+                if ($uid > 0) $emp_user_ids[$uid] = true;
+                if (!empty($email)) $emp_emails[strtolower($email)] = true;
+                if (!empty($name)) $emp_names[strtolower($name)] = true;
+            }
         }
+
+        $acc_res = $data_base_obj->get_result("SELECT l.id, l.user_name, l.name_show, l.first_name, l.last_name
+            FROM `main_user_login` l
+            INNER JOIN `main_user_account_access_level_list` a ON a.id = l.main_user_account_access_level_list_id
+            WHERE LOWER(a.type_of_access) = 'employee'");
+        if ($acc_res && $acc_res->num_rows > 0) {
+            while ($acc = $acc_res->fetch_assoc()) {
+                $uid = (int)$acc['id'];
+                $name = trim($acc['name_show'] ?? '');
+                if ($name === '') $name = trim(($acc['first_name'] ?? '') . ' ' . ($acc['last_name'] ?? ''));
+                if ($name === '') $name = trim($acc['user_name'] ?? '');
+                $email = trim($acc['user_name'] ?? '');
+
+                if (isset($emp_user_ids[$uid])) continue;
+                if (!empty($email) && isset($emp_emails[strtolower($email)])) continue;
+                if (!empty($name) && isset($emp_names[strtolower($name)])) continue;
+
+                $total_emp++;
+                $emp_user_ids[$uid] = true;
+                if (!empty($email)) $emp_emails[strtolower($email)] = true;
+                if (!empty($name)) $emp_names[strtolower($name)] = true;
+            }
+        }
+        $stats['total_employees'] = $total_emp;
 
         // Daily activity is based on presence / work plan activity today
         $daily = $this->get_daily_active_members();
         $stats['active_employees'] = count($daily);
         $stats['inactive_today'] = max(0, $stats['total_employees'] - $stats['active_employees']);
 
-        // 2. Tasks Count strictly from task_management table
+        // 2. Tasks Count strictly from system_tasks table (fallback to task_management)
+        $tasks_table = "system_tasks";
+        $check_tbl = $data_base_obj->get_result("SHOW TABLES LIKE 'system_tasks'");
+        if (!$check_tbl || $check_tbl->num_rows === 0) {
+            $tasks_table = "task_management";
+        }
+
         $res = $data_base_obj->get_result("SELECT 
             SUM(CASE WHEN LOWER(TRIM(status)) = 'pending' THEN 1 ELSE 0 END) AS pending_cnt,
             SUM(CASE WHEN LOWER(TRIM(status)) = 'completed' OR LOWER(TRIM(status)) = 'done' THEN 1 ELSE 0 END) AS completed_cnt,
             SUM(CASE WHEN LOWER(TRIM(status)) = 'in progress' OR LOWER(TRIM(status)) = 'in-progress' OR LOWER(TRIM(status)) = 'inprogress' THEN 1 ELSE 0 END) AS in_prog_cnt
-            FROM `task_management`");
+            FROM `$tasks_table`");
         if ($res && $row = $res->fetch_assoc()) {
             $stats['pending_tasks']     = (int)($row['pending_cnt'] ?? 0);
             $stats['completed_tasks']   = (int)($row['completed_cnt'] ?? 0);
@@ -92,7 +147,7 @@ class dashboard_details_LIST
         }
 
         // 4. Departments Count strictly from departments table
-        $res = $data_base_obj->get_result("SELECT COUNT(*) AS total FROM `departments`");
+        $res = $data_base_obj->get_result("SELECT COUNT(*) AS total FROM `departments` WHERE ast = '1' OR ast IS NULL");
         if ($res && $row = $res->fetch_assoc()) {
             $stats['total_departments'] = (int)($row['total'] ?? 0);
         }
@@ -275,6 +330,12 @@ class dashboard_details_LIST
         $monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         $currentYear = date('Y');
 
+        $tasks_table = "system_tasks";
+        $check_tbl = $data_base_obj->get_result("SHOW TABLES LIKE 'system_tasks'");
+        if (!$check_tbl || $check_tbl->num_rows === 0) {
+            $tasks_table = "task_management";
+        }
+
         foreach ($monthsList as $idx => $m_str) {
             $m_int = $idx + 1;
             $m_num = str_pad($m_int, 2, '0', STR_PAD_LEFT);
@@ -282,7 +343,7 @@ class dashboard_details_LIST
             $query = "SELECT 
                 COUNT(*) AS total_tasks,
                 SUM(CASE WHEN LOWER(TRIM(status)) = 'completed' OR LOWER(TRIM(status)) = 'done' THEN 1 ELSE 0 END) AS completed_tasks
-                FROM `task_management` 
+                FROM `$tasks_table` 
                 WHERE (
                     deadline LIKE '%$currentYear-$m_num%' 
                     OR deadline LIKE '%-$m_num-%' 
@@ -325,31 +386,70 @@ class dashboard_details_LIST
     public function get_department_distribution()
     {
         $data_base_obj = new DataBase();
-        $departments = [];
+        $dept_counts = [];
+        $seen_emails = [];
+        $seen_names = [];
 
-        // 1. Group employees by department if available
-        $res = $data_base_obj->get_result("SELECT departments AS name, COUNT(*) AS count FROM `employees` WHERE departments IS NOT NULL AND departments != '' GROUP BY departments ORDER BY count DESC");
-        if ($res && $res->num_rows > 0) {
-            while ($row = $res->fetch_assoc()) {
-                $departments[] = [
-                    'name' => $row['name'],
-                    'count' => (int)$row['count']
-                ];
+        // Count from employee_profiles
+        $prof_res = $data_base_obj->get_result("SELECT department, full_name, email FROM `employee_profiles`");
+        if ($prof_res && $prof_res->num_rows > 0) {
+            while ($p = $prof_res->fetch_assoc()) {
+                $name = trim($p['full_name'] ?? '');
+                if (empty($name)) continue;
+                $dept = trim($p['department'] ?? '');
+                if (empty($dept)) $dept = 'General';
+                $dept_key = strtolower($dept);
+                if (!isset($dept_counts[$dept_key])) {
+                    $dept_counts[$dept_key] = ['name' => $dept, 'count' => 0];
+                }
+                $dept_counts[$dept_key]['count']++;
+                if (!empty($p['email'])) $seen_emails[strtolower(trim($p['email']))] = true;
+                $seen_names[strtolower($name)] = true;
             }
         }
 
-        // 2. Otherwise read from departments table
-        if (empty($departments)) {
-            $res = $data_base_obj->get_result("SELECT name, employees AS count FROM `departments` ORDER BY id ASC");
-            if ($res && $res->num_rows > 0) {
-                while ($row = $res->fetch_assoc()) {
-                    $departments[] = [
-                        'name' => $row['name'],
-                        'count' => (int)$row['count']
-                    ];
+        // Add employees from employees table if not duplicate
+        $emp_res = $data_base_obj->get_result("SELECT departments, fullname, email_address FROM `employees`");
+        if ($emp_res && $emp_res->num_rows > 0) {
+            while ($e = $emp_res->fetch_assoc()) {
+                $name = trim($e['fullname'] ?? '');
+                $email = trim($e['email_address'] ?? '');
+                if (empty($name) && empty($email)) continue;
+                if (!empty($email) && isset($seen_emails[strtolower($email)])) continue;
+                if (!empty($name) && isset($seen_names[strtolower($name)])) continue;
+
+                $dept = trim($e['departments'] ?? 'General');
+                if (empty($dept)) $dept = 'General';
+                $dept_key = strtolower($dept);
+                if (!isset($dept_counts[$dept_key])) {
+                    $dept_counts[$dept_key] = ['name' => $dept, 'count' => 0];
+                }
+                $dept_counts[$dept_key]['count']++;
+                if (!empty($email)) $seen_emails[strtolower($email)] = true;
+                if (!empty($name)) $seen_names[strtolower($name)] = true;
+            }
+        }
+
+        // Also ensure all registered departments from `departments` table are included
+        $d_res = $data_base_obj->get_result("SELECT name, employees FROM `departments` WHERE ast = '1' OR ast IS NULL ORDER BY id ASC");
+        if ($d_res && $d_res->num_rows > 0) {
+            while ($d = $d_res->fetch_assoc()) {
+                $dname = trim($d['name'] ?? '');
+                if (empty($dname)) continue;
+                $dkey = strtolower($dname);
+                $demp = (int)($d['employees'] ?? 0);
+                if (!isset($dept_counts[$dkey])) {
+                    $dept_counts[$dkey] = ['name' => $dname, 'count' => $demp];
+                } else {
+                    $dept_counts[$dkey]['count'] = max($dept_counts[$dkey]['count'], $demp);
                 }
             }
         }
+
+        $departments = array_values($dept_counts);
+        usort($departments, function ($a, $b) {
+            return $b['count'] <=> $a['count'];
+        });
 
         return $departments;
     }
