@@ -151,6 +151,11 @@ class main_user_login_ADD_UPDATE
         $this->main_user_account_access_level_list_id = $get_main_user_account_access_level_list_id;
         $this->last_name = $get_last_name;
         $this->first_name = $get_first_name;
+        $this->dis = "";
+        $this->phone_number = "";
+        $this->image_url = "";
+        $this->google_id = "";
+        $this->microsoft_id = "";
 
         $this->sql_update_query .=
             ", user_name='" . $this->user_name . "'" .
