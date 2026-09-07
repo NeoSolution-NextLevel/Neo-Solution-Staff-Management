@@ -14,7 +14,6 @@ $description = isset($_POST['description']) ? trim($_POST['description']) : '';
 $department  = isset($_POST['dept']) ? trim($_POST['dept']) : (isset($_POST['department']) ? trim($_POST['department']) : '');
 $assigned_to = isset($_POST['employee']) ? trim($_POST['employee']) : (isset($_POST['assigned_to']) ? trim($_POST['assigned_to']) : '');
 $mode        = isset($_POST['mode']) ? trim($_POST['mode']) : 'Online';
-$priority    = isset($_POST['priority']) ? trim($_POST['priority']) : 'Medium';
 $status      = isset($_POST['status']) ? trim($_POST['status']) : 'Pending';
 $deadline    = isset($_POST['deadline']) && !empty($_POST['deadline']) ? trim($_POST['deadline']) : date('Y-m-d', strtotime('+7 days'));
 $progress    = isset($_POST['progress']) ? (int)$_POST['progress'] : ($status === 'Completed' ? 100 : ($status === 'In Progress' ? 50 : 0));
@@ -27,14 +26,13 @@ if (empty($title)) {
 $db = new DataBase();
 
 $sql = "INSERT INTO `system_tasks` (
-    `title`, `description`, `department`, `assigned_to`, `mode`, `priority`, `status`, `deadline`, `progress`
+    `title`, `description`, `department`, `assigned_to`, `mode`, `status`, `deadline`, `progress`
 ) VALUES (
     '" . addslashes($title) . "',
     '" . addslashes($description) . "',
     '" . addslashes($department) . "',
     '" . addslashes($assigned_to) . "',
     '" . addslashes($mode) . "',
-    '" . addslashes($priority) . "',
     '" . addslashes($status) . "',
     '" . addslashes($deadline) . "',
     " . (int)$progress . "

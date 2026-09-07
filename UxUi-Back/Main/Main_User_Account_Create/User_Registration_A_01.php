@@ -151,17 +151,10 @@
 
                         <div class="erp-form-grid">
                             <div class="erp-form__group">
-                                <label class="erp-form__label">Department <span style="color: var(--erp-accent-error);">*</span></label>
-                                <select class="erp-form__control" name="department" required aria-label="Department" id="User_Registration_A_01_val_05_select_obj">
-                                    <option value="1" disabled selected>Select Department</option>
-                                    <option value="2">Human Resources</option>
-                                    <option value="3">Finance</option>
-                                    <option value="4">Information Technology</option>
-                                    <option value="5">Sales</option>
-                                    <option value="6">Marketing</option>
-                                    <option value="7">Operations</option>
-                                    <option value="8">Research & Development</option>
-                                    <option value="9">Customer Support</option>
+                                <label class="erp-form__label">Account Role <span style="color: var(--erp-accent-error);">*</span></label>
+                                <select class="erp-form__control" name="department" required aria-label="Account Role" id="User_Registration_A_01_val_05_select_obj">
+                                    <option value="2" selected>Employee</option>
+                                    <option value="1">Admin</option>
                                 </select>
                             </div>
 

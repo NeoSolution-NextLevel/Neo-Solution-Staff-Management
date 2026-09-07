@@ -480,6 +480,175 @@
       transform: scale(0.99);
     }
 
+    /* SMTP Configuration Styles */
+    .smtp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 14px;
+    }
+    @media (max-width: 640px) {
+      .smtp-grid { grid-template-columns: 1fr; }
+    }
+    .smtp-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .smtp-field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .smtp-field label span {
+      font-weight: normal;
+      color: var(--text-muted);
+      font-size: 11.5px;
+    }
+    .smtp-input, .smtp-select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13.5px;
+      color: var(--text-main);
+      background-color: #ffffff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .smtp-input:focus, .smtp-select:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+    .smtp-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .btn-smtp-save {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .btn-smtp-save:hover { background: #1d4ed8; }
+    .btn-smtp-test {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-smtp-test:hover { background: #e2e8f0; color: #0f172a; }
+    .btn-smtp-logs {
+      background: #f8fafc;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-smtp-logs:hover { background: #f1f5f9; color: #1e293b; }
+
+    /* Email Outbox Modal */
+    .email-logs-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+    .email-logs-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .email-logs-modal {
+      background: #ffffff;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 850px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    .email-logs-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+    .email-logs-header h3 { font-size: 16px; font-weight: 700; color: #0f172a; margin: 0; }
+    .email-logs-close {
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: #94a3b8;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .email-logs-close:hover { color: #0f172a; }
+    .email-logs-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .email-logs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .email-logs-table th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .email-logs-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      vertical-align: middle;
+    }
+    .email-logs-table tr:hover td {
+      background: #f8fafc;
+    }
+
     /* Mobile Responsive Breakpoints */
     @media (max-width: 900px) {
       .main-wrapper {
@@ -613,7 +782,89 @@
             </div>
           </section>
 
-          <!-- Section 2: Privacy Settings -->
+          <!-- Section 2: Leave Email & SMTP Setup -->
+          <section class="settings-card" id="smtpSettingsSection">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 16px;">
+              <div>
+                <h3 style="margin: 0; border-bottom: none; padding-bottom: 0;">Leave Email & SMTP Configuration</h3>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 3px;">Configure automated email alerts for employee leave requests, approvals, and rejections.</p>
+              </div>
+              <label class="switch" title="Enable / Disable SMTP Live Delivery">
+                <input type="checkbox" id="smtp_is_enabled" name="smtp_is_enabled">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item" style="padding-top: 0; margin-bottom: 8px;">
+              <div class="setting-info">
+                <h4>Admin Notification Email</h4>
+                <p>Employee leave requests will be sent to this email address</p>
+              </div>
+              <div style="min-width: 260px;">
+                <input type="email" id="smtp_admin_email" class="smtp-input" placeholder="admin@neosolution.com">
+              </div>
+            </div>
+
+            <div class="smtp-grid">
+              <div class="smtp-field">
+                <label>SMTP Host <span>(e.g., smtp.gmail.com)</span></label>
+                <input type="text" id="smtp_host" class="smtp-input" placeholder="smtp.gmail.com">
+              </div>
+
+              <div class="smtp-field">
+                <label>SMTP Port <span>(587 for TLS / 465 for SSL)</span></label>
+                <input type="number" id="smtp_port" class="smtp-input" placeholder="587">
+              </div>
+
+              <div class="smtp-field">
+                <label>Encryption Protocol</label>
+                <select id="smtp_secure" class="smtp-select">
+                  <option value="tls">TLS (STARTTLS - Recommended)</option>
+                  <option value="ssl">SSL</option>
+                  <option value="none">None (Plain)</option>
+                </select>
+              </div>
+
+              <div class="smtp-field">
+                <label>Sender Display Name</label>
+                <input type="text" id="smtp_from_name" class="smtp-input" placeholder="NEO Solution HR">
+              </div>
+
+              <div class="smtp-field">
+                <label>SMTP Username / Email</label>
+                <input type="text" id="smtp_user" class="smtp-input" placeholder="hr@neosolution.com">
+              </div>
+
+              <div class="smtp-field">
+                <label>SMTP Password / App Password</label>
+                <input type="password" id="smtp_pass" class="smtp-input" placeholder="••••••••">
+              </div>
+
+              <div class="smtp-field" style="grid-column: span 2;">
+                <label>From Email Address <span>(Sender address shown in emails)</span></label>
+                <input type="email" id="smtp_from_email" class="smtp-input" placeholder="noreply@neosolution.com">
+              </div>
+            </div>
+
+            <div class="smtp-actions">
+              <button type="button" class="btn-smtp-save" id="btnSaveSmtp">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save Email Settings
+              </button>
+
+              <button type="button" class="btn-smtp-test" id="btnTestEmail">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                Send Test Email
+              </button>
+
+              <button type="button" class="btn-smtp-logs" id="btnOpenEmailLogs">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                Sent Email Outbox Logs
+              </button>
+            </div>
+          </section>
+
+          <!-- Section 3: Privacy Settings -->
           <section class="settings-card">
             <h3>Privacy Settings</h3>
 
@@ -705,6 +956,40 @@
           </section>
         </form>
       </main>
+    </div>
+  </div>
+
+  <!-- Email Logs Modal -->
+  <div class="email-logs-modal-overlay" id="emailLogsModal">
+    <div class="email-logs-modal">
+      <div class="email-logs-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <h3>Sent Email Outbox Logs</h3>
+        </div>
+        <button type="button" class="email-logs-close" id="btnCloseEmailLogs">&times;</button>
+      </div>
+      <div class="email-logs-body">
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">Recent email dispatch records and status for leave requests and notifications.</p>
+        <div style="overflow-x: auto;">
+          <table class="email-logs-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Recipient</th>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="emailLogsTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: #94a3b8; padding: 24px;">Loading email logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 

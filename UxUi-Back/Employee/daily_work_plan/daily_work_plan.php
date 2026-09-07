@@ -175,7 +175,7 @@ if ($action === 'shift_end_update' || isset($_POST['evening_update'])) {
 
     if ($taskId === 0) {
         $insSql = "INSERT INTO `system_tasks`
-            (`title`, `description`, `department`, `assigned_to`, `mode`, `priority`, `status`, `deadline`, `progress`, `created_at`)
+            (`title`, `description`, `department`, `assigned_to`, `mode`, `status`, `deadline`, `progress`, `created_at`)
             VALUES
             ('{$taskTitleSql}', '{$fullDescSql}', '{$deptSql}', '{$nameSql}', 'Online', 'Medium', '{$taskStatusSql}', '{$today}', {$progress}, '{$now}')";
         if ($db->get_result($insSql)) {
@@ -247,7 +247,6 @@ if (empty($tasksList) && $planText !== '') {
                 'title' => $line,
                 'status' => 'Pending',
                 'note' => '',
-                'priority' => 'Medium',
                 'mode' => 'Online',
                 'task_id' => 0
             ];

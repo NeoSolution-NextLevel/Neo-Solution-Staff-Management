@@ -15,7 +15,6 @@ $description = isset($_POST['description']) ? trim($_POST['description']) : '';
 $department  = isset($_POST['dept']) ? trim($_POST['dept']) : (isset($_POST['department']) ? trim($_POST['department']) : '');
 $assigned_to = isset($_POST['employee']) ? trim($_POST['employee']) : (isset($_POST['assigned_to']) ? trim($_POST['assigned_to']) : '');
 $mode        = isset($_POST['mode']) ? trim($_POST['mode']) : '';
-$priority    = isset($_POST['priority']) ? trim($_POST['priority']) : '';
 $status      = isset($_POST['status']) ? trim($_POST['status']) : '';
 $deadline    = isset($_POST['deadline']) ? trim($_POST['deadline']) : '';
 $progress    = isset($_POST['progress']) ? (int)$_POST['progress'] : null;
@@ -33,7 +32,6 @@ if (!empty($description)) $updates[] = "`description` = '" . addslashes($descrip
 if (!empty($department))  $updates[] = "`department` = '" . addslashes($department) . "'";
 if (!empty($assigned_to)) $updates[] = "`assigned_to` = '" . addslashes($assigned_to) . "'";
 if (!empty($mode))        $updates[] = "`mode` = '" . addslashes($mode) . "'";
-if (!empty($priority))    $updates[] = "`priority` = '" . addslashes($priority) . "'";
 if (!empty($status))      $updates[] = "`status` = '" . addslashes($status) . "'";
 if (!empty($deadline))    $updates[] = "`deadline` = '" . addslashes($deadline) . "'";
 

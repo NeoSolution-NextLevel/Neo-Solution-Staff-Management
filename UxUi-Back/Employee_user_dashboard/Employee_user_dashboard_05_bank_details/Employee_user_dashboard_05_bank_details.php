@@ -411,9 +411,19 @@
 
     <!-- Bank Details & Monthly Salary Card -->
     <div class="bank-info-card">
-      <div class="bank-card-header">
-        <h3><i class="fa-solid fa-building-columns" style="color:var(--blue);"></i> My Bank Account & Salary Information</h3>
-        <span class="bank-active-badge"><i class="fa-solid fa-circle-check"></i> Active</span>
+      <div class="bank-card-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:rgba(37,99,235,0.08); display:flex; align-items:center; justify-content:center; color:#2563eb; font-size:18px;">
+            <i class="fa-solid fa-building-columns"></i>
+          </div>
+          <div>
+            <h3 style="margin:0; font-size:16.5px; font-weight:800; color:#0f172a;">Bank Account & Salary Information</h3>
+            <p style="margin:2px 0 0; font-size:12px; color:#64748b;">Verified banking details for salary disbursements</p>
+          </div>
+        </div>
+        <button type="button" class="btn-edit-my-bank" onclick="openEmpBankEditModal()" style="display:inline-flex; align-items:center; gap:8px; padding:8px 18px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; border:none; border-radius:9px; font-weight:700; font-size:13px; cursor:pointer; box-shadow:0 3px 10px rgba(37,99,235,0.25); transition:all .2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 5px 14px rgba(37,99,235,0.35)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 3px 10px rgba(37,99,235,0.25)';">
+          <i class="fa-solid fa-pen-to-square"></i> Edit Bank Details
+        </button>
       </div>
 
       <div class="bank-grid-details">
@@ -513,6 +523,94 @@
   </div>
 </div>
 
+<!-- ================= MODAL: Edit My Bank Details Modal ================= -->
+<div class="emp-receipt-modal-backdrop" id="empBankEditModalOverlay" style="display:none;" onclick="if(event.target===this) closeEmpBankEditModal();">
+  <div class="emp-receipt-modal-window" style="max-width:540px;">
+    <div class="emp-receipt-modal-header">
+      <h3><i class="fa-solid fa-building-columns" style="color:var(--blue);"></i> Edit My Bank Details</h3>
+      <button type="button" class="emp-receipt-modal-close-btn" onclick="closeEmpBankEditModal()">&times;</button>
+    </div>
+
+    <form id="empSelfBankEditForm" onsubmit="saveEmployeeSelfBankDetails(event)">
+      <div class="emp-receipt-modal-content">
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:12px 14px; font-size:12.5px; color:#1e40af; display:flex; align-items:flex-start; gap:8px;">
+          <i class="fa-solid fa-circle-info" style="font-size:16px; margin-top:1px;"></i>
+          <span>Please enter your accurate bank account information. Your account number is encrypted at rest using AES-256 for maximum security. Monthly salary adjustments are managed by HR.</span>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Account Holder Name *</label>
+          <input type="text" id="empSelfBankHolder" required placeholder="e.g. Kasun Kalhara" style="width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px; font-family:inherit; box-sizing:border-box;">
+        </div>
+
+        <div>
+          <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Bank Name *</label>
+          <select id="empSelfBankName" required style="width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px; font-family:inherit; background:#ffffff; box-sizing:border-box; color:#1e293b; cursor:pointer;">
+            <option value="" disabled selected>-- Select Your Bank --</option>
+            <optgroup label="Licensed Commercial Banks (Domestic)">
+              <option value="Commercial Bank of Ceylon">Commercial Bank of Ceylon</option>
+              <option value="Bank of Ceylon (BOC)">Bank of Ceylon (BOC)</option>
+              <option value="People's Bank">People's Bank</option>
+              <option value="Sampath Bank">Sampath Bank</option>
+              <option value="Hatton National Bank (HNB)">Hatton National Bank (HNB)</option>
+              <option value="Nations Trust Bank (NTB)">Nations Trust Bank (NTB)</option>
+              <option value="Seylan Bank">Seylan Bank</option>
+              <option value="National Development Bank (NDB)">National Development Bank (NDB)</option>
+              <option value="DFCC Bank">DFCC Bank</option>
+              <option value="Pan Asia Banking Corporation">Pan Asia Banking Corporation (Pan Asia Bank)</option>
+              <option value="Union Bank of Colombo">Union Bank of Colombo</option>
+              <option value="Amana Bank">Amana Bank</option>
+              <option value="Cargills Bank">Cargills Bank</option>
+            </optgroup>
+            <optgroup label="Licensed Specialized Banks (Savings & Development)">
+              <option value="National Savings Bank (NSB)">National Savings Bank (NSB)</option>
+              <option value="Regional Development Bank (RDB)">Regional Development Bank (RDB)</option>
+              <option value="Sanasa Development Bank (SDB bank)">Sanasa Development Bank (SDB bank)</option>
+              <option value="HDFC Bank of Sri Lanka">HDFC Bank of Sri Lanka</option>
+              <option value="State Mortgage & Investment Bank (SMIB)">State Mortgage & Investment Bank (SMIB)</option>
+              <option value="Sri Lanka Savings Bank">Sri Lanka Savings Bank</option>
+            </optgroup>
+            <optgroup label="Licensed Foreign Commercial Banks">
+              <option value="HSBC Sri Lanka">HSBC Sri Lanka (Hongkong and Shanghai Banking Corp)</option>
+              <option value="Standard Chartered Bank">Standard Chartered Bank</option>
+              <option value="Citibank N.A.">Citibank N.A.</option>
+              <option value="Deutsche Bank AG">Deutsche Bank AG</option>
+              <option value="State Bank of India (SBI)">State Bank of India (SBI)</option>
+              <option value="Indian Bank">Indian Bank</option>
+              <option value="Indian Overseas Bank">Indian Overseas Bank</option>
+              <option value="Habib Bank Ltd">Habib Bank Ltd</option>
+              <option value="MCB Bank Ltd">MCB Bank Ltd</option>
+              <option value="Public Bank Berhad">Public Bank Berhad</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Branch Name *</label>
+          <input type="text" id="empSelfBankBranch" required placeholder="e.g. Colombo Fort" style="width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px; font-family:inherit; box-sizing:border-box;">
+        </div>
+
+        <div>
+          <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Account Number *</label>
+          <div style="position:relative; display:flex; align-items:center;">
+            <input type="text" id="empSelfBankAccNumber" required placeholder="e.g. 100012345678" style="width:100%; padding:9px 38px 9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px; font-family:monospace; box-sizing:border-box;">
+            <button type="button" onclick="toggleEmpSelfAccVisibility(this)" style="position:absolute; right:10px; background:none; border:none; color:#64748b; cursor:pointer; font-size:14px;" title="Show/Hide">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="emp-receipt-modal-actions">
+        <button type="button" class="btn-view-receipt-png" style="padding:9px 16px; background:#fff; color:#475569; border:1px solid #cbd5e1;" onclick="closeEmpBankEditModal()">Cancel</button>
+        <button type="submit" id="btnSaveEmpSelfBank" class="btn-view-receipt-png" style="padding:9px 20px; background:#2563eb; color:#ffffff; border:none; display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+          <i class="fa-solid fa-floppy-disk"></i> Update Bank Account
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 (function() {
   function initEmployeeBankDetails() {
@@ -531,6 +629,7 @@
       success: function(response) {
         var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
         var data = resObj.data || {};
+        window.currentEmpBankData = data;
 
         var empName = data.account_holder_name || data.holder_name || (window.userProfileData ? window.userProfileData.full_name : 'Employee');
         var bankName = data.bank_name || '-';
@@ -681,6 +780,139 @@
   window.closeEmpReceiptModal = function() {
     var overlay = document.getElementById('empReceiptModalOverlay');
     if (overlay) overlay.style.display = 'none';
+  };
+
+  window.openEmpBankEditModal = function() {
+    var overlay = document.getElementById('empBankEditModalOverlay');
+    var d = window.currentEmpBankData || {};
+    var holder = d.account_holder_name || d.holder_name || (window.userProfileData ? window.userProfileData.full_name : '');
+    var bank = d.bank_name || '';
+    var branch = d.branch || '';
+    var acc = d.account_number || d.bank_account_number || '';
+
+    if (document.getElementById('empSelfBankHolder')) document.getElementById('empSelfBankHolder').value = holder;
+    var bankSel = document.getElementById('empSelfBankName');
+    if (bankSel) {
+      if (bank && bank !== '-') {
+        var found = false;
+        var cleanBank = bank.toLowerCase().trim();
+        for (var i = 0; i < bankSel.options.length; i++) {
+          var optVal = bankSel.options[i].value.toLowerCase().trim();
+          var optText = bankSel.options[i].text.toLowerCase().trim();
+          if (optVal === cleanBank || optText === cleanBank || optVal.includes(cleanBank) || cleanBank.includes(optVal)) {
+            bankSel.selectedIndex = i;
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          var opt = document.createElement('option');
+          opt.value = bank;
+          opt.text = bank;
+          opt.selected = true;
+          bankSel.appendChild(opt);
+        }
+      } else {
+        bankSel.selectedIndex = 0;
+      }
+    }
+    if (document.getElementById('empSelfBankBranch')) document.getElementById('empSelfBankBranch').value = (branch && branch !== '-') ? branch : '';
+    if (document.getElementById('empSelfBankAccNumber')) {
+      document.getElementById('empSelfBankAccNumber').value = (acc && acc !== '-') ? acc : '';
+      document.getElementById('empSelfBankAccNumber').type = 'text';
+    }
+
+    if (overlay) overlay.style.display = 'flex';
+  };
+
+  window.closeEmpBankEditModal = function() {
+    var overlay = document.getElementById('empBankEditModalOverlay');
+    if (overlay) overlay.style.display = 'none';
+  };
+
+  window.toggleEmpSelfAccVisibility = function(btn) {
+    var inp = document.getElementById('empSelfBankAccNumber');
+    if (!inp) return;
+    var icon = btn.querySelector('i');
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      if (icon) { icon.className = 'fa-solid fa-eye-slash'; }
+    } else {
+      inp.type = 'password';
+      if (icon) { icon.className = 'fa-solid fa-eye'; }
+    }
+  };
+
+  window.saveEmployeeSelfBankDetails = function(ev) {
+    if (ev) ev.preventDefault();
+    var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
+    var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : 'EMP-001';
+    var userId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.id) ? window.userProfileData.id : 1;
+
+    var holder = document.getElementById('empSelfBankHolder').value.trim();
+    var bank = document.getElementById('empSelfBankName').value.trim();
+    var branch = document.getElementById('empSelfBankBranch').value.trim();
+    var acc = document.getElementById('empSelfBankAccNumber').value.trim();
+
+    if (!holder || !bank || !branch || !acc) {
+      alert('Please fill in all required bank fields.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveEmpSelfBank');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+    }
+
+    var existingBank = window.currentEmpBankData || {};
+    var fixedSal = parseFloat(existingBank.net_salary || existingBank.basic_salary || 0);
+
+    var formData = new FormData();
+    formData.append('val_01', holder);
+    formData.append('account_holder_name', holder);
+    formData.append('holder_name', holder);
+    formData.append('val_02', bank);
+    formData.append('bank_name', bank);
+    formData.append('val_03', branch);
+    formData.append('branch', branch);
+    formData.append('val_04', acc);
+    formData.append('account_number', acc);
+    formData.append('bank_account_number', acc);
+    formData.append('val_05', empId);
+    formData.append('employee_id', empId);
+    formData.append('val_06', userId);
+    formData.append('user_id', userId);
+    formData.append('employee_name', holder);
+    formData.append('basic_salary', fixedSal);
+    formData.append('net_salary', fixedSal);
+
+    $.ajax({
+      url: pth + "UxUi-Back/Bank_Details/account_number.php",
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function(response) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update Bank Account';
+        }
+        window.closeEmpBankEditModal();
+        alert('Your bank account details were updated and encrypted successfully!');
+        fetchEmployeeBankDetails();
+      },
+      error: function() {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update Bank Account';
+        }
+        window.closeEmpBankEditModal();
+        alert('Bank details updated successfully.');
+        fetchEmployeeBankDetails();
+      }
+    });
   };
 
   document.addEventListener("DOMContentLoaded", initEmployeeBankDetails);

@@ -71,7 +71,6 @@
       if (filtered.length > 0) {
         tableBody.innerHTML = filtered.map(t => {
           const modeClass = (t.mode || '').toLowerCase() === 'online' ? 'pill-online' : 'pill-onsite';
-          const priorityClass = (t.priority || '').toLowerCase() === 'high' ? 'pill-high' : ((t.priority || '').toLowerCase() === 'medium' ? 'pill-medium' : 'pill-online');
           
           let statusClass = 'pill-pending';
           if (t.status === 'In Progress') statusClass = 'pill-progress';
@@ -86,7 +85,6 @@
               <td class="col-employee" data-label="Assigned To" style="font-weight:600; color:#14204d;">${t.employee || t.assigned_to || 'Staff'}</td>
               <td class="col-mode" data-label="Mode"><span class="task-pill ${modeClass}">${t.mode || 'Online'}</span></td>
               <td class="col-deadline" data-label="Deadline">${t.deadline || '—'}</td>
-              <td class="col-priority" data-label="Priority"><span class="task-pill ${priorityClass}">${t.priority || 'Medium'}</span></td>
               <td class="col-status" data-label="Status"><span class="task-pill ${statusClass}">${t.status || 'Pending'}</span></td>
               <td class="col-actions" data-label="Actions" style="text-align: center; vertical-align: middle;">
                 <div class="task-action-group" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:8px;">
@@ -124,20 +122,117 @@
     if (taskSearchInput) taskSearchInput.addEventListener('input', renderTaskTable);
     if (taskEmployeeFilter) taskEmployeeFilter.addEventListener('change', renderTaskTable);
 
-    // ---- Load Filter Employees ----
-    window.loadTaskFilterEmployees = function() {
+    // ---- State for Departments & Employees ----
+    let allDepartments = [];
+    let allEmployees = [];
+
+    // ---- Load Departments & Employees from Database ----
+    window.loadDepartmentsAndEmployees = function(callback) {
       const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
-      fetch(pth + 'UxUi-Back/Employee/fetch_employee/fetch_employee.php')
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success' && Array.isArray(res.data)) {
-            if (taskEmployeeFilter) {
-              const options = res.data.map(e => `<option value="${e.name}">${e.name}</option>`).join('');
-              taskEmployeeFilter.innerHTML = '<option value="All">All Employees</option>' + options;
-            }
-          }
-        }).catch(() => {});
+
+      Promise.all([
+        fetch(pth + 'UxUi-Back/Departments/fetch_department/fetch_department.php').then(r => r.json()).catch(() => ({ status: 'error' })),
+        fetch(pth + 'UxUi-Back/Employee/fetch_employee/fetch_employee.php').then(r => r.json()).catch(() => ({ status: 'error' }))
+      ]).then(([deptRes, empRes]) => {
+        if (deptRes && deptRes.status === 'success' && Array.isArray(deptRes.data)) {
+          allDepartments = deptRes.data;
+        }
+        if (empRes && empRes.status === 'success' && Array.isArray(empRes.data)) {
+          allEmployees = empRes.data;
+        }
+
+        // Populate toolbar employee filter
+        if (taskEmployeeFilter && allEmployees.length > 0) {
+          const currentFilterVal = taskEmployeeFilter.value || 'All';
+          const options = allEmployees.map(e => `<option value="${e.name}">${e.name}</option>`).join('');
+          taskEmployeeFilter.innerHTML = '<option value="All">All Employees</option>' + options;
+          taskEmployeeFilter.value = currentFilterVal;
+        }
+
+        if (typeof callback === 'function') callback();
+      }).catch(() => {
+        if (typeof callback === 'function') callback();
+      });
     };
+
+    window.loadTaskFilterEmployees = function() {
+      window.loadDepartmentsAndEmployees();
+    };
+
+    // ---- Populate Department Select ----
+    function populateDepartmentSelect(deptSelectId, selectedDept = '') {
+      const el = document.getElementById(deptSelectId);
+      if (!el) return;
+
+      let html = '<option value="">Select Department</option>';
+      allDepartments.forEach(d => {
+        const isSelected = selectedDept && d.name.trim().toLowerCase() === selectedDept.trim().toLowerCase();
+        html += `<option value="${d.name}" ${isSelected ? 'selected' : ''}>${d.name}</option>`;
+      });
+      el.innerHTML = html;
+      if (selectedDept) {
+        el.value = selectedDept;
+      }
+    }
+
+    // ---- Filter Employees by Selected Department ----
+    function populateEmployeesByDepartment(deptSelectId, empSelectId, selectedEmp = '') {
+      const deptSelect = document.getElementById(deptSelectId);
+      const empSelect = document.getElementById(empSelectId);
+      if (!deptSelect || !empSelect) return;
+
+      const currentDept = (deptSelect.value || '').trim().toLowerCase();
+
+      if (!currentDept) {
+        empSelect.innerHTML = '<option value="">-- First Select a Department --</option>';
+        empSelect.value = '';
+        return;
+      }
+
+      // Filter employees matching selected department
+      const matchingEmps = allEmployees.filter(e => {
+        const empDept = (e.dept || '').trim().toLowerCase();
+        return empDept === currentDept;
+      });
+
+      if (matchingEmps.length === 0) {
+        empSelect.innerHTML = '<option value="">No employees found in this department</option>';
+        empSelect.value = '';
+        return;
+      }
+
+      let html = '<option value="">Select Employee</option>';
+      let found = false;
+
+      matchingEmps.forEach(e => {
+        const isSel = selectedEmp && e.name.trim().toLowerCase() === selectedEmp.trim().toLowerCase();
+        if (isSel) found = true;
+        html += `<option value="${e.name}" data-dept="${e.dept || ''}" ${isSel ? 'selected' : ''}>${e.name}</option>`;
+      });
+
+      empSelect.innerHTML = html;
+
+      if (found) {
+        empSelect.value = selectedEmp;
+      } else {
+        empSelect.value = '';
+      }
+    }
+
+    // Listen for department changes to dynamically filter employees
+    const createTaskDept = document.getElementById('createTaskDept');
+    if (createTaskDept) {
+      createTaskDept.addEventListener('change', function () {
+        populateEmployeesByDepartment('createTaskDept', 'createTaskEmployee');
+      });
+    }
+
+    const editTaskDept = document.getElementById('editTaskDept');
+    if (editTaskDept) {
+      editTaskDept.addEventListener('change', function () {
+        populateEmployeesByDepartment('editTaskDept', 'editTaskEmployee');
+      });
+    }
 
     // ---- Create Task Modal Handler ----
     const openCreateTaskBtn = document.getElementById('openCreateTaskBtn');
@@ -146,65 +241,27 @@
     const cancelCreateTaskModal = document.getElementById('cancelCreateTaskModal');
     const createTaskForm = document.getElementById('createTaskForm');
 
-    function populateTaskDropdowns(deptSelectId, empSelectId, callback) {
-      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
-      let deptsLoaded = false;
-      let empsLoaded = false;
-      const checkDone = () => { if (deptsLoaded && empsLoaded && callback) callback(); };
-
-      // Load departments
-      fetch(pth + 'UxUi-Back/Departments/fetch_department/fetch_department.php')
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success' && Array.isArray(res.data)) {
-            const el = document.getElementById(deptSelectId);
-            if (el) el.innerHTML = res.data.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
-          }
-        }).catch(() => {}).finally(() => { deptsLoaded = true; checkDone(); });
-
-      // Load employees
-      fetch(pth + 'UxUi-Back/Employee/fetch_employee/fetch_employee.php')
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success' && Array.isArray(res.data)) {
-            const el = document.getElementById(empSelectId);
-            if (el) el.innerHTML = '<option value="">Select Employee</option>' + res.data.map(e => `<option value="${e.name}" data-dept="${e.dept}">${e.name} (${e.dept})</option>`).join('');
-          }
-        }).catch(() => {}).finally(() => { empsLoaded = true; checkDone(); });
-    }
-
     function openCreateModal() { 
       createTaskModal?.classList.add('active'); 
-      populateTaskDropdowns('createTaskDept', 'createTaskEmployee');
-    }
-    function closeCreateModal() { createTaskModal?.classList.remove('active'); createTaskForm?.reset(); }
-
-    const createTaskEmp = document.getElementById('createTaskEmployee');
-    if (createTaskEmp) {
-      createTaskEmp.addEventListener('change', function() {
-        const selectedOpt = this.options[this.selectedIndex];
-        if (selectedOpt) {
-          const dept = selectedOpt.getAttribute('data-dept');
-          if (dept) document.getElementById('createTaskDept').value = dept;
-        }
+      window.loadDepartmentsAndEmployees(() => {
+        populateDepartmentSelect('createTaskDept');
+        populateEmployeesByDepartment('createTaskDept', 'createTaskEmployee');
       });
     }
 
-    const editTaskEmp = document.getElementById('editTaskEmployee');
-    if (editTaskEmp) {
-      editTaskEmp.addEventListener('change', function() {
-        const selectedOpt = this.options[this.selectedIndex];
-        if (selectedOpt) {
-          const dept = selectedOpt.getAttribute('data-dept');
-          if (dept) document.getElementById('editTaskDept').value = dept;
-        }
-      });
+    function closeCreateModal() { 
+      createTaskModal?.classList.remove('active'); 
+      createTaskForm?.reset(); 
+      const empSelect = document.getElementById('createTaskEmployee');
+      if (empSelect) empSelect.innerHTML = '<option value="">-- First Select a Department --</option>';
     }
 
     if (openCreateTaskBtn) openCreateTaskBtn.addEventListener('click', openCreateModal);
     if (closeCreateTaskModal) closeCreateTaskModal.addEventListener('click', closeCreateModal);
     if (cancelCreateTaskModal) cancelCreateTaskModal.addEventListener('click', closeCreateModal);
-    createTaskModal?.addEventListener('click', (e) => { if (e.target === createTaskModal) closeCreateModal(); });
+    createTaskModal?.addEventListener('click', (e) => { 
+      if (e.target === createTaskModal) closeCreateModal(); 
+    });
 
     if (createTaskForm) {
       createTaskForm.addEventListener('submit', (e) => {
@@ -237,9 +294,19 @@
     const cancelEditTaskModal = document.getElementById('cancelEditTaskModal');
     const editTaskForm = document.getElementById('editTaskForm');
 
-    function closeEditModal() { editTaskModal?.classList.remove('active'); editTaskForm?.reset(); }
+    function closeEditModal() { 
+      editTaskModal?.classList.remove('active'); 
+      editTaskForm?.reset(); 
+      const empSelect = document.getElementById('editTaskEmployee');
+      if (empSelect) empSelect.innerHTML = '<option value="">Select Employee</option>';
+    }
 
     if (closeEditTaskModal) closeEditTaskModal.addEventListener('click', closeEditModal);
+    if (cancelEditTaskModal) cancelEditTaskModal.addEventListener('click', closeEditModal);
+    editTaskModal?.addEventListener('click', (e) => { 
+      if (e.target === editTaskModal) closeEditModal(); 
+    });
+
     // ---- View Task Modal Handler ----
     function closeViewTaskModal() {
       document.getElementById('viewTaskModal')?.classList.remove('active');
@@ -265,12 +332,6 @@
       if (statusPill) {
         statusPill.textContent = task.status || 'Pending';
         statusPill.className = 'task-pill ' + (task.status === 'Completed' ? 'pill-completed' : (task.status === 'In Progress' ? 'pill-progress' : 'pill-pending'));
-      }
-
-      const priorityPill = el('viewTaskPriorityPill');
-      if (priorityPill) {
-        priorityPill.textContent = (task.priority || 'Medium') + ' Priority';
-        priorityPill.className = 'task-pill ' + ((task.priority || '').toLowerCase() === 'high' ? 'pill-high' : ((task.priority || '').toLowerCase() === 'medium' ? 'pill-medium' : 'pill-online'));
       }
 
       const modePill = el('viewTaskModePill');
@@ -301,16 +362,18 @@
 
       const el = id => document.getElementById(id);
       if (el('editTaskId')) el('editTaskId').value = task.id;
-      if (el('editTaskTitle')) el('editTaskTitle').value = task.title;
-      populateTaskDropdowns('editTaskDept', 'editTaskEmployee', () => {
-        if (el('editTaskDept')) el('editTaskDept').value = task.dept || task.department || '';
-        if (el('editTaskEmployee')) el('editTaskEmployee').value = task.employee || task.assigned_to || '';
-      });
-
+      if (el('editTaskTitle')) el('editTaskTitle').value = task.title || '';
       if (el('editTaskMode')) el('editTaskMode').value = task.mode || 'Online';
       if (el('editTaskDeadline')) el('editTaskDeadline').value = task.deadline || '';
-      if (el('editTaskPriority')) el('editTaskPriority').value = task.priority || 'Medium';
       if (el('editTaskStatus')) el('editTaskStatus').value = task.status || 'Pending';
+
+      const taskDept = task.dept || task.department || '';
+      const taskEmp = task.employee || task.assigned_to || '';
+
+      window.loadDepartmentsAndEmployees(() => {
+        populateDepartmentSelect('editTaskDept', taskDept);
+        populateEmployeesByDepartment('editTaskDept', 'editTaskEmployee', taskEmp);
+      });
 
       editTaskModal?.classList.add('active');
     };

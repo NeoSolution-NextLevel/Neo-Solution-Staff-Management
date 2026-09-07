@@ -729,10 +729,8 @@
       </div>
     </div>
 
-    <!-- Step-by-Step Daily Workflow -->
     <div class="workplan-step-container">
       
-      <!-- STEP 1: Morning Plan -->
       <section class="workplan-step-card step-1-card">
         <div class="step-header-wrap">
           <div class="step-title-group">
@@ -743,7 +741,7 @@
         </div>
         <p class="step-subtext">Write down the tasks you plan to accomplish today. Click <b>Start Work</b> to activate your shift for the day.</p>
         
-        <textarea id="dailyWorkPlanText" class="daily-plan-input" placeholder="Enter today's planned tasks:&#10;1. Review pending customer requests&#10;2. Finish documentation updates&#10;3. Conduct weekly inventory verification..."></textarea>
+        <textarea id="dailyWorkPlanText" class="daily-plan-input" placeholder="Enter today's planned tasks:"></textarea>
         
         <div class="daily-plan-actions">
           <button type="button" id="saveDailyPlanBtn" class="save-plan-btn">
@@ -758,7 +756,6 @@
         </div>
       </section>
 
-      <!-- STEP 2: Evening Shift Update -->
       <section class="workplan-step-card step-2-card">
         <div class="step-header-wrap">
           <div class="step-title-group">
@@ -767,19 +764,18 @@
           </div>
           <span class="shift-wrapup-badge" id="shiftStatusBadge"> Shift In Progress</span>
         </div>
-        <p class="step-subtext">When ending your shift, review your morning plan below and provide an update on what was accomplished:</p>
+        <p class="step-subtext">When ending your shift, review your plan below and provide an update on what was accomplished:</p>
 
-        <!-- Morning Plan Reference Box -->
         <div class="plan-ref-box">
           <div class="plan-ref-title">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Today's Morning Plan:
+            Today's Plan:
           </div>
           <div id="morningPlanPreviewText" class="plan-ref-content">No plan entered yet. Write your plan in Step 1 above.</div>
         </div>
 
         <label style="font-size:13px; font-weight:700; color:#334155; display:block; margin-bottom:6px;">
-          What did you complete from this plan? (Evening Progress Update):
+          What did you complete from this plan?:
         </label>
         <textarea id="shiftEndNotes" class="daily-plan-input" placeholder="Write what you finished from the morning plan, what remains pending, or any end-of-shift notes..."></textarea>
 
@@ -797,7 +793,7 @@
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
               <polyline points="22 4 12 14.01 9 11.01"/>
             </svg>
-            <span>Submit Shift Update & Sync to Tasks</span>
+            <span>Submit Update</span>
           </button>
 
           <button type="button" id="viewShiftTaskBtn" class="shift-view-task-btn" style="display: none;" onclick="openShiftWorkTaskModal()">
@@ -813,14 +809,12 @@
 
     </div>
 
-    <!-- Page Head with View Switcher -->
     <div class="workplan-header-row">
       <div class="workplan-head-left">
         <h1>My Assigned & Daily Tasks</h1>
         <p id="empActiveTasksCount">Loading tasks from database...</p>
       </div>
 
-      <!-- Grid & List Switcher -->
       <div class="view-switcher">
         <button class="view-btn active" title="Grid view" onclick="setWorkplanView('grid', this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -843,7 +837,6 @@
       </div>
     </div>
 
-    <!-- Search & Filters Bar -->
     <div class="workplan-filters">
       <div class="search-pill-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -867,16 +860,14 @@
       </select>
     </div>
 
-    <!-- Tasks Grid (2 Column Desktop / 1 Column Mobile) -->
     <div class="workplan-tasks-grid" id="workplanTasksGrid">
       <div style="text-align:center; padding: 40px 16px; color:#64748b; background:#fff; border-radius:16px; grid-column: 1 / -1; border:1px solid #e8eaf0;">
-        Loading your tasks from database...
+        Loading your tasks...
       </div>
     </div>
 
   </div>
 
-  <!-- Task Details Modal (for Employee) -->
   <div class="emp-modal-overlay" id="workplanTaskDetailsModal" style="display:none;">
     <div class="emp-modal-card">
       <div class="emp-modal-header">
@@ -891,7 +882,6 @@
 
         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
           <span id="modalTaskStatusPill" class="status-pill done">Completed</span>
-          <span id="modalTaskPriorityPill" class="tag-pill medium">Medium</span>
           <span id="modalTaskModePill" class="tag-pill online">Online</span>
         </div>
 
@@ -931,7 +921,6 @@
   const morningPlanPreview = document.getElementById('morningPlanPreviewText');
   const morningStatusBadge = document.getElementById('morningPlanStatusBadge');
 
-  // Evening Shift Update elements
   const shiftEndNotes = document.getElementById('shiftEndNotes');
   const shiftEndTaskStatus = document.getElementById('shiftEndTaskStatus');
   const submitShiftEndBtn = document.getElementById('submitShiftEndBtn');
@@ -956,7 +945,6 @@
     }
   }
 
-  // Sync morning plan text into Step 2 reference box on input
   planText?.addEventListener('input', function () {
     updatePlanPreviewText(this.value);
   });
@@ -1013,7 +1001,6 @@
           planStatus.textContent = res.data.updated_at ? `Updated ${formatTimeStr(res.data.updated_at)}` : '';
         }
 
-        // Evening update population
         const viewShiftTaskBtn = document.getElementById('viewShiftTaskBtn');
         if (shiftEndNotes && res.data.evening_update) {
           shiftEndNotes.value = res.data.evening_update;
@@ -1202,13 +1189,6 @@
       statusPill.className = 'status-pill ' + (task.status === 'Completed' ? 'done' : (task.status === 'In Progress' ? 'in-progress' : 'pending'));
     }
 
-    const priorityPill = el('modalTaskPriorityPill');
-    if (priorityPill) {
-      priorityPill.textContent = (task.priority || 'Medium') + ' Priority';
-      const p = (task.priority || '').toLowerCase();
-      priorityPill.className = 'tag-pill ' + (p === 'high' ? 'high' : (p === 'low' ? 'low' : 'medium'));
-    }
-
     const modePill = el('modalTaskModePill');
     if (modePill) {
       modePill.textContent = task.mode || 'Online';
@@ -1316,7 +1296,6 @@
       if (t.status === 'In Progress') statusPillClass = 'in-progress';
       if (t.status === 'Completed') statusPillClass = 'done';
 
-      let prioClass = (t.priority || '').toLowerCase() === 'high' ? 'high' : ((t.priority || '').toLowerCase() === 'medium' ? 'medium' : 'low');
       let modeClass = (t.mode || '').toLowerCase() === 'online' ? 'online' : 'onsite';
 
       let actionBtnHtml = '';
@@ -1338,7 +1317,6 @@
             <p class="task-card-desc">${t.description || 'Assigned task for ' + (t.department || 'the department')}</p>
             
             <div class="task-tags-row">
-              <span class="tag-pill ${prioClass}">${t.priority}</span>
               <span class="tag-pill ${modeClass}">${t.mode}</span>
             </div>
 

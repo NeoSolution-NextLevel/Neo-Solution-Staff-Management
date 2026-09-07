@@ -18,7 +18,6 @@
             data: Sending_value,
             success: function(res) {
                 console.log(res);
-                alert(res);
 
                 try {
                     var json = JSON.parse(res);

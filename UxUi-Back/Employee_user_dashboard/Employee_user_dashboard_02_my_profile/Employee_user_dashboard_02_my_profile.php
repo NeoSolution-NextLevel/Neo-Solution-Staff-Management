@@ -353,12 +353,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 4px;
+    padding: 10px 3px;
     border-radius: 12px;
     text-align: center;
     border: 1px solid #e2e8f0;
     background: #ffffff;
     transition: all 0.2s ease;
+    min-width: 0;
   }
   
   .roster-day-name {
@@ -366,15 +367,24 @@
     font-weight: 700;
     color: #1e293b;
     margin-bottom: 6px;
+    white-space: nowrap;
   }
 
   .roster-day-badge {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    word-break: keep-all;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 4px 6px;
     border-radius: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
+    line-height: 1;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .roster-day-badge.onsite { background: #2563eb; color: #ffffff; border: 1px solid #2563eb; }
   .roster-day-badge.wfh { background: #7c3aed; color: #ffffff; border: 1px solid #7c3aed; }
