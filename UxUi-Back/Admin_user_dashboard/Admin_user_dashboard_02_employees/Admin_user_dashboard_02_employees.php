@@ -1281,6 +1281,51 @@
                 <option value="Internship">Internship</option>
               </select>
             </div>
+
+            <!-- Bank & Compensation Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between;">
+              <span><i class="fa-solid fa-building-columns" style="color:#2563eb; margin-right:4px;"></i> Bank Account & Compensation</span>
+              <span style="font-size:11px; font-weight:600; color:#10b981; text-transform:none;"><i class="fa-solid fa-shield-halved"></i> AES-256 Encrypted</span>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Account Holder Name</label>
+                <input type="text" name="holder_name" id="editEmpHolderName" placeholder="e.g. Kasun Kalhara">
+              </div>
+              <div class="w3-form-group">
+                <label>Bank Name</label>
+                <input type="text" name="bank_name" id="editEmpBankName" list="sriLankaBanksList" placeholder="e.g. Commercial Bank of Ceylon">
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Branch Name</label>
+                <input type="text" name="branch" id="editEmpBranch" placeholder="e.g. Colombo Fort">
+              </div>
+              <div class="w3-form-group">
+                <label>Account Number</label>
+                <div style="position:relative; display:flex; align-items:center;">
+                  <input type="text" name="account_number" id="editEmpAccNumber" placeholder="e.g. 100012345678" style="width:100%; font-family:monospace; padding-right:38px;">
+                  <button type="button" onclick="toggleAccVisibility('editEmpAccNumber', this)" style="position:absolute; right:8px; background:none; border:none; color:#64748b; cursor:pointer; font-size:14px;" title="Show/Hide">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Basic Salary (LKR)</label>
+                <input type="number" step="0.01" name="basic_salary" id="editEmpBasicSalary" placeholder="0.00">
+              </div>
+              <div class="w3-form-group">
+                <label>Net Salary (LKR)</label>
+                <input type="number" step="0.01" name="net_salary" id="editEmpNetSalary" placeholder="0.00">
+              </div>
+            </div>
+
           </div>
           <div class="w3-modal-footer">
             <button type="button" class="w3-btn-cancel" id="cancelEditEmpModal">Cancel</button>
@@ -1289,6 +1334,42 @@
         </form>
       </div>
     </div>
+
+    <!-- Reusable Sri Lanka Banks Datalist -->
+    <datalist id="sriLankaBanksList">
+      <!-- Licensed Commercial Banks (Domestic) -->
+      <option value="Commercial Bank of Ceylon">
+      <option value="Bank of Ceylon (BOC)">
+      <option value="People's Bank">
+      <option value="Sampath Bank">
+      <option value="Hatton National Bank (HNB)">
+      <option value="Nations Trust Bank (NTB)">
+      <option value="Seylan Bank">
+      <option value="National Development Bank (NDB)">
+      <option value="DFCC Bank">
+      <option value="Pan Asia Banking Corporation (Pan Asia Bank)">
+      <option value="Union Bank of Colombo">
+      <option value="Amana Bank">
+      <option value="Cargills Bank">
+      <!-- Licensed Specialized Banks (Savings & Development) -->
+      <option value="National Savings Bank (NSB)">
+      <option value="Regional Development Bank (RDB)">
+      <option value="Sanasa Development Bank (SDB bank)">
+      <option value="HDFC Bank of Sri Lanka">
+      <option value="State Mortgage & Investment Bank (SMIB)">
+      <option value="Sri Lanka Savings Bank">
+      <!-- Licensed Foreign Commercial Banks -->
+      <option value="HSBC Sri Lanka (Hongkong and Shanghai Banking Corp)">
+      <option value="Standard Chartered Bank">
+      <option value="Citibank N.A.">
+      <option value="Deutsche Bank AG">
+      <option value="State Bank of India (SBI)">
+      <option value="Indian Bank">
+      <option value="Indian Overseas Bank">
+      <option value="Habib Bank Ltd">
+      <option value="MCB Bank Ltd">
+      <option value="Public Bank Berhad">
+    </datalist>
 </div>
   </main>
 </div>

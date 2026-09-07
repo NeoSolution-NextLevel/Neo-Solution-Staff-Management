@@ -891,17 +891,21 @@
             <label for="adminBankSelectName">Bank Name</label>
             <select id="adminBankSelectName" class="bank-form-select" required>
               <option value="" disabled selected>Select bank</option>
-              <option value="Commercial Bank of Ceylon">Commercial Bank of Ceylon</option>
-              <option value="Bank of Ceylon (BOC)">Bank of Ceylon (BOC)</option>
-              <option value="People's Bank">People's Bank</option>
-              <option value="Hatton National Bank (HNB)">Hatton National Bank (HNB)</option>
-              <option value="Sampath Bank">Sampath Bank</option>
-              <option value="Seylan Bank">Seylan Bank</option>
-              <option value="National Development Bank (NDB)">National Development Bank (NDB)</option>
-              <option value="Nations Trust Bank (NTB)">Nations Trust Bank (NTB)</option>
-              <option value="DFCC Bank">DFCC Bank</option>
-              <option value="Pan Asia Bank">Pan Asia Bank</option>
-              <option value="Union Bank of Colombo">Union Bank of Colombo</option>
+              <optgroup label="Licensed Commercial Banks (Domestic)">
+                <option value="Commercial Bank of Ceylon">Commercial Bank of Ceylon</option>
+                <option value="Bank of Ceylon (BOC)">Bank of Ceylon (BOC)</option>
+                <option value="People's Bank">People's Bank</option>
+                <option value="Sampath Bank">Sampath Bank</option>
+                <option value="Hatton National Bank (HNB)">Hatton National Bank (HNB)</option>
+                <option value="Nations Trust Bank (NTB)">Nations Trust Bank (NTB)</option>
+                <option value="Seylan Bank">Seylan Bank</option>
+                <option value="National Development Bank (NDB)">National Development Bank (NDB)</option>
+                <option value="DFCC Bank">DFCC Bank</option>
+                <option value="Pan Asia Banking Corporation">Pan Asia Banking Corporation (Pan Asia Bank)</option>
+                <option value="Union Bank of Colombo">Union Bank of Colombo</option>
+                <option value="Amana Bank">Amana Bank</option>
+                <option value="Cargills Bank">Cargills Bank</option>
+              </optgroup>
             </select>
           </div>
           <div class="bank-form-group">

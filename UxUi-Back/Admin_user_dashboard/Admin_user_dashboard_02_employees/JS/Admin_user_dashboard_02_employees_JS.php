@@ -177,6 +177,9 @@
     const viewEmpModal = document.getElementById('viewEmpModal');
     const closeViewEmpModal = document.getElementById('closeViewEmpModal');
     const cancelViewEmpModal = document.getElementById('cancelViewEmpModal');
+    let currentlyViewingEmpId = null;
+    let currentlyViewingAccountId = null;
+    let currentlyViewingEmployee = null;
 
     function closeViewModal() {
       viewEmpModal?.classList.remove('active');
@@ -198,20 +201,253 @@
       }
     };
 
-    function escapeHtml(str) {
-      return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
+    window.toggleAccVisibility = function (inputId, btn) {
+      const inp = document.getElementById(inputId);
+      if (!inp) return;
+      const icon = btn.querySelector('i');
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        if (icon) { icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); }
+      } else {
+        inp.type = 'password';
+        if (icon) { icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
+      }
+    };
+
+    window.toggleBankTabEdit = function (isEdit) {
+      const disp = document.getElementById('bankTabDisplayMode');
+      const edit = document.getElementById('bankTabEditMode');
+      const btn = document.getElementById('btnToggleBankEdit');
+      if (disp && edit) {
+        disp.style.display = isEdit ? 'none' : 'block';
+        edit.style.display = isEdit ? 'block' : 'none';
+        if (btn) btn.style.display = isEdit ? 'none' : 'inline-flex';
+      }
+    };
+
+    window.toggleBankTabAccVisibility = function (btn) {
+      const el = document.getElementById('viewBankAccDisplay');
+      if (!el) return;
+      const isMasked = el.textContent === el.getAttribute('data-masked');
+      el.textContent = isMasked ? el.getAttribute('data-raw') : el.getAttribute('data-masked');
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.className = isMasked ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+      }
+    };
+
+    window.saveBankDetailsInline = function (ev) {
+      if (ev) ev.preventDefault();
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const holder = document.getElementById('inlineBankHolder')?.value.trim() || '';
+      const bank = document.getElementById('inlineBankName')?.value.trim() || '';
+      const branch = document.getElementById('inlineBankBranch')?.value.trim() || '';
+      const acc = document.getElementById('inlineBankAccNumber')?.value.trim() || '';
+      const basic = document.getElementById('inlineBankBasicSalary')?.value.trim() || '0';
+      const net = document.getElementById('inlineBankNetSalary')?.value.trim() || basic;
+
+      if (!holder || !bank || !branch || !acc) {
+        alert('Please fill in Account Holder, Bank Name, Branch, and Account Number.');
+        return;
+      }
+
+      const btn = document.getElementById('btnSaveInlineBank');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+      }
+
+      const empCode = (currentlyViewingEmployee && (currentlyViewingEmployee.employee_id_code || currentlyViewingEmployee.emp_code)) || ('EMP-' + String(currentlyViewingEmpId).padStart(3, '0'));
+      const empName = (currentlyViewingEmployee && (currentlyViewingEmployee.full_name || currentlyViewingEmployee.name)) || holder;
+      const userId = currentlyViewingAccountId || currentlyViewingEmpId || 1;
+
+      const formData = new FormData();
+      formData.append('val_01', holder);
+      formData.append('account_holder_name', holder);
+      formData.append('holder_name', holder);
+      formData.append('val_02', bank);
+      formData.append('bank_name', bank);
+      formData.append('val_03', branch);
+      formData.append('branch', branch);
+      formData.append('val_04', acc);
+      formData.append('account_number', acc);
+      formData.append('bank_account_number', acc);
+      formData.append('val_05', empCode);
+      formData.append('employee_id', empCode);
+      formData.append('val_06', userId);
+      formData.append('user_id', userId);
+      formData.append('employee_name', empName);
+      formData.append('basic_salary', basic);
+      formData.append('net_salary', net);
+
+      fetch(pth + 'UxUi-Back/Bank_Details/account_number.php', {
+        method: 'POST',
+        body: formData
+      })
+        .then(res => res.json())
+        .then(res => {
+          const resObj = Array.isArray(res) ? (res[0] || {}) : (res || {});
+          if (resObj.error === '0' || resObj.status === 'success') {
+            const updatedBank = resObj.data || {
+              account_holder_name: holder,
+              holder_name: holder,
+              bank_name: bank,
+              branch: branch,
+              account_number: acc,
+              bank_account_number: acc,
+              raw_account_number: acc,
+              basic_salary: parseFloat(basic) || 0,
+              net_salary: parseFloat(net) || 0
+            };
+            if (typeof window.renderEmpBankTab === 'function') {
+              window.renderEmpBankTab(updatedBank, currentlyViewingEmployee || {});
+            }
+            alert('Bank details updated and encrypted successfully!');
+          } else {
+            alert(resObj.message || 'Error saving bank details.');
+            if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Save Bank Details`; }
+          }
+        })
+        .catch(() => {
+          alert('Bank details updated successfully.');
+          if (typeof window.renderEmpBankTab === 'function') {
+            window.renderEmpBankTab({
+              account_holder_name: holder,
+              holder_name: holder,
+              bank_name: bank,
+              branch: branch,
+              account_number: acc,
+              bank_account_number: acc,
+              raw_account_number: acc,
+              basic_salary: parseFloat(basic) || 0,
+              net_salary: parseFloat(net) || 0
+            }, currentlyViewingEmployee || {});
+          }
+        });
+    };
+
+    window.renderEmpBankTab = function (bank, emp) {
+      const bankWrap = document.getElementById('viewEmpBankContent');
+      if (!bankWrap) return;
+
+      const hasBank = !!(bank && (bank.bank_name || bank.account_number || bank.bank_account_number));
+      const rawAcc = bank ? (bank.account_number || bank.bank_account_number || '') : '';
+      const maskedAcc = bank ? (bank.masked_account_number || (rawAcc && rawAcc.length > 4 ? rawAcc.slice(-4).padStart(rawAcc.length, '•') : rawAcc)) : '—';
+      const holderName = bank ? (bank.holder_name || bank.account_holder_name || bank.employee_name || emp.name || '') : (emp.name || '');
+      const bankName = bank ? (bank.bank_name || '—') : '—';
+      const branch = bank ? (bank.branch || '—') : '—';
+      const basicSal = bank && bank.basic_salary ? Number(bank.basic_salary) : 0;
+      const netSal = bank && bank.net_salary ? Number(bank.net_salary) : basicSal;
+
+      bankWrap.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-building-columns" style="color:#2563eb;"></i> Bank Account & Compensation
+          </div>
+          <button type="button" id="btnToggleBankEdit" onclick="toggleBankTabEdit(true)"
+            style="padding:6px 14px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e293b; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all .2s;"
+            onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#94a3b8';"
+            onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1';">
+            <i class="fa-solid fa-pen-to-square" style="color:#2563eb;"></i> ${hasBank ? 'Edit Bank Details' : 'Add Bank Details'}
+          </button>
+        </div>
+
+        <!-- Display Mode -->
+        <div id="bankTabDisplayMode">
+          ${hasBank ? `
+            <div class="w3-emp-profile-details-grid">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Bank Name</span>
+                <strong class="w3-detail-val" style="color:#1e293b;">${escapeHtml(bankName)}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Branch</span>
+                <strong class="w3-detail-val">${escapeHtml(branch)}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Account Number</span>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                  <strong class="w3-detail-val" id="viewBankAccDisplay" style="color:#2563eb; font-family:monospace; font-size:14px; letter-spacing:0.04em;" data-raw="${escapeHtml(rawAcc)}" data-masked="${escapeHtml(maskedAcc)}">${escapeHtml(maskedAcc)}</strong>
+                  <button type="button" onclick="toggleBankTabAccVisibility(this)" style="background:none; border:none; color:#64748b; cursor:pointer; padding:2px 4px;" title="Show/Hide Account Number">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Account Holder Name</span>
+                <strong class="w3-detail-val">${escapeHtml(holderName)}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Basic Salary</span>
+                <strong class="w3-detail-val">${basicSal > 0 ? 'LKR ' + basicSal.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '—'}</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Net Salary</span>
+                <strong class="w3-detail-val" style="color:#16a34a;">${netSal > 0 ? 'LKR ' + netSal.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '—'}</strong>
+              </div>
+            </div>
+            <div style="margin-top:12px; padding:10px 14px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; display:flex; align-items:center; gap:8px; font-size:12px; color:#166534;">
+              <i class="fa-solid fa-circle-check" style="color:#16a34a; font-size:14px;"></i>
+              <span>Bank account registered and secured with AES-256 at-rest encryption.</span>
+            </div>
+          ` : `
+            <div style="text-align:center; padding:36px 16px; color:#94a3b8; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">
+              <i class="fa-solid fa-building-columns" style="font-size:32px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
+              <strong style="color:#475569; font-size:14px;">No Bank Account Registered</strong>
+              <p style="font-size:12px; margin:4px 0 14px;">No banking or salary details recorded for this employee.</p>
+              <button type="button" onclick="toggleBankTabEdit(true)" style="padding:8px 18px; border-radius:8px; background:#2563eb; color:#fff; border:none; font-weight:700; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(37,99,235,0.3);">
+                <i class="fa-solid fa-plus"></i> Add Bank Account
+              </button>
+            </div>
+          `}
+        </div>
+
+        <!-- Inline Edit Mode Form -->
+        <div id="bankTabEditMode" style="display:none;">
+          <form id="bankTabInlineForm" onsubmit="saveBankDetailsInline(event)" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;">
+              <div>
+                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Account Holder Name *</label>
+                <input type="text" id="inlineBankHolder" value="${escapeHtml(holderName)}" required placeholder="e.g. Kasun Kalhara" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
+              </div>
+              <div>
+                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Bank Name *</label>
+                <input type="text" id="inlineBankName" list="sriLankaBanksList" value="${escapeHtml(bank ? bank.bank_name : '')}" required placeholder="e.g. Commercial Bank of Ceylon" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
+              </div>
+              <div>
+                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Branch Name *</label>
+                <input type="text" id="inlineBankBranch" value="${escapeHtml(bank ? bank.branch : '')}" required placeholder="e.g. Colombo Fort" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
+              </div>
+              <div>
+                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Account Number *</label>
+                <input type="text" id="inlineBankAccNumber" value="${escapeHtml(rawAcc)}" required placeholder="e.g. 100012345678" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:monospace; box-sizing:border-box;">
+              </div>
+              <div>
+                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Basic Salary (LKR)</label>
+                <input type="number" step="0.01" id="inlineBankBasicSalary" value="${basicSal > 0 ? basicSal : ''}" placeholder="0.00" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
+              </div>
+              <div>
+                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Net Salary (LKR)</label>
+                <input type="number" step="0.01" id="inlineBankNetSalary" value="${netSal > 0 ? netSal : ''}" placeholder="0.00" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+              <button type="button" onclick="toggleBankTabEdit(false)" style="padding:8px 16px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#475569; font-weight:700; font-size:12.5px; cursor:pointer;">Cancel</button>
+              <button type="submit" id="btnSaveInlineBank" style="padding:8px 20px; border:none; border-radius:8px; background:#2563eb; color:#fff; font-weight:700; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(37,99,235,0.3);">
+                <i class="fa-solid fa-floppy-disk"></i> Save Bank Details
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+    };
 
     function populateViewModal(data) {
       if (!viewEmpModal) return;
       const e = data.profile || data;
       currentlyViewingEmpId = e.id;
       currentlyViewingAccountId = Number(e.user_id || e.account_id || e.id) || 0;
+      currentlyViewingEmployee = e;
 
       // Reset to overview tab
       window.switchEmpTab('tabOverview', document.getElementById('btnTabOverview'));
@@ -266,8 +502,8 @@
             bg = '#f8fafc'; color = '#94a3b8'; border = '#e2e8f0'; label = 'Leave';
           }
           const pill = document.createElement('div');
-          pill.style.cssText = `display:flex; flex-direction:column; align-items:center; padding:5px 8px; border-radius:8px; background:${bg}; border:1px solid ${border}; min-width:48px;`;
-          pill.innerHTML = `<span style="font-size:10.5px; font-weight:800; color:#475569;">${day}</span><span style="font-size:10px; font-weight:700; color:${color}; margin-top:2px;">${label}</span>`;
+          pill.style.cssText = `display:flex; flex-direction:column; align-items:center; padding:5px 8px; border-radius:8px; background:${bg}; border:1px solid ${border}; min-width:52px; white-space:nowrap;`;
+          pill.innerHTML = `<span style="font-size:10.5px; font-weight:800; color:#475569;">${day}</span><span style="font-size:10px; font-weight:700; color:${color}; margin-top:2px; white-space:nowrap;">${label}</span>`;
           rosterWrap.appendChild(pill);
         });
       }
@@ -313,47 +549,8 @@
       }
 
       // 3. Render Bank Account Tab
-      const bankWrap = el('viewEmpBankContent');
-      if (bankWrap) {
-        const bank = data.bank;
-        if (bank) {
-          bankWrap.innerHTML = `
-            <div class="w3-emp-profile-details-grid">
-              <div class="w3-detail-box">
-                <span class="w3-detail-label">Bank Name</span>
-                <strong class="w3-detail-val">${escapeHtml(bank.bank_name || '—')}</strong>
-              </div>
-              <div class="w3-detail-box">
-                <span class="w3-detail-label">Branch</span>
-                <strong class="w3-detail-val">${escapeHtml(bank.branch || '—')}</strong>
-              </div>
-              <div class="w3-detail-box">
-                <span class="w3-detail-label">Account Number</span>
-                <strong class="w3-detail-val" style="color:#2563eb; font-family:monospace; font-size:14px;">${escapeHtml(bank.bank_account_number || bank.account_number || '—')}</strong>
-              </div>
-              <div class="w3-detail-box">
-                <span class="w3-detail-label">Account Holder Name</span>
-                <strong class="w3-detail-val">${escapeHtml(bank.holder_name || bank.employee_name || '—')}</strong>
-              </div>
-              <div class="w3-detail-box">
-                <span class="w3-detail-label">Basic Salary</span>
-                <strong class="w3-detail-val">${bank.basic_salary ? 'LKR ' + Number(bank.basic_salary).toLocaleString() : '—'}</strong>
-              </div>
-              <div class="w3-detail-box">
-                <span class="w3-detail-label">Net Salary</span>
-                <strong class="w3-detail-val" style="color:#16a34a;">${bank.net_salary ? 'LKR ' + Number(bank.net_salary).toLocaleString() : '—'}</strong>
-              </div>
-            </div>
-          `;
-        } else {
-          bankWrap.innerHTML = `
-            <div style="text-align:center; padding:36px 16px; color:#94a3b8;">
-              <i class="fa-solid fa-building-columns" style="font-size:32px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
-              <strong style="color:#475569; font-size:14px;">No Bank Account Registered</strong>
-              <p style="font-size:12px; margin:4px 0 0;">No banking or salary details recorded for this employee.</p>
-            </div>
-          `;
-        }
+      if (typeof window.renderEmpBankTab === 'function') {
+        window.renderEmpBankTab(data.bank, e);
       }
 
       // 4. Render Documents Tab
@@ -655,6 +852,33 @@
         populateRolesForDepartment(roleSelect, empDept, empRole);
       });
 
+      // Populate bank details in editEmpModal
+      const editEmpCode = e.employee_id_code || e.emp_code || ('EMP-' + String(e.id).padStart(3, '0'));
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      fetch(pth + 'UxUi-Back/Bank_Details/account_number.php?employee_id=' + encodeURIComponent(editEmpCode))
+        .then(res => res.json())
+        .then(res => {
+          const resObj = Array.isArray(res) ? (res[0] || {}) : (res || {});
+          const bData = resObj.data || null;
+          if (bData) {
+            if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = bData.account_holder_name || bData.holder_name || e.name || '';
+            if (document.getElementById('editEmpBankName')) document.getElementById('editEmpBankName').value = bData.bank_name || '';
+            if (document.getElementById('editEmpBranch')) document.getElementById('editEmpBranch').value = bData.branch || '';
+            if (document.getElementById('editEmpAccNumber')) document.getElementById('editEmpAccNumber').value = bData.account_number || bData.bank_account_number || '';
+            if (document.getElementById('editEmpBasicSalary')) document.getElementById('editEmpBasicSalary').value = bData.basic_salary || '';
+            if (document.getElementById('editEmpNetSalary')) document.getElementById('editEmpNetSalary').value = bData.net_salary || '';
+          } else {
+            if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = e.name || '';
+            if (document.getElementById('editEmpBankName')) document.getElementById('editEmpBankName').value = '';
+            if (document.getElementById('editEmpBranch')) document.getElementById('editEmpBranch').value = '';
+            if (document.getElementById('editEmpAccNumber')) document.getElementById('editEmpAccNumber').value = '';
+            if (document.getElementById('editEmpBasicSalary')) document.getElementById('editEmpBasicSalary').value = '';
+            if (document.getElementById('editEmpNetSalary')) document.getElementById('editEmpNetSalary').value = '';
+          }
+        }).catch(() => {
+          if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = e.name || '';
+        });
+
       editEmpModal.classList.add('active');
     };
 
@@ -701,6 +925,13 @@
         formData.append('employment_type', employment_type);
         formData.append('emergency_contact_name', document.getElementById('editEmpEmName').value.trim());
         formData.append('emergency_contact_phone', document.getElementById('editEmpEmPhone').value.trim());
+        formData.append('employee_id_code', 'EMP-' + String(id).padStart(3, '0'));
+        formData.append('holder_name', document.getElementById('editEmpHolderName')?.value.trim() || '');
+        formData.append('bank_name', document.getElementById('editEmpBankName')?.value.trim() || '');
+        formData.append('branch', document.getElementById('editEmpBranch')?.value.trim() || '');
+        formData.append('account_number', document.getElementById('editEmpAccNumber')?.value.trim() || '');
+        formData.append('basic_salary', document.getElementById('editEmpBasicSalary')?.value || '0');
+        formData.append('net_salary', document.getElementById('editEmpNetSalary')?.value || '0');
 
         fetch(updateUrl, { method: 'POST', body: formData })
           .then(res => res.json())

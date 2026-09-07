@@ -221,8 +221,9 @@
     }
 
     // ---- Fetch Live Data from Dashboard Controller Endpoint ----
-    function fetchLiveDashboardData() {
-      const endpoint = '../View-List/Dashboard/dashboard_details_LIST.php';
+    window.fetchLiveDashboardData = function() {
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const endpoint = pth + 'View-List/Dashboard/dashboard_details_LIST.php';
       fetch(endpoint)
         .then(response => {
           if (!response.ok) throw new Error('Network response was not ok');
@@ -262,13 +263,13 @@
         .catch(err => {
           console.error('Error fetching dashboard live data:', err);
         });
-    }
+    };
 
-    fetchLiveDashboardData();
+    window.fetchLiveDashboardData();
 
     // Global playback function for tab switching
     window.playDashboardChartAnimations = function() {
-      fetchLiveDashboardData();
+      window.fetchLiveDashboardData();
     };
 
   });
