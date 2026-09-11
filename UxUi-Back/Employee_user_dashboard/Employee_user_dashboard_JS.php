@@ -60,6 +60,12 @@
             }
           }
 
+          // Status indicator dot
+          var sbDot = document.querySelector('.user-status-dot');
+          if (sbDot) {
+            sbDot.style.display = (d.activity_status === 0 || d.activity_status === false) ? 'none' : 'block';
+          }
+          
           // 2. Sync ALL Topbars across entire dashboard
           document.querySelectorAll('.admin-pill, .emp-pill, .profile-pill').forEach(function(pill) {
             var nameSpan = pill.querySelector('span');
@@ -183,6 +189,9 @@
     if (el) el.style.display = "";
     setEmployeeSidebarActive('leave_requests');
     window.syncGlobalEmployeeData();
+    if (typeof window.initLeaveDateConstraints === 'function') {
+      window.initLeaveDateConstraints();
+    }
     if (typeof window.fetchEmpLeaveHistory === 'function') {
       window.fetchEmpLeaveHistory();
     }
