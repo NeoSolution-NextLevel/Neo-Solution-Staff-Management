@@ -75,35 +75,6 @@
     const workShift = p.work_shift || '08:30 AM – 05:30 PM';
     const schedStart = p.schedule_start_date || '—';
     const schedEnd = p.schedule_end_date || '—';
-    const workMode = p.work_mode || 'On-Site (Active)';
-
-    // Text Fields on My Profile
-    const el = id => document.getElementById(id);
-    if (el('viewProfileName')) el('viewProfileName').textContent = name;
-    if (el('topEmpName')) el('topEmpName').textContent = firstName;
-    if (el('viewProfileTitle')) el('viewProfileTitle').textContent = `${role} • ${dept}`;
-    if (el('viewEmail')) el('viewEmail').textContent = p.email || '—';
-    if (el('viewPhone')) el('viewPhone').textContent = p.phone || '—';
-    if (el('viewDept')) el('viewDept').textContent = dept;
-    if (el('viewJobRole')) el('viewJobRole').textContent = role;
-    if (el('viewWorkLocation')) el('viewWorkLocation').textContent = location;
-    if (el('viewEmpIdTag')) el('viewEmpIdTag').textContent = empCode;
-    if (el('viewDeptTag')) el('viewDeptTag').textContent = dept;
-    if (el('viewWorkShift')) el('viewWorkShift').textContent = workShift;
-    if (el('viewSchedStart')) el('viewSchedStart').textContent = schedStart;
-    if (el('viewSchedEnd')) el('viewSchedEnd').textContent = schedEnd;
-    if (el('viewWorkMode')) {
-      el('viewWorkMode').textContent = workMode;
-      el('viewWorkMode').style.color = '#16a34a';
-    }
-
-    // Working Days Synchronization
-    const rawWorkingDays = p.working_days || 'Mon,Tue,Wed,Thu,Fri';
-    const activeDaysArr = rawWorkingDays.split(',').map(d => d.trim()).filter(Boolean);
-    if (el('viewWorkingDays')) {
-      el('viewWorkingDays').textContent = activeDaysArr.join(', ');
-    }
-
     // Parse Weekly Roster for On-Site, WFH, and Leave
     let roster = { Mon: 'onsite', Tue: 'onsite', Wed: 'onsite', Thu: 'onsite', Fri: 'onsite', Sat: 'leave', Sun: 'leave' };
     if (p.weekly_roster && p.weekly_roster.trim() !== '') {
@@ -118,6 +89,66 @@
       });
     }
 
+    // Determine Today's Dynamic Work Mode
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const todayName = p.today_day || dayNames[new Date().getDay()];
+    let todayWorkMode = p.today_work_mode || p.work_mode;
+    let todayModeType = p.today_mode_type || '';
+
+    if (!todayWorkMode) {
+      const modeKey = (roster[todayName] || 'onsite').toLowerCase();
+      if (modeKey === 'wfh') {
+        todayWorkMode = 'Work From Home (WFH)';
+        todayModeType = 'wfh';
+      } else if (modeKey === 'leave') {
+        todayWorkMode = 'On Leave';
+        todayModeType = 'leave';
+      } else {
+        todayWorkMode = 'On-Site (Active)';
+        todayModeType = 'onsite';
+      }
+    }
+    if (!todayModeType) {
+      if (todayWorkMode.includes('Home') || todayWorkMode.includes('WFH')) todayModeType = 'wfh';
+      else if (todayWorkMode.includes('Leave')) todayModeType = 'leave';
+      else todayModeType = 'onsite';
+    }
+
+    // Text Fields on My Profile
+    const el = id => document.getElementById(id);
+    if (el('viewProfileName')) el('viewProfileName').textContent = name;
+    if (el('topEmpName')) el('topEmpName').textContent = firstName;
+    if (el('viewProfileTitle')) el('viewProfileTitle').textContent = `${role} • ${dept}`;
+    if (el('viewEmail')) el('viewEmail').textContent = p.email || '—';
+    if (el('viewPhone')) el('viewPhone').textContent = p.phone || '—';
+    if (el('viewEmName')) el('viewEmName').textContent = p.emergency_contact_name || '—';
+    if (el('viewEmPhone')) el('viewEmPhone').textContent = p.emergency_contact_phone || '—';
+    if (el('viewDept')) el('viewDept').textContent = dept;
+    if (el('viewJobRole')) el('viewJobRole').textContent = role;
+    if (el('viewWorkLocation')) el('viewWorkLocation').textContent = location;
+    if (el('viewEmpIdTag')) el('viewEmpIdTag').textContent = empCode;
+    if (el('viewDeptTag')) el('viewDeptTag').textContent = dept;
+    if (el('viewWorkShift')) el('viewWorkShift').textContent = workShift;
+    if (el('viewSchedStart')) el('viewSchedStart').textContent = schedStart;
+    if (el('viewSchedEnd')) el('viewSchedEnd').textContent = schedEnd;
+    if (el('viewWorkMode')) {
+      el('viewWorkMode').textContent = todayWorkMode;
+      if (todayModeType === 'wfh') {
+        el('viewWorkMode').style.color = '#7c3aed';
+      } else if (todayModeType === 'leave') {
+        el('viewWorkMode').style.color = '#dc2626';
+      } else {
+        el('viewWorkMode').style.color = '#16a34a';
+      }
+    }
+
+    // Working Days Synchronization
+    const rawWorkingDays = p.working_days || 'Mon,Tue,Wed,Thu,Fri';
+    const activeDaysArr = rawWorkingDays.split(',').map(d => d.trim()).filter(Boolean);
+    if (el('viewWorkingDays')) {
+      el('viewWorkingDays').textContent = activeDaysArr.join(', ');
+    }
+
     let countOnsite = 0;
     let countWfh = 0;
     let countLeave = 0;
@@ -127,39 +158,43 @@
       const mode = (roster[day] || 'onsite').toLowerCase();
       const badge = el('badge_' + day);
       const box = el('dayBox_' + day);
+      const isToday = (day === todayName);
 
       if (mode === 'onsite') {
         countOnsite++;
         if (box) {
-          box.style.background = '#ffffff';
-          box.style.borderColor = '#93c5fd';
+          box.style.background = isToday ? '#f0fdf4' : '#ffffff';
+          box.style.borderColor = isToday ? '#16a34a' : '#93c5fd';
+          box.style.boxShadow = isToday ? '0 0 0 2px rgba(22, 163, 74, 0.25)' : 'none';
           box.style.opacity = '1';
         }
         if (badge) {
           badge.className = 'roster-day-badge onsite';
-          badge.textContent = 'On-Site';
+          badge.textContent = isToday ? 'On-Site • Today' : 'On-Site';
         }
       } else if (mode === 'wfh') {
         countWfh++;
         if (box) {
-          box.style.background = '#ffffff';
-          box.style.borderColor = '#c084fc';
+          box.style.background = isToday ? '#faf5ff' : '#ffffff';
+          box.style.borderColor = isToday ? '#7c3aed' : '#c084fc';
+          box.style.boxShadow = isToday ? '0 0 0 2px rgba(124, 58, 237, 0.25)' : 'none';
           box.style.opacity = '1';
         }
         if (badge) {
           badge.className = 'roster-day-badge wfh';
-          badge.textContent = 'WFH';
+          badge.textContent = isToday ? 'WFH • Today' : 'WFH';
         }
       } else {
         countLeave++;
         if (box) {
-          box.style.background = '#f8fafc';
-          box.style.borderColor = '#e2e8f0';
-          box.style.opacity = '0.85';
+          box.style.background = isToday ? '#fef2f2' : '#f8fafc';
+          box.style.borderColor = isToday ? '#dc2626' : '#e2e8f0';
+          box.style.boxShadow = isToday ? '0 0 0 2px rgba(220, 38, 38, 0.25)' : 'none';
+          box.style.opacity = '0.9';
         }
         if (badge) {
           badge.className = 'roster-day-badge leave';
-          badge.textContent = 'Leave';
+          badge.textContent = isToday ? 'Leave • Today' : 'Leave';
         }
       }
     });
@@ -203,6 +238,8 @@
     if (el('editDept')) el('editDept').value = userProfileData.department || 'Engineering';
     if (el('editJobRole')) el('editJobRole').value = userProfileData.job_title || 'Staff';
     if (el('editLocation')) el('editLocation').value = userProfileData.work_location || 'Colombo HQ';
+    if (el('editEmName')) el('editEmName').value = userProfileData.emergency_contact_name || '';
+    if (el('editEmPhone')) el('editEmPhone').value = userProfileData.emergency_contact_phone || '';
 
     // Populate Read-Only Assigned Work Schedule info card
     if (el('modalViewWorkShift')) el('modalViewWorkShift').textContent = userProfileData.work_shift || '08:30 AM – 05:30 PM';
