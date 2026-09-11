@@ -3,6 +3,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../imports/need/SystemNotifications.php';
+include_once __DIR__ . '/../../../imports/email/Email_Send.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
@@ -49,6 +50,22 @@ if ($result) {
         "employee",
         $assigned_to
     );
+
+    // Send Task Assigned Email to Employee
+    try {
+        if (class_exists('Email')) {
+            Email::send_task_assigned_notification([
+                'title'       => $title,
+                'description' => $description,
+                'department'  => $department,
+                'assigned_to' => $assigned_to,
+                'mode'        => $mode,
+                'status'      => $status,
+                'deadline'    => $deadline,
+                'progress'    => $progress
+            ]);
+        }
+    } catch (Exception $e) {}
 
     echo json_encode([
         'status'  => 'success',
