@@ -420,6 +420,11 @@
       <p>Submit and track your leave requests with Admin approval</p>
     </div>
 
+    <?php
+      // Minimum date allowed: strictly 2 days in advance from today
+      $minLeaveDate = date('Y-m-d', strtotime('+2 days'));
+      $minLeaveFormatted = date('M d, Y', strtotime('+2 days'));
+    ?>
     <!-- Information Notice Banner -->
     <div class="leave-info-note">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -427,7 +432,7 @@
         <line x1="12" y1="16" x2="12" y2="12"/>
         <line x1="12" y1="8" x2="12.01" y2="8"/>
       </svg>
-      <span><strong>Note:</strong> Please submit your leave request at least 2 days before your intended leave date. All requests are reviewed by Admin.</span>
+      <span><strong>Notice:</strong> Leave requests must be submitted at least 2 days before the requested leave date. Earliest selectable date: <strong><?php echo $minLeaveFormatted; ?></strong>.</span>
     </div>
 
     <!-- New Leave Request Form Card -->
@@ -448,14 +453,18 @@
 
         <div class="leave-date-grid">
           <div class="leave-form-group" style="margin-bottom: 0;">
-            <label for="leaveFromDate">From Date</label>
-            <input type="date" id="leaveFromDate" name="from" class="leave-form-control" required value="<?php echo date('Y-m-d'); ?>">
+            <label for="leaveFromDate">From Date <span style="font-size:11.5px; color:#2563eb; font-weight:600;">(Min 2 days in advance)</span></label>
+            <input type="date" id="leaveFromDate" name="from" class="leave-form-control" required min="<?php echo $minLeaveDate; ?>" value="<?php echo $minLeaveDate; ?>">
           </div>
 
           <div class="leave-form-group" style="margin-bottom: 0;">
             <label for="leaveToDate">To Date</label>
-            <input type="date" id="leaveToDate" name="to" class="leave-form-control" required value="<?php echo date('Y-m-d'); ?>">
+            <input type="date" id="leaveToDate" name="to" class="leave-form-control" required min="<?php echo $minLeaveDate; ?>" value="<?php echo $minLeaveDate; ?>">
           </div>
+        </div>
+        <div style="font-size:12px; color:#64748b; margin-top:-8px; margin-bottom:14px; font-weight:600; display:flex; align-items:center; gap:6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#2563eb;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+          Earliest allowed leave date: <span style="color:#2563eb; font-weight:700;"><?php echo $minLeaveFormatted; ?></span>
         </div>
 
         <div class="leave-form-group">
@@ -592,6 +601,48 @@
     }).join('');
   }
 
+  // Strictly enforce 2-day advance leave notice
+  window.initLeaveDateConstraints = function () {
+    const fromInput = document.getElementById('leaveFromDate');
+    const toInput = document.getElementById('leaveToDate');
+    if (!fromInput || !toInput) return;
+
+    // Minimum date is strictly 2 days ahead of today
+    const now = new Date();
+    now.setDate(now.getDate() + 2);
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const minDateStr = `${yyyy}-${mm}-${dd}`;
+
+    fromInput.min = minDateStr;
+    if (!fromInput.value || fromInput.value < minDateStr) {
+      fromInput.value = minDateStr;
+    }
+
+    toInput.min = fromInput.value || minDateStr;
+    if (!toInput.value || toInput.value < toInput.min) {
+      toInput.value = toInput.min;
+    }
+
+    fromInput.onchange = function () {
+      if (this.value < minDateStr) {
+        this.value = minDateStr;
+      }
+      toInput.min = this.value;
+      if (toInput.value < this.value) {
+        toInput.value = this.value;
+      }
+    };
+
+    toInput.onchange = function () {
+      const currentFrom = fromInput.value || minDateStr;
+      if (this.value < currentFrom) {
+        this.value = currentFrom;
+      }
+    };
+  };
+
   // Handle Submit to Database
   if (form) {
     form.addEventListener('submit', (e) => {
@@ -607,9 +658,26 @@
         return;
       }
 
+      // Calculate 2 days ahead minimum boundary
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const minDate = new Date(now);
+      minDate.setDate(minDate.getDate() + 2);
+
+      const d1 = new Date(from + 'T00:00:00');
+      const d2 = new Date(to + 'T00:00:00');
+
+      if (d1 < minDate) {
+        showEmpToast('Leave must be requested at least 2 days in advance. Earliest allowed date: ' + minDate.toISOString().split('T')[0], 'error');
+        return;
+      }
+
+      if (d2 < d1) {
+        showEmpToast('To Date cannot be earlier than From Date.', 'error');
+        return;
+      }
+
       // Calculate days
-      const d1 = new Date(from);
-      const d2 = new Date(to);
       let diffDays = Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
       const currentEmployee = (document.getElementById('topEmpLeaveName') && document.getElementById('topEmpLeaveName').textContent.trim()) 
         || (document.getElementById('empSidebarName') && document.getElementById('empSidebarName').textContent.trim()) 
@@ -682,6 +750,7 @@
           if (res.status === 'success') {
             showEmpToast('Leave request submitted! Email notification sent to Admin.', 'success');
             form.reset();
+            window.initLeaveDateConstraints();
             window.fetchEmpLeaveHistory();
           } else {
             showEmpToast(res.message || 'Error submitting leave request.', 'error');
@@ -691,6 +760,7 @@
           if (btn) btn.disabled = false;
           showEmpToast('Leave request submitted successfully.', 'success');
           form.reset();
+          window.initLeaveDateConstraints();
           window.fetchEmpLeaveHistory();
         });
     });
@@ -723,6 +793,7 @@
   }
 
   // Initial Load
+  window.initLeaveDateConstraints();
   window.fetchEmpLeaveHistory();
   syncEmpLeaveTopbar();
 })();
