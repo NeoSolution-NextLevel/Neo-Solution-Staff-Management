@@ -28,7 +28,7 @@
 
   #Admin_user_dashboard_04_bank_details {
     width: 100%;
-    min-height: 100vh;
+    min-height: auto;
   }
 
   /* Main Container */
@@ -36,7 +36,7 @@
     margin-left: 250px;
     width: calc(100% - 250px);
     max-width: calc(100% - 250px);
-    min-height: 100vh;
+    min-height: auto;
     padding: 16px 20px 24px;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
@@ -288,35 +288,37 @@
     color: var(--navy);
     font-family: 'Courier New', monospace;
     font-weight:700;
-    font-size: 13px;
-    letter-spacing: .04em;
-    padding: 6px 12px;
-    border-radius: 8px;
+    font-size: 11.5px;
+    letter-spacing: .02em;
+    padding: 3px 7px;
+    border-radius: 6px;
+    white-space: nowrap;
   }
 
   .salary-chip {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
     color: #15803d;
     font-weight: 800;
-    font-size: 13px;
-    padding: 5px 11px;
-    border-radius: 8px;
+    font-size: 11.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
   }
 
   .view-acc-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     background: #ffffff;
     border: 1px solid var(--border);
     color: var(--navy);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -330,16 +332,18 @@
   .table-pay-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 5px;
     background: #eff6ff;
     border: 1px solid #bfdbfe;
     color: #1d4ed8;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 12.5px;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 11.5px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
+    white-space: nowrap;
   }
   .table-pay-btn:hover {
     background: #2563eb;
@@ -351,13 +355,13 @@
   .table-receipt-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     background: #ecfdf5;
     border: 1px solid #a7f3d0;
     color: #065f46;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 12.5px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -369,56 +373,73 @@
     transform: translateY(-1px);
   }
 
-  /* Desktop Table Layout */
+  /* Desktop Table Layout - Full width without horizontal scrolling */
   .table-card{
     background: var(--card);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
     overflow:hidden;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+    width: 100%;
   }
-  .table-wrap{ width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .table-wrap{ 
+    width: 100%; 
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .table-wrap::-webkit-scrollbar {
+    height: 4px;
+  }
+  .table-wrap::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
   table.emp-table{
-    width:100%;
+    width: 100%;
     border-collapse: collapse;
-    min-width: 820px;
+    table-layout: fixed;
+    min-width: 0;
   }
   table.emp-table thead th{
-    text-align:left;
-    font-size: 12px;
-    text-transform:uppercase;
-    letter-spacing: .04em;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
     color: var(--muted);
-    font-weight:700;
-    padding: 14px 18px;
+    font-weight: 700;
+    padding: 11px 10px;
     border-bottom: 1px solid var(--border);
     background: #fafbfd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   table.emp-table tbody td{
-    padding: 14px 18px;
+    padding: 10px 10px;
     border-bottom: 1px solid var(--border);
-    vertical-align:middle;
-    font-size:13.5px;
+    vertical-align: middle;
+    font-size: 12.5px;
     color: #3a3f55;
-    white-space: nowrap;
+    overflow: hidden;
   }
   table.emp-table tbody tr:last-child td{ border-bottom:none; }
   table.emp-table tbody tr:hover{ background: #fafbfd; }
 
-  .emp-cell{ display:flex; align-items:center; gap:12px; }
+  .emp-cell{ display:flex; align-items:center; gap:8px; min-width:0; }
   .emp-avatar{
-    width:38px; height:38px;
-    border-radius:50%;
+    width: 32px; height: 32px;
+    border-radius: 50%;
     background: var(--blue);
-    color:#fff;
-    font-size:12.5px;
-    font-weight:700;
-    display:flex; align-items:center; justify-content:center;
-    flex-shrink:0;
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
   }
-  .emp-name{ font-size:14px; font-weight:700; color: var(--ink); }
-  .emp-email{ font-size:12px; color: var(--muted); margin-top:1px; }
+  .emp-name{ font-size: 12.5px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .emp-email{ font-size: 11px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* Modals Overlay */
   .bank-modal-overlay {
@@ -659,6 +680,14 @@
       <div class="table-card">
         <div class="table-wrap">
           <table class="emp-table">
+            <colgroup>
+              <col style="width: 22%;">
+              <col style="width: 18%;">
+              <col style="width: 23%;">
+              <col style="width: 14%;">
+              <col style="width: 13%;">
+              <col style="width: 10%;">
+            </colgroup>
             <thead>
               <tr>
                 <th>Employee</th>
@@ -704,6 +733,14 @@
       <div class="table-card">
         <div class="table-wrap">
           <table class="emp-table">
+            <colgroup>
+              <col style="width: 14%;">
+              <col style="width: 22%;">
+              <col style="width: 18%;">
+              <col style="width: 16%;">
+              <col style="width: 16%;">
+              <col style="width: 14%;">
+            </colgroup>
             <thead>
               <tr>
                 <th>Receipt #</th>
@@ -1031,19 +1068,19 @@
       tr.innerHTML = '<td>' +
         '<div class="emp-cell">' +
           '<div class="emp-avatar">' + initials + '</div>' +
-          '<div>' +
-            '<div class="emp-name">' + empName + '</div>' +
+          '<div style="min-width:0; overflow:hidden;">' +
+            '<div class="emp-name" title="' + empName + '">' + empName + '</div>' +
             '<div class="emp-email">' + empId + '</div>' +
           '</div>' +
         '</div>' +
       '</td>' +
-      '<td><strong style="color:#1e293b;">' + holderName + '</strong></td>' +
-      '<td><span style="font-weight:700; color:var(--blue);">' + bank + '</span><br><small style="color:#64748b;">' + branch + '</small></td>' +
-      '<td><span class="acc-chip">' + accMasked + '</span></td>' +
+      '<td><div style="font-weight:700; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="' + holderName + '">' + holderName + '</div></td>' +
+      '<td><div style="font-weight:700; color:var(--blue); font-size:12px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="' + bank + '">' + bank + '</div><div style="color:#64748b; font-size:11px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="' + branch + '">' + branch + '</div></td>' +
+      '<td><span class="acc-chip" title="' + accRaw + '">' + accMasked + '</span></td>' +
       '<td><span class="salary-chip"><i class="fa-solid fa-coins"></i> LKR ' + fixedSal + '</span></td>' +
       '<td style="text-align:center; vertical-align:middle;">' +
-        '<div style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">' +
-          '<button type="button" class="table-pay-btn" onclick="openAdminUploadReceiptForEmp(\'' + jsonPayload + '\')"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Receipt</button>' +
+        '<div style="display:flex; align-items:center; justify-content:center; margin:0 auto;">' +
+          '<button type="button" class="table-pay-btn" onclick="openAdminUploadReceiptForEmp(\'' + jsonPayload + '\')" title="Upload Payment Receipt"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button>' +
         '</div>' +
       '</td>';
       tbody.appendChild(tr);
@@ -1123,16 +1160,16 @@
       var jsonPayload = encodeURIComponent(JSON.stringify(row));
 
       var tr = document.createElement('tr');
-      tr.innerHTML = '<td><strong style="color:var(--blue); font-family:monospace;">' + recNo + '</strong></td>' +
+      tr.innerHTML = '<td><strong style="color:var(--blue); font-family:monospace; font-size:12px;">' + recNo + '</strong></td>' +
         '<td>' +
-          '<div class="emp-name">' + empName + '</div>' +
-          '<div class="emp-email">' + empId + '</div>' +
+          '<div class="emp-name" style="font-size:12.5px;" title="' + empName + '">' + empName + '</div>' +
+          '<div class="emp-email" style="font-size:11px;">' + empId + '</div>' +
         '</td>' +
-        '<td><span style="font-weight:700; color:#1e293b;"><i class="fa-solid fa-calendar-day" style="color:var(--blue); margin-right:4px;"></i>' + date + '</span></td>' +
-        '<td><strong>' + month + '</strong></td>' +
-        '<td><strong style="color:#059669;">LKR ' + amount + '</strong></td>' +
+        '<td><span style="font-weight:700; color:#1e293b; font-size:12px; white-space:nowrap;"><i class="fa-solid fa-calendar-day" style="color:var(--blue); margin-right:4px;"></i>' + date + '</span></td>' +
+        '<td><strong style="font-size:12px; white-space:nowrap;">' + month + '</strong></td>' +
+        '<td><strong style="color:#059669; font-size:12px; white-space:nowrap;">LKR ' + amount + '</strong></td>' +
         '<td style="text-align:center; vertical-align:middle;">' +
-          (hasImg ? '<img src="' + imgUrl + '" style="height:36px; max-width:60px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; cursor:pointer; margin:0 auto; display:inline-block;" onclick="openAdminViewReceiptModal(\'' + jsonPayload + '\')">' : '<span style="color:#94a3b8; font-size:12px;">No PNG</span>') +
+          (hasImg ? '<img src="' + imgUrl + '" style="height:30px; max-width:50px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; cursor:pointer; margin:0 auto; display:inline-block;" onclick="openAdminViewReceiptModal(\'' + jsonPayload + '\')" title="View PNG Receipt">' : '<span style="color:#94a3b8; font-size:11.5px;">No PNG</span>') +
         '</td>'; 
         
       tbody.appendChild(tr);
