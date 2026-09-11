@@ -10,6 +10,7 @@ header('Content-Type: application/json; charset=utf-8');
 include_once __DIR__ . '/../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../imports/need/DB.php';
 include_once __DIR__ . '/../../Controllers/Main/Documents/document_requests_ADD_UPDATE.php';
+include_once __DIR__ . '/../../imports/email/Email_Send.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
@@ -78,6 +79,21 @@ if ($req->process_new_record()) {
             $recipient_name
         );
     }
+
+    // Send Document Request Email to target employee(s)
+    try {
+        if (class_exists('Email')) {
+            Email::send_document_request_notification([
+                'target_type'             => $target_type,
+                'target_employee_user_id' => $target_employee_user_id,
+                'target_employee_name'    => $target_employee_name,
+                'doc_type'                => $doc_type,
+                'notes'                   => $notes,
+                'deadline'                => $deadline,
+                'requested_by'            => $admin_name
+            ]);
+        }
+    } catch (Exception $e) {}
 
     echo json_encode([
         'status'  => 'success',
