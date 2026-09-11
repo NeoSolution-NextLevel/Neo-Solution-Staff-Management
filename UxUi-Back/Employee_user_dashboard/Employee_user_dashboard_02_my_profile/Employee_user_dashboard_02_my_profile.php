@@ -1,7 +1,5 @@
 <style>
-  /* =========================================================
-     EMPLOYEE MY PROFILE (WORKPLACE IDENTITY & SCHEDULE ROSTER)
-  ========================================================= */
+  
   :root {
     --navy: #14204d;
     --navy-2: #1c2b63;
@@ -341,7 +339,6 @@
     word-break: break-word;
   }
 
-  /* Weekly Roster Pills & Grid */
   .roster-days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -544,7 +541,6 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   }
 
-  /* Day Roster Form Rows in Modal */
   .modal-roster-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -595,7 +591,6 @@
 <div id="Employee_user_dashboard_02_my_profile" class="w3-container tab-content" style="display: none; padding: 0;">
   <div class="emp-prof-container">
 
-    <!-- Standard Dashboard Topbar -->
     <div class="topbar">
       <div class="topbar-left">
         <button class="menu-btn" id="menuBtn_02" aria-label="Open menu" onclick="if(typeof openEmployeeSidebar==='function'){ openEmployeeSidebar(); }">
@@ -640,7 +635,6 @@
 
       <div class="profile-hero-content">
         <div class="profile-avatar-row">
-          <!-- Interactive Avatar with Photo Upload -->
           <div class="profile-avatar-wrapper">
             <img id="myProfilePicImg" class="profile-avatar-img" style="display:none;" alt="Profile Picture" />
             <div id="myProfilePicPlaceholder" class="profile-avatar-placeholder">--</div>
@@ -663,21 +657,16 @@
       </div>
     </div>
 
-    <!-- 2. Bento Details Grid Layout -->
     <div class="profile-grid-layout">
       
-      <!-- Left Column: Work Schedule & Duty Roster Planner -->
       <div>
-        <!-- Work Schedule & Shift Timing Card -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               <span>Work Schedule & Shift Timing</span>
             </h3>
-            <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 3px 10px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-              <i class="fa-solid fa-shield-halved"></i> Set by Administrator
-            </span>
+           
           </div>
           <div class="info-field-grid">
             <div class="info-field">
@@ -707,7 +696,6 @@
           </div>
         </div>
 
-        <!-- Weekly Duty Roster Card -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
@@ -718,7 +706,6 @@
           <div>
             <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px;">Day-by-day weekly arrangement according to assigned working days:</div>
             
-            <!-- 7-Day Visual Roster Grid -->
             <div class="roster-days-grid" id="viewRosterGrid">
               <div class="roster-day-box" id="dayBox_Mon">
                 <span class="roster-day-name">Mon</span>
@@ -750,7 +737,6 @@
               </div>
             </div>
 
-            <!-- Dynamic Roster Summary Counters -->
             <div class="roster-summary-row" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9; display: flex; gap: 10px; flex-wrap: wrap;">
               <span class="roster-stat-pill onsite" id="statOnsite">On-Site: 5 Days</span>
               <span class="roster-stat-pill wfh" id="statWfh" style="background:#f5f3ff; color:#7c3aed; border:1px solid #ddd6fe;">WFH: 0 Days</span>
@@ -760,9 +746,7 @@
         </div>
       </div>
 
-      <!-- Right Column: Workplace Coordinates & Navigation -->
       <div>
-        <!-- Workplace Contact & Role Info -->
         <div class="prof-card">
           <div class="prof-card-head">
             <h3>
@@ -780,44 +764,20 @@
               <span class="info-field-val" id="viewPhone">—</span>
             </div>
             <div class="info-field">
+              <span class="info-field-label">Emergency Contact Name</span>
+              <span class="info-field-val" id="viewEmName" style="color:#0f172a; font-weight:700;">—</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field-label">Emergency Contact Phone</span>
+              <span class="info-field-val" id="viewEmPhone" style="color:#0f172a; font-weight:700;">—</span>
+            </div>
+            <div class="info-field">
               <span class="info-field-label">Department</span>
               <span class="info-field-val" id="viewDept">—</span>
             </div>
             <div class="info-field">
               <span class="info-field-label">Designation / Role</span>
               <span class="info-field-val" id="viewJobRole">—</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Navigation Hub -->
-        <div class="prof-card">
-          <div class="prof-card-head">
-            <h3>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              <span>Staff Hub Quick Links</span>
-            </h3>
-          </div>
-          <div>
-            <div class="quick-action-link" onclick="Employee_user_dashboard_03_OPEN()">
-              <span>Personal Details</span>
-              <span>&rarr;</span>
-            </div>
-            <div class="quick-action-link" onclick="Employee_user_dashboard_06_OPEN()">
-              <span>Job Information & Timeline</span>
-              <span>&rarr;</span>
-            </div>
-            <div class="quick-action-link" onclick="Employee_user_dashboard_07_OPEN()">
-              <span>Daily Work Plan</span>
-              <span>&rarr;</span>
-            </div>
-            <div class="quick-action-link" onclick="Employee_user_dashboard_04_OPEN()">
-              <span>My Documents</span>
-              <span>&rarr;</span>
-            </div>
-            <div class="quick-action-link" onclick="Employee_user_dashboard_08_OPEN()">
-              <span>Request Leave</span>
-              <span>&rarr;</span>
             </div>
           </div>
         </div>
@@ -828,7 +788,6 @@
   </div>
 </div>
 
-<!-- Edit Profile & Schedule Modal Dialog -->
 <div class="modal-overlay" id="editProfileModal">
   <div class="modal-box" style="max-width: 640px; width: 100%; max-height: 90vh; display: flex; flex-direction: column;">
     <div class="modal-header">
@@ -842,8 +801,7 @@
     <form id="editProfileForm" onsubmit="saveProfileEdits(event)" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
       <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 130px); padding: 20px 24px; display: flex; flex-direction: column; gap: 16px;">
         
-        <!-- Section 1: Professional Identity & Role -->
-        <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">1. Professional Identity & Role</div>
+      
         
         <div class="modal-form-group">
           <label for="editFullName">Display Name *</label>
@@ -852,19 +810,19 @@
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="modal-form-group">
-            <label for="editDept">Department</label>
-            <input type="text" id="editDept" name="dept" class="modal-form-control" placeholder="e.g. Engineering" />
+            <label for="editDept">Department <span style="font-size:10px; color:#94a3b8; font-weight:700;">(Admin Set)</span></label>
+            <input type="text" id="editDept" name="dept" class="modal-form-control" placeholder="e.g. Engineering" readonly tabindex="-1" style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
           <div class="modal-form-group">
-            <label for="editJobRole">Job Role / Designation</label>
-            <input type="text" id="editJobRole" name="role" class="modal-form-control" placeholder="e.g. Senior Software Engineer" />
+            <label for="editJobRole">Job Role / Designation <span style="font-size:10px; color:#94a3b8; font-weight:700;">(Admin Set)</span></label>
+            <input type="text" id="editJobRole" name="role" class="modal-form-control" placeholder="e.g. Senior Software Engineer" readonly tabindex="-1" style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="modal-form-group">
-            <label for="editEmail">Official Work Email</label>
-            <input type="email" id="editEmail" name="email" class="modal-form-control" placeholder="e.g. kasun@company.com" />
+            <label for="editEmail">Official Work Email <span style="font-size:10px; color:#94a3b8; font-weight:700;">(Official)</span></label>
+            <input type="email" id="editEmail" name="email" class="modal-form-control" placeholder="e.g. kasun@company.com" readonly tabindex="-1" style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
           <div class="modal-form-group">
             <label for="editPhone">Primary Contact Phone</label>
@@ -873,16 +831,21 @@
         </div>
 
         <div class="modal-form-group">
-          <label for="editLocation">Work Location</label>
-          <input type="text" id="editLocation" name="work_location" class="modal-form-control" placeholder="e.g. Colombo HQ" />
+          <label for="editLocation">Work Location <span style="font-size:10px; color:#94a3b8; font-weight:700;">(Admin Set)</span></label>
+          <input type="text" id="editLocation" name="work_location" class="modal-form-control" placeholder="e.g. Colombo HQ" readonly tabindex="-1" style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
         </div>
 
-        <!-- Section 2: Work Schedule (Assigned by Administrator) -->
-        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 10px;">
-          <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">2. Assigned Work Schedule & Shift</div>
-          <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 999px; font-weight: 700;">
-            <i class="fa-solid fa-lock"></i> Set by Administrator (View Only)
-          </span>
+       
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="modal-form-group">
+            <label for="editEmName">Emergency Contact Name <span style="font-size:10px; color:#16a34a; font-weight:700;">(Editable)</span></label>
+            <input type="text" id="editEmName" name="emergency_contact_name" class="modal-form-control" placeholder="e.g. Nimal Perera (Father)" style="border: 1.5px solid #86efac; background: #ffffff;" />
+          </div>
+          <div class="modal-form-group">
+            <label for="editEmPhone">Emergency Contact Phone <span style="font-size:10px; color:#16a34a; font-weight:700;">(Editable)</span></label>
+            <input type="text" id="editEmPhone" name="emergency_contact_phone" class="modal-form-control" placeholder="e.g. +94 77 123 4567" style="border: 1.5px solid #86efac; background: #ffffff;" />
+          </div>
         </div>
 
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
