@@ -115,6 +115,7 @@
     const activeMembersList = document.getElementById('activeMembersList');
     const activeMembersDate = document.getElementById('activeMembersDate');
     const dailyWorkPlansList = document.getElementById('dailyWorkPlansList');
+    const dailyWorkPlansMobileList = document.getElementById('dailyWorkPlansMobileList');
 
     function renderActiveMembers(members) {
       if (!activeMembersList) return;
@@ -148,13 +149,38 @@
       if (!dailyWorkPlansList) return;
       if (!Array.isArray(plans) || plans.length === 0) {
         dailyWorkPlansList.innerHTML = '<div style="padding:12px; color:#94a3b8; font-size:13px;">No daily work plans submitted today.</div>';
+        if (dailyWorkPlansMobileList) dailyWorkPlansMobileList.innerHTML = '<div style="padding:12px; color:#94a3b8; font-size:13px;">No daily work plans submitted today.</div>';
         return;
       }
-      dailyWorkPlansList.innerHTML = `<table class="daily-plans-table"><thead><tr><th>Employee</th><th>Daily Plan</th><th>Started</th><th>Status</th><th></th></tr></thead><tbody>${plans.map(plan => {
+      dailyWorkPlansList.innerHTML = `<table class="daily-plans-table"><thead><tr><th>Employee</th><th>Daily Plan</th><th>Started</th><th>Status</th></tr></thead><tbody>${plans.map(plan => {
         const status = plan.started_at ? 'Active' : 'Submitted';
         const started = plan.started_at ? escapeHtml(plan.started_at) : 'Not started';
-        return `<tr><td><div class="plan-name">${escapeHtml(plan.name)}</div><div class="plan-dept">${escapeHtml(plan.department || plan.role || '')}</div></td><td>${escapeHtml(plan.plan_text)}</td><td>${started}</td><td><span class="plan-status ${plan.started_at ? 'active' : ''}">${status}</span></td><td><button class="plan-profile-btn" type="button" onclick="openDashboardEmployeeProfile(${Number(plan.profile_id)})">Profile</button></td></tr>`;
+        return `<tr><td><div class="plan-name plan-name-link" role="button" tabindex="0" onclick="openDashboardEmployeeProfile(${Number(plan.profile_id)})" onkeydown="if(event.key === 'Enter' || event.key === ' ') openDashboardEmployeeProfile(${Number(plan.profile_id)})">${escapeHtml(plan.name)}</div><div class="plan-dept">${escapeHtml(plan.department || plan.role || '')}</div></td><td>${escapeHtml(plan.plan_text)}</td><td>${started}</td><td><span class="plan-status ${plan.started_at ? 'active' : ''}">${status}</span></td></tr>`;
       }).join('')}</tbody></table>`;
+
+      if (dailyWorkPlansMobileList) {
+        dailyWorkPlansMobileList.innerHTML = plans.map(plan => {
+          const status = plan.started_at ? 'Active' : 'Submitted';
+          const started = plan.started_at ? escapeHtml(plan.started_at) : 'Not started';
+          return `<article class="daily-plan-mobile-card">
+            <div class="daily-plan-mobile-head">
+              <div style="min-width:0;">
+                <div class="daily-plan-mobile-title" role="button" tabindex="0" onclick="openDashboardEmployeeProfile(${Number(plan.profile_id)})" onkeydown="if(event.key === 'Enter' || event.key === ' ') openDashboardEmployeeProfile(${Number(plan.profile_id)})">${escapeHtml(plan.name)}</div>
+                <div class="daily-plan-mobile-dept">${escapeHtml(plan.department || plan.role || '')}</div>
+              </div>
+              <span class="plan-status ${plan.started_at ? 'active' : ''}">${status}</span>
+            </div>
+            <div>
+              <div class="daily-plan-mobile-label">Daily plan</div>
+              <div class="daily-plan-mobile-value" style="max-width:100%; text-align:left; margin-top:3px;">${escapeHtml(plan.plan_text)}</div>
+            </div>
+            <div class="daily-plan-mobile-row">
+              <span class="daily-plan-mobile-label">Started</span>
+              <span class="daily-plan-mobile-value">${started}</span>
+            </div>
+          </article>`;
+        }).join('');
+      }
     }
     function renderActivities(customActs) {
       if (!activitiesList) return;

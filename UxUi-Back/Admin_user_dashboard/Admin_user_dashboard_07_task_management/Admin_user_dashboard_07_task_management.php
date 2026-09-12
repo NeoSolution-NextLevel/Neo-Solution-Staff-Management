@@ -235,6 +235,7 @@
       font-size: 11.5px;
       font-weight: 700;
       line-height: 1;
+      white-space: nowrap !important;
     }
 
     .pill-online { background: var(--badge-online-bg); color: var(--badge-online-text); }
@@ -477,10 +478,12 @@
       }
 
       .task-count-text {
+        min-width: 0 !important;
         font-size: 13.5px !important;
         font-weight: 700 !important;
         color: #64748b !important;
         margin: 0 !important;
+        overflow-wrap: anywhere !important;
       }
 
       .btn-create-task {
@@ -526,30 +529,27 @@
         display: flex !important;
         align-items: center !important;
         gap: 8px !important;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        white-space: nowrap !important;
-        padding: 2px 2px 8px 2px !important;
+        flex-wrap: wrap !important;
+        overflow: visible !important;
+        white-space: normal !important;
+        padding: 2px 2px 4px 2px !important;
         width: 100% !important;
-        scrollbar-width: none !important;
-      }
-
-      .task-filter-group::-webkit-scrollbar {
-        display: none !important;
       }
 
       .filter-pill {
         padding: 7px 15px !important;
         font-size: 12.5px !important;
         font-weight: 600 !important;
-        flex-shrink: 0 !important;
-        white-space: nowrap !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        white-space: normal !important;
         border-radius: 999px !important;
       }
 
       #taskEmployeeFilter {
         margin-left: 0 !important;
-        flex-shrink: 0 !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
         font-size: 12.5px !important;
         font-weight: 600 !important;
         padding: 7px 14px !important;
@@ -679,6 +679,7 @@
         color: #334155 !important;
         font-weight: 600 !important;
         font-size: 13px !important;
+        white-space: nowrap !important;
       }
 
       .task-table td.col-mode {
@@ -689,6 +690,7 @@
         gap: 4px !important;
         padding: 0 !important;
         border: none !important;
+        white-space: nowrap !important;
       }
 
       .task-table td.col-mode::before {
@@ -698,6 +700,7 @@
         color: #94a3b8 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.04em !important;
+        white-space: nowrap !important;
       }
 
       .task-table td.col-status {
@@ -708,6 +711,7 @@
         gap: 4px !important;
         padding: 0 !important;
         border: none !important;
+        white-space: nowrap !important;
       }
 
       .task-table td.col-status::before {
@@ -717,6 +721,7 @@
         color: #94a3b8 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.04em !important;
+        white-space: nowrap !important;
       }
 
       .task-table td.col-actions {
@@ -786,6 +791,116 @@
       }
       .w3-modal-footer {
         padding: 12px 18px !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #Admin_user_dashboard_07_task_management {
+        padding: 8px 10px 64px !important;
+        overflow-x: hidden !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .main-task-wrapper {
+        gap: 12px !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-header-row {
+        gap: 8px !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-count-text {
+        font-size: 12px !important;
+        line-height: 1.3 !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .btn-create-task {
+        padding: 8px 11px !important;
+        font-size: 12px !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-filter-group {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        width: 100% !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        gap: 7px !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .filter-pill,
+      #Admin_user_dashboard_07_task_management #taskEmployeeFilter {
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 8px 6px !important;
+        font-size: 11.5px !important;
+        white-space: normal !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-table tr {
+        grid-template-columns: 1fr 1fr !important;
+        padding: 14px !important;
+        gap: 12px 14px !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-table td {
+        min-width: 0 !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-table td.col-employee {
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-table td.col-status,
+      #Admin_user_dashboard_07_task_management .task-table td.col-mode,
+      #Admin_user_dashboard_07_task_management .task-table td.col-deadline {
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+        white-space: nowrap !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-table td.col-status .task-pill,
+      #Admin_user_dashboard_07_task_management .task-table td.col-mode .task-pill {
+        white-space: nowrap !important;
+        display: inline-flex !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-table td.col-task .task-title-text,
+      #Admin_user_dashboard_07_task_management .task-table td.col-task .task-dept-text {
+        overflow-wrap: anywhere !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-table td.col-actions .task-action-group {
+        flex-wrap: wrap !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .task-table td.col-actions .task-btn-view {
+        min-width: 0 !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .w3-modal-overlay {
+        padding: 8px !important;
+        padding-top: 18px !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .w3-modal-card {
+        max-height: calc(100dvh - 26px) !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .w3-modal-header h3 {
+        font-size: 15px !important;
+        max-width: calc(100% - 36px) !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .w3-modal-footer {
+        flex-wrap: wrap !important;
+      }
+
+      #Admin_user_dashboard_07_task_management .w3-modal-footer button {
+        flex: 1 1 120px !important;
       }
     }
 </style>

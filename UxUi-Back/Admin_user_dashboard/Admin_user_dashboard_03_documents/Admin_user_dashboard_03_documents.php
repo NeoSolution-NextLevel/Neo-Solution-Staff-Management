@@ -30,14 +30,15 @@
 
   #Admin_user_dashboard_03_documents {
     width: 100%;
-    min-height; 100vh;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
   .main {
     margin-left: 250px;
     width: calc(100% - 250px);
     max-width: calc(100% - 250px);
-    min-heigth: 100vh;
+    min-height: 100vh;
     padding: 16px 20px 24px;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
@@ -700,20 +701,40 @@
       min-height: 100vh !important;
       height: auto !important;
       max-height: none !important;
-      overflow: visible !important;
-      padding: 0 12px 80px !important;
+      overflow-x: hidden !important;
+      overflow-y: visible !important;
+      padding: 0 10px 72px !important;
+      width: 100% !important;
+      max-width: 100vw !important;
     }
     #Admin_user_dashboard_03_documents .main {
       margin-left: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
       padding: 0 !important;
+      min-width: 0 !important;
       height: auto !important;
       max-height: none !important;
-      overflow: visible !important;
+      overflow-x: hidden !important;
+      overflow-y: visible !important;
+    }
+    #Admin_user_dashboard_03_documents .topbar {
+      width: calc(100% + 20px) !important;
+      margin: 0 -10px 12px !important;
+      padding: 0 10px !important;
+      height: 58px !important;
+      min-height: 58px !important;
+      max-height: 58px !important;
     }
     .menu-btn { display: inline-flex !important; }
-    .topbar h2 { font-size: 18px !important; }
+    #Admin_user_dashboard_03_documents .topbar h2 { font-size: 18px !important; }
+    #Admin_user_dashboard_03_documents .topbar-left,
+    #Admin_user_dashboard_03_documents .topbar-right {
+      min-width: 0;
+      gap: 6px;
+    }
+    #Admin_user_dashboard_03_documents .admin-pill { padding: 4px; }
+    #Admin_user_dashboard_03_documents .admin-pill span { display: none; }
     
     .doc-main-card {
       border: none !important;
@@ -728,8 +749,8 @@
     .doc-toolbar {
       flex-direction: column;
       align-items: stretch;
-      gap: 10px;
-      padding: 12px;
+      gap: 8px;
+      padding: 10px;
       background: #ffffff;
       border-radius: 12px;
       border: 1px solid var(--border);
@@ -741,6 +762,12 @@
       width: 100%;
       flex-direction: column;
       gap: 8px;
+    }
+    #docsFilterGroup,
+    #reqsFilterGroup {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
     }
     .doc-search-box {
       width: 100% !important;
@@ -754,9 +781,31 @@
       box-sizing: border-box !important;
     }
     .doc-toolbar-right {
-      justify-content: space-between;
+      flex-wrap: wrap;
+      justify-content: stretch;
       width: 100%;
-      gap: 10px;
+      gap: 8px;
+    }
+    .doc-subnav-tabs {
+      display: flex;
+      flex: 1 1 100%;
+      width: 100%;
+      gap: 3px;
+    }
+    .doc-tab-pill {
+      flex: 1 1 0;
+      min-width: 0;
+      justify-content: center;
+      padding: 7px 5px;
+      gap: 4px;
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .doc-tab-pill i { display: none; }
+    #btnOpenReqModal {
+      width: 100%;
+      justify-content: center;
     }
 
     .doc-table-wrap { display: none !important; }
@@ -765,6 +814,60 @@
       padding: 0 !important; 
       background: transparent !important;
       gap: 12px;
+    }
+    .mobile-doc-card {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      border-radius: 13px;
+      overflow: hidden;
+    }
+    .mobile-doc-card-head {
+      min-width: 0;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .mobile-doc-card-head .emp-cell,
+    .mobile-doc-card-head .emp-info { min-width: 0; }
+    .mobile-doc-card-head .emp-name,
+    .mobile-doc-card-head .emp-id-badge {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .mobile-doc-details {
+      min-width: 0;
+      padding: 9px 10px;
+    }
+    .mobile-doc-row {
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .mobile-doc-val,
+    .mobile-doc-row .doc-type-badge {
+      min-width: 0;
+      max-width: 72%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      text-align: right;
+    }
+    .mobile-doc-actions { flex-wrap: wrap; gap: 6px; }
+    .btn-mobile-action { min-width: 0; padding: 8px 6px; }
+    #adminDocRequestsSection {
+      padding: 12px 0 !important;
+      overflow: visible !important;
+    }
+    #adminDocRequestsSection > div:first-child h3 { font-size: 15px !important; }
+    #reqMobileCards {
+      display: flex !important;
+      width: 100%;
+      min-width: 0;
+    }
+    #reqMobileCards > div {
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
     }
   }
 
@@ -777,6 +880,10 @@
       border-radius: 0 !important;
     }
     .hide-on-mobile { display: none !important; }
+    #reqDocModal > div {
+      max-height: calc(100vh - 20px);
+      overflow-y: auto;
+    }
   }
 </style>
 

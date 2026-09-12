@@ -28,7 +28,8 @@
 
   #Admin_user_dashboard_04_bank_details {
     width: 100%;
-    min-height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
   /* Main Container */
@@ -609,32 +610,82 @@
 
   /* Mobile Responsive */
   @media (max-width: 900px){
-    #Admin_user_dashboard_04_bank_details { padding: 0 12px 80px !important; }
-    .main{ margin-left: 0 !important; width: 100% !important; max-width: 100% !important; padding: 12px 0 !important; }
-    .topbar { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 8px !important; margin-bottom: 14px !important; }
+    #Admin_user_dashboard_04_bank_details {
+      width: 100% !important;
+      max-width: 100vw !important;
+      padding: 0 10px 72px !important;
+      overflow-x: hidden !important;
+    }
+    .main{
+      margin-left: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      overflow-x: hidden !important;
+    }
+    #Admin_user_dashboard_04_bank_details .topbar {
+      width: calc(100% + 20px) !important;
+      margin: 0 -10px 12px !important;
+      padding: 0 10px !important;
+      height: 58px !important;
+      min-height: 58px !important;
+      max-height: 58px !important;
+    }
     .topbar-left { display: flex !important; align-items: center !important; gap: 6px !important; min-width: 0 !important; flex: 1 !important; }
     .menu-btn{ display: inline-flex !important; flex-shrink: 0 !important; }
-    .topbar h2{ font-size: 16px !important; line-height: 1.25 !important; }
+    .topbar h2{ font-size: 17px !important; line-height: 1.25 !important; white-space: nowrap !important; }
     .topbar-right { display: flex !important; align-items: center !important; gap: 8px !important; flex-shrink: 0 !important; }
     .admin-pill { padding: 4px 8px 4px 4px !important; }
     .admin-pill span { display: none !important; }
-    .bank-tabs-nav { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; white-space: nowrap !important; gap: 8px !important; padding-bottom: 6px !important; }
-    .bank-tab-btn { padding: 7px 12px !important; font-size: 13px !important; flex-shrink: 0 !important; }
-    .page-head { margin-bottom: 12px !important; gap: 8px !important; }
-    .page-head p { font-size: 12.5px !important; }
-    .head-actions { width: 100% !important; flex-direction: column !important; gap: 8px !important; }
+    .bank-tabs-nav {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px !important;
+      margin-bottom: 12px !important;
+      padding: 4px !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 10px !important;
+      overflow: hidden !important;
+    }
+    .bank-tab-btn {
+      min-width: 0 !important;
+      width: 100% !important;
+      justify-content: center !important;
+      padding: 8px 5px !important;
+      gap: 4px !important;
+      font-size: 11.5px !important;
+      text-align: center !important;
+      white-space: normal !important;
+    }
+    .bank-tab-btn i { display: none; }
+    .bank-tab-badge { padding: 1px 5px !important; font-size: 10px !important; }
+    .page-head { margin-bottom: 10px !important; gap: 8px !important; align-items: flex-start !important; }
+    .page-head > div:first-child { min-width: 0 !important; }
+    .page-head p { font-size: 12px !important; line-height: 1.35 !important; }
+    .head-actions { width: 100% !important; flex-direction: column !important; gap: 7px !important; }
     .search-input-wrap { width: 100% !important; }
     .search-input { width: 100% !important; font-size: 13px !important; padding: 8px 12px 8px 34px !important; }
     .add-btn, .pay-btn-primary { width: 100% !important; justify-content: center !important; }
     .bank-form-grid-2 { grid-template-columns: 1fr !important; }
-    #Admin_user_dashboard_04_bank_details .table-card { display: block !important; border: 1px solid var(--border) !important; border-radius: 12px !important; background: var(--card) !important; box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important; margin-top: 8px !important; overflow: hidden !important; }
+    #Admin_user_dashboard_04_bank_details .table-card { display: block !important; border: 1px solid var(--border) !important; border-radius: 12px !important; background: var(--card) !important; box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important; margin-top: 8px !important; overflow: hidden !important; min-width: 0 !important; }
     .table-wrap { display: none !important; }
     .emp-mobile-receipt-cards { display: flex !important; flex-direction: column !important; gap: 10px !important; padding: 12px !important; }
-    .emp-mobile-receipt-card { background: #ffffff !important; border: 1px solid var(--border) !important; border-radius: 10px !important; padding: 12px !important; }
-    .bank-modal-overlay { padding: 8px !important; }
-    .bank-modal-card { border-radius: 14px !important; }
-    .bank-modal-body { padding: 16px !important; }
-    .bank-modal-footer { padding: 12px 16px !important; }
+    .emp-mobile-receipt-card { background: #ffffff !important; border: 1px solid var(--border) !important; border-radius: 10px !important; padding: 12px !important; min-width: 0 !important; overflow: hidden !important; }
+    .emp-mobile-receipt-card .emp-cell { min-width: 0 !important; }
+    .emp-mobile-receipt-card .emp-name,
+    .emp-mobile-receipt-card .emp-email,
+    .emp-mobile-receipt-card strong { white-space: normal !important; overflow-wrap: anywhere !important; word-break: break-word !important; }
+    .emp-mobile-receipt-card > div { min-width: 0; }
+    .bank-modal-overlay { padding: 8px !important; align-items: flex-start !important; }
+    .bank-modal-card { width: 100% !important; max-width: 100% !important; max-height: calc(100vh - 16px) !important; border-radius: 14px !important; margin: 0 auto !important; }
+    .bank-modal-head { padding: 14px 16px !important; }
+    .bank-modal-head h3 { min-width: 0; font-size: 15px !important; line-height: 1.3 !important; }
+    .bank-modal-body { padding: 14px !important; max-height: none !important; overflow-y: auto !important; }
+    .bank-modal-footer { padding: 10px 14px !important; flex-wrap: wrap !important; }
+    .bank-modal-footer > * { flex: 1 1 140px; justify-content: center !important; text-align: center !important; }
+    .receipt-image-dropzone { padding: 18px 12px !important; }
   }
 </style>
 

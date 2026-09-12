@@ -3,12 +3,14 @@
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .emp-notif-container {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   /* Top Navigation Bar */
@@ -127,6 +129,10 @@
     gap: 10px;
   }
 
+  .emp-notif-head > div {
+    min-width: 0;
+  }
+
   .emp-notif-head h3 {
     font-size: 18px;
     font-weight: 800;
@@ -144,6 +150,8 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.15s ease;
+    flex: 0 0 auto;
+    text-align: center;
   }
   .emp-mark-read-btn:hover { 
     background: #e2e8f0; 
@@ -170,6 +178,17 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.04); 
   }
 
+  .emp-notif-item > div:nth-child(2) {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .emp-notif-item h4,
+  .emp-notif-item p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   .emp-notif-icon {
     width: 38px;
     height: 38px;
@@ -184,7 +203,52 @@
   @media (max-width: 768px) {
     .emp-notif-menu-btn { display: inline-flex !important; }
     .emp-notif-topbar h2 { font-size: 18px !important; }
-    .emp-notif-card { padding: 16px; }
+    .emp-notif-topbar { margin-bottom: 6px !important; }
+    .emp-notif-card {
+      padding: 0 10px 10px;
+      margin-bottom: 12px;
+    }
+    .emp-notif-head {
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .emp-notif-head h3 { font-size: 16px; }
+    .emp-notif-head > div {
+      flex: 1 1 auto;
+      line-height: 1.35;
+    }
+    .emp-mark-read-btn {
+      min-width: 116px;
+      max-width: 126px;
+      padding: 8px 10px;
+      line-height: 1.35;
+    }
+    .emp-notif-item {
+      gap: 8px;
+      padding: 10px;
+    }
+    .emp-notif-item > div:nth-child(2) > div:first-child {
+      align-items: flex-start !important;
+      flex-wrap: wrap !important;
+      gap: 2px 8px;
+    }
+    .emp-notif-item .notif-time {
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .emp-notif-card { padding: 0 9px 9px; }
+    .emp-notif-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 112px;
+      align-items: start;
+    }
+    .emp-mark-read-btn {
+      min-width: 0;
+      width: 112px;
+    }
   }
 </style>
 

@@ -14,6 +14,7 @@
 
     let leaveRequests = [];
     const tableBody = document.getElementById('leaveTableBody');
+    const mobileLeaveCards = document.getElementById('mobileLeaveCards');
     const leaveCount = document.getElementById('leaveCount');
     const filterTabs = document.querySelectorAll('#leaveFilterTabs .filter-btn');
     const leaveModal = document.getElementById('leaveDetailsModal');
@@ -78,6 +79,55 @@
         }).join('');
       } else {
         tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 36px 20px; color: #64748b;">No leave requests found for this filter.</td></tr>';
+      }
+
+      if (mobileLeaveCards) {
+        if (filtered.length === 0) {
+          mobileLeaveCards.innerHTML = '<div class="mobile-leave-card" style="text-align:center; color:#64748b;">No leave requests found for this filter.</div>';
+        } else {
+          mobileLeaveCards.innerHTML = filtered.map(r => {
+            const statusClass = (r.status || 'Pending').toLowerCase();
+            const fromDate = (r.from || '').split(' ')[0];
+            const toDate = (r.to || '').split(' ')[0];
+            const reasonFull = r.reason ? r.reason : '—';
+            const empName = r.employee || 'Employee';
+            const actions = statusClass === 'pending'
+              ? `<div class="btn-actions-group">
+                   <button type="button" class="btn-action approve" onclick="approveLeave(${r.id}, event)">Approve</button>
+                   <button type="button" class="btn-action reject" onclick="rejectLeave(${r.id}, event)">Reject</button>
+                 </div>`
+              : `<div class="btn-actions-group">
+                   <button type="button" class="btn-action view" onclick="openLeaveDetails(${r.id})">View Details</button>
+                 </div>`;
+
+            return `
+              <article class="mobile-leave-card">
+                <div class="mobile-leave-card-header">
+                  <div>
+                    <div class="mobile-leave-card-label">Employee</div>
+                    <div class="mobile-leave-card-name">${escapeHtml(empName)}</div>
+                  </div>
+                  <span class="status-tag ${statusClass}">${escapeHtml(r.status || 'Pending')}</span>
+                </div>
+                <div class="mobile-leave-card-body">
+                  <div class="mobile-leave-card-row">
+                    <span class="mobile-leave-card-label">Leave type</span>
+                    <strong class="mobile-leave-card-value">${escapeHtml(r.type || 'Leave')}</strong>
+                  </div>
+                  <div class="mobile-leave-card-row">
+                    <span class="mobile-leave-card-label">Period</span>
+                    <span class="mobile-leave-card-value">${escapeHtml(fromDate)} to ${escapeHtml(toDate)} (${escapeHtml(r.days || 1)} d)</span>
+                  </div>
+                  <div>
+                    <div class="mobile-leave-card-label">Reason</div>
+                    <div class="mobile-leave-card-reason">${escapeHtml(reasonFull)}</div>
+                  </div>
+                </div>
+                <div class="mobile-leave-card-actions">${actions}</div>
+              </article>
+            `;
+          }).join('');
+        }
       }
 
       const pendingCount = leaveRequests.filter(r => (r.status || '').toLowerCase() === 'pending').length;

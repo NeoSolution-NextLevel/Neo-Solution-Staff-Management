@@ -634,10 +634,80 @@
   .daily-plans-table th { text-align:left; color:var(--muted); font-size:11px; text-transform:uppercase; padding:9px 8px; border-bottom:1px solid var(--border); }
   .daily-plans-table td { padding:10px 8px; border-bottom:1px solid #f1f5f9; vertical-align:top; }
   .daily-plans-table .plan-name { font-weight:800; color:var(--ink); }
+  .daily-plans-table .plan-name-link { cursor:pointer; }
+  .daily-plans-table .plan-name-link:hover { color:var(--blue); text-decoration:underline; }
   .daily-plans-table .plan-dept { color:var(--muted); font-size:11px; margin-top:2px; }
   .plan-status { display:inline-block; border-radius:999px; padding:4px 9px; font-size:11px; font-weight:700; background:#eff6ff; color:#2563eb; white-space:nowrap; }
   .plan-status.active { background:#dcfce7; color:#15803d; }
   .plan-profile-btn { border:0; background:transparent; color:var(--blue); font-weight:700; cursor:pointer; }
+
+  .daily-plans-mobile-list {
+    display: none;
+  }
+
+  .daily-plan-mobile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #f1f5f9;
+    border-radius: 10px;
+    background: #f8fafc;
+    box-sizing: border-box;
+  }
+
+  .daily-plan-mobile-head,
+  .daily-plan-mobile-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .daily-plan-mobile-label {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .daily-plan-mobile-value {
+    min-width: 0;
+    max-width: 72%;
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 1.4;
+    text-align: right;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .daily-plan-mobile-title {
+    min-width: 0;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+  }
+
+  .daily-plan-mobile-title:hover {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+
+  .daily-plan-mobile-dept {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
 
   /* ---------- Responsive ---------- */
   @media (max-width: 1200px) {
@@ -653,14 +723,154 @@
   }
 
   @media (max-width: 768px) {
+    #Admin_user_dashboard_01 {
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+    }
+    #Admin_user_dashboard_01 .main {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      padding: 0 10px 72px !important;
+      overflow-x: hidden !important;
+    }
+    #Admin_user_dashboard_01 .topbar {
+      width: calc(100% + 20px) !important;
+      margin: 0 -10px 12px !important;
+      padding: 0 10px !important;
+      height: 58px !important;
+      min-height: 58px !important;
+      max-height: 58px !important;
+    }
+    #Admin_user_dashboard_01 .topbar-left,
+    #Admin_user_dashboard_01 .topbar-right {
+      min-width: 0;
+      gap: 6px;
+    }
+    #Admin_user_dashboard_01 .topbar-left h2 {
+      font-size: 18px !important;
+      white-space: nowrap;
+    }
+    #Admin_user_dashboard_01 .admin-pill span {
+      display: none;
+    }
+    #Admin_user_dashboard_01 .admin-pill {
+      padding: 4px;
+    }
+    #Admin_user_dashboard_01 .banner {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 14px;
+    }
+    #Admin_user_dashboard_01 .banner h3 {
+      font-size: 18px;
+      line-height: 1.25;
+    }
+    #Admin_user_dashboard_01 .banner p {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    #Admin_user_dashboard_01 .banner-badge {
+      align-self: stretch;
+      text-align: center;
+      padding: 7px 10px;
+    }
     .stats {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    #Admin_user_dashboard_01 .stat-card {
+      min-width: 0;
+      padding: 11px 12px;
+      gap: 7px;
+      border-radius: 13px;
+    }
+    #Admin_user_dashboard_01 .stat-icon {
+      width: 32px;
+      height: 32px;
+    }
+    #Admin_user_dashboard_01 .stat-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+    #Admin_user_dashboard_01 .stat-value {
+      font-size: 19px;
+    }
+    #Admin_user_dashboard_01 .stat-label {
+      font-size: 11px;
     }
     .charts-row {
       grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    #Admin_user_dashboard_01 .card,
+    #Admin_user_dashboard_01 .active-members-card,
+    #Admin_user_dashboard_01 .daily-plans-card {
+      min-width: 0;
+      padding: 13px;
+      border-radius: 14px;
+    }
+    #Admin_user_dashboard_01 .card-header-row {
+      align-items: flex-start;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+    #Admin_user_dashboard_01 .card-header-row h4 {
+      min-width: 0;
+      font-size: 13px;
+      line-height: 1.3;
+      white-space: normal;
+    }
+    #Admin_user_dashboard_01 .card-header-link {
+      font-size: 10px;
+    }
+    #Admin_user_dashboard_01 .donut {
+      width: 142px;
+      height: 142px;
+    }
+    #Admin_user_dashboard_01 .donut::after {
+      width: 84px;
+      height: 84px;
+    }
+    #Admin_user_dashboard_01 .donut-total {
+      font-size: 20px;
+    }
+    #Admin_user_dashboard_01 .dept-list-container,
+    #Admin_user_dashboard_01 .activities-list-container {
+      max-height: 240px;
+      padding-right: 0;
+    }
+    #Admin_user_dashboard_01 .active-members-list {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    #Admin_user_dashboard_01 .active-member-row {
+      min-width: 0;
+      padding: 8px;
+    }
+    #Admin_user_dashboard_01 .daily-plans-card {
+      margin-bottom: 12px;
+    }
+    #Admin_user_dashboard_01 .daily-plan-mobile-card {
+      padding: 10px;
     }
     .card:last-child {
       grid-column: span 1;
+    }
+    .daily-plans-table-wrap {
+      display: none;
+    }
+    .daily-plans-mobile-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
     }
   }
 </style>
@@ -834,6 +1044,9 @@
         <span class="card-header-link">Employee submissions</span>
       </div>
       <div class="daily-plans-table-wrap" id="dailyWorkPlansList">
+        <div style="padding:12px; color:#94a3b8; font-size:13px;">Loading daily work plans...</div>
+      </div>
+      <div class="daily-plans-mobile-list" id="dailyWorkPlansMobileList">
         <div style="padding:12px; color:#94a3b8; font-size:13px;">Loading daily work plans...</div>
       </div>
     </section>

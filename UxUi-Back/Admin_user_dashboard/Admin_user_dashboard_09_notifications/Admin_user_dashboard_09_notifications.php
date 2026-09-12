@@ -104,7 +104,7 @@
 
     .icon-btn {
       background: #f1f5f9;
-      border: none;
+      border: 1px solid #e2e8f0;
       width: 36px;
       height: 36px;
       border-radius: 50%;
@@ -113,11 +113,25 @@
       justify-content: center;
       cursor: pointer;
       position: relative;
+      flex: 0 0 36px;
+      padding: 0;
+      color: #475569;
       transition: background 0.2s;
     }
 
     .icon-btn:hover {
       background: #e2e8f0;
+    }
+
+    .icon-btn:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, 0.22);
+      outline-offset: 2px;
+    }
+
+    .icon-btn svg {
+      display: block;
+      width: 18px;
+      height: 18px;
     }
 
     .notif-dot {
@@ -346,10 +360,17 @@
 
     /* Mobile Responsive Breakpoints */
     @media (max-width: 900px) {
+      #Admin_user_dashboard_09_notifications {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+      }
+
       .main-wrapper {
         margin-left: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
+        min-width: 0 !important;
       }
 
       .sidebar {
@@ -389,10 +410,27 @@
       .content-header {
         align-items: center;
         margin-bottom: 10px;
+        gap: 10px;
+        min-width: 0;
       }
 
       .header-title h1 {
         font-size: 19px;
+      }
+
+      .header-title {
+        min-width: 0;
+      }
+
+      .header-title p {
+        overflow-wrap: anywhere;
+      }
+
+      .mark-read-btn {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        font-size: 12px;
+        white-space: nowrap;
       }
 
       .notif-card {
@@ -417,11 +455,151 @@
         padding-right: 8px;
       }
 
+      .notif-title {
+        overflow-wrap: anywhere;
+      }
+
       .unread-indicator {
         top: 12px;
         right: 12px;
         width: 7px;
         height: 7px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #Admin_user_dashboard_09_notifications .topbar {
+        height: 56px !important;
+        padding: 8px 10px !important;
+        gap: 8px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .topbar-left {
+        min-width: 0 !important;
+        gap: 6px !important;
+        flex: 1 !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .page-breadcrumb {
+        min-width: 0 !important;
+        font-size: 15px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .topbar-right {
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .icon-btn {
+        width: 32px !important;
+        height: 32px !important;
+        flex-basis: 32px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .profile-pill {
+        padding: 2px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .content {
+        padding: 10px 10px 64px !important;
+        gap: 12px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .content-header {
+        align-items: stretch !important;
+        padding: 0 !important;
+        gap: 8px !important;
+        margin-bottom: 2px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .header-title {
+        display: flex !important;
+        align-items: center !important;
+        flex: 1 1 auto !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .header-title p {
+        font-size: 12px !important;
+        line-height: 1.3 !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .mark-read-btn {
+        align-self: center !important;
+        padding: 7px 9px !important;
+        font-size: 11px !important;
+        border-radius: 7px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notifications-list {
+        gap: 8px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-card {
+        padding: 11px !important;
+        gap: 9px !important;
+        border-radius: 11px !important;
+        margin-bottom: 0 !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-icon {
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 9px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-icon svg {
+        width: 16px !important;
+        height: 16px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-body {
+        min-width: 0 !important;
+        padding-right: 4px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-title-row {
+        align-items: flex-start !important;
+        gap: 3px 8px !important;
+        margin-bottom: 3px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-title {
+        min-width: 0 !important;
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-time {
+        font-size: 10.5px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-msg {
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 4px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .notif-link {
+        font-size: 11.5px !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .unread-indicator {
+        top: 10px !important;
+        right: 10px !important;
+      }
+    }
+
+    @media (max-width: 360px) {
+      #Admin_user_dashboard_09_notifications .content-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+      }
+
+      #Admin_user_dashboard_09_notifications .mark-read-btn {
+        width: 100% !important;
       }
     }
   </style>
@@ -444,7 +622,7 @@
           <h2 class="page-breadcrumb">Notifications</h2>
         </div>
         <div class="topbar-right">
-          <button class="icon-btn" aria-label="Notifications" onclick="Admin_user_dashboard_09_OPEN();">
+          <button class="icon-btn" type="button" aria-label="Notifications" aria-current="page" title="Notifications">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             <span class="notif-dot"></span>
           </button>
