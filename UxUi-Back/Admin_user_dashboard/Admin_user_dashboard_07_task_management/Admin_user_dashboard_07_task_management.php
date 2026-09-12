@@ -903,14 +903,7 @@
                 <input type="date" name="deadline" value="<?php echo date('Y-m-d'); ?>">
               </div>
             </div>
-            <div class="w3-form-group">
-              <label>Status</label>
-              <select name="status">
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
+            
           </div>
           <div class="w3-modal-footer">
             <button type="button" class="w3-btn-cancel" id="cancelCreateTaskModal">Cancel</button>
