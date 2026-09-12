@@ -33,12 +33,16 @@ if ($res) {
     $work_shift = isset($_POST['work_shift']) && !empty($_POST['work_shift']) ? trim($_POST['work_shift']) : '08:30 AM – 05:30 PM';
     $working_days = isset($_POST['working_days']) && !empty($_POST['working_days']) ? trim($_POST['working_days']) : 'Mon,Tue,Wed,Thu,Fri';
     $weekly_roster = isset($_POST['weekly_roster']) && !empty($_POST['weekly_roster']) ? trim($_POST['weekly_roster']) : '';
+    $work_location = isset($_POST['work_location']) && !empty($_POST['work_location']) ? trim($_POST['work_location']) : 'Colombo HQ';
+    $employment_type = isset($_POST['employment_type']) && !empty($_POST['employment_type']) ? trim($_POST['employment_type']) : 'Full-Time (Permanent)';
 
     $db = new DataBase();
     $conn = $db->get_data_base_connction();
     @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_shift` VARCHAR(100) DEFAULT '08:30 AM – 05:30 PM'");
     @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `working_days` VARCHAR(255) DEFAULT 'Mon,Tue,Wed,Thu,Fri'");
     @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `weekly_roster` TEXT DEFAULT NULL");
+    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_location` VARCHAR(255) DEFAULT 'Colombo HQ'");
+    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `employment_type` VARCHAR(100) DEFAULT 'Full-Time (Permanent)'");
 
     // Auto-create or link login account in main_user_login
     include_once __DIR__ . '/../../../imports/security/encrypt_decrypt.php';
@@ -79,9 +83,9 @@ if ($res) {
         $login_user_id = $new_emp_id;
     }
 
-    $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `email`, `department`, `job_title`, `join_date`, `work_shift`, `working_days`, `weekly_roster`, `created_at`) 
-                  VALUES ('$login_user_id', '" . addslashes($name) . "', '" . addslashes($email) . "', '" . addslashes($dept) . "', '" . addslashes($role) . "', '" . addslashes($joined) . "', '" . addslashes($work_shift) . "', '" . addslashes($working_days) . "', '" . addslashes($weekly_roster) . "', NOW())
-                  ON DUPLICATE KEY UPDATE `user_id` = '$login_user_id', `join_date` = '" . addslashes($joined) . "', `work_shift` = '" . addslashes($work_shift) . "', `working_days` = '" . addslashes($working_days) . "', `weekly_roster` = '" . addslashes($weekly_roster) . "'");
+    $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `email`, `department`, `job_title`, `join_date`, `work_shift`, `working_days`, `weekly_roster`, `work_location`, `employment_type`, `created_at`) 
+                  VALUES ('$login_user_id', '" . addslashes($name) . "', '" . addslashes($email) . "', '" . addslashes($dept) . "', '" . addslashes($role) . "', '" . addslashes($joined) . "', '" . addslashes($work_shift) . "', '" . addslashes($working_days) . "', '" . addslashes($weekly_roster) . "', '" . addslashes($work_location) . "', '" . addslashes($employment_type) . "', NOW())
+                  ON DUPLICATE KEY UPDATE `user_id` = '$login_user_id', `join_date` = '" . addslashes($joined) . "', `work_shift` = '" . addslashes($work_shift) . "', `working_days` = '" . addslashes($working_days) . "', `weekly_roster` = '" . addslashes($weekly_roster) . "', `work_location` = '" . addslashes($work_location) . "', `employment_type` = '" . addslashes($employment_type) . "'");
     $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$login_user_id'");
 
     // Sync job roles employee count according to department

@@ -7,6 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 include_once __DIR__ . '/../../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../../imports/need/DB.php';
+include_once __DIR__ . '/../../../imports/email/Email_Send.php';
 
 $db = new DataBase();
 
@@ -209,6 +210,22 @@ if ($action === 'shift_end_update' || isset($_POST['evening_update'])) {
         );
     }
 
+    // Send Daily Update Email to Admin
+    try {
+        if (class_exists('Email')) {
+            Email::send_daily_update_notification([
+                'update_type'    => 'shift_end',
+                'employee_name'  => $profileName,
+                'department'     => $profileDept,
+                'job_title'      => $profileRole,
+                'task_title'     => $taskTitle,
+                'task_status'    => $taskStatus,
+                'evening_update' => $eveningUpdate,
+                'date'           => $today
+            ]);
+        }
+    } catch (Exception $e) {}
+
     $updatedPlanRes = $db->get_result("SELECT id, user_id, employee_profile_id, employee_name, department, job_title, plan_text, status, started_at, shift_ended_at, submitted_at, updated_at, evening_update, task_status, task_id
         FROM `daily_employee_work_plans` WHERE id = {$planId} LIMIT 1");
 
@@ -301,6 +318,21 @@ $plan = $result ? $result->fetch_assoc() : null;
 if ($plan) {
     $plan['planned_tasks'] = $tasksList;
 }
+
+// Send Morning Plan Email to Admin
+try {
+    if (class_exists('Email')) {
+        Email::send_daily_update_notification([
+            'update_type'   => 'morning_plan',
+            'employee_name' => $profileName,
+            'department'    => $profileDept,
+            'job_title'     => $profileRole,
+            'plan_text'     => $planText,
+            'tasks'         => $tasksList,
+            'date'          => $today
+        ]);
+    }
+} catch (Exception $e) {}
 
 echo json_encode([
     'status' => 'success',

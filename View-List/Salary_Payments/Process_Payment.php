@@ -7,6 +7,7 @@ include_once __DIR__ . '/../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../imports/need/DB.php';
 include_once __DIR__ . '/../../Controllers/Main/Salary_Payments/salary_payments_ADD_UPDATE.php';
 include_once __DIR__ . '/../../Controllers/Main/Salary_Payments/salary_payments_LIST.php';
+include_once __DIR__ . '/../../imports/email/Email_Send.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -174,6 +175,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     'employee', '$escRecName', '$escTitle', '$escMsg', 'payment', 0, NOW()
                 )");
             } catch (Exception $e) {}
+
+            // 3. Dispatch automated Salary Payment email voucher to employee
+            try {
+                if (class_exists('Email')) {
+                    Email::send_salary_payment_notification([
+                        'employee_name'  => $employee_name,
+                        'employee_id'    => $employee_id,
+                        'user_id'        => $user_id,
+                        'payment_month'  => $payment_month,
+                        'payment_date'   => $payment_date,
+                        'net_salary'     => $net_salary,
+                        'basic_salary'   => $basic_salary,
+                        'allowances'     => $allowances,
+                        'bonus'          => $bonus,
+                        'deductions'     => $deductions,
+                        'epf_employee'   => $epf_employee,
+                        'payment_method' => $payment_method,
+                        'bank_name'      => $bank_name,
+                        'branch'         => $branch,
+                        'account_number' => $account_number,
+                        'receipt_no'     => $receipt_no,
+                        'reference_no'   => $reference_no
+                    ]);
+                }
+            } catch (Exception $e) {}
+
 
             $state['error']         = "0";
             $state['status']        = "success";

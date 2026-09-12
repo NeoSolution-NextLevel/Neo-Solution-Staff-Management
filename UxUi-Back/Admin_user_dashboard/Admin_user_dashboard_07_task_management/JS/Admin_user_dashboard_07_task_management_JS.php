@@ -86,13 +86,13 @@
               <td class="col-mode" data-label="Mode"><span class="task-pill ${modeClass}">${t.mode || 'Online'}</span></td>
               <td class="col-deadline" data-label="Deadline">${t.deadline || '—'}</td>
               <td class="col-status" data-label="Status"><span class="task-pill ${statusClass}">${t.status || 'Pending'}</span></td>
-              <td class="col-actions" data-label="Actions" style="text-align: center; vertical-align: middle;">
-                <div class="task-action-group" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:8px;">
-                  <button class="task-action-btn task-btn-view" aria-label="View Task" title="View Task" onclick="viewTask(${t.id})" style="display:inline-flex; align-items:center; gap:5px; padding: 6px 11px; border-radius: 8px; font-size: 12px; font-weight: 700; width: auto; height: auto;">
+              <td class="col-actions" data-label="Actions">
+                <div class="task-action-group">
+                  <button class="task-btn-view" aria-label="View Task" title="View Task" onclick="viewTask(${t.id})">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     <span>View</span>
                   </button>
-                  <button class="task-action-btn task-btn-edit" aria-label="Edit Task" title="Edit Task" onclick="editTask(${t.id})">${iconEdit}</button>
+                  <button class="task-btn-edit" aria-label="Edit Task" title="Edit Task" onclick="editTask(${t.id})">${iconEdit}</button>
                 </div>
               </td>
             </tr>

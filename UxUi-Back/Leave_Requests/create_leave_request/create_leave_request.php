@@ -21,6 +21,24 @@ $email    = isset($_POST['email']) && !empty($_POST['email']) ? trim($_POST['ema
 
 if ($days <= 0) $days = 1;
 
+// Strictly validate that leave request is at least 2 days in advance
+$minAllowedDate = date('Y-m-d', strtotime('+2 days'));
+if ($from < $minAllowedDate) {
+    echo json_encode([
+        'status'  => 'error',
+        'message' => 'Leave requests must be submitted at least 2 days in advance. Earliest allowed date is ' . $minAllowedDate . '.'
+    ]);
+    exit;
+}
+
+if ($to < $from) {
+    echo json_encode([
+        'status'  => 'error',
+        'message' => 'To Date cannot be earlier than From Date.'
+    ]);
+    exit;
+}
+
 $leave_obj = new leave_requests_ADD_UPDATE();
 $leave_obj->set_data($employee, $type, $from, $to, $days, $reason, "Pending");
 $res = $leave_obj->process_new_record();

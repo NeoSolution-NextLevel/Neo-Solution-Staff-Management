@@ -762,11 +762,11 @@
       <div class="quick-login-wrap" style="display:inline-flex; align-items:center; gap:8px; background:#f5f3ff; border:1.5px solid #ddd6fe; padding:4px 12px; border-radius:12px;">
         <span style="font-size:12.5px; font-weight:800; color:#6366f1; display:inline-flex; align-items:center; gap:6px; white-space:nowrap;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8l2 2-2 2"/><path d="M17 10h4"/></svg>
-          Auto Login:
+          
         </span>
         <select id="quickAutoLoginSelect" onchange="if(typeof handleQuickAutoLogin==='function'){handleQuickAutoLogin(this.value);}"
           style="padding:6px 10px; border-radius:8px; border:1px solid #c7d2fe; background:#ffffff; font-size:12.5px; font-weight:700; color:#312e81; cursor:pointer; outline:none; max-width:240px; box-shadow:0 1px 2px rgba(99,102,241,.1);">
-          <option value="">⚡ Select Employee to Login...</option>
+          <option value="">Select Employee...</option>
         </select>
       </div>
     </div>
@@ -827,6 +827,7 @@
                   <option value="">Select Department first...</option>
                 </select>
               </div>
+            </div>
             <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Status</label>
@@ -838,6 +839,21 @@
               <div class="w3-form-group">
                 <label>Joined Date</label>
                 <input type="date" name="joined" value="<?php echo date('Y-m-d'); ?>">
+              </div>
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Work Location</label>
+                <input type="text" name="work_location" id="addEmpLocation" placeholder="e.g. Colombo HQ" value="Colombo HQ">
+              </div>
+              <div class="w3-form-group">
+                <label>Employment Type</label>
+                <select name="employment_type" id="addEmpType">
+                  <option value="Full-Time (Permanent)">Full-Time (Permanent)</option>
+                  <option value="Part-Time">Part-Time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
               </div>
             </div>
 
@@ -944,8 +960,6 @@
           </div>
         </form>
       </div>
-      </div>
-</div>
     </div>
 
     <!-- View Employee Profile Details Card Modal -->
@@ -965,8 +979,9 @@
               <h2 class="w3-emp-profile-name" id="viewEmpName" style="font-size:22px; font-weight:800; color:#14204d; margin:0 0 2px;">Loading...</h2>
               <p class="w3-emp-profile-role" style="font-size:13.5px; font-weight:700; color:#2563eb; margin:0;"><span id="viewEmpRole">—</span> • <span id="viewEmpDept">—</span></p>
             </div>
-            <div style="display:flex; gap:6px;">
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
               <span class="status-badge active" id="viewEmpStatus" style="font-size:12px; padding:4px 12px;">Active</span>
+              <span class="status-badge" id="viewEmpTodayMode" style="background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:12px; padding:4px 12px; font-weight:700;">On-Site</span>
               <span class="status-badge" id="viewEmpCode" style="background:#eff6ff; color:#2563eb; font-size:12px; padding:4px 12px;">EMP-001</span>
             </div>
           </div>
@@ -1166,14 +1181,30 @@
                 <input type="date" name="joined" id="editEmpJoined">
               </div>
             </div>
+            
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Emergency Contact Name</label>
-                <input type="text" name="emergency_contact_name" id="editEmpEmName" placeholder="e.g. Namal Perera">
+                <label>Work Location</label>
+                <input type="text" name="work_location" id="editEmpLocation" placeholder="e.g. Colombo HQ">
               </div>
               <div class="w3-form-group">
-                <label>Emergency Contact Phone</label>
-                <input type="text" name="emergency_contact_phone" id="editEmpEmPhone" placeholder="e.g. 0771234567">
+                <label>Employment Type</label>
+                <select name="employment_type" id="editEmpType">
+                  <option value="Full-Time (Permanent)">Full-Time (Permanent)</option>
+                  <option value="Part-Time">Part-Time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
+              </div>
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Emergency Contact Name <span style="font-size:10px; color:#94a3b8; font-weight:700;">(Employee Managed - Locked)</span></label>
+                <input type="text" name="emergency_contact_name" id="editEmpEmName" placeholder="e.g. Nimal Perera (Father)" readonly tabindex="-1" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+              </div>
+              <div class="w3-form-group">
+                <label>Emergency Contact Phone <span style="font-size:10px; color:#94a3b8; font-weight:700;">(Employee Managed - Locked)</span></label>
+                <input type="text" name="emergency_contact_phone" id="editEmpEmPhone" placeholder="e.g. +94 77 123 4567" readonly tabindex="-1" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
               </div>
             </div>
             <!-- Work Schedule Section -->
@@ -1272,42 +1303,37 @@
                 </div>
               </div>
             </div>
-            <div class="w3-form-group">
-              <label>Employment Type</label>
-              <select name="employment_type" id="editEmpType">
-                <option value="Full-Time (Permanent)">Full-Time (Permanent)</option>
-                <option value="Part-Time">Part-Time</option>
-                <option value="Contract">Contract</option>
-                <option value="Internship">Internship</option>
-              </select>
-            </div>
+
 
             <!-- Bank & Compensation Section -->
-            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between;">
-              <span><i class="fa-solid fa-building-columns" style="color:#2563eb; margin-right:4px;"></i> Bank Account & Compensation</span>
-              <span style="font-size:11px; font-weight:600; color:#10b981; text-transform:none;"><i class="fa-solid fa-shield-halved"></i> AES-256 Encrypted</span>
-            </div>
-
-            <div class="w3-form-row">
-              <div class="w3-form-group">
-                <label>Account Holder Name</label>
-                <input type="text" name="holder_name" id="editEmpHolderName" placeholder="e.g. Kasun Kalhara">
-              </div>
-              <div class="w3-form-group">
-                <label>Bank Name</label>
-                <input type="text" name="bank_name" id="editEmpBankName" list="sriLankaBanksList" placeholder="e.g. Commercial Bank of Ceylon">
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+              <span><i class="fa-solid fa-building-columns" style="color:#2563eb; margin-right:4px;"></i> Employee Bank Account</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:11px; font-weight:700; color:#475569; background:#f1f5f9; padding:2px 8px; border-radius:12px; border:1px solid #cbd5e1; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-lock" style="color:#64748b;"></i> </span>
+                <span style="font-size:11px; font-weight:600; color:#10b981; text-transform:none;"><i class="fa-solid fa-shield-halved"></i> AES-256</span>
               </div>
             </div>
 
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Branch Name</label>
-                <input type="text" name="branch" id="editEmpBranch" placeholder="e.g. Colombo Fort">
+                <label>Account Holder Name <span style="font-size:10px; color:#94a3b8;">(Locked)</span></label>
+                <input type="text" name="holder_name" id="editEmpHolderName" readonly tabindex="-1" placeholder="Employee Account Holder" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
               </div>
               <div class="w3-form-group">
-                <label>Account Number</label>
+                <label>Bank Name <span style="font-size:10px; color:#94a3b8;">(Locked)</span></label>
+                <input type="text" name="bank_name" id="editEmpBankName" readonly tabindex="-1" placeholder="Bank Name" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Branch Name <span style="font-size:10px; color:#94a3b8;">(Locked)</span></label>
+                <input type="text" name="branch" id="editEmpBranch" readonly tabindex="-1" placeholder="Branch Name" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+              </div>
+              <div class="w3-form-group">
+                <label>Account Number <span style="font-size:10px; color:#94a3b8;">(Locked)</span></label>
                 <div style="position:relative; display:flex; align-items:center;">
-                  <input type="text" name="account_number" id="editEmpAccNumber" placeholder="e.g. 100012345678" style="width:100%; font-family:monospace; padding-right:38px;">
+                  <input type="text" name="account_number" id="editEmpAccNumber" readonly tabindex="-1" placeholder="Account Number" style="width:100%; font-family:monospace; padding-right:38px; background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
                   <button type="button" onclick="toggleAccVisibility('editEmpAccNumber', this)" style="position:absolute; right:8px; background:none; border:none; color:#64748b; cursor:pointer; font-size:14px;" title="Show/Hide">
                     <i class="fa-solid fa-eye"></i>
                   </button>
@@ -1315,14 +1341,19 @@
               </div>
             </div>
 
+            <div style="font-size:12px; font-weight:800; color:#1e293b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between;">
+              <span><i class="fa-solid fa-coins" style="color:#f59e0b; margin-right:4px;"></i> Salary & Compensation</span>
+              <span style="font-size:11px; font-weight:700; color:#1d4ed8; background:#eff6ff; padding:2px 10px; border-radius:12px; border:1px solid #bfdbfe; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-pen"></i> Editable by Admin</span>
+            </div>
+
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Basic Salary (LKR)</label>
-                <input type="number" step="0.01" name="basic_salary" id="editEmpBasicSalary" placeholder="0.00">
+                <label>Basic Salary (LKR) <span style="font-size:10px; color:#2563eb; font-weight:700;">(Editable)</span></label>
+                <input type="number" step="0.01" name="basic_salary" id="editEmpBasicSalary" placeholder="0.00" style="font-weight:600; color:#0f172a; border:1.5px solid #93c5fd; background:#ffffff;">
               </div>
               <div class="w3-form-group">
-                <label>Net Salary (LKR)</label>
-                <input type="number" step="0.01" name="net_salary" id="editEmpNetSalary" placeholder="0.00">
+                <label>Net Salary (LKR) <span style="font-size:10px; color:#2563eb; font-weight:700;">(Editable)</span></label>
+                <input type="number" step="0.01" name="net_salary" id="editEmpNetSalary" placeholder="0.00" style="font-weight:600; color:#0f172a; border:1.5px solid #93c5fd; background:#ffffff;">
               </div>
             </div>
 
@@ -1335,9 +1366,7 @@
       </div>
     </div>
 
-    <!-- Reusable Sri Lanka Banks Datalist -->
     <datalist id="sriLankaBanksList">
-      <!-- Licensed Commercial Banks (Domestic) -->
       <option value="Commercial Bank of Ceylon">
       <option value="Bank of Ceylon (BOC)">
       <option value="People's Bank">
@@ -1351,14 +1380,12 @@
       <option value="Union Bank of Colombo">
       <option value="Amana Bank">
       <option value="Cargills Bank">
-      <!-- Licensed Specialized Banks (Savings & Development) -->
       <option value="National Savings Bank (NSB)">
       <option value="Regional Development Bank (RDB)">
       <option value="Sanasa Development Bank (SDB bank)">
       <option value="HDFC Bank of Sri Lanka">
       <option value="State Mortgage & Investment Bank (SMIB)">
       <option value="Sri Lanka Savings Bank">
-      <!-- Licensed Foreign Commercial Banks -->
       <option value="HSBC Sri Lanka (Hongkong and Shanghai Banking Corp)">
       <option value="Standard Chartered Bank">
       <option value="Citibank N.A.">

@@ -73,35 +73,38 @@ if ($prof_check && $prof_check->num_rows > 0) {
 
     $updates = [];
     if (!empty($fullName))  $updates[] = "`full_name` = '" . addslashes($fullName) . "'";
-    if (!empty($email))     $updates[] = "`email` = '" . addslashes($email) . "'";
+    if (!$isEmployeeSelf && !empty($email)) $updates[] = "`email` = '" . addslashes($email) . "'";
     if (!empty($phone))     $updates[] = "`phone` = '" . addslashes($phone) . "'";
-    if (!empty($dept))      $updates[] = "`department` = '" . addslashes($dept) . "'";
-    if (!empty($role))      $updates[] = "`job_title` = '" . addslashes($role) . "'";
-    if (!empty($joined))    $updates[] = "`join_date` = '" . addslashes($joined) . "'";
     if (!empty($nic))       $updates[] = "`nic` = '" . addslashes($nic) . "'";
     if (!empty($dob))       $updates[] = "`dob` = '" . addslashes($dob) . "'";
     if (!empty($gender))    $updates[] = "`gender` = '" . addslashes($gender) . "'";
-    if (!empty($address))   $updates[] = "`address` = '" . addslashes($address) . "'";
-    if (!empty($emName))    $updates[] = "`emergency_contact_name` = '" . addslashes($emName) . "'";
-    if (!empty($emPhone))   $updates[] = "`emergency_contact_phone` = '" . addslashes($emPhone) . "'";
-    if (!empty($empCode))   $updates[] = "`employee_id_code` = '" . addslashes($empCode) . "'";
-    if (!empty($empType))   $updates[] = "`employment_type` = '" . addslashes($empType) . "'";
-    if (!empty($location))  $updates[] = "`work_location` = '" . addslashes($location) . "'";
+    if (isset($_POST['address'])) $updates[] = "`address` = '" . addslashes($address) . "'";
+    // Emergency contact is exclusively managed and editable by the employee
+    if ($isEmployeeSelf) {
+        if (isset($_POST['emergency_contact_name']))  $updates[] = "`emergency_contact_name` = '" . addslashes($emName) . "'";
+        if (isset($_POST['emergency_contact_phone'])) $updates[] = "`emergency_contact_phone` = '" . addslashes($emPhone) . "'";
+    }
 
-    // Work schedule & shift timing can ONLY be updated by Administrator, never by employee self-service
+    // Service & Placement, Work location, and Work schedule can ONLY be updated by Administrator, never by employee self-service
     if (!$isEmployeeSelf) {
+        if (!empty($dept))        $updates[] = "`department` = '" . addslashes($dept) . "'";
+        if (!empty($role))        $updates[] = "`job_title` = '" . addslashes($role) . "'";
+        if (!empty($joined))      $updates[] = "`join_date` = '" . addslashes($joined) . "'";
+        if (!empty($empCode))     $updates[] = "`employee_id_code` = '" . addslashes($empCode) . "'";
+        if (!empty($empType))     $updates[] = "`employment_type` = '" . addslashes($empType) . "'";
+        if (!empty($location))    $updates[] = "`work_location` = '" . addslashes($location) . "'";
         if (!empty($workShift))   $updates[] = "`work_shift` = '" . addslashes($workShift) . "'";
         if (!empty($workingDays)) $updates[] = "`working_days` = '" . addslashes($workingDays) . "'";
         if (!empty($weeklyRoster))$updates[] = "`weekly_roster` = '" . addslashes($weeklyRoster) . "'";
         if (!empty($schedStart))  $updates[] = "`schedule_start_date` = '" . addslashes($schedStart) . "'";
         if (!empty($schedEnd))    $updates[] = "`schedule_end_date` = '" . addslashes($schedEnd) . "'";
         if (!empty($workMode))    $updates[] = "`work_mode` = '" . addslashes($workMode) . "'";
+        if (!empty($probation))   $updates[] = "`probation_status` = '" . addslashes($probation) . "'";
+        if (!empty($probStart))   $updates[] = "`probation_start_date` = '" . addslashes($probStart) . "'";
+        if (!empty($probEnd))     $updates[] = "`probation_end_date` = '" . addslashes($probEnd) . "'";
+        if (!empty($offStart))    $updates[] = "`official_start_date` = '" . addslashes($offStart) . "'";
+        if ($attDays !== null)    $updates[] = "`attendance_days` = " . (int)$attDays;
     }
-    if (!empty($probation)) $updates[] = "`probation_status` = '" . addslashes($probation) . "'";
-    if (!empty($probStart)) $updates[] = "`probation_start_date` = '" . addslashes($probStart) . "'";
-    if (!empty($probEnd))   $updates[] = "`probation_end_date` = '" . addslashes($probEnd) . "'";
-    if (!empty($offStart))  $updates[] = "`official_start_date` = '" . addslashes($offStart) . "'";
-    if ($attDays !== null)  $updates[] = "`attendance_days` = " . (int)$attDays;
 
     if (!empty($updates)) {
         $conn->query("UPDATE `employee_profiles` SET " . implode(", ", $updates) . " WHERE `id` = '$prof_id'");
@@ -117,19 +120,22 @@ if ($prof_check && $prof_check->num_rows > 0) {
 // 2. Also sync with employees table (phpMyAdmin exact table)
 $emp_updates = [];
 if (!empty($fullName)) $emp_updates[] = "`fullname` = '" . addslashes($fullName) . "'";
-if (!empty($email))    $emp_updates[] = "`email_address` = '" . addslashes($email) . "'";
 if (!empty($phone))    $emp_updates[] = "`phone_number` = '" . addslashes($phone) . "'";
-if (!empty($dept))     $emp_updates[] = "`departments` = '" . addslashes($dept) . "'";
-if (!empty($role))     $emp_updates[] = "`job_roles` = '" . addslashes($role) . "'";
-if (!empty($status))   $emp_updates[] = "`status` = '" . addslashes($status) . "'";
-if (!empty($joined))   $emp_updates[] = "`joined_date` = '" . addslashes($joined) . "'";
+
+if (!$isEmployeeSelf) {
+    if (!empty($email))    $emp_updates[] = "`email_address` = '" . addslashes($email) . "'";
+    if (!empty($dept))     $emp_updates[] = "`departments` = '" . addslashes($dept) . "'";
+    if (!empty($role))     $emp_updates[] = "`job_roles` = '" . addslashes($role) . "'";
+    if (!empty($status))   $emp_updates[] = "`status` = '" . addslashes($status) . "'";
+    if (!empty($joined))   $emp_updates[] = "`joined_date` = '" . addslashes($joined) . "'";
+}
 
 if (!empty($emp_updates)) {
     $conn->query("UPDATE `employees` SET " . implode(", ", $emp_updates) . " WHERE `id` = '$userId' OR `email_address` = '" . addslashes($email) . "' OR `fullname` = '" . addslashes($fullName) . "'");
 }
 
 // 3. Sync with main_user_login table
-if (!empty($joined)) {
+if (!$isEmployeeSelf && !empty($joined)) {
     $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$userId' OR `user_name` = '" . addslashes($email) . "'");
 }
 
@@ -137,26 +143,26 @@ if (!empty($joined)) {
 include_once __DIR__ . '/../../Job_Roles/sync_job_roles_count.php';
 sync_job_role_employee_counts($conn);
 
-// 3.5 Sync with bank_details table if bank information provided
-if (!empty($bankName) || !empty($accNumber)) {
+// 3.5 Sync with bank_details table if bank information provided or salary updated
+if (!empty($bankName) || !empty($accNumber) || (!$isEmployeeSelf && (isset($_POST['basic_salary']) || isset($_POST['net_salary'])))) {
     include_once __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
     $encAcc = !empty($accNumber) ? Bank_Security::encrypt($accNumber) : '';
-    $bCheck = $conn->query("SELECT id, bank_account_number, account_number FROM `bank_details` WHERE `user_id` = '$userId' OR `employee_id` = '" . addslashes($empCode) . "' OR `employee_name` = '" . addslashes($fullName) . "' ORDER BY `id` DESC LIMIT 1");
+    $bCheck = $conn->query("SELECT id, bank_account_number, account_number FROM `bank_details` WHERE `user_id` = '$userId' OR `employee_id` = '" . addslashes($empCode) . "' OR `employee_name` = '" . addslashes($fullName) . "' OR `holder_name` = '" . addslashes($fullName) . "' ORDER BY `id` DESC LIMIT 1");
     if ($bCheck && $bCheck->num_rows > 0) {
         $bRow = $bCheck->fetch_assoc();
         $bId = (int)$bRow['id'];
         $bUpdates = [];
-        if (!empty($bankName)) $bUpdates[] = "`bank_name` = '" . addslashes($bankName) . "'";
-        if (!empty($branch)) $bUpdates[] = "`branch` = '" . addslashes($branch) . "'";
+        if (!empty($bankName) && $bankName !== 'Bank Name') $bUpdates[] = "`bank_name` = '" . addslashes($bankName) . "'";
+        if (!empty($branch) && $branch !== 'Branch Name') $bUpdates[] = "`branch` = '" . addslashes($branch) . "'";
         if (!empty($encAcc)) {
             $bUpdates[] = "`bank_account_number` = '" . addslashes($encAcc) . "'";
             $bUpdates[] = "`account_number` = '" . addslashes($encAcc) . "'";
         }
-        if (!empty($holderName)) $bUpdates[] = "`holder_name` = '" . addslashes($holderName) . "'";
+        if (!empty($holderName) && $holderName !== 'Employee Account Holder') $bUpdates[] = "`holder_name` = '" . addslashes($holderName) . "'";
         if (!empty($fullName)) $bUpdates[] = "`employee_name` = '" . addslashes($fullName) . "'";
         if (!empty($empCode)) $bUpdates[] = "`employee_id` = '" . addslashes($empCode) . "'";
-        if ($basicSal > 0) $bUpdates[] = "`basic_salary` = " . (float)$basicSal;
-        if ($netSal > 0) $bUpdates[] = "`net_salary` = " . (float)$netSal;
+        if (!$isEmployeeSelf && isset($_POST['basic_salary'])) $bUpdates[] = "`basic_salary` = " . (float)$basicSal;
+        if (!$isEmployeeSelf && isset($_POST['net_salary'])) $bUpdates[] = "`net_salary` = " . (float)$netSal;
         if (!empty($bUpdates)) {
             $conn->query("UPDATE `bank_details` SET " . implode(", ", $bUpdates) . " WHERE `id` = '$bId'");
         }
@@ -165,6 +171,11 @@ if (!empty($bankName) || !empty($accNumber)) {
             (`user_id`, `employee_id`, `employee_name`, `holder_name`, `bank_name`, `branch`, `bank_account_number`, `account_number`, `basic_salary`, `net_salary`, `status`, `ast`, `sdt`) 
             VALUES 
             ('$userId', '" . addslashes($empCode ?: ('EMP-' . $userId)) . "', '" . addslashes($fullName) . "', '" . addslashes($holderName ?: $fullName) . "', '" . addslashes($bankName) . "', '" . addslashes($branch) . "', '" . addslashes($encAcc) . "', '" . addslashes($encAcc) . "', " . (float)$basicSal . ", " . (float)$netSal . ", 'Active', '1', NOW())");
+    } else if (!$isEmployeeSelf && (isset($_POST['basic_salary']) || isset($_POST['net_salary']))) {
+        $conn->query("INSERT INTO `bank_details` 
+            (`user_id`, `employee_id`, `employee_name`, `holder_name`, `basic_salary`, `net_salary`, `status`, `ast`, `sdt`) 
+            VALUES 
+            ('$userId', '" . addslashes($empCode ?: ('EMP-' . $userId)) . "', '" . addslashes($fullName) . "', '" . addslashes($holderName ?: $fullName) . "', " . (float)$basicSal . ", " . (float)$netSal . ", 'Active', '1', NOW())");
     }
 }
 

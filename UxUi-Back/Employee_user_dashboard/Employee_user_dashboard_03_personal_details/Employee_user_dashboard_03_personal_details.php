@@ -596,49 +596,59 @@
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="pd-modal-form-group">
-            <label for="pdEditEmName">Emergency Contact Person</label>
-            <input type="text" id="pdEditEmName" name="emergency_contact_name" class="pd-modal-form-control" placeholder="e.g. S. Perera (Father)" />
+            <label for="pdEditEmName">Emergency Contact Person <span style="font-size:10px; color:#16a34a; font-weight:700;">(Editable by Employee)</span></label>
+            <input type="text" id="pdEditEmName" name="emergency_contact_name" class="pd-modal-form-control" placeholder="e.g. Nimal Perera (Father)" style="border:1.5px solid #86efac; background:#ffffff;" />
           </div>
           <div class="pd-modal-form-group">
-            <label for="pdEditEmPhone">Emergency Contact Phone</label>
-            <input type="text" id="pdEditEmPhone" name="emergency_contact_phone" class="pd-modal-form-control" placeholder="e.g. 077 7654321" />
+            <label for="pdEditEmPhone">Emergency Contact Phone <span style="font-size:10px; color:#16a34a; font-weight:700;">(Editable by Employee)</span></label>
+            <input type="text" id="pdEditEmPhone" name="emergency_contact_phone" class="pd-modal-form-control" placeholder="e.g. +94 77 123 4567" style="border:1.5px solid #86efac; background:#ffffff;" />
           </div>
         </div>
 
-        <!-- Section 3: Placement & Contract -->
-        <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 6px;">3. Service & Placement Record</div>
+        <!-- Section 3: Placement & Contract (Read-Only for Employee) -->
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; margin-top: 10px; margin-bottom: 6px;">
+          <span style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">3. Service & Placement Record</span>
+          <span style="font-size: 11px; font-weight: 700; color: #475569; background: #f1f5f9; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-lock" style="font-size: 10px; color: #64748b;"></i> Managed by Admin (Read-Only)
+          </span>
+        </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="pd-modal-form-group">
             <label for="pdEditDept">Department</label>
-            <input type="text" id="pdEditDept" name="dept" class="pd-modal-form-control" placeholder="e.g. Engineering" />
+            <input type="text" id="pdEditDept" name="dept" class="pd-modal-form-control" placeholder="e.g. Engineering" readonly style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
           <div class="pd-modal-form-group">
             <label for="pdEditJobRole">Designation / Role</label>
-            <input type="text" id="pdEditJobRole" name="role" class="pd-modal-form-control" placeholder="e.g. Senior Software Engineer" />
+            <input type="text" id="pdEditJobRole" name="role" class="pd-modal-form-control" placeholder="e.g. Senior Software Engineer" readonly style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="pd-modal-form-group">
             <label for="pdEditEmpCode">Employee ID Code</label>
-            <input type="text" id="pdEditEmpCode" name="employee_id_code" class="pd-modal-form-control" placeholder="e.g. EMP-001" />
+            <input type="text" id="pdEditEmpCode" name="employee_id_code" class="pd-modal-form-control" placeholder="e.g. EMP-001" readonly style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
           <div class="pd-modal-form-group">
             <label for="pdEditJoinDate">Official Joining Date</label>
-            <input type="date" id="pdEditJoinDate" name="joined" class="pd-modal-form-control" />
+            <input type="date" id="pdEditJoinDate" name="joined" class="pd-modal-form-control" readonly style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="pd-modal-form-group">
             <label for="pdEditLocation">Work Location</label>
-            <input type="text" id="pdEditLocation" name="work_location" class="pd-modal-form-control" placeholder="e.g. Colombo HQ" />
+            <input type="text" id="pdEditLocation" name="work_location" class="pd-modal-form-control" placeholder="e.g. Colombo HQ" readonly style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
           <div class="pd-modal-form-group">
             <label for="pdEditEmpType">Employment Type</label>
-            <input type="text" id="pdEditEmpType" name="employment_type" class="pd-modal-form-control" placeholder="e.g. Full-Time" />
+            <input type="text" id="pdEditEmpType" name="employment_type" class="pd-modal-form-control" placeholder="e.g. Full-Time" readonly style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px dashed #cbd5e1;" />
           </div>
+        </div>
+
+        <div style="font-size: 11.5px; color: #94a3b8; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-circle-info" style="color: #3b82f6;"></i>
+          <span>Official placement, designation, and department details are managed by Company Administration.</span>
         </div>
 
 

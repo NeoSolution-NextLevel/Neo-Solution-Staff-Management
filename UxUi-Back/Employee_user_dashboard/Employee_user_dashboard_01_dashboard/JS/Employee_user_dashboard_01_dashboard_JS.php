@@ -46,7 +46,35 @@
             // Work Schedule & Shift Timing Visibility
             if (el('dashWorkShift')) el('dashWorkShift').textContent = p.work_shift || '08:30 AM – 05:30 PM';
             if (el('dashWorkingDays')) el('dashWorkingDays').textContent = p.working_days || 'Mon,Tue,Wed,Thu,Fri';
-            if (el('dashWorkMode')) el('dashWorkMode').textContent = p.work_mode || 'On-Site (Active)';
+            
+            // Dynamic Daily Work Mode (On-Site, WFH, Leave)
+            if (el('dashWorkMode')) {
+              const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              const todayDay = days[new Date().getDay()];
+              let dynamicMode = p.today_work_mode || p.work_mode;
+              if (!dynamicMode && p.weekly_roster) {
+                try {
+                  const r = typeof p.weekly_roster === 'string' ? JSON.parse(p.weekly_roster) : p.weekly_roster;
+                  const m = (r[todayDay] || 'onsite').toLowerCase();
+                  if (m === 'wfh') dynamicMode = 'Work From Home (WFH)';
+                  else if (m === 'leave') dynamicMode = 'On Leave';
+                  else dynamicMode = 'On-Site (Active)';
+                } catch(e) {}
+              }
+              if (!dynamicMode) dynamicMode = 'On-Site (Active)';
+
+              el('dashWorkMode').textContent = dynamicMode;
+              if (dynamicMode.toLowerCase().includes('leave')) {
+                el('dashWorkMode').style.color = '#fca5a5';
+                el('dashWorkMode').style.fontWeight = '800';
+              } else if (dynamicMode.toLowerCase().includes('wfh')) {
+                el('dashWorkMode').style.color = '#c4b5fd';
+                el('dashWorkMode').style.fontWeight = '800';
+              } else {
+                el('dashWorkMode').style.color = '#86efac';
+                el('dashWorkMode').style.fontWeight = '800';
+              }
+            }
 
             const topAvatar = el('dashTopAvatar');
             if (topAvatar) {

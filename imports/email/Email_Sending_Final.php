@@ -20,6 +20,12 @@ class Email_Sender {
         $this->event_type = $event_type;
     }
 
+    private $last_error = '';
+
+    public function get_last_error() {
+        return $this->last_error;
+    }
+
     public function set_event_type($type) {
         $this->event_type = $type;
     }
@@ -116,7 +122,7 @@ class Email_Sender {
         $port   = (int)$smtp_cfg['smtp_port'];
         $secure = strtolower(trim($smtp_cfg['smtp_secure']));
         $user   = trim($smtp_cfg['smtp_user']);
-        $pass   = trim($smtp_cfg['smtp_pass']);
+        $pass   = str_replace(' ', '', trim($smtp_cfg['smtp_pass']));
 
         $timeout = 8;
         $context = stream_context_create([
@@ -279,6 +285,10 @@ class Email_Sender {
             if ($smtpRes['success']) {
                 $this->log_email('Sent', 'Dispatched via SMTP (' . $smtp_cfg['smtp_host'] . ')');
                 return true;
+            } else {
+                $this->last_error = $smtpRes['error'] ?? 'SMTP dispatch failed';
+                $this->log_email('Failed', $this->last_error);
+                return false;
             }
         }
 

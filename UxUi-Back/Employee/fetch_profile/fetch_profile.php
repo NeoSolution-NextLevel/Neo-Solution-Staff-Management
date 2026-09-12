@@ -43,11 +43,59 @@ try {
     if ($userId > 0)        $whereClauses[] = "(`user_id` = '{$userId}' OR `id` = '{$userId}')";
     if (!empty($safeEmail)) $whereClauses[] = "`email` = '{$safeEmail}'";
 
-    $whereSql = !empty($whereClauses) ? implode(' OR ', $whereClauses) : "`id` = 1";
-    $check = $conn->query("SELECT * FROM `employee_profiles` WHERE {$whereSql} LIMIT 1");
+    $whereSql = !empty($whereClauses) ? implode(' OR ', $whereClauses) : "1=1";
+    $check = $conn->query("SELECT * FROM `employee_profiles` WHERE {$whereSql} ORDER BY `id` ASC LIMIT 1");
     if ($check && $check->num_rows > 0) {
         $p = $check->fetch_assoc();
         $name = !empty($p['full_name']) ? $p['full_name'] : '';
+
+        // Dynamic Daily Work Mode Calculation for Today
+        $todayDate = date('Y-m-d');
+        $todayDay = date('D'); // 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
+        $dailyWorkMode = 'On-Site (Active)';
+        $dailyModeType = 'onsite';
+
+        $safeName = addslashes($name);
+        $empEmail = !empty($p['email']) ? addslashes($p['email']) : $safeEmail;
+        $chkLeave = $conn->query("SELECT id FROM `leave_requests` 
+            WHERE (`employee` = '{$safeName}' OR `email` = '{$empEmail}') 
+            AND `status` = 'Approved' 
+            AND '{$todayDate}' BETWEEN `from_date` AND `to_date` 
+            LIMIT 1");
+
+        if ($chkLeave && $chkLeave->num_rows > 0) {
+            $dailyWorkMode = 'On Leave';
+            $dailyModeType = 'leave';
+        } else {
+            $roster = ['Mon' => 'onsite', 'Tue' => 'onsite', 'Wed' => 'onsite', 'Thu' => 'onsite', 'Fri' => 'onsite', 'Sat' => 'leave', 'Sun' => 'leave'];
+            if (!empty($p['weekly_roster'])) {
+                $decoded = json_decode($p['weekly_roster'], true);
+                if (is_array($decoded)) {
+                    $roster = array_merge($roster, $decoded);
+                }
+            } elseif (!empty($p['working_days'])) {
+                $wDays = array_map('trim', explode(',', $p['working_days']));
+                foreach (['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as $d) {
+                    $roster[$d] = in_array($d, $wDays) ? 'onsite' : 'leave';
+                }
+            }
+
+            $todayMode = strtolower($roster[$todayDay] ?? 'onsite');
+            if ($todayMode === 'wfh') {
+                $dailyWorkMode = 'Work From Home (WFH)';
+                $dailyModeType = 'wfh';
+            } elseif ($todayMode === 'leave') {
+                $dailyWorkMode = 'On Leave';
+                $dailyModeType = 'leave';
+            } else {
+                $dailyWorkMode = 'On-Site (Active)';
+                $dailyModeType = 'onsite';
+            }
+        }
+
+        // Sync computed daily work mode to database column
+        @$conn->query("UPDATE `employee_profiles` SET `work_mode` = '" . addslashes($dailyWorkMode) . "' WHERE `id` = '{$p['id']}'");
+
         $profile = [
             'id'                      => (int)$p['id'],
             'user_id'                 => (int)($p['user_id'] ?? $userId),
@@ -72,7 +120,10 @@ try {
             'weekly_roster'           => !empty($p['weekly_roster']) ? $p['weekly_roster'] : '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"wfh","Sat":"leave","Sun":"leave"}',
             'schedule_start_date'     => !empty($p['schedule_start_date']) ? $p['schedule_start_date'] : date('Y-m-01'),
             'schedule_end_date'       => !empty($p['schedule_end_date']) ? $p['schedule_end_date'] : date('Y-12-31'),
-            'work_mode'               => !empty($p['work_mode']) ? $p['work_mode'] : 'On-Site (Active)',
+            'work_mode'               => $dailyWorkMode,
+            'today_work_mode'         => $dailyWorkMode,
+            'today_mode_type'         => $dailyModeType,
+            'today_day'               => $todayDay,
             'probation_status'        => !empty($p['probation_status']) ? $p['probation_status'] : 'In Progress',
             'probation_start_date'    => !empty($p['probation_start_date']) ? $p['probation_start_date'] : (!empty($p['join_date']) ? $p['join_date'] : ''),
             'probation_end_date'      => !empty($p['probation_end_date']) ? $p['probation_end_date'] : '',
@@ -80,6 +131,11 @@ try {
             'attendance_days'         => isset($p['attendance_days']) ? (int)$p['attendance_days'] : null,
             'profile_pic'             => !empty($p['profile_pic']) ? $p['profile_pic'] : ''
         ];
+
+        // Fetch employee activity_status preference
+        $empUid = !empty($p['user_id']) ? $conn->real_escape_string((string)$p['user_id']) : (string)$p['id'];
+        $qSet = $conn->query("SELECT `activity_status` FROM `employee_settings` WHERE `user_id` = '$empUid' LIMIT 1");
+        $profile['activity_status'] = ($qSet && $rSet = $qSet->fetch_assoc()) ? (int)$rSet['activity_status'] : 1;
     } else {
         // 2. Fallback to employees table
         $empWhereClauses = [];
@@ -117,6 +173,13 @@ try {
                 'employee_id_code'        => 'EMP-' . str_pad($e['id'], 3, '0', STR_PAD_LEFT),
                 'employment_type'         => 'Full-Time',
                 'work_location'           => 'Colombo HQ',
+                'work_shift'              => '08:30 AM – 05:30 PM',
+                'working_days'            => 'Mon,Tue,Wed,Thu,Fri',
+                'weekly_roster'           => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}',
+                'work_mode'               => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+                'today_work_mode'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+                'today_mode_type'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'leave' : 'onsite',
+                'today_day'               => date('D'),
                 'profile_pic'             => ''
             ];
         }

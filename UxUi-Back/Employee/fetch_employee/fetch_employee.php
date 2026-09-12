@@ -19,6 +19,49 @@ if ($prof_res && $prof_res->num_rows > 0) {
         }
         $initials = substr($initials, 0, 2) ?: 'EM';
 
+        $todayDate = date('Y-m-d');
+        $todayDay = date('D');
+        $dailyWorkMode = 'On-Site (Active)';
+        $dailyModeType = 'onsite';
+
+        $safeName = addslashes($name);
+        $empEmail = !empty($p['email']) ? addslashes($p['email']) : '';
+        $chkLeave = $db->get_result("SELECT id FROM `leave_requests` 
+            WHERE (`employee` = '{$safeName}' OR `email` = '{$empEmail}') 
+            AND `status` = 'Approved' 
+            AND '{$todayDate}' BETWEEN `from_date` AND `to_date` 
+            LIMIT 1");
+
+        if ($chkLeave && $chkLeave->num_rows > 0) {
+            $dailyWorkMode = 'On Leave';
+            $dailyModeType = 'leave';
+        } else {
+            $roster = ['Mon' => 'onsite', 'Tue' => 'onsite', 'Wed' => 'onsite', 'Thu' => 'onsite', 'Fri' => 'onsite', 'Sat' => 'leave', 'Sun' => 'leave'];
+            if (!empty($p['weekly_roster'])) {
+                $dec = json_decode($p['weekly_roster'], true);
+                if (is_array($dec)) {
+                    $roster = array_merge($roster, $dec);
+                }
+            } elseif (!empty($p['working_days'])) {
+                $arr = array_map('trim', explode(',', $p['working_days']));
+                foreach (['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as $d) {
+                    $roster[$d] = in_array($d, $arr) ? 'onsite' : 'leave';
+                }
+            }
+
+            $todayMode = strtolower($roster[$todayDay] ?? 'onsite');
+            if ($todayMode === 'wfh') {
+                $dailyWorkMode = 'Work From Home (WFH)';
+                $dailyModeType = 'wfh';
+            } elseif ($todayMode === 'leave') {
+                $dailyWorkMode = 'On Leave';
+                $dailyModeType = 'leave';
+            } else {
+                $dailyWorkMode = 'On-Site (Active)';
+                $dailyModeType = 'onsite';
+            }
+        }
+
         $employees[] = [
             'id'              => (int)$p['id'],
             'account_id'      => (int)($p['user_id'] ?? 0),
@@ -40,6 +83,9 @@ if ($prof_res && $prof_res->num_rows > 0) {
             'work_shift'      => !empty($p['work_shift']) ? $p['work_shift'] : '08:30 AM – 05:30 PM',
             'working_days'    => !empty($p['working_days']) ? $p['working_days'] : 'Mon,Tue,Wed,Thu,Fri',
             'weekly_roster'   => !empty($p['weekly_roster']) ? $p['weekly_roster'] : '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"wfh","Sat":"leave","Sun":"leave"}',
+            'work_mode'       => $dailyWorkMode,
+            'today_work_mode' => $dailyWorkMode,
+            'today_mode_type' => $dailyModeType,
             'employment_type' => !empty($p['employment_type']) ? $p['employment_type'] : 'Full-Time',
             'em_name'         => !empty($p['emergency_contact_name']) ? $p['emergency_contact_name'] : '',
             'em_phone'        => !empty($p['emergency_contact_phone']) ? $p['emergency_contact_phone'] : ''

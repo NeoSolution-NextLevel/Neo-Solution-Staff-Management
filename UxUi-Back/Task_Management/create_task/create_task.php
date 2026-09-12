@@ -3,6 +3,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../Controllers/Main/Task_Management/task_management_ADD_UPDATE.php';
+include_once __DIR__ . '/../../../imports/email/Email_Send.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
@@ -26,6 +27,21 @@ $task_obj->set_data($title, $dept, $employee, $mode, $deadline, $status);
 $res = $task_obj->process_new_record();
 
 if ($res) {
+    // Send Task Assigned Email to Employee
+    try {
+        if (class_exists('Email')) {
+            Email::send_task_assigned_notification([
+                'title'       => $title,
+                'description' => '',
+                'department'  => $dept,
+                'assigned_to' => $employee,
+                'mode'        => $mode,
+                'status'      => $status,
+                'deadline'    => $deadline
+            ]);
+        }
+    } catch (Exception $e) {}
+
     echo json_encode([
         'status'  => 'success',
         'message' => 'Task created successfully in database.',

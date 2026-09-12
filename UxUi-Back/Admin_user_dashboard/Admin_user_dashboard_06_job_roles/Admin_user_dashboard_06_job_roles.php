@@ -464,8 +464,8 @@
       width: 100%;
     }
 
-    .table-card { display: none !important; }
-    .mobile-role-cards { display: flex !important; }
+    #Admin_user_dashboard_06_job_roles .table-card { display: none !important; }
+    #Admin_user_dashboard_06_job_roles .mobile-role-cards { display: flex !important; }
   }
 </style>
 

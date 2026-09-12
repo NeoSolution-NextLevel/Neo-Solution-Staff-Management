@@ -7,6 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../imports/need/SystemNotifications.php';
+include_once __DIR__ . '/../../../imports/email/Email_Send.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
@@ -206,6 +207,18 @@ if (!empty($uploaded_records)) {
             "Admin"
         );
     }
+
+    // Send Document Uploaded Email to Admin
+    try {
+        if (class_exists('Email')) {
+            Email::send_document_upload_notification([
+                'employee_name' => $employee_name,
+                'employee_id'   => $employee_id,
+                'doc_type'      => $doc_type,
+                'file_name'     => $primary_name
+            ]);
+        }
+    } catch (Exception $e) {}
 
     echo json_encode([
         'status'    => 'success',

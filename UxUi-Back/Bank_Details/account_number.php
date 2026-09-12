@@ -173,14 +173,46 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $json[] = $state;
     }
 } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
-    $employee_id = isset($_GET['employee_id']) ? trim($_GET['employee_id']) : (isset($_GET['val_01']) ? trim($_GET['val_01']) : "EMP-001");
-    
-    $bank_details_LIST_obj = new bank_details_LIST();
-    $bank_details_LIST_obj->filter_by_employee_id($employee_id);
-    $get_result = $bank_details_LIST_obj->get_result();
+    $employee_id = isset($_GET['employee_id']) ? trim($_GET['employee_id']) : (isset($_GET['val_01']) ? trim($_GET['val_01']) : "");
+    $name = isset($_GET['name']) ? trim($_GET['name']) : '';
+    $user_id = isset($_GET['user_id']) ? trim($_GET['user_id']) : '';
 
-    if ($get_result && $get_result->num_rows > 0) {
-        $row = $get_result->fetch_assoc();
+    $db = new DataBase();
+    $conn = $db->get_data_base_connction();
+
+    $where_clauses = [];
+    if (!empty($employee_id)) {
+        $where_clauses[] = "`employee_id` = '" . $conn->real_escape_string($employee_id) . "'";
+    }
+    if (!empty($user_id) && is_numeric($user_id)) {
+        $where_clauses[] = "`user_id` = '" . (int)$user_id . "'";
+    }
+    if (!empty($name)) {
+        $esc_name = $conn->real_escape_string($name);
+        $where_clauses[] = "`holder_name` LIKE '%$esc_name%'";
+        $where_clauses[] = "`employee_name` LIKE '%$esc_name%'";
+    }
+
+    $row = null;
+    if (!empty($where_clauses)) {
+        $sql = "SELECT * FROM `bank_details` WHERE `ast` = '1' AND (" . implode(" OR ", $where_clauses) . ") ORDER BY id DESC LIMIT 1";
+        $get_result = $conn->query($sql);
+        if ($get_result && $get_result->num_rows > 0) {
+            $row = $get_result->fetch_assoc();
+        }
+    }
+
+    // Fallback: If still not found and employee_id was given, try fallback using bank_details_LIST
+    if (!$row && !empty($employee_id)) {
+        $bank_details_LIST_obj = new bank_details_LIST();
+        $bank_details_LIST_obj->filter_by_employee_id($employee_id);
+        $get_result = $bank_details_LIST_obj->get_result();
+        if ($get_result && $get_result->num_rows > 0) {
+            $row = $get_result->fetch_assoc();
+        }
+    }
+
+    if ($row) {
         $stored_acc = !empty($row['bank_account_number']) ? $row['bank_account_number'] : (!empty($row['account_number']) ? $row['account_number'] : '');
         $decrypted_acc = Bank_Security::decrypt($stored_acc);
         $masked_acc = Bank_Security::mask($decrypted_acc);

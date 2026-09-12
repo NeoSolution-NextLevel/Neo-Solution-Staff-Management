@@ -51,7 +51,7 @@
       const sel = document.getElementById('quickAutoLoginSelect');
       if (!sel) return;
       const currentVal = sel.value;
-      sel.innerHTML = '<option value="">⚡ Select Employee to Login...</option>' +
+      sel.innerHTML = '<option value=""> Select Employee...</option>' +
         employees.map(e => {
           const empId = Number(e.account_id || e.id);
           const profId = Number(e.id);
@@ -177,8 +177,7 @@
     const viewEmpModal = document.getElementById('viewEmpModal');
     const closeViewEmpModal = document.getElementById('closeViewEmpModal');
     const cancelViewEmpModal = document.getElementById('cancelViewEmpModal');
-    let currentlyViewingEmpId = null;
-    let currentlyViewingAccountId = null;
+    // Variables currentlyViewingEmpId and currentlyViewingAccountId already declared at top of scope
     let currentlyViewingEmployee = null;
 
     function closeViewModal() {
@@ -482,7 +481,13 @@
       if (el('viewEmpEmName')) el('viewEmpEmName').textContent = e.emergency_contact_name || e.em_name || '—';
       if (el('viewEmpEmPhone')) el('viewEmpEmPhone').textContent = e.emergency_contact_phone || e.em_phone || '—';
 
-      // 1. Render Weekly Roster Badges
+      // 1. Render Weekly Roster Badges & Today's Work Mode
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const todayDay = dayNames[new Date().getDay()];
+
+      let todayWorkMode = e.today_work_mode || e.work_mode || '';
+      let todayModeType = e.today_mode_type || '';
+
       const rosterWrap = el('viewEmpRosterWrap');
       if (rosterWrap) {
         rosterWrap.innerHTML = '';
@@ -492,9 +497,22 @@
             rosterObj = typeof e.weekly_roster === 'string' ? JSON.parse(e.weekly_roster) : e.weekly_roster;
           } catch(err) { rosterObj = {}; }
         }
+        if (!todayWorkMode) {
+          const m = (rosterObj[todayDay] || 'onsite').toLowerCase();
+          if (m === 'wfh') { todayWorkMode = 'Work From Home (WFH)'; todayModeType = 'wfh'; }
+          else if (m === 'leave') { todayWorkMode = 'On Leave'; todayModeType = 'leave'; }
+          else { todayWorkMode = 'On-Site (Active)'; todayModeType = 'onsite'; }
+        }
+        if (!todayModeType) {
+          if (todayWorkMode.includes('Home') || todayWorkMode.includes('WFH')) todayModeType = 'wfh';
+          else if (todayWorkMode.includes('Leave')) todayModeType = 'leave';
+          else todayModeType = 'onsite';
+        }
+
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         days.forEach(day => {
           const mode = rosterObj[day] || 'onsite';
+          const isToday = (day === todayDay);
           let bg = '#eff6ff', color = '#2563eb', border = '#bfdbfe', label = 'On-Site';
           if (mode === 'wfh') {
             bg = '#faf5ff'; color = '#7c3aed'; border = '#e9d5ff'; label = 'WFH';
@@ -502,10 +520,30 @@
             bg = '#f8fafc'; color = '#94a3b8'; border = '#e2e8f0'; label = 'Leave';
           }
           const pill = document.createElement('div');
-          pill.style.cssText = `display:flex; flex-direction:column; align-items:center; padding:5px 8px; border-radius:8px; background:${bg}; border:1px solid ${border}; min-width:52px; white-space:nowrap;`;
-          pill.innerHTML = `<span style="font-size:10.5px; font-weight:800; color:#475569;">${day}</span><span style="font-size:10px; font-weight:700; color:${color}; margin-top:2px; white-space:nowrap;">${label}</span>`;
+          const todayStyle = isToday ? 'box-shadow: 0 0 0 2px ' + color + '; font-weight:800;' : '';
+          pill.style.cssText = `display:flex; flex-direction:column; align-items:center; padding:5px 8px; border-radius:8px; background:${bg}; border:1px solid ${border}; min-width:52px; white-space:nowrap; ${todayStyle}`;
+          pill.innerHTML = `<span style="font-size:10.5px; font-weight:800; color:#475569;">${day}${isToday ? ' ★' : ''}</span><span style="font-size:10px; font-weight:700; color:${color}; margin-top:2px; white-space:nowrap;">${label}</span>`;
           rosterWrap.appendChild(pill);
         });
+      }
+
+      // Today's Work Mode Badge
+      const todayModeEl = el('viewEmpTodayMode');
+      if (todayModeEl) {
+        todayModeEl.textContent = todayWorkMode || 'On-Site';
+        if (todayModeType === 'wfh') {
+          todayModeEl.style.background = '#faf5ff';
+          todayModeEl.style.color = '#7c3aed';
+          todayModeEl.style.borderColor = '#d8b4fe';
+        } else if (todayModeType === 'leave') {
+          todayModeEl.style.background = '#fef2f2';
+          todayModeEl.style.color = '#dc2626';
+          todayModeEl.style.borderColor = '#fecaca';
+        } else {
+          todayModeEl.style.background = '#f0fdf4';
+          todayModeEl.style.color = '#16a34a';
+          todayModeEl.style.borderColor = '#bbf7d0';
+        }
       }
 
       const statusEl = el('viewEmpStatus');
@@ -777,6 +815,9 @@
       document.getElementById('editEmpStatus').value = e.status;
       document.getElementById('editEmpJoined').value = e.joined;
       document.getElementById('editEmpType').value = e.employment_type || 'Full-Time (Permanent)';
+      if (document.getElementById('editEmpLocation')) {
+        document.getElementById('editEmpLocation').value = e.work_location || e.location || 'Colombo HQ';
+      }
       document.getElementById('editEmpEmName').value = e.em_name || '';
       document.getElementById('editEmpEmPhone').value = e.em_phone || '';
 
@@ -854,21 +895,23 @@
 
       // Populate bank details in editEmpModal
       const editEmpCode = e.employee_id_code || e.emp_code || ('EMP-' + String(e.id).padStart(3, '0'));
+      const empFullName = e.name || e.fullname || e.full_name || '';
+      const empUserId = e.account_id || e.user_id || e.id || '';
       const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
-      fetch(pth + 'UxUi-Back/Bank_Details/account_number.php?employee_id=' + encodeURIComponent(editEmpCode))
+      fetch(pth + 'UxUi-Back/Bank_Details/account_number.php?employee_id=' + encodeURIComponent(editEmpCode) + '&name=' + encodeURIComponent(empFullName) + '&user_id=' + encodeURIComponent(empUserId))
         .then(res => res.json())
         .then(res => {
           const resObj = Array.isArray(res) ? (res[0] || {}) : (res || {});
           const bData = resObj.data || null;
           if (bData) {
-            if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = bData.account_holder_name || bData.holder_name || e.name || '';
+            if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = bData.account_holder_name || bData.holder_name || empFullName;
             if (document.getElementById('editEmpBankName')) document.getElementById('editEmpBankName').value = bData.bank_name || '';
             if (document.getElementById('editEmpBranch')) document.getElementById('editEmpBranch').value = bData.branch || '';
             if (document.getElementById('editEmpAccNumber')) document.getElementById('editEmpAccNumber').value = bData.account_number || bData.bank_account_number || '';
-            if (document.getElementById('editEmpBasicSalary')) document.getElementById('editEmpBasicSalary').value = bData.basic_salary || '';
-            if (document.getElementById('editEmpNetSalary')) document.getElementById('editEmpNetSalary').value = bData.net_salary || '';
+            if (document.getElementById('editEmpBasicSalary')) document.getElementById('editEmpBasicSalary').value = (bData.basic_salary !== undefined && bData.basic_salary !== null) ? bData.basic_salary : '';
+            if (document.getElementById('editEmpNetSalary')) document.getElementById('editEmpNetSalary').value = (bData.net_salary !== undefined && bData.net_salary !== null) ? bData.net_salary : '';
           } else {
-            if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = e.name || '';
+            if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = empFullName;
             if (document.getElementById('editEmpBankName')) document.getElementById('editEmpBankName').value = '';
             if (document.getElementById('editEmpBranch')) document.getElementById('editEmpBranch').value = '';
             if (document.getElementById('editEmpAccNumber')) document.getElementById('editEmpAccNumber').value = '';
@@ -876,7 +919,7 @@
             if (document.getElementById('editEmpNetSalary')) document.getElementById('editEmpNetSalary').value = '';
           }
         }).catch(() => {
-          if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = e.name || '';
+          if (document.getElementById('editEmpHolderName')) document.getElementById('editEmpHolderName').value = empFullName;
         });
 
       editEmpModal.classList.add('active');
@@ -909,6 +952,7 @@
         const working_days = document.getElementById('editEmpWorkingDays').value.trim();
         const weekly_roster = document.getElementById('editEmpWeeklyRoster')?.value || '';
         const employment_type = document.getElementById('editEmpType').value;
+        const work_location = document.getElementById('editEmpLocation')?.value.trim() || 'Colombo HQ';
 
         const updateUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/update_profile/update_profile.php';
         const formData = new FormData();
@@ -923,6 +967,7 @@
         formData.append('working_days', working_days);
         formData.append('weekly_roster', weekly_roster);
         formData.append('employment_type', employment_type);
+        formData.append('work_location', work_location);
         formData.append('emergency_contact_name', document.getElementById('editEmpEmName').value.trim());
         formData.append('emergency_contact_phone', document.getElementById('editEmpEmPhone').value.trim());
         formData.append('employee_id_code', 'EMP-' + String(id).padStart(3, '0'));
