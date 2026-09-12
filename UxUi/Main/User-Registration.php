@@ -7,6 +7,7 @@ include_once '../../imports/need/session_setup.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Admin Portal | Registration</title>
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
