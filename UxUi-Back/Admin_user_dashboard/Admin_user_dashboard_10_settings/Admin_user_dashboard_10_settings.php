@@ -696,6 +696,187 @@
         grid-template-columns: 1fr;
       }
     }
+
+    @media (max-width: 600px) {
+      #Admin_user_dashboard_10_settings {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+      }
+
+      #Admin_user_dashboard_10_settings .topbar {
+        height: 56px !important;
+        padding: 8px 10px !important;
+        gap: 8px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .topbar-left {
+        min-width: 0 !important;
+        gap: 6px !important;
+        flex: 1 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .page-breadcrumb {
+        min-width: 0 !important;
+        font-size: 15px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+
+      #Admin_user_dashboard_10_settings .topbar-right {
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .icon-btn {
+        width: 32px !important;
+        height: 32px !important;
+        flex: 0 0 32px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .profile-pill {
+        padding: 2px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .content {
+        padding: 10px 10px 64px !important;
+        gap: 12px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .content-header {
+        padding: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .content-header p {
+        font-size: 12px !important;
+        line-height: 1.35 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .settings-card {
+        padding: 15px 13px !important;
+        border-radius: 12px !important;
+        margin-bottom: 10px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .settings-card h3 {
+        font-size: 15px !important;
+        margin-bottom: 12px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .setting-item {
+        align-items: flex-start !important;
+        gap: 12px !important;
+        padding: 12px 0 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .setting-info {
+        min-width: 0 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .setting-info h4 {
+        font-size: 13px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .setting-info p {
+        font-size: 11.5px !important;
+        line-height: 1.35 !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      #Admin_user_dashboard_10_settings .settings-card > div[style*="justify-content: space-between"] {
+        align-items: flex-start !important;
+        gap: 10px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .settings-card > div[style*="justify-content: space-between"] > div {
+        min-width: 0 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .settings-card > div[style*="justify-content: space-between"] h3 {
+        line-height: 1.3 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .settings-card > div[style*="justify-content: space-between"] p {
+        font-size: 11px !important;
+        line-height: 1.4 !important;
+      }
+
+      #Admin_user_dashboard_10_settings .settings-card .setting-item > div[style*="min-width"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: 1 1 100% !important;
+      }
+
+      #Admin_user_dashboard_10_settings .smtp-grid {
+        grid-template-columns: 1fr !important;
+        gap: 11px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .smtp-grid .smtp-field[style*="grid-column"] {
+        grid-column: auto !important;
+      }
+
+      #Admin_user_dashboard_10_settings .smtp-input,
+      #Admin_user_dashboard_10_settings .smtp-select {
+        min-width: 0 !important;
+        padding: 9px 11px !important;
+        font-size: 12.5px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .smtp-actions {
+        flex-direction: column !important;
+        gap: 8px !important;
+        margin-top: 14px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .smtp-actions button {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      #Admin_user_dashboard_10_settings .info-grid {
+        gap: 9px !important;
+        margin-bottom: 16px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .info-box {
+        padding: 12px 13px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .info-box strong {
+        font-size: 13px !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      #Admin_user_dashboard_10_settings .btn-submit {
+        padding: 12px 16px !important;
+        font-size: 13.5px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .email-logs-modal-overlay {
+        padding: 8px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .email-logs-modal {
+        max-height: calc(100dvh - 16px) !important;
+        border-radius: 12px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .email-logs-header {
+        padding: 13px 14px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .email-logs-header h3 {
+        font-size: 14px !important;
+      }
+
+      #Admin_user_dashboard_10_settings .email-logs-body {
+        padding: 12px !important;
+        overflow-x: auto !important;
+      }
+    }
   </style>
 <div id="Admin_user_dashboard_10_settings" style="display:none;">
 

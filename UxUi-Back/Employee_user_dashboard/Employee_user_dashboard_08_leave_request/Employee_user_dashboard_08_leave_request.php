@@ -35,6 +35,26 @@
     max-width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
+    min-width: 0;
+  }
+
+  #Employee_user_dashboard_08_leave_request .topbar,
+  #Employee_user_dashboard_08_leave_request .topbar-left,
+  #Employee_user_dashboard_08_leave_request .topbar-right,
+  #Employee_user_dashboard_08_leave_request .leave-info-note,
+  #Employee_user_dashboard_08_leave_request .leave-form-card,
+  #Employee_user_dashboard_08_leave_request .leave-table-card,
+  #Employee_user_dashboard_08_leave_request .leave-history-section {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  #Employee_user_dashboard_08_leave_request .leave-info-note span,
+  #Employee_user_dashboard_08_leave_request .leave-page-head p,
+  #Employee_user_dashboard_08_leave_request .leave-form-group label {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   /* Top Navigation Bar */
@@ -420,12 +440,137 @@
 
   /* Responsive Breakpoints */
   @media (max-width: 768px) {
-    .emp-menu-btn { display: inline-flex !important; }
-    .emp-topbar h2 { font-size: 18px !important; }
-    .leave-form-card { padding: 18px 16px; }
-    .leave-date-grid { grid-template-columns: 1fr; gap: 12px; }
-    .leave-table-card { display: none !important; }
-    .mobile-leave-emp-cards { display: flex !important; }
+    #Employee_user_dashboard_08_leave_request .topbar {
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .topbar-left {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    #Employee_user_dashboard_08_leave_request .topbar-left h2 {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 16px !important;
+    }
+
+    #Employee_user_dashboard_08_leave_request .topbar-right {
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .admin-pill span {
+      display: none;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-page-head {
+      margin-bottom: 14px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-page-head p {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-info-note {
+      align-items: flex-start;
+      gap: 9px;
+      padding: 12px 13px;
+      margin-bottom: 16px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-info-note svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-info-note span {
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-form-card {
+      padding: 18px 16px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-form-card h3 {
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-date-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-form-control {
+      min-width: 0;
+      font-size: 13px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-history-section h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-table-card {
+      display: none !important;
+    }
+
+    #Employee_user_dashboard_08_leave_request .mobile-leave-emp-cards {
+      display: flex !important;
+    }
+
+    #Employee_user_dashboard_08_leave_request .mobile-leave-emp-card {
+      padding: 14px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .mobile-leave-emp-card-head {
+      align-items: flex-start;
+    }
+
+    #Employee_user_dashboard_08_leave_request .mobile-leave-emp-row {
+      gap: 8px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .mobile-leave-emp-row > span:last-child {
+      max-width: 65%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #Employee_user_dashboard_08_leave_request .topbar {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-form-card {
+      padding: 14px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .leave-info-note {
+      padding: 11px 12px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .mobile-leave-emp-card {
+      padding: 12px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .mobile-leave-emp-row {
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    #Employee_user_dashboard_08_leave_request .mobile-leave-emp-row > span:last-child {
+      max-width: 100%;
+      text-align: left;
+    }
   }
 </style>
 

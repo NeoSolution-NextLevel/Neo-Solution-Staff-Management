@@ -330,6 +330,28 @@
     background: #f8fafc;
   }
 
+  #Employee_user_dashboard_05_bank_details,
+  #Employee_user_dashboard_05_bank_details .main,
+  #Employee_user_dashboard_05_bank_details .topbar,
+  #Employee_user_dashboard_05_bank_details .bank-info-card,
+  #Employee_user_dashboard_05_bank_details .receipts-list-card {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  #Employee_user_dashboard_05_bank_details .bank-field-box,
+  #Employee_user_dashboard_05_bank_details .bank-card-header > *,
+  #Employee_user_dashboard_05_bank_details .receipts-list-header > * {
+    min-width: 0;
+  }
+
+  #Employee_user_dashboard_05_bank_details .bank-field-box strong,
+  #Employee_user_dashboard_05_bank_details .salary-highlight-sub,
+  #Employee_user_dashboard_05_bank_details .receipts-list-header h3 {
+    overflow-wrap: anywhere;
+  }
+
   /* Media Queries for full responsiveness */
   @media (max-width: 1024px) {
     .bank-grid-details {
@@ -374,6 +396,169 @@
     }
     .emp-receipt-modal-actions {
       padding: 12px 14px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #Employee_user_dashboard_05_bank_details {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    #Employee_user_dashboard_05_bank_details .topbar {
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .topbar-left,
+    #Employee_user_dashboard_05_bank_details .topbar-right {
+      min-width: 0;
+    }
+
+    #Employee_user_dashboard_05_bank_details .topbar-left {
+      flex: 1 1 auto;
+    }
+
+    #Employee_user_dashboard_05_bank_details .topbar-left h2 {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .topbar-right {
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .admin-pill span {
+      display: none;
+    }
+
+    #Employee_user_dashboard_05_bank_details .bank-page-header {
+      margin: 0 0 14px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .bank-page-header p {
+      line-height: 1.45;
+    }
+
+    #Employee_user_dashboard_05_bank_details .bank-card-header {
+      align-items: stretch !important;
+    }
+
+    #Employee_user_dashboard_05_bank_details .bank-card-header > div:first-child {
+      width: 100%;
+    }
+
+    #Employee_user_dashboard_05_bank_details .bank-card-header > div:first-child h3 {
+      font-size: 15px !important;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    #Employee_user_dashboard_05_bank_details .btn-edit-my-bank {
+      width: 100%;
+      justify-content: center;
+    }
+
+    #Employee_user_dashboard_05_bank_details .receipts-list-header {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 16px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .receipts-list-header h3 {
+      line-height: 1.35;
+    }
+
+    #Employee_user_dashboard_05_bank_details .receipts-count-badge {
+      align-self: flex-start;
+    }
+
+    #Employee_user_dashboard_05_bank_details .emp-receipt-modal-window {
+      width: min(100%, 540px);
+      max-height: calc(100vh - 16px);
+    }
+
+    #Employee_user_dashboard_05_bank_details .emp-receipt-modal-header h3 {
+      min-width: 0;
+      font-size: 14px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    #Employee_user_dashboard_05_bank_details .emp-receipt-modal-actions {
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+
+    #Employee_user_dashboard_05_bank_details .emp-receipt-modal-actions > * {
+      width: 100%;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    #Employee_user_dashboard_05_bank_details .emp-receipt-modal-content [style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    #Employee_user_dashboard_05_bank_details .emp-receipt-modal-content [style*="grid-column"] {
+      grid-column: auto !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #Employee_user_dashboard_05_bank_details .topbar {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .menu-btn {
+      flex: 0 0 auto;
+    }
+
+    #Employee_user_dashboard_05_bank_details .bank-info-card {
+      padding: 14px;
+      border-radius: 14px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .bank-card-header > div:first-child {
+      gap: 9px !important;
+    }
+
+    #Employee_user_dashboard_05_bank_details .bank-card-header > div:first-child > div:first-child {
+      width: 36px !important;
+      height: 36px !important;
+      flex: 0 0 36px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .salary-highlight-card {
+      padding: 13px 14px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .salary-highlight-amount {
+      font-size: 18px;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    #Employee_user_dashboard_05_bank_details .receipts-mobile-grid {
+      padding: 10px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .receipt-mobile-item {
+      padding: 12px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .emp-receipt-modal-backdrop {
+      padding: 6px;
+    }
+
+    #Employee_user_dashboard_05_bank_details .emp-receipt-modal-header {
+      padding: 13px 14px;
     }
   }
 </style>
