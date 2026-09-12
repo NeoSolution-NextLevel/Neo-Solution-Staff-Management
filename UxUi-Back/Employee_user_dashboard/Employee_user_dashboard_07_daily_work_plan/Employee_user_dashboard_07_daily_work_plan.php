@@ -8,7 +8,7 @@
     box-sizing: border-box;
   }
 
-  @media (min-width: 769px) {
+  @media (min-width: 901px) {
     #Employee_user_dashboard_07_daily_work_plan {
       margin-left: 250px !important;
       width: calc(100% - 250px) !important;
@@ -18,7 +18,7 @@
     }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     #Employee_user_dashboard_07_daily_work_plan {
       margin-left: 0 !important;
       width: 100% !important;
@@ -688,7 +688,7 @@
   }
 
   /* Responsive */
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .workplan-menu-btn { display: inline-flex !important; }
     .workplan-topbar h2 { font-size: 18px !important; }
     .workplan-tasks-grid { grid-template-columns: 1fr !important; gap: 14px; }

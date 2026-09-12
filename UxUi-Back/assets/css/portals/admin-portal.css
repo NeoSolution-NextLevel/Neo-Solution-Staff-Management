@@ -327,8 +327,8 @@
             box-shadow: none !important;
         }
 
-        /* Mobile & Tablet View (<= 768px) */
-        @media (max-width: 768px) {
+        /* Mobile & Tablet View (<= 900px) */
+        @media (max-width: 900px) {
             [id^="Admin_user_dashboard_"],
             [id^="Admin_user_dashboard_"].w3-container,
             .main,

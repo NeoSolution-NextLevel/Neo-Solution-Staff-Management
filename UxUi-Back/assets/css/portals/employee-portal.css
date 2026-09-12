@@ -313,8 +313,8 @@
             }
         }
 
-        /* Mobile & Tablet View (<= 768px) */
-        @media (max-width: 768px) {
+        /* Mobile & Tablet View (<= 900px) */
+        @media (max-width: 900px) {
             [id^="Employee_user_dashboard_"],
             [id^="Employee_user_dashboard_"].emp-main,
             .emp-main,
