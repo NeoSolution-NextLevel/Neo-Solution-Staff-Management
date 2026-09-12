@@ -608,17 +608,29 @@
   }
 
   /* Mobile Responsive */
-  @media (max-width: 768px){
+  @media (max-width: 900px){
     #Admin_user_dashboard_04_bank_details { padding: 0 12px 80px !important; }
-    .main{ margin-left: 0 !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; }
-    .menu-btn{ display: inline-flex !important; }
-    .topbar h2{ font-size: 18px !important; }
-    .head-actions { width: 100%; flex-direction: column; gap: 8px; }
-    .search-input { width: 100% !important; }
-    .add-btn, .pay-btn-primary { width: 100%; justify-content: center; }
-    .bank-form-grid-2 { grid-template-columns: 1fr; }
+    .main{ margin-left: 0 !important; width: 100% !important; max-width: 100% !important; padding: 12px 0 !important; }
+    .topbar { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 8px !important; margin-bottom: 14px !important; }
+    .topbar-left { display: flex !important; align-items: center !important; gap: 6px !important; min-width: 0 !important; flex: 1 !important; }
+    .menu-btn{ display: inline-flex !important; flex-shrink: 0 !important; }
+    .topbar h2{ font-size: 16px !important; line-height: 1.25 !important; }
+    .topbar-right { display: flex !important; align-items: center !important; gap: 8px !important; flex-shrink: 0 !important; }
+    .admin-pill { padding: 4px 8px 4px 4px !important; }
+    .admin-pill span { display: none !important; }
+    .bank-tabs-nav { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; white-space: nowrap !important; gap: 8px !important; padding-bottom: 6px !important; }
+    .bank-tab-btn { padding: 7px 12px !important; font-size: 13px !important; flex-shrink: 0 !important; }
+    .page-head { margin-bottom: 12px !important; gap: 8px !important; }
+    .page-head p { font-size: 12.5px !important; }
+    .head-actions { width: 100% !important; flex-direction: column !important; gap: 8px !important; }
+    .search-input-wrap { width: 100% !important; }
+    .search-input { width: 100% !important; font-size: 13px !important; padding: 8px 12px 8px 34px !important; }
+    .add-btn, .pay-btn-primary { width: 100% !important; justify-content: center !important; }
+    .bank-form-grid-2 { grid-template-columns: 1fr !important; }
+    #Admin_user_dashboard_04_bank_details .table-card { display: block !important; border: 1px solid var(--border) !important; border-radius: 12px !important; background: var(--card) !important; box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important; margin-top: 8px !important; overflow: hidden !important; }
     .table-wrap { display: none !important; }
-    .emp-mobile-receipt-cards { display: flex !important; }
+    .emp-mobile-receipt-cards { display: flex !important; flex-direction: column !important; gap: 10px !important; padding: 12px !important; }
+    .emp-mobile-receipt-card { background: #ffffff !important; border: 1px solid var(--border) !important; border-radius: 10px !important; padding: 12px !important; }
     .bank-modal-overlay { padding: 8px !important; }
     .bank-modal-card { border-radius: 14px !important; }
     .bank-modal-body { padding: 16px !important; }
