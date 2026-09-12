@@ -488,46 +488,6 @@
         </div>
       </div>
 
-      <!-- Card 4: Work Schedule & Shift Timing (Bottom-Right Card in 2x2 Bento Grid) -->
-      <div class="pd-bento-card">
-        <div class="pd-card-header">
-          <div class="pd-card-icon blue">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <div>
-            <h3 class="pd-card-title">Work Schedule & Shift Timing</h3>
-            <p class="pd-card-subtitle">Active shift, schedule & assigned location</p>
-          </div>
-        </div>
-
-        <div class="pd-item-list">
-          <div class="pd-item-box">
-            <span class="pd-label">Work Shift Hours</span>
-            <span class="pd-val" id="pdWorkShift" style="color: #1e293b; font-weight: 700; margin-top:2px;">08:30 AM – 05:30 PM</span>
-          </div>
-
-          <div class="pd-item-box">
-            <span class="pd-label">Working Days</span>
-            <span class="pd-val" id="pdWorkingDays" style="color: #2563eb; font-weight: 700;">Mon, Tue, Wed, Thu, Fri</span>
-          </div>
-
-          <div class="pd-item-box">
-            <span class="pd-label">General Work Mode</span>
-            <span class="pd-val" id="pdWorkMode" style="color: #16a34a; font-weight: 700;">On-Site (Active)</span>
-          </div>
-
-          <div class="pd-item-box">
-            <span class="pd-label">Assigned Location</span>
-            <span class="pd-val" id="pdWorkLocation">Colombo HQ</span>
-          </div>
-
-          <div class="pd-item-box full-width" style="margin-top: 2px;">
-            <span class="pd-label">Schedule Period</span>
-            <span class="pd-val" id="pdSchedulePeriod" style="font-weight:600; color:#475569;">Active Permanent Schedule</span>
-          </div>
-        </div>
-      </div>
-
     </div>
 
   </div>

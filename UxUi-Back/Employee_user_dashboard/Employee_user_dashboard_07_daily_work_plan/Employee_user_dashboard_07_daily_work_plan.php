@@ -537,6 +537,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap !important;
   }
 
   .shift-wrapup-badge.completed {

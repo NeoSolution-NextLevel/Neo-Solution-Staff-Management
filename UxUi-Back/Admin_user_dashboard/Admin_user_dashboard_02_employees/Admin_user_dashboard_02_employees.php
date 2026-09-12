@@ -652,45 +652,175 @@
 
   @media (max-width: 768px) {
     #Admin_user_dashboard_02_employees {
-      padding: 0 12px 80px !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      padding: 0 10px 72px !important;
+      overflow-x: hidden !important;
     }
     .main, .w3-main-content {
       margin-left: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
       padding: 0 !important;
+      min-width: 0 !important;
+      overflow-x: hidden !important;
     }
 
     .menu-btn { display: inline-flex !important; }
-    .topbar h2 { font-size: 18px !important; }
+    #Admin_user_dashboard_02_employees .topbar {
+      width: calc(100% + 20px) !important;
+      margin: 0 -10px 12px !important;
+      padding: 0 10px !important;
+      height: 58px !important;
+      min-height: 58px !important;
+      max-height: 58px !important;
+    }
+    #Admin_user_dashboard_02_employees .topbar-left,
+    #Admin_user_dashboard_02_employees .topbar-right {
+      min-width: 0;
+      gap: 6px;
+    }
+    #Admin_user_dashboard_02_employees .topbar h2 { font-size: 18px !important; }
+    #Admin_user_dashboard_02_employees .admin-pill {
+      padding: 4px;
+    }
+    #Admin_user_dashboard_02_employees .admin-pill span {
+      display: none;
+    }
     .w3-page-head {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
     }
     .w3-btn-primary {
-      width: 100%;
-      justify-content: center;
+      flex: 0 0 auto;
+      padding: 9px 12px;
+      font-size: 12px;
     }
 
     .w3-toolbar {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) minmax(128px, .85fr);
+      align-items: center;
+      gap: 8px !important;
+      margin-bottom: 12px;
     }
-    .w3-search-box { width: 100%; }
+    .w3-toolbar > div:first-child {
+      display: contents !important;
+    }
+    .w3-search-box {
+      grid-column: 1 / -1;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+    }
     .w3-filter-pills {
-      overflow-x: auto;
-      padding-bottom: 4px;
+      grid-column: 1;
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      gap: 4px;
+      overflow: hidden;
+      padding-bottom: 0;
       -webkit-overflow-scrolling: touch;
+    }
+    .w3-filter-pills .w3-pill {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 8px 4px;
+      text-align: center;
+      font-size: 11.5px;
+    }
+    .quick-login-wrap {
+      grid-column: 2;
+      width: 100%;
+      min-width: 0;
+      padding: 3px 6px !important;
+      gap: 4px !important;
+    }
+    .quick-login-wrap > span {
+      display: none !important;
+    }
+    .quick-login-wrap select {
+      width: 100%;
+      min-width: 0;
+      max-width: none !important;
+      padding: 6px 5px !important;
+      font-size: 11.5px !important;
     }
 
     .w3-table-card { display: none !important; }
-    .mobile-emp-cards { display: flex !important; }
+    .mobile-emp-cards {
+      display: flex !important;
+      width: 100%;
+      min-width: 0;
+      gap: 10px;
+    }
+    .mobile-emp-card {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      gap: 10px;
+      border-radius: 13px;
+      overflow: hidden;
+    }
+    .mobile-emp-card-head {
+      min-width: 0;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .mobile-emp-card-head .emp-cell {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .mobile-emp-card-head .emp-cell > div:last-child {
+      min-width: 0;
+    }
+    .mobile-emp-card-head .emp-name,
+    .mobile-emp-card-head .emp-email {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .mobile-emp-info-grid {
+      min-width: 0;
+      padding: 9px 10px;
+      gap: 8px;
+    }
+    .mobile-emp-info-val {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .mobile-emp-card-actions {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .mobile-emp-card-actions > button {
+      flex: 1 1 30%;
+      min-width: 0;
+      padding-left: 6px;
+      padding-right: 6px;
+      white-space: normal;
+    }
 
     .w3-form-row { grid-template-columns: 1fr; gap: 8px; }
     .w3-emp-profile-details-grid { grid-template-columns: 1fr; gap: 8px; }
     .w3-modal-card { width: 100%; max-height: 92vh; }
+
+    /* Let the employee profile modal and its actions scroll as one page. */
+    .w3-emp-profile-modal {
+      max-height: none !important;
+      overflow: visible !important;
+      margin: 12px 0 !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-body {
+      max-height: none !important;
+      overflow: visible !important;
+      flex: none !important;
+    }
+    .w3-emp-profile-modal .w3-modal-footer {
+      flex-wrap: wrap;
+    }
   }
 
   @media (max-height: 520px) {

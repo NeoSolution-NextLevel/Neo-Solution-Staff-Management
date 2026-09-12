@@ -27,12 +27,14 @@
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .emp-leave-container {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   /* Top Navigation Bar */
@@ -352,16 +354,28 @@
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     box-shadow: 0 1px 3px rgba(20,25,60,.04);
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow: hidden;
   }
 
   .mobile-leave-emp-card-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .mobile-leave-emp-card-head strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .mobile-leave-emp-details {
@@ -373,12 +387,35 @@
     border-radius: 10px;
     padding: 10px 12px;
     font-size: 12.5px;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .mobile-leave-emp-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .mobile-leave-emp-row > span:first-child {
+    flex: 0 0 auto;
+  }
+
+  .mobile-leave-emp-row > span:last-child {
+    min-width: 0;
+    max-width: 70%;
+    text-align: right;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+  }
+
+  .mobile-leave-emp-details > div:last-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   /* Responsive Breakpoints */

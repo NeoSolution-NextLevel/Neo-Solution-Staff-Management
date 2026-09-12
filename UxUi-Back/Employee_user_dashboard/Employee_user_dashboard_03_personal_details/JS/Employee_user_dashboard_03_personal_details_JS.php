@@ -81,28 +81,6 @@
           if (el('pdJoinDate')) el('pdJoinDate').textContent = joined;
           if (el('pdEmpType')) el('pdEmpType').textContent = p.employment_type || 'Full-Time';
 
-          // Work Schedule & Shift Timing in Card 4
-          if (el('pdWorkShift')) el('pdWorkShift').textContent = p.work_shift || '08:30 AM – 05:30 PM';
-          if (el('pdWorkingDays')) el('pdWorkingDays').textContent = p.working_days || 'Mon, Tue, Wed, Thu, Fri';
-          let todayWorkMode = p.today_work_mode || p.work_mode || 'On-Site (Active)';
-          let todayModeType = p.today_mode_type || '';
-          if (!todayModeType) {
-            if (todayWorkMode.includes('Home') || todayWorkMode.includes('WFH')) todayModeType = 'wfh';
-            else if (todayWorkMode.includes('Leave')) todayModeType = 'leave';
-            else todayModeType = 'onsite';
-          }
-          if (el('pdWorkMode')) {
-            el('pdWorkMode').textContent = todayWorkMode;
-            if (todayModeType === 'wfh') {
-              el('pdWorkMode').style.color = '#7c3aed';
-            } else if (todayModeType === 'leave') {
-              el('pdWorkMode').style.color = '#dc2626';
-            } else {
-              el('pdWorkMode').style.color = '#16a34a';
-            }
-          }
-          if (el('pdWorkLocation')) el('pdWorkLocation').textContent = p.work_location || 'Colombo HQ';
-          if (el('pdSchedulePeriod')) el('pdSchedulePeriod').textContent = p.schedule_start_date ? `Effective from ${p.schedule_start_date}` : 'Active Permanent Schedule';
         }
       })
       .catch(() => {});

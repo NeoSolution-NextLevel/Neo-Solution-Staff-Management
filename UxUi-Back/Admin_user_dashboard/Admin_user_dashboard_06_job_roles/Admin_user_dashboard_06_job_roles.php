@@ -440,32 +440,142 @@
       margin-left: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
-      padding: 12px 12px 80px !important;
+      min-width: 0 !important;
+      padding: 0 10px 72px !important;
+      overflow-x: hidden !important;
+    }
+
+    #Admin_user_dashboard_06_job_roles {
+      width: 100% !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+    }
+    #Admin_user_dashboard_06_job_roles .topbar {
+      width: calc(100% + 20px) !important;
+      margin: 0 -10px 12px !important;
+      padding: 0 10px !important;
+      height: 58px !important;
+      min-height: 58px !important;
+      max-height: 58px !important;
+    }
+    #Admin_user_dashboard_06_job_roles .topbar-left,
+    #Admin_user_dashboard_06_job_roles .topbar-right {
+      min-width: 0;
+      gap: 6px;
     }
 
     .menu-btn { display: inline-flex !important; }
-    .topbar h2 { font-size: 18px !important; }
+    #Admin_user_dashboard_06_job_roles .topbar h2 { font-size: 18px !important; white-space: nowrap; }
+    #Admin_user_dashboard_06_job_roles .profile-pill { padding: 4px; }
+    #Admin_user_dashboard_06_job_roles .profile-pill span { display: none; }
     .header-row {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .header-title {
+      min-width: 0;
+    }
+    .header-title p {
+      font-size: 12px;
     }
     .btn-add {
-      width: 100%;
-      justify-content: center;
+      flex: 0 0 auto;
+      padding: 9px 11px;
+      font-size: 12px;
     }
 
     .roles-toolbar {
-      flex-direction: column;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) minmax(128px, .85fr);
       align-items: stretch;
-      gap: 10px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
-    .roles-search-box, .team-filter-select {
+    .roles-search-box {
+      grid-column: 1 / -1;
       width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+    }
+    .team-filter-select {
+      grid-column: 1 / -1;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 10px;
     }
 
     #Admin_user_dashboard_06_job_roles .table-card { display: none !important; }
-    #Admin_user_dashboard_06_job_roles .mobile-role-cards { display: flex !important; }
+    #Admin_user_dashboard_06_job_roles .mobile-role-cards {
+      display: flex !important;
+      width: 100%;
+      min-width: 0;
+      gap: 10px;
+    }
+    #Admin_user_dashboard_06_job_roles .mobile-role-card {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      gap: 10px;
+      border-radius: 13px;
+      overflow: hidden;
+    }
+    #Admin_user_dashboard_06_job_roles .mobile-role-card-head {
+      min-width: 0;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    #Admin_user_dashboard_06_job_roles .mobile-role-card-head .job-cell,
+    #Admin_user_dashboard_06_job_roles .mobile-role-card-head .job-cell > div:last-child {
+      min-width: 0;
+    }
+    #Admin_user_dashboard_06_job_roles .job-title,
+    #Admin_user_dashboard_06_job_roles .mobile-role-row > span:last-child {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      white-space: normal;
+    }
+    #Admin_user_dashboard_06_job_roles .mobile-role-details {
+      min-width: 0;
+      padding: 9px 10px;
+    }
+    #Admin_user_dashboard_06_job_roles .mobile-role-row {
+      align-items: flex-start;
+      gap: 10px;
+    }
+    #Admin_user_dashboard_06_job_roles .mobile-role-row > span:last-child {
+      max-width: 70%;
+      text-align: right;
+    }
+    #Admin_user_dashboard_06_job_roles .mobile-role-actions {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    #Admin_user_dashboard_06_job_roles .btn-mobile-role-edit {
+      min-width: 0;
+      padding: 8px 6px;
+    }
+    #Admin_user_dashboard_06_job_roles .w3-modal-overlay {
+      padding: 8px;
+      align-items: flex-start;
+    }
+    #Admin_user_dashboard_06_job_roles .w3-modal-card {
+      width: 100%;
+      max-width: 100%;
+      max-height: calc(100vh - 16px);
+      margin: 0 auto;
+    }
+    #Admin_user_dashboard_06_job_roles .w3-modal-header { padding: 12px 14px; }
+    #Admin_user_dashboard_06_job_roles .w3-modal-body-scroll { padding: 14px; }
+    #Admin_user_dashboard_06_job_roles .w3-modal-footer {
+      padding: 10px 14px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    #Admin_user_dashboard_06_job_roles .w3-modal-footer > button {
+      flex: 1 1 130px;
+      text-align: center;
+    }
   }
 </style>
 

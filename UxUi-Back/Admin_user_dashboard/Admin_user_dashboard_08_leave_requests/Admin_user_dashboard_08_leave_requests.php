@@ -356,6 +356,10 @@
     color: #3b5bdb;
   }
 
+  .mobile-leave-cards {
+    display: none;
+  }
+
   /* Mobile */
   @media (max-width: 768px) {
     .main-wrapper {
@@ -389,12 +393,243 @@
     .menu-btn { display: inline-flex !important; }
     .topbar h2 { font-size: 18px !important; }
     .table-card {
-      width: 100% !important;
-      overflow-x: auto !important;
-      -webkit-overflow-scrolling: touch !important;
-      border-radius: 12px !important;
+      display: none !important;
     }
-    table.leave-table { min-width: 620px !important; }
+    .mobile-leave-cards {
+      display: flex !important;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    .mobile-leave-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      padding: 14px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .mobile-leave-card-header,
+    .mobile-leave-card-row,
+    .mobile-leave-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .mobile-leave-card-header {
+      align-items: flex-start;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .mobile-leave-card-name {
+      color: #14204d;
+      font-size: 14px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .mobile-leave-card-type,
+    .mobile-leave-card-label {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .mobile-leave-card-body {
+      display: grid;
+      gap: 9px;
+      padding: 12px 0;
+    }
+    .mobile-leave-card-value {
+      color: #334155;
+      font-size: 13px;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+    .mobile-leave-card-reason {
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 2px;
+      overflow-wrap: anywhere;
+    }
+    .mobile-leave-card-actions {
+      justify-content: flex-end;
+      padding-top: 12px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .mobile-leave-card-actions .btn-actions-group {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .leave-modal-card {
+      width: calc(100% - 24px) !important;
+      margin: 20px auto !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    #Admin_user_dashboard_08_leave_requests {
+      overflow-x: hidden !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .main-wrapper {
+      padding: 8px 10px 64px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .topbar {
+      gap: 8px !important;
+      margin-bottom: 12px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .topbar-left {
+      min-width: 0 !important;
+      gap: 6px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .topbar h2 {
+      min-width: 0 !important;
+      font-size: 16px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .topbar-right {
+      gap: 7px !important;
+      flex-shrink: 0 !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .profile-pill {
+      padding: 4px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .profile-pill > span {
+      display: none !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .avatar-sm {
+      width: 28px !important;
+      height: 28px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .header-row {
+      gap: 8px !important;
+      margin-bottom: 12px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .header-title p {
+      font-size: 12.5px !important;
+      line-height: 1.35 !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .filter-tabs {
+      padding: 3px !important;
+      gap: 3px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .filter-btn {
+      min-width: 0 !important;
+      padding: 8px 3px !important;
+      font-size: 11px !important;
+      white-space: normal !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card {
+      padding: 12px !important;
+      border-radius: 11px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card-header,
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card-row {
+      align-items: flex-start !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card-row {
+      flex-wrap: wrap !important;
+      gap: 4px 10px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card-label {
+      flex: 0 0 auto !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card-value {
+      min-width: 0 !important;
+      flex: 1 1 120px !important;
+      text-align: right !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card-actions {
+      align-items: stretch !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card-actions .btn-actions-group {
+      width: 100% !important;
+      justify-content: stretch !important;
+      gap: 6px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .mobile-leave-card-actions .btn-action {
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+      padding: 7px 6px !important;
+      white-space: normal !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-card {
+      width: calc(100% - 16px) !important;
+      max-width: none !important;
+      max-height: calc(100dvh - 24px) !important;
+      margin: 12px auto !important;
+      overflow-y: auto !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-header {
+      padding: 13px 15px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-header h4 {
+      font-size: 14px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-card > div:nth-child(2) {
+      padding: 14px 15px !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-card table {
+      table-layout: fixed !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-card table td {
+      padding: 8px 0 !important;
+      font-size: 12.5px !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-card table td:first-child {
+      width: 38% !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-card > div:last-child {
+      padding: 10px 15px !important;
+      flex-wrap: wrap !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-card > div:last-child .btn-actions-group {
+      flex: 1 1 100% !important;
+      justify-content: stretch !important;
+      flex-wrap: wrap !important;
+    }
+
+    #Admin_user_dashboard_08_leave_requests .leave-modal-card > div:last-child .btn-action {
+      flex: 1 1 110px !important;
+    }
   }
 </style>
 
@@ -455,6 +690,11 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile Card View -->
+      <div class="mobile-leave-cards" id="mobileLeaveCards">
+        <div class="mobile-leave-card" style="text-align:center; color:#64748b;">Loading leave requests...</div>
       </div>
 
     </main>

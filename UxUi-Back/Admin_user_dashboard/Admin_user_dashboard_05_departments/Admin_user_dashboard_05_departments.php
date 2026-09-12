@@ -382,17 +382,53 @@
         margin-left: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
-        padding: 12px 12px 80px !important;
+        min-width: 0 !important;
+        padding: 0 10px 72px !important;
+        overflow-x: hidden !important;
+      }
+      #Admin_user_dashboard_05_departments {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+      }
+      #Admin_user_dashboard_05_departments .topbar {
+        width: calc(100% + 20px) !important;
+        margin: 0 -10px 12px !important;
+        padding: 0 10px !important;
+        height: 58px !important;
+        min-height: 58px !important;
+        max-height: 58px !important;
+      }
+      #Admin_user_dashboard_05_departments .topbar-left,
+      #Admin_user_dashboard_05_departments .topbar-right {
+        min-width: 0;
+        gap: 6px;
       }
       .menu-btn { display: inline-flex !important; }
-      .topbar h2 { font-size: 18px !important; }
+      #Admin_user_dashboard_05_departments .topbar h2 { font-size: 18px !important; white-space: nowrap; }
+      #Admin_user_dashboard_05_departments .profile-pill { padding: 4px; }
+      #Admin_user_dashboard_05_departments .profile-pill span { display: none; }
       .page-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
       }
-      .btn-add-dept { width: 100%; justify-content: center; }
-      .dept-grid { grid-template-columns: 1fr; }
+      .page-title { min-width: 0; }
+      .page-title p { font-size: 12px; line-height: 1.35; }
+      .btn-add-dept { flex: 0 0 auto; padding: 9px 11px; font-size: 12px; }
+      .dept-grid { grid-template-columns: 1fr !important; gap: 10px; margin-bottom: 16px; min-width: 0; }
+      .dept-card { min-width: 0; padding: 14px; gap: 10px; border-radius: 13px; }
+      .card-info, .card-info h3, .card-info p { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+      .card-info h3 { font-size: 15px; line-height: 1.3; }
+      .card-info p { font-size: 12px; }
+      .card-icon { width: 40px; height: 40px; font-size: 16px; }
+      .emp-count-badge { max-width: 75%; overflow-wrap: anywhere; padding: 5px 10px; font-size: 11px; }
+      .w3-modal-overlay { padding: 8px; align-items: flex-start; }
+      .w3-modal-card { width: 100%; max-width: 100%; max-height: calc(100vh - 16px); margin: 0 auto; }
+      .w3-modal-header { padding: 12px 14px; }
+      .w3-modal-body-scroll { padding: 14px; }
+      .w3-modal-footer { padding: 10px 14px; gap: 8px; flex-wrap: wrap; }
+      .w3-modal-footer > button { flex: 1 1 130px; text-align: center; }
     }
 </style>
 
