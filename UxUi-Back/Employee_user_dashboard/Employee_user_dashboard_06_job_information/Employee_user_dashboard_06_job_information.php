@@ -6,12 +6,32 @@
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
+    min-width: 0;
+    overflow-x: hidden;
   }
 
   .job-info-container {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    min-width: 0;
+  }
+
+  #Employee_user_dashboard_06_job_information .topbar,
+  #Employee_user_dashboard_06_job_information .topbar-left,
+  #Employee_user_dashboard_06_job_information .topbar-right,
+  #Employee_user_dashboard_06_job_information .job-stat-box,
+  #Employee_user_dashboard_06_job_information .job-stat-content {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  #Employee_user_dashboard_06_job_information .job-stat-content .value,
+  #Employee_user_dashboard_06_job_information .job-page-head p,
+  #Employee_user_dashboard_06_job_information .timeline-title,
+  #Employee_user_dashboard_06_job_information .timeline-desc {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   /* Topbar */
@@ -223,11 +243,109 @@
 
   /* Responsive Breakpoints */
   @media (max-width: 768px) {
-    .job-menu-btn { display: inline-flex !important; }
-    .job-topbar h2 { font-size: 18px !important; }
+    #Employee_user_dashboard_06_job_information .topbar {
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    #Employee_user_dashboard_06_job_information .topbar-left {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    #Employee_user_dashboard_06_job_information .topbar-left h2 {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 16px !important;
+    }
+
+    #Employee_user_dashboard_06_job_information .topbar-right {
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    #Employee_user_dashboard_06_job_information .admin-pill span {
+      display: none;
+    }
+
+    #Employee_user_dashboard_06_job_information .job-page-head {
+      margin-bottom: 14px;
+    }
+
+    #Employee_user_dashboard_06_job_information .job-page-head p {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
     .job-info-grid { grid-template-columns: 1fr !important; gap: 12px; }
-    .job-stat-box { padding: 16px 18px; }
-    .timeline-card { padding: 18px 16px; }
+    #Employee_user_dashboard_06_job_information .job-stat-box {
+      padding: 15px 16px;
+      gap: 13px;
+      border-radius: 14px;
+    }
+
+    #Employee_user_dashboard_06_job_information .job-stat-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    #Employee_user_dashboard_06_job_information .job-stat-content .value {
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    #Employee_user_dashboard_06_job_information .timeline-card {
+      padding: 18px 16px;
+      border-radius: 14px;
+    }
+
+    #Employee_user_dashboard_06_job_information .timeline-card h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    #Employee_user_dashboard_06_job_information .timeline-list {
+      padding-left: 24px;
+    }
+
+    #Employee_user_dashboard_06_job_information .timeline-dot {
+      left: -24px;
+    }
+
+    #Employee_user_dashboard_06_job_information .timeline-item {
+      padding-bottom: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #Employee_user_dashboard_06_job_information .topbar {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    #Employee_user_dashboard_06_job_information .job-info-grid {
+      gap: 10px !important;
+    }
+
+    #Employee_user_dashboard_06_job_information .job-stat-box {
+      padding: 13px 14px;
+    }
+
+    #Employee_user_dashboard_06_job_information .job-stat-icon {
+      width: 36px;
+      height: 36px;
+    }
+
+    #Employee_user_dashboard_06_job_information .job-stat-icon svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    #Employee_user_dashboard_06_job_information .timeline-card {
+      padding: 16px 14px;
+    }
   }
 </style>
 

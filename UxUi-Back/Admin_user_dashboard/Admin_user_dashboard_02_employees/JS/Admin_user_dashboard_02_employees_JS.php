@@ -152,10 +152,6 @@
                 <button type="button" class="btn-mobile-emp-edit" onclick="editEmp(${e.id})">
                   <i class="fa-solid fa-pen"></i> Edit
                 </button>
-                <button type="button" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')}, ${Number(e.id)})"
-                  style="flex:1; padding:9px 10px; border:none; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-                  <i class="fa-solid fa-right-to-bracket"></i> Auto Login
-                </button>
               </div>
             </div>
           `).join('');

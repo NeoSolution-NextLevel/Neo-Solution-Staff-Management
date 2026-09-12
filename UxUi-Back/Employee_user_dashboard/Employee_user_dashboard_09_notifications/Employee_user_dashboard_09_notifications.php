@@ -11,6 +11,18 @@
     max-width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
+    min-width: 0;
+  }
+
+  #Employee_user_dashboard_09_notifications .topbar,
+  #Employee_user_dashboard_09_notifications .topbar-left,
+  #Employee_user_dashboard_09_notifications .topbar-right,
+  #Employee_user_dashboard_09_notifications .emp-notif-card,
+  #Employee_user_dashboard_09_notifications .emp-notif-head,
+  #Employee_user_dashboard_09_notifications .emp-notif-item {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* Top Navigation Bar */
@@ -35,20 +47,27 @@
     margin: 0;
   }
 
+  .menu-btn,
   .emp-notif-menu-btn {
     display: none;
     align-items: center;
     justify-content: center;
     width: 38px;
     height: 38px;
-    border-radius: 8px;
+    min-width: 38px;
+    min-height: 38px;
+    border-radius: 10px;
     background: #eef2ff;
-    border: none;
+    border: 1px solid #e0edff;
     cursor: pointer;
     color: #14204d;
-    margin-right: 6px;
+    margin: 0 6px 0 0;
+    padding: 0;
+    align-self: center;
+    box-sizing: border-box;
   }
-  .emp-notif-menu-btn svg { width: 20px; height: 20px; }
+  .menu-btn svg,
+  .emp-notif-menu-btn svg { width: 20px; height: 20px; display: block; margin: auto; }
 
   .emp-notif-topbar-right {
     display: flex;
@@ -201,53 +220,117 @@
   }
 
   @media (max-width: 768px) {
-    .emp-notif-menu-btn { display: inline-flex !important; }
-    .emp-notif-topbar h2 { font-size: 18px !important; }
-    .emp-notif-topbar { margin-bottom: 6px !important; }
-    .emp-notif-card {
-      padding: 0 10px 10px;
-      margin-bottom: 12px;
+    #Employee_user_dashboard_09_notifications .topbar {
+      gap: 10px;
+      padding: 12px 14px;
     }
-    .emp-notif-head {
+
+    #Employee_user_dashboard_09_notifications .topbar-left {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    #Employee_user_dashboard_09_notifications .topbar-left h2 {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 16px !important;
+    }
+
+    #Employee_user_dashboard_09_notifications .topbar-right {
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    #Employee_user_dashboard_09_notifications .admin-pill span {
+      display: none;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-card {
+      padding: 14px 10px 10px;
+      margin-bottom: 12px;
+      border-radius: 14px;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-head {
       align-items: flex-start;
       gap: 8px;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
-    .emp-notif-head h3 { font-size: 16px; }
-    .emp-notif-head > div {
+
+    #Employee_user_dashboard_09_notifications .emp-notif-head h3 {
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-head > div {
       flex: 1 1 auto;
       line-height: 1.35;
     }
-    .emp-mark-read-btn {
+
+    #Employee_user_dashboard_09_notifications .emp-mark-read-btn {
       min-width: 116px;
       max-width: 126px;
       padding: 8px 10px;
       line-height: 1.35;
     }
-    .emp-notif-item {
+
+    #Employee_user_dashboard_09_notifications .emp-notif-item {
       gap: 8px;
       padding: 10px;
     }
-    .emp-notif-item > div:nth-child(2) > div:first-child {
+
+    #Employee_user_dashboard_09_notifications .emp-notif-item > div:nth-child(2) > div:first-child {
       align-items: flex-start !important;
       flex-wrap: wrap !important;
       gap: 2px 8px;
     }
-    .emp-notif-item .notif-time {
+
+    #Employee_user_dashboard_09_notifications .emp-notif-item .notif-time {
       white-space: nowrap;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-icon {
+      width: 34px;
+      height: 34px;
+      font-size: 14px;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-item h4 {
+      font-size: 13.5px !important;
+      line-height: 1.35;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-item p {
+      font-size: 12px !important;
+      line-height: 1.45 !important;
     }
   }
 
   @media (max-width: 380px) {
-    .emp-notif-card { padding: 0 9px 9px; }
-    .emp-notif-head {
+    #Employee_user_dashboard_09_notifications .topbar {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-card {
+      padding: 12px 9px 9px;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-head {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 112px;
       align-items: start;
     }
-    .emp-mark-read-btn {
+
+    #Employee_user_dashboard_09_notifications .emp-mark-read-btn {
       min-width: 0;
       width: 112px;
+    }
+
+    #Employee_user_dashboard_09_notifications .emp-notif-item {
+      padding: 9px;
     }
   }
 </style>

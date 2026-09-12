@@ -388,10 +388,36 @@
       .toggle-menu,
       .menu-btn {
         display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        min-height: 38px !important;
+        border-radius: 10px !important;
+        background: #eef2ff !important;
+        border: 1px solid #e0edff !important;
+        cursor: pointer !important;
+        color: #14204d !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-self: center !important;
+        flex-shrink: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      .toggle-menu svg,
+      .menu-btn svg {
+        width: 20px !important;
+        height: 20px !important;
+        display: block !important;
+        margin: auto !important;
       }
 
       .topbar {
-        padding: 10px 14px;
+        padding: 0 14px;
+        display: flex !important;
+        align-items: center !important;
       }
 
       .profile-pill span {
@@ -469,14 +495,21 @@
 
     @media (max-width: 600px) {
       #Admin_user_dashboard_09_notifications .topbar {
-        height: 56px !important;
-        padding: 8px 10px !important;
+        height: 58px !important;
+        min-height: 58px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0 12px !important;
         gap: 8px !important;
+        box-sizing: border-box !important;
       }
 
       #Admin_user_dashboard_09_notifications .topbar-left {
+        display: flex !important;
+        align-items: center !important;
         min-width: 0 !important;
-        gap: 6px !important;
+        gap: 8px !important;
         flex: 1 !important;
       }
 

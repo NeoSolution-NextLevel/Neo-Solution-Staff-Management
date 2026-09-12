@@ -333,6 +333,182 @@
   @media (max-width: 500px) {
     .pd-probation-4col-grid { grid-template-columns: 1fr !important; }
   }
+
+  @media (max-width: 600px) {
+    #Employee_user_dashboard_03_personal_details {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .emp-pd-container {
+      padding: 0 10px 64px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .topbar {
+      min-width: 0 !important;
+      height: 56px !important;
+      padding: 8px 0 !important;
+      gap: 8px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .topbar-left {
+      min-width: 0 !important;
+      gap: 6px !important;
+      flex: 1 !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .topbar-left h2 {
+      min-width: 0 !important;
+      font-size: 16px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .topbar-right {
+      gap: 6px !important;
+      flex-shrink: 0 !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .admin-pill {
+      padding: 3px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .admin-pill > span {
+      display: none !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .emp-pd-container > div[style*="justify-content: space-between"] {
+      align-items: stretch !important;
+      gap: 9px !important;
+      margin-bottom: 12px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .emp-pd-container > div[style*="justify-content: space-between"] > div {
+      min-width: 0 !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .emp-pd-container > div[style*="justify-content: space-between"] p {
+      font-size: 11.5px !important;
+      line-height: 1.4 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .btn-pd-edit {
+      width: auto !important;
+      min-width: 0 !important;
+      padding: 8px 10px !important;
+      font-size: 11.5px !important;
+      white-space: nowrap !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-bento-grid {
+      grid-template-columns: 1fr !important;
+      gap: 11px !important;
+      margin-bottom: 14px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-bento-card {
+      min-width: 0 !important;
+      padding: 14px 12px !important;
+      border-radius: 13px !important;
+      gap: 11px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-card-header {
+      align-items: flex-start !important;
+      gap: 9px !important;
+      padding-bottom: 10px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-card-icon {
+      width: 34px !important;
+      height: 34px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-card-title {
+      font-size: 14px !important;
+      line-height: 1.3 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-card-subtitle {
+      font-size: 10.5px !important;
+      line-height: 1.35 !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-item-list {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-item-box {
+      min-width: 0 !important;
+      padding: 10px 11px !important;
+      border-radius: 10px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-label {
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      line-height: 1.25 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-val {
+      font-size: 13px !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-overlay {
+      padding: 8px !important;
+      align-items: flex-start !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-box {
+      width: 100% !important;
+      max-width: 100% !important;
+      max-height: calc(100dvh - 16px) !important;
+      border-radius: 13px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-header {
+      padding: 13px 14px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-header h3 {
+      min-width: 0 !important;
+      font-size: 15px !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-body {
+      padding: 14px !important;
+      gap: 12px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-body > div[style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-form-control {
+      min-width: 0 !important;
+      padding: 9px 11px !important;
+      font-size: 12.5px !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-box > .modal-footer {
+      padding: 10px 14px !important;
+      flex-wrap: wrap !important;
+    }
+
+    #Employee_user_dashboard_03_personal_details .pd-modal-box > .modal-footer button {
+      flex: 1 1 120px !important;
+    }
+  }
 </style>
 
 <div id="Employee_user_dashboard_03_personal_details" class="w3-container tab-content" style="display: none; padding: 0;">

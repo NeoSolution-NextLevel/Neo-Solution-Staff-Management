@@ -299,12 +299,176 @@
 
   @media (max-width: 600px) {
     .stats {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
     }
     .charts-row {
       grid-template-columns: 1fr;
       gap: 14px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    #Employee_user_dashboard_01 {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+
+    #Employee_user_dashboard_01 .main {
+      min-width: 0 !important;
+      width: 100% !important;
+      padding: 0 10px 64px !important;
+    }
+
+    #Employee_user_dashboard_01 .topbar {
+      min-width: 0 !important;
+      height: 56px !important;
+      padding: 8px 0 !important;
+      gap: 8px !important;
+    }
+
+    #Employee_user_dashboard_01 .topbar-left {
+      min-width: 0 !important;
+      gap: 6px !important;
+      flex: 1 !important;
+    }
+
+    #Employee_user_dashboard_01 .topbar-left h2 {
+      min-width: 0 !important;
+      font-size: 16px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    #Employee_user_dashboard_01 .topbar-right {
+      gap: 6px !important;
+      flex-shrink: 0 !important;
+    }
+
+    #Employee_user_dashboard_01 .admin-pill {
+      padding: 3px !important;
+    }
+
+    #Employee_user_dashboard_01 .admin-pill > span {
+      display: none !important;
+    }
+
+    #Employee_user_dashboard_01 .banner {
+      padding: 14px !important;
+      border-radius: 13px !important;
+      margin-bottom: 11px !important;
+    }
+
+    #Employee_user_dashboard_01 .banner h3 {
+      font-size: 19px !important;
+      line-height: 1.25 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_01 .banner p {
+      font-size: 12px !important;
+      line-height: 1.4 !important;
+    }
+
+    #Employee_user_dashboard_01 .banner > div:first-child {
+      align-items: flex-start !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+    }
+
+    #Employee_user_dashboard_01 .banner > div:first-child > div:last-child {
+      width: 100% !important;
+      flex-wrap: wrap !important;
+    }
+
+    #Employee_user_dashboard_01 .banner > div:first-child > div:last-child span {
+      max-width: 100% !important;
+      overflow-wrap: anywhere !important;
+      padding: 3px 8px !important;
+      font-size: 10.5px !important;
+    }
+
+    #Employee_user_dashboard_01 .banner > div[style*="Work Schedule"] {
+      gap: 7px 12px !important;
+      margin-top: 10px !important;
+      padding: 8px 10px !important;
+      font-size: 11px !important;
+    }
+
+    #Employee_user_dashboard_01 .stats {
+      gap: 8px !important;
+      margin-bottom: 11px !important;
+    }
+
+    #Employee_user_dashboard_01 .stat-card {
+      min-width: 0 !important;
+      padding: 11px !important;
+      gap: 7px !important;
+      border-radius: 12px !important;
+    }
+
+    #Employee_user_dashboard_01 .stat-icon {
+      width: 32px !important;
+      height: 32px !important;
+    }
+
+    #Employee_user_dashboard_01 .stat-icon svg {
+      width: 16px !important;
+      height: 16px !important;
+    }
+
+    #Employee_user_dashboard_01 .stat-value {
+      font-size: 19px !important;
+    }
+
+    #Employee_user_dashboard_01 .stat-label {
+      font-size: 11px !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_01 .charts-row {
+      gap: 10px !important;
+      margin-bottom: 10px !important;
+    }
+
+    #Employee_user_dashboard_01 .card {
+      min-width: 0 !important;
+      padding: 13px !important;
+      border-radius: 12px !important;
+    }
+
+    #Employee_user_dashboard_01 .card-header-row {
+      align-items: flex-start !important;
+      gap: 8px !important;
+      margin-bottom: 12px !important;
+    }
+
+    #Employee_user_dashboard_01 .card-header-row h4 {
+      min-width: 0 !important;
+      font-size: 14px !important;
+      line-height: 1.3 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_01 .card-header-row > span {
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      font-size: 11px !important;
+    }
+
+    #Employee_user_dashboard_01 #dashTodayWorkPlanContainer,
+    #Employee_user_dashboard_01 #dashDeadlinesContainer,
+    #Employee_user_dashboard_01 #dashRecentNotificationsContainer {
+      min-width: 0 !important;
+      overflow-wrap: anywhere !important;
+    }
+  }
+
+  @media (max-width: 360px) {
+    #Employee_user_dashboard_01 .stats {
+      grid-template-columns: 1fr !important;
     }
   }
 </style>

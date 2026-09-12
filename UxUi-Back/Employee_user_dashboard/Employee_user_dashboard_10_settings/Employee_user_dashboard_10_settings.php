@@ -6,6 +6,33 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    min-width: 0;
+  }
+
+  #Employee_user_dashboard_10_settings,
+  #Employee_user_dashboard_10_settings .main,
+  #Employee_user_dashboard_10_settings .topbar,
+  #Employee_user_dashboard_10_settings .topbar-left,
+  #Employee_user_dashboard_10_settings .topbar-right,
+  #Employee_user_dashboard_10_settings .settings-box-card,
+  #Employee_user_dashboard_10_settings .setting-toggle-item,
+  #Employee_user_dashboard_10_settings .setting-toggle-info,
+  #Employee_user_dashboard_10_settings .account-info-box {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  #Employee_user_dashboard_10_settings {
+    overflow-x: hidden;
+  }
+
+  #Employee_user_dashboard_10_settings .settings-page-head p,
+  #Employee_user_dashboard_10_settings .setting-toggle-info strong,
+  #Employee_user_dashboard_10_settings .setting-toggle-info span,
+  #Employee_user_dashboard_10_settings .account-info-box .value {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .settings-page-head {
@@ -183,14 +210,115 @@
   }
 
   @media (max-width: 900px) {
-    .settings-box-card {
-      padding: 20px 18px;
+    #Employee_user_dashboard_10_settings .topbar {
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    #Employee_user_dashboard_10_settings .topbar-left {
+      flex: 1 1 auto;
+    }
+
+    #Employee_user_dashboard_10_settings .topbar-left h2 {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 16px !important;
+    }
+
+    #Employee_user_dashboard_10_settings .topbar-right {
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    #Employee_user_dashboard_10_settings .admin-pill span {
+      display: none;
+    }
+
+    #Employee_user_dashboard_10_settings .settings-page-head {
       margin-bottom: 16px;
     }
 
-    .account-info-grid {
+    #Employee_user_dashboard_10_settings .settings-page-head p {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    #Employee_user_dashboard_10_settings .settings-box-card {
+      padding: 20px 18px;
+      margin-bottom: 16px;
+      border-radius: 14px;
+    }
+
+    #Employee_user_dashboard_10_settings .settings-box-card h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    #Employee_user_dashboard_10_settings .setting-toggle-item {
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 0;
+    }
+
+    #Employee_user_dashboard_10_settings .setting-toggle-info {
+      flex: 1 1 auto;
+    }
+
+    #Employee_user_dashboard_10_settings .setting-toggle-info span {
+      display: block;
+      line-height: 1.4;
+    }
+
+    #Employee_user_dashboard_10_settings .account-info-grid {
       grid-template-columns: 1fr;
       gap: 12px;
+    }
+
+    #Employee_user_dashboard_10_settings .account-info-box {
+      padding: 12px 14px;
+    }
+
+    #Employee_user_dashboard_10_settings .settings-save-btn {
+      min-height: 44px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #Employee_user_dashboard_10_settings .topbar {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    #Employee_user_dashboard_10_settings .settings-box-card {
+      padding: 15px 14px;
+    }
+
+    #Employee_user_dashboard_10_settings .setting-toggle-item {
+      gap: 9px;
+    }
+
+    #Employee_user_dashboard_10_settings .setting-toggle-info strong {
+      font-size: 13.5px;
+    }
+
+    #Employee_user_dashboard_10_settings .setting-toggle-info span {
+      font-size: 12px;
+    }
+
+    #Employee_user_dashboard_10_settings .switch-pill {
+      width: 42px;
+      height: 24px;
+    }
+
+    #Employee_user_dashboard_10_settings .switch-slider:before {
+      width: 18px;
+      height: 18px;
+    }
+
+    #Employee_user_dashboard_10_settings .switch-pill input:checked + .switch-slider:before {
+      transform: translateX(18px);
     }
   }
 </style>

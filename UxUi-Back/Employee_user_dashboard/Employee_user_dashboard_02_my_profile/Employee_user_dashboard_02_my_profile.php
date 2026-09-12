@@ -586,6 +586,338 @@
     .profile-actions-bar { width: 100%; }
     .btn-edit-profile { width: 100%; justify-content: center; }
   }
+
+  @media (max-width: 600px) {
+    #Employee_user_dashboard_02_my_profile {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .emp-prof-container {
+      padding: 0 10px 64px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .topbar {
+      min-width: 0 !important;
+      height: 56px !important;
+      padding: 8px 0 !important;
+      gap: 8px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .topbar-left {
+      min-width: 0 !important;
+      gap: 6px !important;
+      flex: 1 !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .topbar-left h2 {
+      min-width: 0 !important;
+      font-size: 16px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .topbar-right {
+      gap: 6px !important;
+      flex-shrink: 0 !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .admin-pill {
+      padding: 3px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .admin-pill > span {
+      display: none !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .emp-prof-container > div[style*="justify-content: space-between"] {
+      align-items: stretch !important;
+      gap: 9px !important;
+      margin-bottom: 12px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .emp-prof-container > div[style*="justify-content: space-between"] > div {
+      min-width: 0 !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .emp-prof-container > div[style*="justify-content: space-between"] p {
+      font-size: 11.5px !important;
+      line-height: 1.4 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .btn-edit-profile {
+      width: auto !important;
+      min-width: 0 !important;
+      padding: 8px 10px !important;
+      font-size: 11.5px !important;
+      white-space: nowrap !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-hero-card {
+      border-radius: 13px !important;
+      margin-bottom: 12px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-banner {
+      height: 86px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-hero-content {
+      padding: 0 13px 15px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-avatar-row {
+      align-items: flex-start !important;
+      gap: 8px !important;
+      margin-bottom: 10px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-avatar-wrapper,
+    #Employee_user_dashboard_02_my_profile .profile-avatar-img,
+    #Employee_user_dashboard_02_my_profile .profile-avatar-placeholder {
+      width: 72px !important;
+      height: 72px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-avatar-wrapper {
+      margin-top: -36px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-name {
+      font-size: 20px !important;
+      line-height: 1.25 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-title {
+      font-size: 12px !important;
+      line-height: 1.35 !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-tags {
+      gap: 5px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-tag {
+      font-size: 10.5px !important;
+      padding: 4px 8px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .profile-grid-layout {
+      gap: 10px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .prof-card {
+      padding: 14px 12px !important;
+      border-radius: 13px !important;
+      margin-bottom: 10px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .prof-card-head {
+      align-items: flex-start !important;
+      gap: 8px !important;
+      margin-bottom: 11px !important;
+      padding-bottom: 10px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .prof-card-head h3 {
+      min-width: 0 !important;
+      font-size: 14px !important;
+      line-height: 1.3 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .info-field-grid {
+      gap: 8px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .info-field {
+      min-width: 0 !important;
+      padding: 10px 11px !important;
+      border-radius: 10px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .info-field-label {
+      line-height: 1.25 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .info-field-val {
+      font-size: 12.5px !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .roster-days-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 7px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .roster-day-box {
+      padding: 8px 4px !important;
+      border-radius: 9px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .roster-day-name {
+      font-size: 11px !important;
+      margin-bottom: 5px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .roster-day-badge {
+      font-size: 8.5px !important;
+      padding: 4px 5px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-overlay {
+      padding: 8px !important;
+      align-items: flex-start !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-box {
+      width: 100% !important;
+      max-width: 100% !important;
+      max-height: calc(100dvh - 16px) !important;
+      border-radius: 13px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-header {
+      padding: 13px 14px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-header h3 {
+      min-width: 0 !important;
+      font-size: 15px !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-body {
+      padding: 14px !important;
+      gap: 12px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-body > div[style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-form-control,
+    #Employee_user_dashboard_02_my_profile .modal-day-select {
+      min-width: 0 !important;
+      padding: 9px 11px !important;
+      font-size: 12.5px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-roster-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-box > .modal-footer {
+      padding: 10px 14px !important;
+      flex-wrap: wrap !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-footer {
+      padding: 10px 14px !important;
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-footer button {
+      flex: 1 1 120px !important;
+      min-width: 0 !important;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm {
+      min-height: 0 !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body {
+      max-height: calc(100dvh - 128px) !important;
+      overflow-x: hidden !important;
+      background: #f8fafc !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body > .modal-form-group,
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body > div[style*="grid-template-columns"] {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 11px;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body > div[style*="grid-template-columns"] {
+      align-items: stretch;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body > div[style*="background: #f8fafc"] {
+      min-width: 0 !important;
+      padding: 12px !important;
+      box-shadow: none !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body > div[style*="background: #f8fafc"] > div[style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+      gap: 9px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm .modal-form-group {
+      min-width: 0 !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm .modal-form-group label {
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm .modal-form-control {
+      max-width: 100% !important;
+      min-height: 40px;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm .modal-form-group {
+      margin: 0;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm .modal-form-group + .modal-form-group {
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 380px) {
+    #Employee_user_dashboard_02_my_profile .modal-overlay {
+      padding: 4px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile .modal-box {
+      max-height: calc(100dvh - 8px) !important;
+      border-radius: 11px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body {
+      padding: 12px !important;
+      gap: 10px !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body > .modal-form-group,
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-body > div[style*="grid-template-columns"] {
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-footer {
+      flex-direction: column !important;
+    }
+
+    #Employee_user_dashboard_02_my_profile #editProfileForm > .modal-footer button {
+      width: 100% !important;
+      flex-basis: auto !important;
+    }
+  }
 </style>
 
 <div id="Employee_user_dashboard_02_my_profile" class="w3-container tab-content" style="display: none; padding: 0;">

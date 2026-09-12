@@ -326,6 +326,180 @@
       border-radius: 0 !important;
     }
   }
+
+  @media (max-width: 600px) {
+    #Employee_user_dashboard_04_documents {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+
+    #Employee_user_dashboard_04_documents .docs-container {
+      padding: 0 10px 64px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .topbar {
+      min-width: 0 !important;
+      height: 56px !important;
+      padding: 8px 0 !important;
+      gap: 8px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .topbar-left {
+      min-width: 0 !important;
+      gap: 6px !important;
+      flex: 1 !important;
+    }
+
+    #Employee_user_dashboard_04_documents .topbar-left h2 {
+      min-width: 0 !important;
+      font-size: 16px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    #Employee_user_dashboard_04_documents .topbar-right {
+      gap: 6px !important;
+      flex-shrink: 0 !important;
+    }
+
+    #Employee_user_dashboard_04_documents .admin-pill {
+      padding: 3px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .admin-pill > span {
+      display: none !important;
+    }
+
+    #Employee_user_dashboard_04_documents .docs-page-head {
+      margin-bottom: 12px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .docs-page-head p {
+      font-size: 11.5px !important;
+      line-height: 1.4 !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-upload-card {
+      min-width: 0 !important;
+      padding: 14px 12px !important;
+      border-radius: 13px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-card-head {
+      align-items: flex-start !important;
+      gap: 7px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-card-head h4 {
+      min-width: 0 !important;
+      font-size: 14px !important;
+      line-height: 1.3 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-status-tag {
+      flex-shrink: 0 !important;
+      font-size: 10px !important;
+      padding: 3px 7px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-desc {
+      font-size: 11.5px !important;
+      line-height: 1.4 !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-dropzone {
+      min-width: 0 !important;
+      min-height: 105px !important;
+      padding: 13px 8px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-dropzone[style*="grid"] {
+      min-height: 105px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-upload-card > div[style*="grid-template-columns"] {
+      gap: 7px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-filled-name {
+      max-width: 100% !important;
+      overflow-wrap: anywhere !important;
+      white-space: normal !important;
+      text-align: center !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-actions-row {
+      gap: 6px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-actions-row button {
+      min-width: 0 !important;
+      padding: 9px 6px !important;
+      font-size: 11.5px !important;
+      white-space: normal !important;
+    }
+
+    #Employee_user_dashboard_04_documents #pendingDocRequestsPanel {
+      margin-bottom: 12px !important;
+      border-radius: 12px !important;
+    }
+
+    #Employee_user_dashboard_04_documents #pendingDocRequestsPanel > div:first-child {
+      padding: 11px 12px !important;
+      align-items: flex-start !important;
+    }
+
+    #Employee_user_dashboard_04_documents #pendingDocRequestsPanel > div:first-child > div {
+      min-width: 0 !important;
+    }
+
+    #Employee_user_dashboard_04_documents #pendingReqSubtitle {
+      line-height: 1.35 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    #Employee_user_dashboard_04_documents #btnTogglePendingReqs {
+      flex-shrink: 0 !important;
+      padding: 7px 9px !important;
+      font-size: 11px !important;
+      white-space: nowrap !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-modal-box {
+      height: 100dvh !important;
+      max-height: 100dvh !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-modal-box > div:first-child {
+      padding: 10px 11px !important;
+      gap: 7px !important;
+    }
+
+    #Employee_user_dashboard_04_documents #empViewDocOpenTab,
+    #Employee_user_dashboard_04_documents #empViewDocDownload {
+      padding: 6px 7px !important;
+      font-size: 10px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-modal-box > div:first-child > div:last-child {
+      gap: 4px !important;
+    }
+
+    #Employee_user_dashboard_04_documents #empViewDocTitle {
+      font-size: 13px !important;
+    }
+
+    #Employee_user_dashboard_04_documents #empViewDocSub {
+      font-size: 10.5px !important;
+    }
+
+    #Employee_user_dashboard_04_documents .doc-modal-box > div:nth-child(2) {
+      overflow: auto !important;
+    }
+  }
 </style>
 
 <div id="Employee_user_dashboard_04_documents" class="emp-main" style="display:none; padding:0;">

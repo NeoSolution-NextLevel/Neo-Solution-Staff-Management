@@ -6,6 +6,8 @@
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
+    min-width: 0;
+    overflow-x: hidden;
   }
 
   @media (min-width: 901px) {
@@ -32,6 +34,31 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    min-width: 0;
+  }
+
+  #Employee_user_dashboard_07_daily_work_plan .topbar,
+  #Employee_user_dashboard_07_daily_work_plan .topbar-left,
+  #Employee_user_dashboard_07_daily_work_plan .topbar-right,
+  #Employee_user_dashboard_07_daily_work_plan .workplan-header-row,
+  #Employee_user_dashboard_07_daily_work_plan .workplan-head-left,
+  #Employee_user_dashboard_07_daily_work_plan .workplan-step-card,
+  #Employee_user_dashboard_07_daily_work_plan .task-card,
+  #Employee_user_dashboard_07_daily_work_plan .task-card-head,
+  #Employee_user_dashboard_07_daily_work_plan .task-card-title,
+  #Employee_user_dashboard_07_daily_work_plan .task-card-desc {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  #Employee_user_dashboard_07_daily_work_plan .task-card-title,
+  #Employee_user_dashboard_07_daily_work_plan .task-card-desc,
+  #Employee_user_dashboard_07_daily_work_plan .task-meta-box .meta-value,
+  #Employee_user_dashboard_07_daily_work_plan .step-header-wrap h3,
+  #Employee_user_dashboard_07_daily_work_plan .step-subtext,
+  #Employee_user_dashboard_07_daily_work_plan .plan-ref-content {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   /* Topbar */
@@ -690,13 +717,250 @@
 
   /* Responsive */
   @media (max-width: 900px) {
-    .workplan-menu-btn { display: inline-flex !important; }
-    .workplan-topbar h2 { font-size: 18px !important; }
-    .workplan-tasks-grid { grid-template-columns: 1fr !important; gap: 14px; }
-    .task-card { padding: 18px 16px; }
-    .search-pill-wrap { max-width: 100%; }
-    .shift-ctrls-row { flex-direction: column; align-items: stretch; }
-    .shift-end-submit-btn { width: 100%; justify-content: center; }
+    #Employee_user_dashboard_07_daily_work_plan .topbar {
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .topbar-left {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .topbar-left h2 {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 16px !important;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .topbar-right {
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .admin-pill span {
+      display: none;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .workplan-step-card {
+      padding: 18px 16px;
+      border-radius: 14px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .step-header-wrap {
+      align-items: flex-start;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .step-title-group {
+      flex: 1 1 220px;
+      min-width: 0;
+      align-items: flex-start;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .step-title-group h3 {
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .shift-wrapup-badge {
+      max-width: 100%;
+      white-space: normal !important;
+      text-align: center;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .daily-plan-actions {
+      align-items: stretch;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .daily-plan-actions > button {
+      flex: 1 1 100%;
+      justify-content: center;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .daily-plan-status {
+      width: 100%;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .shift-ctrls-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .shift-ctrls-row > div,
+    #Employee_user_dashboard_07_daily_work_plan .shift-ctrls-row > button {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .shift-ctrls-row > div {
+      align-items: stretch !important;
+      flex-direction: column;
+      gap: 6px !important;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .shift-ctrls-row select {
+      width: 100%;
+      min-width: 0 !important;
+      box-sizing: border-box;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .shift-end-submit-btn,
+    #Employee_user_dashboard_07_daily_work_plan .shift-view-task-btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .workplan-header-row {
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .workplan-head-left h1 {
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .workplan-head-left p {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .view-switcher {
+      flex: 0 0 auto;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .workplan-filters {
+      align-items: stretch;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .search-pill-wrap,
+    #Employee_user_dashboard_07_daily_work_plan .filter-pill-select {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .workplan-tasks-grid {
+      grid-template-columns: 1fr !important;
+      gap: 14px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .task-card {
+      padding: 18px 16px;
+      border-radius: 14px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .task-card-head {
+      align-items: flex-start;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .task-card-title {
+      flex: 1 1 auto;
+      font-size: 15px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .status-pill {
+      flex: 0 0 auto;
+      white-space: normal;
+      text-align: center;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .task-tags-row {
+      flex-wrap: wrap;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .task-meta-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .task-card > div:last-child {
+      flex-direction: column;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .task-card > div:last-child > *,
+    #Employee_user_dashboard_07_daily_work_plan .task-card > div:last-child > div {
+      width: 100%;
+      flex: 1 1 auto !important;
+      box-sizing: border-box;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-overlay {
+      padding: 8px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-card {
+      width: 100%;
+      max-height: calc(100vh - 16px);
+      border-radius: 14px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-header {
+      padding: 14px 16px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-header h3 {
+      min-width: 0;
+      font-size: 15px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-body {
+      padding: 16px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-body [style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-footer {
+      padding: 12px 16px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-footer button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #Employee_user_dashboard_07_daily_work_plan {
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .topbar {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .workplan-step-card,
+    #Employee_user_dashboard_07_daily_work_plan .task-card {
+      padding: 14px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .step-title-group {
+      gap: 7px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .step-badge {
+      padding-left: 9px;
+      padding-right: 9px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .daily-plan-input {
+      min-height: 84px;
+      padding: 11px 12px;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .emp-modal-overlay {
+      padding: 5px;
+    }
   }
 </style>
 

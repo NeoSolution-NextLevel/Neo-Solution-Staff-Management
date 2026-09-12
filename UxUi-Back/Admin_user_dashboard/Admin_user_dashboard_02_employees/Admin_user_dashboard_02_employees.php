@@ -793,14 +793,14 @@
     }
     .mobile-emp-card-actions {
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
     }
     .mobile-emp-card-actions > button {
-      flex: 1 1 30%;
+      flex: 1 1 calc(50% - 4px);
       min-width: 0;
-      padding-left: 6px;
-      padding-right: 6px;
-      white-space: normal;
+      padding-left: 8px;
+      padding-right: 8px;
+      white-space: nowrap;
     }
 
     .w3-form-row { grid-template-columns: 1fr; gap: 8px; }
@@ -888,17 +888,6 @@
         </div>
       </div>
 
-      <!-- Quick Auto-Login as Employee Dropdown -->
-      <div class="quick-login-wrap" style="display:inline-flex; align-items:center; gap:8px; background:#f5f3ff; border:1.5px solid #ddd6fe; padding:4px 12px; border-radius:12px;">
-        <span style="font-size:12.5px; font-weight:800; color:#6366f1; display:inline-flex; align-items:center; gap:6px; white-space:nowrap;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8l2 2-2 2"/><path d="M17 10h4"/></svg>
-          
-        </span>
-        <select id="quickAutoLoginSelect" onchange="if(typeof handleQuickAutoLogin==='function'){handleQuickAutoLogin(this.value);}"
-          style="padding:6px 10px; border-radius:8px; border:1px solid #c7d2fe; background:#ffffff; font-size:12.5px; font-weight:700; color:#312e81; cursor:pointer; outline:none; max-width:240px; box-shadow:0 1px 2px rgba(99,102,241,.1);">
-          <option value="">Select Employee...</option>
-        </select>
-      </div>
     </div>
 
     <!-- 1. Desktop & Tablet Table -->
@@ -1250,12 +1239,6 @@
         </div>
         <div class="w3-modal-footer">
           <button type="button" class="w3-btn-cancel" id="cancelViewEmpModal">Close</button>
-          <button type="button" id="btnLoginAsEmpFromView" onclick="loginAsCurrentEmp()"
-            style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border:none; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,.3); transition:all .2s;"
-            onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8l2 2-2 2"/><path d="M17 10h4"/></svg>
-            Login as Employee
-          </button>
           <button type="button" class="w3-btn-save" id="btnEditFromViewModal" onclick="editCurrentEmpFromView()">Edit Employee</button>
         </div>
       </div>
