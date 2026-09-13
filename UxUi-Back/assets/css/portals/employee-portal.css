@@ -158,6 +158,7 @@ header.topbar,
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
 }
 
 .icon-btn {
@@ -226,6 +227,12 @@ header.topbar,
     font-size: 13.5px;
     font-weight: 700;
     color: var(--navy);
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .menu-btn,
