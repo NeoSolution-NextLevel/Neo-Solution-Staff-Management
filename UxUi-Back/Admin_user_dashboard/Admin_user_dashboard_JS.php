@@ -7,17 +7,24 @@
    });
  }
 
+ function setAdminDashboardSectionDisplay(id, displayValue) {
+   var section = document.getElementById(id);
+   if (section) {
+     section.style.display = displayValue;
+   }
+ }
+
 function Admin_user_dashboard_close_all() {
- document.getElementById("Admin_user_dashboard_01").style.display = "none";
- document.getElementById("Admin_user_dashboard_02_employees").style.display = "none";
- document.getElementById("Admin_user_dashboard_03_documents").style.display = "none";
- document.getElementById("Admin_user_dashboard_04_bank_details").style.display = "none";
- document.getElementById("Admin_user_dashboard_05_departments").style.display = "none";
- document.getElementById("Admin_user_dashboard_06_job_roles").style.display = "none";
- document.getElementById("Admin_user_dashboard_07_task_management").style.display = "none";
- document.getElementById("Admin_user_dashboard_08_leave_requests").style.display = "none";
- document.getElementById("Admin_user_dashboard_09_notifications").style.display = "none";
- document.getElementById("Admin_user_dashboard_10_settings").style.display = "none";
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_01", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_02_employees", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_03_documents", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_04_bank_details", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_05_departments", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_06_job_roles", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_07_task_management", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_08_leave_requests", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_09_notifications", "none");
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_10_settings", "none");
 
  }
 
@@ -33,7 +40,7 @@ function Admin_user_dashboard_close_all() {
 
 function Admin_user_dashboard_02_OPEN() {
  Admin_user_dashboard_close_all();
- document.getElementById("Admin_user_dashboard_02_employees").style.display = "";
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_02_employees", "");
  setSidebarActive('employees');
  if (typeof window.fetchAdminEmployees === 'function') {
    window.fetchAdminEmployees();
@@ -76,7 +83,7 @@ function Admin_user_dashboard_04_OPEN() {
 
 function Admin_user_dashboard_05_OPEN() {
 Admin_user_dashboard_close_all();
-document.getElementById("Admin_user_dashboard_05_departments").style.display = "";
+setAdminDashboardSectionDisplay("Admin_user_dashboard_05_departments", "");
  setSidebarActive('departments');
 if (typeof Member_body_01_01_A_01_Memeber_Details_Display === 'function') {
  Member_body_01_01_A_01_Memeber_Details_Display();
@@ -85,7 +92,7 @@ if (typeof Member_body_01_01_A_01_Memeber_Details_Display === 'function') {
 
  function Admin_user_dashboard_06_OPEN() {
  Admin_user_dashboard_close_all();
-document.getElementById("Admin_user_dashboard_06_job_roles").style.display = "";
+setAdminDashboardSectionDisplay("Admin_user_dashboard_06_job_roles", "");
 setSidebarActive('job_roles');
 if (typeof Member_body_01_01_A_01_Memeber_Details_Display === 'function') {
  Member_body_01_01_A_01_Memeber_Details_Display();
@@ -94,7 +101,7 @@ if (typeof Member_body_01_01_A_01_Memeber_Details_Display === 'function') {
 
  function Admin_user_dashboard_07_OPEN() {
   Admin_user_dashboard_close_all();
-  document.getElementById("Admin_user_dashboard_07_task_management").style.display = "";
+  setAdminDashboardSectionDisplay("Admin_user_dashboard_07_task_management", "");
   setSidebarActive('task_management');
   if (typeof window.fetchAdminTasks === 'function') {
     window.fetchAdminTasks();
@@ -122,7 +129,7 @@ if (typeof Member_body_01_01_A_01_Memeber_Details_Display === 'function') {
 
 function Admin_user_dashboard_10_OPEN() {
  Admin_user_dashboard_close_all();
- document.getElementById("Admin_user_dashboard_10_settings").style.display = "";
+ setAdminDashboardSectionDisplay("Admin_user_dashboard_10_settings", "");
 setSidebarActive('settings');
 if (typeof window.fetchAdminSettings === 'function') {
  window.fetchAdminSettings();
