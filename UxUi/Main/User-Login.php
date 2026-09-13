@@ -465,15 +465,15 @@
         include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
         include_once '../../View-List/Main/Google-Login/Main_User_Google_Login_Config.php';
         include_once '../../View-List/Main/Microsoft-Login/Main_User_Microsoft_Login_Config.php';
-        include_once '../../UxUI-Back/Common/header.php';
+        include_once '../../UxUi-Back/Common/header.php';
         ?>
 
 
         <?php
-        include_once '../../UxUI-Back/Main/Main_User_Login/JS/User_Login_A_01_JS.php';
-        include_once '../../UxUI-Back/Main/Main_User_Login/User_Login_A_01.php';
+        include_once '../../UxUi-Back/Main/Main_User_Login/JS/User_Login_A_01_JS.php';
+        include_once '../../UxUi-Back/Main/Main_User_Login/User_Login_A_01.php';
         ?>
-        <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+        <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
     </body>
 
     </html>
