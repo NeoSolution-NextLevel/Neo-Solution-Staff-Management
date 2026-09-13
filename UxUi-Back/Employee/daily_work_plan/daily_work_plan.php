@@ -1,38 +1,70 @@
 <?php
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
 header('Content-Type: application/json; charset=utf-8');
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    @session_start();
 }
 
 include_once __DIR__ . '/../../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../../imports/need/DB.php';
-include_once __DIR__ . '/../../../imports/email/Email_Send.php';
 
 $db = new DataBase();
 
-// Ensure table exists with all necessary columns
-$db->get_result("CREATE TABLE IF NOT EXISTS `daily_employee_work_plans` (
-    `id` int NOT NULL AUTO_INCREMENT,
-    `user_id` int NOT NULL,
-    `employee_profile_id` int DEFAULT NULL,
-    `employee_name` varchar(255) DEFAULT NULL,
-    `department` varchar(150) DEFAULT NULL,
-    `job_title` varchar(150) DEFAULT NULL,
-    `plan_date` date NOT NULL,
-    `plan_text` text NOT NULL,
-    `status` varchar(30) NOT NULL DEFAULT 'submitted',
-    `started_at` datetime DEFAULT NULL,
-    `submitted_at` datetime NOT NULL,
-    `updated_at` datetime NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `unique_user_plan_date` (`user_id`, `plan_date`),
-    KEY `idx_work_plan_date` (`plan_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+// Ensure table exists with all necessary columns safely across all MySQL/MariaDB versions
+function ensureDailyWorkPlansTable($db) {
+    try {
+        $db->get_result("CREATE TABLE IF NOT EXISTS `daily_employee_work_plans` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `user_id` int NOT NULL,
+            `employee_profile_id` int DEFAULT NULL,
+            `employee_name` varchar(255) DEFAULT NULL,
+            `department` varchar(150) DEFAULT NULL,
+            `job_title` varchar(150) DEFAULT NULL,
+            `plan_date` date NOT NULL,
+            `plan_text` text DEFAULT NULL,
+            `planned_tasks_json` longtext DEFAULT NULL,
+            `evening_update` text DEFAULT NULL,
+            `task_status` varchar(50) DEFAULT 'Pending',
+            `task_id` int DEFAULT NULL,
+            `status` varchar(30) NOT NULL DEFAULT 'submitted',
+            `started_at` datetime DEFAULT NULL,
+            `shift_ended_at` datetime DEFAULT NULL,
+            `submitted_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `unique_user_plan_date` (`user_id`, `plan_date`),
+            KEY `idx_work_plan_date` (`plan_date`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    } catch (Throwable $t) {}
 
-@$db->get_result("ALTER TABLE `daily_employee_work_plans` ADD COLUMN IF NOT EXISTS `employee_name` varchar(255) DEFAULT NULL");
-@$db->get_result("ALTER TABLE `daily_employee_work_plans` ADD COLUMN IF NOT EXISTS `department` varchar(150) DEFAULT NULL");
-@$db->get_result("ALTER TABLE `daily_employee_work_plans` ADD COLUMN IF NOT EXISTS `job_title` varchar(150) DEFAULT NULL");
+    // Check existing columns to add any missing ones safely without syntax errors
+    $columns = [
+        'employee_name'      => "VARCHAR(255) DEFAULT NULL",
+        'department'         => "VARCHAR(150) DEFAULT NULL",
+        'job_title'          => "VARCHAR(150) DEFAULT NULL",
+        'plan_text'          => "TEXT DEFAULT NULL",
+        'planned_tasks_json' => "LONGTEXT DEFAULT NULL",
+        'evening_update'     => "TEXT DEFAULT NULL",
+        'task_status'        => "VARCHAR(50) DEFAULT 'Pending'",
+        'task_id'            => "INT DEFAULT NULL",
+        'shift_ended_at'     => "DATETIME DEFAULT NULL"
+    ];
+    foreach ($columns as $col => $def) {
+        try {
+            $colRes = $db->get_result("SHOW COLUMNS FROM `daily_employee_work_plans` LIKE '{$col}'");
+            if ($colRes && $colRes->num_rows === 0) {
+                $db->get_result("ALTER TABLE `daily_employee_work_plans` ADD COLUMN `{$col}` {$def}");
+            }
+        } catch (Throwable $t) {}
+    }
+}
+
+try {
+    ensureDailyWorkPlansTable($db);
+} catch (Throwable $t) {}
 
 // Determine user ID
 $userId = 0;
@@ -52,21 +84,23 @@ $profileName = '';
 $profileDept = '';
 $profileRole = '';
 
-$pRes = $db->get_result("SELECT id, full_name, department, job_title FROM `employee_profiles` WHERE user_id = {$userId} OR id = {$userId} LIMIT 1");
-if ($pRes && ($p = $pRes->fetch_assoc())) {
-    $profileId = (int)$p['id'];
-    $profileName = trim((string)($p['full_name'] ?? ''));
-    $profileDept = trim((string)($p['department'] ?? ''));
-    $profileRole = trim((string)($p['job_title'] ?? ''));
-} else {
-    $eRes = $db->get_result("SELECT id, name, department, role FROM `employees` WHERE id = {$userId} LIMIT 1");
-    if ($eRes && ($e = $eRes->fetch_assoc())) {
-        $profileId = (int)$e['id'];
-        $profileName = trim((string)($e['name'] ?? ''));
-        $profileDept = trim((string)($e['department'] ?? ''));
-        $profileRole = trim((string)($e['role'] ?? ''));
+try {
+    $pRes = $db->get_result("SELECT id, full_name, department, job_title FROM `employee_profiles` WHERE user_id = {$userId} OR id = {$userId} LIMIT 1");
+    if ($pRes && ($p = $pRes->fetch_assoc())) {
+        $profileId = (int)$p['id'];
+        $profileName = trim((string)($p['full_name'] ?? ''));
+        $profileDept = trim((string)($p['department'] ?? ''));
+        $profileRole = trim((string)($p['job_title'] ?? ''));
+    } else {
+        $eRes = $db->get_result("SELECT id, name, department, role FROM `employees` WHERE id = {$userId} LIMIT 1");
+        if ($eRes && ($e = $eRes->fetch_assoc())) {
+            $profileId = (int)$e['id'];
+            $profileName = trim((string)($e['name'] ?? ''));
+            $profileDept = trim((string)($e['department'] ?? ''));
+            $profileRole = trim((string)($e['role'] ?? ''));
+        }
     }
-}
+} catch (Throwable $t) {}
 
 if ($profileName === '' && !empty($_SESSION['user_name'])) {
     $profileName = (string)$_SESSION['user_name'];
@@ -79,10 +113,19 @@ $today = date('Y-m-d');
 
 // GET: Retrieve today's work plan
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $result = $db->get_result("SELECT id, user_id, employee_profile_id, employee_name, department, job_title, plan_text, status, started_at, shift_ended_at, submitted_at, updated_at, evening_update, task_status, task_id
-        FROM `daily_employee_work_plans` WHERE (user_id = {$userId} OR employee_profile_id = {$profileId}) AND plan_date = '{$today}' LIMIT 1");
-    $plan = $result ? $result->fetch_assoc() : null;
-    echo json_encode(['status' => 'success', 'data' => $plan ?: null, 'date' => $today]);
+    try {
+        $result = $db->get_result("SELECT id, user_id, employee_profile_id, employee_name, department, job_title, plan_text, planned_tasks_json, status, started_at, shift_ended_at, submitted_at, updated_at, evening_update, task_status, task_id
+            FROM `daily_employee_work_plans` WHERE (user_id = {$userId} OR employee_profile_id = {$profileId}) AND plan_date = '{$today}' LIMIT 1");
+        $plan = ($result && $result->num_rows > 0) ? $result->fetch_assoc() : null;
+        if ($plan && !empty($plan['planned_tasks_json'])) {
+            $plan['planned_tasks'] = json_decode($plan['planned_tasks_json'], true) ?: [];
+        }
+        ob_clean();
+        echo json_encode(['status' => 'success', 'data' => $plan ?: null, 'date' => $today]);
+    } catch (Throwable $e) {
+        ob_clean();
+        echo json_encode(['status' => 'success', 'data' => null, 'date' => $today, 'error' => $e->getMessage()]);
+    }
     exit;
 }
 
@@ -212,6 +255,9 @@ if ($action === 'shift_end_update' || isset($_POST['evening_update'])) {
 
     // Send Daily Update Email to Admin
     try {
+        if (!class_exists('Email') && file_exists(__DIR__ . '/../../../imports/email/Email_Send.php')) {
+            include_once __DIR__ . '/../../../imports/email/Email_Send.php';
+        }
         if (class_exists('Email')) {
             Email::send_daily_update_notification([
                 'update_type'    => 'shift_end',
@@ -224,7 +270,7 @@ if ($action === 'shift_end_update' || isset($_POST['evening_update'])) {
                 'date'           => $today
             ]);
         }
-    } catch (Exception $e) {}
+    } catch (Throwable $e) {}
 
     $updatedPlanRes = $db->get_result("SELECT id, user_id, employee_profile_id, employee_name, department, job_title, plan_text, status, started_at, shift_ended_at, submitted_at, updated_at, evening_update, task_status, task_id
         FROM `daily_employee_work_plans` WHERE id = {$planId} LIMIT 1");
@@ -321,6 +367,9 @@ if ($plan) {
 
 // Send Morning Plan Email to Admin
 try {
+    if (!class_exists('Email') && file_exists(__DIR__ . '/../../../imports/email/Email_Send.php')) {
+        include_once __DIR__ . '/../../../imports/email/Email_Send.php';
+    }
     if (class_exists('Email')) {
         Email::send_daily_update_notification([
             'update_type'   => 'morning_plan',
@@ -332,7 +381,7 @@ try {
             'date'          => $today
         ]);
     }
-} catch (Exception $e) {}
+} catch (Throwable $e) {}
 
 echo json_encode([
     'status' => 'success',
