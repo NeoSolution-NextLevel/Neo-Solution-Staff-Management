@@ -105,8 +105,12 @@ $bank = null;
 $bRes = $db->get_result("SELECT * FROM `bank_details` 
     WHERE `user_id` = {$userId} OR `employee_id` = '{$safeEmpCode}' OR `employee_name` = '{$safeFullName}' 
     ORDER BY `id` DESC LIMIT 1");
-if ($bRes && ($b = $bRes->fetch_assoc())) {
-    include_once __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
+    if (!class_exists('Bank_Security')) {
+        $bsPath = file_exists(__DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php')
+            ? __DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php'
+            : __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
+        if (file_exists($bsPath)) include_once $bsPath;
+    }
     $stored_acc = !empty($b['bank_account_number']) ? $b['bank_account_number'] : (!empty($b['account_number']) ? $b['account_number'] : '');
     $decrypted_acc = Bank_Security::decrypt($stored_acc);
     $masked_acc = Bank_Security::mask($decrypted_acc);
