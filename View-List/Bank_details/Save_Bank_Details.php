@@ -5,9 +5,12 @@ ini_set('display_errors', 0);
 
 include_once __DIR__ . '/../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../imports/need/DB.php';
-include_once __DIR__ . '/../../Controllers/Main/Bank_Details/Bank_Security.php';
-include_once __DIR__ . '/../../Controllers/Main/Bank_Details/bank_details_ADD_UPDATE.php';
-include_once __DIR__ . '/../../Controllers/Main/Bank_Details/bank_details_LIST.php';
+$bankCtrlDir = file_exists(__DIR__ . '/../../Controllers/Main/Bank_details/Bank_Security.php')
+    ? __DIR__ . '/../../Controllers/Main/Bank_details/'
+    : __DIR__ . '/../../Controllers/Main/Bank_Details/';
+include_once $bankCtrlDir . 'Bank_Security.php';
+include_once $bankCtrlDir . 'bank_details_ADD_UPDATE.php';
+include_once $bankCtrlDir . 'bank_details_LIST.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
