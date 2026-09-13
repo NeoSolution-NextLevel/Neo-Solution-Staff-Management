@@ -501,8 +501,8 @@
         </div>
 
         <div class="admin-pill" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); }">
-          <div class="avatar" id="dashTopAvatar">AP</div>
-          <span id="dashTopEmpName">Amal</span>
+          <div class="avatar" id="dashTopAvatar"></div>
+          <span id="dashTopEmpName"></span>
         </div>
       </div>
     </div>
@@ -512,12 +512,12 @@
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; position: relative; flex-wrap: wrap; gap: 8px;">
         <div class="date"><?php echo date('l, F j, Y'); ?></div>
         <div style="display: flex; gap: 8px; align-items: center;">
-          <span id="dashEmpCode" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;">EMP-002</span>
-          <span id="dashEmpDept" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;">Engineering</span>
+          <span id="dashEmpCode" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;"></span>
+          <span id="dashEmpDept" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;"></span>
         </div>
       </div>
 
-      <h3 id="dashWelcomeTitle" style="margin:0 0 4px 0;">Welcome back, Amal</h3>
+      <h3 id="dashWelcomeTitle" style="margin:0 0 4px 0;">Welcome back, </h3>
       <p id="dashWelcomeSubtitle" style="margin:0;">Here's your work overview for today.</p>
 
       <!-- Work Schedule & Shift Strip for Employee Visibility -->
