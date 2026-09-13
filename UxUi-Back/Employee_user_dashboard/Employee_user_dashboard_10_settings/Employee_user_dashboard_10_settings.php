@@ -11,7 +11,6 @@
 
   #Employee_user_dashboard_10_settings,
   #Employee_user_dashboard_10_settings .main,
-  #Employee_user_dashboard_10_settings .topbar,
   #Employee_user_dashboard_10_settings .topbar-left,
   #Employee_user_dashboard_10_settings .topbar-right,
   #Employee_user_dashboard_10_settings .settings-box-card,
@@ -25,6 +24,24 @@
 
   #Employee_user_dashboard_10_settings {
     overflow-x: hidden;
+  }
+
+  @media (min-width: 901px) {
+    #Employee_user_dashboard_10_settings {
+      margin-left: 250px !important;
+      width: calc(100% - 250px) !important;
+      max-width: calc(100% - 250px) !important;
+      padding: 0 24px 80px !important;
+      box-sizing: border-box !important;
+    }
+
+    #Employee_user_dashboard_10_settings > .main {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
   }
 
   #Employee_user_dashboard_10_settings .settings-page-head p,
