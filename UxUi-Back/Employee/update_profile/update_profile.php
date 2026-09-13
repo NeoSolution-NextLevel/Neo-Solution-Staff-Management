@@ -144,9 +144,13 @@ include_once __DIR__ . '/../../Job_Roles/sync_job_roles_count.php';
 sync_job_role_employee_counts($conn);
 
 // 3.5 Sync with bank_details table if bank information provided or salary updated
-if (!empty($bankName) || !empty($accNumber) || (!$isEmployeeSelf && (isset($_POST['basic_salary']) || isset($_POST['net_salary'])))) {
-    include_once __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
-    $encAcc = !empty($accNumber) ? Bank_Security::encrypt($accNumber) : '';
+    $bankCtrlDir = file_exists(__DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php')
+        ? __DIR__ . '/../../../Controllers/Main/Bank_details/'
+        : __DIR__ . '/../../../Controllers/Main/Bank_Details/';
+    if (file_exists($bankCtrlDir . 'Bank_Security.php')) {
+        include_once $bankCtrlDir . 'Bank_Security.php';
+    }
+    $encAcc = (!empty($accNumber) && class_exists('Bank_Security')) ? Bank_Security::encrypt($accNumber) : '';
     $bCheck = $conn->query("SELECT id, bank_account_number, account_number FROM `bank_details` WHERE `user_id` = '$userId' OR `employee_id` = '" . addslashes($empCode) . "' OR `employee_name` = '" . addslashes($fullName) . "' OR `holder_name` = '" . addslashes($fullName) . "' ORDER BY `id` DESC LIMIT 1");
     if ($bCheck && $bCheck->num_rows > 0) {
         $bRow = $bCheck->fetch_assoc();
