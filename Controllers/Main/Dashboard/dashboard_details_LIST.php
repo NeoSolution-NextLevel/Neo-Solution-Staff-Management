@@ -222,6 +222,9 @@ class dashboard_details_LIST
                 COALESCE(NULLIF(p.department, ''), NULLIF(e.departments, ''), '') AS department,
                 COALESCE(NULLIF(p.job_title, ''), NULLIF(e.job_roles, ''), '') AS job_title,
                 COALESCE(p.profile_pic, '') AS profile_pic,
+                COALESCE((SELECT d2.ip_address FROM `main_user_login_device` d2
+                    WHERE d2.main_user_login_id = d.user_id AND d2.ast = 1
+                    ORDER BY d2.is_active DESC, d2.last_activity DESC LIMIT 1), '') AS ip_address,
                 d.first_seen_at,
                 d.last_seen_at
             FROM `daily_employee_presence` d
@@ -243,6 +246,7 @@ class dashboard_details_LIST
                     'department' => $row['department'] ?? '',
                     'role' => $row['job_title'] ?? '',
                     'profile_pic' => $row['profile_pic'] ?? '',
+                    'ip_address' => $row['ip_address'] ?? '',
                     'first_seen_at' => $row['first_seen_at'] ?? '',
                     'last_seen_at' => $row['last_seen_at'] ?? ''
                 ];
@@ -270,6 +274,9 @@ class dashboard_details_LIST
 
         $today = date('Y-m-d');
         $query = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
+            COALESCE((SELECT d.ip_address FROM `main_user_login_device` d
+                WHERE d.main_user_login_id = w.user_id AND d.ast = 1
+                ORDER BY d.is_active DESC, d.last_activity DESC LIMIT 1), '') AS ip_address,
                 w.submitted_at, w.updated_at, w.plan_date,
                 COALESCE(NULLIF(w.employee_name, ''), NULLIF(p.full_name, ''), NULLIF(e.fullname, ''), NULLIF(l.name_show, ''),
                     NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name, 'Employee') AS full_name,
@@ -285,7 +292,10 @@ class dashboard_details_LIST
             ORDER BY w.updated_at DESC, w.id DESC";
         $res = $data_base_obj->get_result($query);
         if (!$res || $res->num_rows === 0) {
-            $fallbackQuery = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
+                $fallbackQuery = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
+                    COALESCE((SELECT d.ip_address FROM `main_user_login_device` d
+                    WHERE d.main_user_login_id = w.user_id AND d.ast = 1
+                    ORDER BY d.is_active DESC, d.last_activity DESC LIMIT 1), '') AS ip_address,
                     w.submitted_at, w.updated_at, w.plan_date,
                     COALESCE(NULLIF(w.employee_name, ''), NULLIF(p.full_name, ''), NULLIF(e.fullname, ''), NULLIF(l.name_show, ''),
                         NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name, 'Employee') AS full_name,
@@ -312,6 +322,7 @@ class dashboard_details_LIST
                     'plan_text' => $row['plan_text'] ?? '',
                     'status' => $row['status'] ?? 'submitted',
                     'started_at' => $row['started_at'] ?? '',
+                    'ip_address' => $row['ip_address'] ?? '',
                     'submitted_at' => $row['submitted_at'] ?? '',
                     'updated_at' => $row['updated_at'] ?? '',
                     'plan_date' => $row['plan_date'] ?? $today
