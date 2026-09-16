@@ -407,7 +407,7 @@
 
     #Employee_user_dashboard_05_bank_details .topbar {
       gap: 10px;
-      padding: 12px 14px;
+      padding: 0 12px;
     }
 
     #Employee_user_dashboard_05_bank_details .topbar-left,
