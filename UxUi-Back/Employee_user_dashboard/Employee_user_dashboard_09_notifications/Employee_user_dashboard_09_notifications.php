@@ -222,7 +222,7 @@
   @media (max-width: 768px) {
     #Employee_user_dashboard_09_notifications .topbar {
       gap: 10px;
-      padding: 12px 14px;
+      padding: 0 12px;
     }
 
     #Employee_user_dashboard_09_notifications .topbar-left {
