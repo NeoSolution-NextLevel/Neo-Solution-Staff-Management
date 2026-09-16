@@ -129,7 +129,7 @@
         const avatar = member.profile_pic ? `<img src="${escapeHtml((typeof window.pth !== 'undefined' ? window.pth : '../') + member.profile_pic)}" alt="">` : initials;
         return `<div class="active-member-row">
           <div class="active-member-avatar">${avatar}</div>
-          <div class="active-member-info"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(member.department || member.role || 'Employee')}</span></div>
+          <div class="active-member-info"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(member.department || member.role || 'Employee')} • IP: ${escapeHtml(member.ip_address || 'Unavailable')}</span></div>
           <button class="active-member-view" type="button" onclick="openDashboardEmployeeProfile(${Number(member.profile_id)})">Profile</button>
         </div>`;
       }).join('');
@@ -152,10 +152,10 @@
         if (dailyWorkPlansMobileList) dailyWorkPlansMobileList.innerHTML = '<div style="padding:12px; color:#94a3b8; font-size:13px;">No daily work plans submitted today.</div>';
         return;
       }
-      dailyWorkPlansList.innerHTML = `<table class="daily-plans-table"><thead><tr><th>Employee</th><th>Daily Plan</th><th>Started</th><th>Status</th></tr></thead><tbody>${plans.map(plan => {
+      dailyWorkPlansList.innerHTML = `<table class="daily-plans-table"><thead><tr><th>Employee</th><th>Daily Plan</th><th>Started</th><th>IP Address</th><th>Status</th></tr></thead><tbody>${plans.map(plan => {
         const status = plan.started_at ? 'Active' : 'Submitted';
         const started = plan.started_at ? escapeHtml(plan.started_at) : 'Not started';
-        return `<tr><td><div class="plan-name plan-name-link" role="button" tabindex="0" onclick="openDashboardEmployeeProfile(${Number(plan.profile_id)})" onkeydown="if(event.key === 'Enter' || event.key === ' ') openDashboardEmployeeProfile(${Number(plan.profile_id)})">${escapeHtml(plan.name)}</div><div class="plan-dept">${escapeHtml(plan.department || plan.role || '')}</div></td><td>${escapeHtml(plan.plan_text)}</td><td>${started}</td><td><span class="plan-status ${plan.started_at ? 'active' : ''}">${status}</span></td></tr>`;
+        return `<tr><td><div class="plan-name plan-name-link" role="button" tabindex="0" onclick="openDashboardEmployeeProfile(${Number(plan.profile_id)})" onkeydown="if(event.key === 'Enter' || event.key === ' ') openDashboardEmployeeProfile(${Number(plan.profile_id)})">${escapeHtml(plan.name)}</div><div class="plan-dept">${escapeHtml(plan.department || plan.role || '')}</div></td><td>${escapeHtml(plan.plan_text)}</td><td>${started}</td><td>${escapeHtml(plan.ip_address || 'Unavailable')}</td><td><span class="plan-status ${plan.started_at ? 'active' : ''}">${status}</span></td></tr>`;
       }).join('')}</tbody></table>`;
 
       if (dailyWorkPlansMobileList) {
@@ -177,6 +177,10 @@
             <div class="daily-plan-mobile-row">
               <span class="daily-plan-mobile-label">Started</span>
               <span class="daily-plan-mobile-value">${started}</span>
+            </div>
+            <div class="daily-plan-mobile-row">
+              <span class="daily-plan-mobile-label">IP Address</span>
+              <span class="daily-plan-mobile-value">${escapeHtml(plan.ip_address || 'Unavailable')}</span>
             </div>
           </article>`;
         }).join('');
