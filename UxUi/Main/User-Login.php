@@ -1,5 +1,6 @@
     <?php
     include_once '../../imports/need/session_setup.php';
+    redirect_if_logged_in();
     ?>
 
     <!DOCTYPE html>
