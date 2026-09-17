@@ -1,8 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 include_once '../../imports/need/session_setup.php';
+require_login();
 ?>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
