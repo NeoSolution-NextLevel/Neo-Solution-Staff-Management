@@ -400,7 +400,7 @@
 </head>
 
 <body>
-    <?php include_once '../../UxUI-Back/Common/header.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/header.php'; ?>
 
     <div class="erp-session-card">
         <!-- Header -->
@@ -769,7 +769,7 @@
         });
     </script>
 
-    <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
 </body>
 
 </html>

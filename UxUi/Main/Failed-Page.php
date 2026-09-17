@@ -631,15 +631,15 @@ include_once '../../imports/need/session_setup.php';
 
 <body>
     <?php
-    include_once '../../UxUI-Back/Common/header.php';
+    include_once '../../UxUi-Back/Common/header.php';
     ?>
     <?php
-    include_once '../../UxUI-Back/Main/Failed-Page/Failed-Page.php';
+    include_once '../../UxUi-Back/Main/Failed-Page/Failed-Page.php';
 
-    include_once '../../UxUI-Back/Main/Failed-Page/JS/Failed-Page_JS.php';
+    include_once '../../UxUi-Back/Main/Failed-Page/JS/Failed-Page_JS.php';
     ?>
 
-    <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
 </body>
 
 </html>
