@@ -1,5 +1,6 @@
 <?php 
 include_once __DIR__ . '/../imports/need/session_setup.php';
+require_login(['admin', 'manager', 'super']);
 ?>
 
 <!DOCTYPE html>
