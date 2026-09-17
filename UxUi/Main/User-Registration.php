@@ -472,7 +472,7 @@ include_once '../../imports/need/session_setup.php';
 
 <body>
     <?php
-    include_once '../../UxUI-Back/Common/header.php';
+    include_once '../../UxUi-Back/Common/header.php';
     include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
 
     $company_obj = new Company_Info_Variable_List();
@@ -481,12 +481,12 @@ include_once '../../imports/need/session_setup.php';
     <!-- content  -->
     <?php
 
-    include_once '../../UxUI-Back/Main/Main_User_Account_Create/JS/User_Registration_A_01_JS.php';
-    include_once '../../UxUI-Back/Main/Main_User_Account_Create/User_Registration_A_01.php';
+    include_once '../../UxUi-Back/Main/Main_User_Account_Create/JS/User_Registration_A_01_JS.php';
+    include_once '../../UxUi-Back/Main/Main_User_Account_Create/User_Registration_A_01.php';
 
     ?>
 
-    <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
 </body>
 
 </html>
