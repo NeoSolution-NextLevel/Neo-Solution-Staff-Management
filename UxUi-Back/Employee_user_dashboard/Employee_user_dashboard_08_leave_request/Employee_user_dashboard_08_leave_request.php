@@ -27,18 +27,15 @@
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
-    overflow-x: hidden;
   }
 
   .emp-leave-container {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
     min-width: 0;
   }
 
-  #Employee_user_dashboard_08_leave_request .topbar,
   #Employee_user_dashboard_08_leave_request .topbar-left,
   #Employee_user_dashboard_08_leave_request .topbar-right,
   #Employee_user_dashboard_08_leave_request .leave-info-note,
