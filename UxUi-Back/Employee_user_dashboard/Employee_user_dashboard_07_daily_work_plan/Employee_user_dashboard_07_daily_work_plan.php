@@ -7,14 +7,13 @@
     min-height: 100vh;
     box-sizing: border-box;
     min-width: 0;
-    overflow-x: hidden;
   }
 
   @media (min-width: 901px) {
     #Employee_user_dashboard_07_daily_work_plan {
-      margin-left: 250px !important;
-      width: calc(100% - 250px) !important;
-      max-width: calc(100% - 250px) !important;
+      margin-left: 260px !important;
+      width: calc(100% - 260px) !important;
+      max-width: calc(100% - 260px) !important;
       padding: 0 24px 80px !important;
       box-sizing: border-box !important;
     }
