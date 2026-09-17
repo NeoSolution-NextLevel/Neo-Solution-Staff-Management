@@ -80,14 +80,27 @@ header.topbar,
     z-index: 99 !important;
 }
 
-/* Desktop Layout (>= 769px) */
-@media (min-width: 769px) {
+/* Desktop Layout (>= 901px) */
+@media (min-width: 901px) {
     [id^="Employee_user_dashboard_"] {
-        margin-left: 250px !important;
-        width: calc(100% - 250px) !important;
-        max-width: calc(100% - 250px) !important;
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        max-width: calc(100% - 260px) !important;
         padding: 0 24px 80px !important;
         transition: margin-left 0.3s ease, width 0.3s ease;
+        overflow-x: visible !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .emp-notif-container,
+    [id^="Employee_user_dashboard_"] .emp-leave-container,
+    [id^="Employee_user_dashboard_"] .workplan-container,
+    [id^="Employee_user_dashboard_"] .job-info-container,
+    [id^="Employee_user_dashboard_"] .docs-container,
+    [id^="Employee_user_dashboard_"] .emp-pd-container,
+    [id^="Employee_user_dashboard_"] .emp-prof-container,
+    [id^="Employee_user_dashboard_"] .main {
+        overflow: visible !important;
+        overflow-x: visible !important;
     }
 
     .topbar,
@@ -99,6 +112,7 @@ header.topbar,
         padding: 0 24px !important;
         margin: 0 -24px 22px -24px !important;
         width: calc(100% + 48px) !important;
+        max-width: calc(100% + 48px) !important;
     }
 }
 
