@@ -28,15 +28,28 @@ $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 $scriptUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
 $pathParts = explode('/', trim($scriptUri, '/'));
 $projectPrefix = '';
-$uxIndex = array_search('UxUi', $pathParts, true);
-if ($uxIndex !== false && $uxIndex > 0) {
-    $projectPrefix = implode('/', array_slice($pathParts, 0, $uxIndex)) . '/';
+$docRoot = isset($_SERVER['DOCUMENT_ROOT']) ? str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'])) : '';
+$projectDir = str_replace('\\', '/', realpath(dirname(dirname(__DIR__))));
+if ($docRoot !== '' && $projectDir && strpos($projectDir, $docRoot) === 0) {
+    $relPath = trim(substr($projectDir, strlen($docRoot)), '/');
+    $projectPrefix = $relPath !== '' ? $relPath . '/' : '';
+} else {
+    $folderName = basename(dirname(dirname(__DIR__)));
+    $fIndex = array_search($folderName, $pathParts, true);
+    if ($fIndex !== false) {
+        $projectPrefix = implode('/', array_slice($pathParts, 0, $fIndex + 1)) . '/';
+    } else {
+        $uxIndex = array_search('UxUi', $pathParts, true);
+        if ($uxIndex !== false && $uxIndex > 0) {
+            $projectPrefix = implode('/', array_slice($pathParts, 0, $uxIndex)) . '/';
+        }
+    }
 }
 $home_page = $scheme . '://' . $host . '/' . $projectPrefix;
 $User_login_url = "UxUi/Main/";
 $home_page_url = $home_page . "index" . $online_offline_extention;
 
-// $home_page_url = "http://localhost:3000/";
+include_once __DIR__ . '/auth_guard.php';
 
 //---------------local host-------------------------------------
 $total_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : ''; // e.g.  /folder/sub/page.php
