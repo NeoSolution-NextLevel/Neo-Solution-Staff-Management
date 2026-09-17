@@ -747,17 +747,17 @@ include_once '../../imports/need/session_setup.php'
         });
     </script>
 
-    <?php include_once '../../UxUI-Back/Common/header.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/header.php'; ?>
 
     <input type="hidden" id="check_user_profile_page_val_01" value="0">
 
     <?php
-    include_once '../../UxUI-Back/Main/User_profile/User-Profile.php';
-    include_once '../../UxUI-Back/Main/User_profile/JS/User-Profile_JS.php';
+    include_once '../../UxUi-Back/Main/User_profile/User-Profile.php';
+    include_once '../../UxUi-Back/Main/User_profile/JS/User-Profile_JS.php';
     ?>
 
 
-    <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
 </body>
 
 </html>
