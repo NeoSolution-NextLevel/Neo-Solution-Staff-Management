@@ -1,5 +1,6 @@
 <?php 
 include_once '../imports/need/session_setup.php';
+require_login();
 
 // --- Admin Impersonation Banner ---
 // $is_impersonating  = !empty($_SESSION['admin_impersonating']) && $_SESSION['admin_impersonating'] === true;
