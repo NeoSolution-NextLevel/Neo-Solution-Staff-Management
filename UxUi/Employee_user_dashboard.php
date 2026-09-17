@@ -41,7 +41,6 @@ require_login();
         document.addEventListener("DOMContentLoaded", function() {
             Employee_user_dashboard_close_all();
             Employee_user_dashboard_01_OPEN();
-            
         });
     </script>
 
@@ -53,56 +52,37 @@ require_login();
     include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_JS.php';
 
     // 01 Dashboard
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_01_dashboard/Employee_user_dashboard_01_dashboard.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_01_dashboard/Employee_user_dashboard_01_dashboard.php';
-
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_01_dashboard/JS/Employee_user_dashboard_01_dashboard_JS.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_01_dashboard/JS/Employee_user_dashboard_01_dashboard_JS.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_01_dashboard/Employee_user_dashboard_01_dashboard.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_01_dashboard/JS/Employee_user_dashboard_01_dashboard_JS.php';
 
     // 02 My Profile
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_02_my_profile/Employee_user_dashboard_02_my_profile.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_02_my_profile/Employee_user_dashboard_02_my_profile.php';
-
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_02_my_profile/JS/Employee_user_dashboard_02_my_profile_JS.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_02_my_profile/JS/Employee_user_dashboard_02_my_profile_JS.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_02_my_profile/Employee_user_dashboard_02_my_profile.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_02_my_profile/JS/Employee_user_dashboard_02_my_profile_JS.php';
 
     // 03 Personal Details
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_03_personal_details/Employee_user_dashboard_03_personal_details.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_03_personal_details/Employee_user_dashboard_03_personal_details.php';
-
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_03_personal_details/JS/Employee_user_dashboard_03_personal_details_JS.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_03_personal_details/JS/Employee_user_dashboard_03_personal_details_JS.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_03_personal_details/Employee_user_dashboard_03_personal_details.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_03_personal_details/JS/Employee_user_dashboard_03_personal_details_JS.php';
 
     // 04 Documents
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_04_documents/Employee_user_dashboard_04_documents.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_04_documents/Employee_user_dashboard_04_documents.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_04_documents/Employee_user_dashboard_04_documents.php';
 
     // 05 Bank Details
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_05_bank_details/Employee_user_dashboard_05_bank_details.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_05_bank_details/Employee_user_dashboard_05_bank_details.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_05_bank_details/Employee_user_dashboard_05_bank_details.php';
 
     // 06 Job Information
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_06_job_information/Employee_user_dashboard_06_job_information.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_06_job_information/Employee_user_dashboard_06_job_information.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_06_job_information/Employee_user_dashboard_06_job_information.php';
 
     // 07 Daily Work Plan
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_07_daily_work_plan/Employee_user_dashboard_07_daily_work_plan.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_07_daily_work_plan/Employee_user_dashboard_07_daily_work_plan.php';
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_07_daily_work_plan/Employee_user_dashboard_07_daily_work_plan.php';
 
     // 08 Leave Requests
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_08_leave_request/Employee_user_dashboard_08_leave_request.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_08_leave_request/Employee_user_dashboard_08_leave_request.php';
-    
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_08_leave_request/Employee_user_dashboard_08_leave_request.php';
 
     // 09 Notifications
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_09_notifications/Employee_user_dashboard_09_notifications.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_09_notifications/Employee_user_dashboard_09_notifications.php';
-    
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_09_notifications/Employee_user_dashboard_09_notifications.php';
 
     // 10 Settings
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_10_settings/Employee_user_dashboard_10_settings.php';
-        include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_10_settings/Employee_user_dashboard_10_settings.php';
-    
+    include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_10_settings/Employee_user_dashboard_10_settings.php';
     ?>
 
     <?php 
