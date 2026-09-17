@@ -3,18 +3,15 @@
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
-    overflow-x: hidden;
   }
 
   .emp-notif-container {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
     min-width: 0;
   }
 
-  #Employee_user_dashboard_09_notifications .topbar,
   #Employee_user_dashboard_09_notifications .topbar-left,
   #Employee_user_dashboard_09_notifications .topbar-right,
   #Employee_user_dashboard_09_notifications .emp-notif-card,
