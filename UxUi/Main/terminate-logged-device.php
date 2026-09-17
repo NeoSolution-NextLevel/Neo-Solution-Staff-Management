@@ -1,3 +1,7 @@
+<?php
+include_once '../../imports/need/session_setup.php';
+require_login();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
