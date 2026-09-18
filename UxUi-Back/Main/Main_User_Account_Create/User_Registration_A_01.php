@@ -154,7 +154,6 @@
                                 <label class="erp-form__label">Account Role <span style="color: var(--erp-accent-error);">*</span></label>
                                 <select class="erp-form__control" name="department" required aria-label="Account Role" id="User_Registration_A_01_val_05_select_obj">
                                     <option value="2" selected>Employee</option>
-                                    <option value="1">Admin</option>
                                 </select>
                             </div>
 
