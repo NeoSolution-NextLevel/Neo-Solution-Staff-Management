@@ -25,9 +25,9 @@ if ($prof_res && $prof_res->num_rows > 0) {
         $dailyModeType = 'onsite';
 
         $safeName = addslashes($name);
-        $empEmail = !empty($p['email']) ? addslashes($p['email']) : '';
+        $empIdVal = !empty($p['employee_id']) ? addslashes($p['employee_id']) : (!empty($p['id']) ? addslashes($p['id']) : '');
         $chkLeave = $db->get_result("SELECT id FROM `leave_requests` 
-            WHERE (`employee` = '{$safeName}' OR `email` = '{$empEmail}') 
+            WHERE (`employee_name` = '{$safeName}'" . (!empty($empIdVal) ? " OR `employee_id` = '{$empIdVal}'" : "") . ") 
             AND `status` = 'Approved' 
             AND '{$todayDate}' BETWEEN `from_date` AND `to_date` 
             LIMIT 1");
