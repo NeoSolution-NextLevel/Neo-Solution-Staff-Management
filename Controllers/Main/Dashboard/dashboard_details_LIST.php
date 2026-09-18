@@ -420,26 +420,38 @@ class dashboard_details_LIST
         }
 
         // Add employees from employees table if not duplicate
-        $emp_res = $data_base_obj->get_result("SELECT departments, fullname, email_address FROM `employees`");
-        if ($emp_res && $emp_res->num_rows > 0) {
-            while ($e = $emp_res->fetch_assoc()) {
-                $name = trim($e['fullname'] ?? '');
-                $email = trim($e['email_address'] ?? '');
-                if (empty($name) && empty($email)) continue;
-                if (!empty($email) && isset($seen_emails[strtolower($email)])) continue;
-                if (!empty($name) && isset($seen_names[strtolower($name)])) continue;
-
-                $dept = trim($e['departments'] ?? 'General');
-                if (empty($dept)) $dept = 'General';
-                $dept_key = strtolower($dept);
-                if (!isset($dept_counts[$dept_key])) {
-                    $dept_counts[$dept_key] = ['name' => $dept, 'count' => 0];
+        try {
+            $col_res = $data_base_obj->get_result("SHOW COLUMNS FROM `employees`");
+            $emp_cols = [];
+            if ($col_res && $col_res->num_rows > 0) {
+                while ($c = $col_res->fetch_assoc()) {
+                    $emp_cols[] = strtolower($c['Field']);
                 }
-                $dept_counts[$dept_key]['count']++;
-                if (!empty($email)) $seen_emails[strtolower($email)] = true;
-                if (!empty($name)) $seen_names[strtolower($name)] = true;
             }
-        }
+            $dept_col = in_array('department', $emp_cols) ? 'department' : (in_array('departments', $emp_cols) ? 'departments' : '');
+            if (!empty($dept_col)) {
+                $emp_res = $data_base_obj->get_result("SELECT `{$dept_col}` AS departments, fullname, email_address FROM `employees`");
+                if ($emp_res && $emp_res->num_rows > 0) {
+                    while ($e = $emp_res->fetch_assoc()) {
+                        $name = trim($e['fullname'] ?? '');
+                        $email = trim($e['email_address'] ?? '');
+                        if (empty($name) && empty($email)) continue;
+                        if (!empty($email) && isset($seen_emails[strtolower($email)])) continue;
+                        if (!empty($name) && isset($seen_names[strtolower($name)])) continue;
+
+                        $dept = trim($e['departments'] ?? 'General');
+                        if (empty($dept)) $dept = 'General';
+                        $dept_key = strtolower($dept);
+                        if (!isset($dept_counts[$dept_key])) {
+                            $dept_counts[$dept_key] = ['name' => $dept, 'count' => 0];
+                        }
+                        $dept_counts[$dept_key]['count']++;
+                        if (!empty($email)) $seen_emails[strtolower($email)] = true;
+                        if (!empty($name)) $seen_names[strtolower($name)] = true;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {}
 
         // Also ensure all registered departments from `departments` table are included
         $d_res = $data_base_obj->get_result("SELECT name, employees FROM `departments` WHERE ast = '1' OR ast IS NULL ORDER BY id ASC");
