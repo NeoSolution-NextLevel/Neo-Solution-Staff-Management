@@ -38,7 +38,12 @@ class DataBase
 
     public function __destruct()
     {
-        $this->close_connction();
+        // Safe destructor: let PHP GC manage connection or close safely without throwing
+        try {
+            $this->close_connction();
+        } catch (\Throwable $e) {
+            // Never throw inside a destructor
+        }
     }
 
     public function get_data_base_connction()
@@ -62,8 +67,13 @@ class DataBase
 
     public function close_connction()
     {
-        if ($this->db_connction) {
-            $this->db_connction->close();
+        try {
+            if ($this->db_connction instanceof mysqli) {
+                @$this->db_connction->close();
+            }
+        } catch (\Throwable $e) {
+            // Suppress any error if connection is already closed or has active results
+        } finally {
             $this->db_connction = null;
         }
     }
