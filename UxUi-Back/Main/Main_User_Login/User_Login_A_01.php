@@ -104,15 +104,14 @@
                           <a href="#" class="erp-link erp-text-sm">Forgot your password?</a>
                       </div>
 
-                      <!-- Registration Option: For new users -->
+                      <!-- Registration Option: For new employees -->
                       <div class="erp-text-center erp-mt-xl">
                           <p class="erp-text-tertiary erp-text-sm erp-mb-sm">Don't have an account?</p>
                           <button class="erp-btn erp-btn--secondary" type="button"
                               onclick="window.location.href='<?php echo $home_page ?><?php echo $User_login_url ?>User-Registration<?php echo $online_offline_extention ?>'">
                               <i class="fas fa-user-plus"></i>
-                              <span>Register Now</span>
+                              <span>Register as Employee</span>
                           </button>
-
                       </div>
                   </form>
               </div>
