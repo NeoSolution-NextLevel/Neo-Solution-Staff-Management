@@ -47,7 +47,12 @@ class DataBase
             return $this->db_connction;
         }
 
-        $this->db_connction = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+        // Prevent fatal uncaught mysqli_sql_exception in PHP 8.1+
+        if (function_exists('mysqli_report')) {
+            @mysqli_report(MYSQLI_REPORT_OFF);
+        }
+
+        $this->db_connction = @new mysqli($this->servername, $this->username, $this->password, $this->dbname);
         if ($this->db_connction->connect_error) {
             die("Connection failed: " . $this->db_connction->connect_error);
         }
@@ -66,7 +71,11 @@ class DataBase
     public function get_result($get_sql_query)
     {
         $this->get_data_base_connction();
-        return $this->db_connction->query($get_sql_query);
+        try {
+            return $this->db_connction->query($get_sql_query);
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     public function get_id()
