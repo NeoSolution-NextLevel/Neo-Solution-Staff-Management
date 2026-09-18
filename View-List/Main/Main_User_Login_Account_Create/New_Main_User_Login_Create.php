@@ -40,14 +40,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $ref_key = 'EMP-' . strtoupper(substr(md5($user_name . time()), 0, 6));
     }
 
-    // Determine access level and account type
-    if ((string)$access_level_req === "1") {
-        $main_user_account_access_level_list_id = 1;
-        $ac_type = 'admin';
-    } else {
-        $main_user_account_access_level_list_id = 2;
-        $ac_type = 'Employee';
-    }
+    // Public registration is strictly for Employees.
+    // Admin accounts cannot be created via registration; only existing database admins can access admin portal.
+    $main_user_account_access_level_list_id = 2;
+    $ac_type = 'Employee';
 
     $main_user_login_ADD_UPDATE_obj = new main_user_login_ADD_UPDATE();
     $main_user_login_LIST_obj = new main_user_login_LIST();
