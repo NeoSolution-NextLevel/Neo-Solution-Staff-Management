@@ -21,11 +21,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- User Info (Integrated Compact) -->
     <div class="sidebar-user">
         <div class="sidebar-user-avatar-wrap">
-            <div class="sidebar-user-avatar">AU</div>
+            <div class="sidebar-user-avatar"><?php 
+                if (!empty($logged_user_pic) && strtolower($logged_user_pic) !== 'null' && file_exists(__DIR__ . '/../../' . ltrim($logged_user_pic, '/\\'))) {
+                    $sb_pic = (isset($home_page) ? $home_page : '../') . htmlspecialchars($logged_user_pic);
+                    echo '<img src="' . $sb_pic . '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />';
+                } else {
+                    echo 'AD';
+                }
+            ?></div>
             <span class="user-status-dot"></span>
         </div>
         <div class="sidebar-user-info">
-            <strong>Admin User</strong>
+            <strong>Admin</strong>
             <span>System Administrator</span>
         </div>
     </div>
