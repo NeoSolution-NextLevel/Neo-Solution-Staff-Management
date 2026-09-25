@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 include_once __DIR__ . '/../../../imports/need/DB.php';
+include_once __DIR__ . '/../../../imports/need/session_setup.php';
 
 $db = new DataBase();
 $conn = $db->get_data_base_connction();
@@ -24,26 +25,22 @@ $safeEmail = addslashes($userEmail);
 $profile = null;
 
 try {
-    // 0. Ensure columns exist
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `probation_start_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `probation_end_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `official_start_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `probation_status` VARCHAR(100) DEFAULT 'In Progress'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_shift` VARCHAR(100) DEFAULT '08:30 AM – 05:30 PM'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `working_days` VARCHAR(255) DEFAULT 'Mon,Tue,Wed,Thu,Fri'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `weekly_roster` TEXT DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `schedule_start_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `schedule_end_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_mode` VARCHAR(100) DEFAULT 'On-Site (Active)'");
-
     // 1. Try to find in employee_profiles table
     $whereClauses = [];
-    if ($empProfileId > 0)  $whereClauses[] = "`id` = '{$empProfileId}'";
-    if ($mainUserId > 0)    $whereClauses[] = "`user_id` = '{$mainUserId}'";
-    if ($userId > 0)        $whereClauses[] = "(`user_id` = '{$userId}' OR `id` = '{$userId}')";
-    if (!empty($safeEmail)) $whereClauses[] = "`email` = '{$safeEmail}'";
+    if (!empty($safeEmail)) {
+        $whereClauses[] = "(`email` != '' AND `email` = '{$safeEmail}')";
+    }
+    if ($empProfileId > 0) {
+        $whereClauses[] = "`id` = '{$empProfileId}'";
+    }
+    if ($mainUserId > 0) {
+        $whereClauses[] = "(`user_id` = '{$mainUserId}'" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ")";
+    } elseif ($userId > 0) {
+        $whereClauses[] = "(`user_id` = '{$userId}'" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ")";
+    }
 
-    $whereSql = !empty($whereClauses) ? implode(' OR ', $whereClauses) : "1=1";
+    if (!empty($whereClauses)) {
+        $whereSql = implode(' OR ', $whereClauses);
     $check = $conn->query("SELECT * FROM `employee_profiles` WHERE {$whereSql} ORDER BY `id` ASC LIMIT 1");
     if ($check && $check->num_rows > 0) {
         $p = $check->fetch_assoc();
@@ -51,7 +48,7 @@ try {
 
         // Dynamic Daily Work Mode Calculation for Today
         $todayDate = date('Y-m-d');
-        $todayDay = date('D'); // 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
+            $todayDay = date('D');
         $dailyWorkMode = 'On-Site (Active)';
         $dailyModeType = 'onsite';
 
@@ -97,8 +94,10 @@ try {
             }
         }
 
-        // Sync computed daily work mode to database column
+            // Sync computed daily work mode if column exists
+            try {
         @$conn->query("UPDATE `employee_profiles` SET `work_mode` = '" . addslashes($dailyWorkMode) . "' WHERE `id` = '{$p['id']}'");
+            } catch (\Throwable $e) {}
 
         $profile = [
             'id'                      => (int)$p['id'],
@@ -108,7 +107,7 @@ try {
             'phone'                   => !empty($p['phone']) ? $p['phone'] : '',
             'department'              => !empty($p['department']) ? $p['department'] : 'Engineering',
             'job_title'               => !empty($p['job_title']) ? $p['job_title'] : 'Staff',
-            'status'                  => 'active',
+                'status'                  => !empty($p['status']) ? $p['status'] : 'active',
             'join_date'               => !empty($p['join_date']) ? $p['join_date'] : date('Y-m-d'),
             'nic'                     => !empty($p['nic']) ? $p['nic'] : '',
             'dob'                     => !empty($p['dob']) ? $p['dob'] : '',
@@ -137,30 +136,44 @@ try {
         ];
 
         // Fetch employee activity_status preference
+            try {
         $empUid = !empty($p['user_id']) ? $conn->real_escape_string((string)$p['user_id']) : (string)$p['id'];
         $qSet = $conn->query("SELECT `activity_status` FROM `employee_settings` WHERE `user_id` = '$empUid' LIMIT 1");
         $profile['activity_status'] = ($qSet && $rSet = $qSet->fetch_assoc()) ? (int)$rSet['activity_status'] : 1;
-    } else {
-        // 2. Fallback to employees table
-        $empWhereClauses = [];
-        if ($empProfileId > 0)  $empWhereClauses[] = "`id` = '{$empProfileId}'";
-        if ($userId > 0)        $empWhereClauses[] = "`id` = '{$userId}'";
-        if (!empty($safeEmail)) $empWhereClauses[] = "(`email_address` = '{$safeEmail}' OR `email` = '{$safeEmail}')";
+            } catch (\Throwable $e) {
+                $profile['activity_status'] = 1;
+            }
+        }
+    }
 
-        $empWhereSql = !empty($empWhereClauses) ? implode(' OR ', $empWhereClauses) : "`id` = '{$userId}'";
+        // 2. Fallback to employees table
+    if (!$profile) {
+        $empWhereClauses = [];
+        if (!empty($safeEmail)) {
+            $empWhereClauses[] = "(`email_address` != '' AND `email_address` = '{$safeEmail}')";
+        }
+        if ($empProfileId > 0) {
+            $empWhereClauses[] = "`id` = '{$empProfileId}'";
+        }
+        if ($userId > 0) {
+            $empWhereClauses[] = "(`main_user_login_id` = '{$userId}'" . (!empty($safeEmail) ? " AND (`email_address` = '' OR `email_address` IS NULL OR `email_address` = '{$safeEmail}')" : "") . ")";
+        }
+
+        if (!empty($empWhereClauses)) {
+            $empWhereSql = implode(' OR ', $empWhereClauses);
         $empCheck = $conn->query("SELECT * FROM `employees` WHERE {$empWhereSql} LIMIT 1");
         if ($empCheck && $empCheck->num_rows > 0) {
             $e = $empCheck->fetch_assoc();
-            $fullname = !empty($e['fullname']) ? $e['fullname'] : (!empty($e['name']) ? $e['name'] : 'Employee');
-            $email = !empty($e['email_address']) ? $e['email_address'] : (!empty($e['email']) ? $e['email'] : '');
-            $dept = !empty($e['departments']) ? $e['departments'] : (!empty($e['department']) ? $e['department'] : 'Engineering');
-            $role = !empty($e['job_roles']) ? $e['job_roles'] : (!empty($e['job_role']) ? $e['job_role'] : 'Staff');
-            $phone = !empty($e['phone_number']) ? $e['phone_number'] : (!empty($e['phone']) ? $e['phone'] : '');
-            $joined = !empty($e['joined_date']) ? $e['joined_date'] : (!empty($e['joined']) ? $e['joined'] : date('Y-m-d'));
+                $fullname = !empty($e['fullname']) ? $e['fullname'] : 'Employee';
+                $email = !empty($e['email_address']) ? $e['email_address'] : '';
+                $dept = !empty($e['departments']) ? $e['departments'] : 'Engineering';
+                $role = !empty($e['job_roles']) ? $e['job_roles'] : 'Staff';
+                $phone = !empty($e['phone_number']) ? $e['phone_number'] : '';
+                $joined = !empty($e['joined_date']) ? $e['joined_date'] : date('Y-m-d');
 
             $profile = [
                 'id'                      => (int)$e['id'],
-                'user_id'                 => (int)$e['id'],
+                    'user_id'                 => (int)($e['main_user_login_id'] ?? $userId),
                 'full_name'               => $fullname,
                 'email'                   => $email,
                 'phone'                   => $phone,
@@ -188,6 +201,7 @@ try {
             ];
         }
     }
+}
 } catch (Exception $ex) {
     $profile = null;
 }
