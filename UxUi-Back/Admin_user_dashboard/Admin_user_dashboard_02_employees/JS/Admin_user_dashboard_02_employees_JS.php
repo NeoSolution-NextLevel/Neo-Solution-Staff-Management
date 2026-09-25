@@ -1168,14 +1168,9 @@
               alert(res.message || 'Error adding employee.');
             }
           })
-          .catch(() => {
-            alert('Employee added successfully.');
-            addEmpForm.reset();
-            closeAddModal();
-            window.fetchAdminEmployees();
-            if (typeof window.fetchAdminJobRoles === 'function') {
-              window.fetchAdminJobRoles();
-            }
+          .catch((err) => {
+            alert('Error adding employee: The server crashed or returned invalid data.');
+            console.error('Add employee error:', err);
           });
       });
     }
