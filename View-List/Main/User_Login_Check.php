@@ -36,7 +36,16 @@ unset(
     $_SESSION['main_user_account_access_level_list_id'],
     $_SESSION['url_home'],
     $_SESSION['user_role'],
-    $_SESSION['ac_type']
+    $_SESSION['ac_type'],
+    $_SESSION['full_name'],
+    $_SESSION['first_name'],
+    $_SESSION['last_name'],
+    $_SESSION['name_show'],
+    $_SESSION['department'],
+    $_SESSION['job_title'],
+    $_SESSION['profile_pic'],
+    $_SESSION['employee_id_code'],
+    $_SESSION['employee_profile_id']
 );
 
 if ($User_Account_Check_obj->check_user_name()) {
@@ -53,6 +62,10 @@ if ($User_Account_Check_obj->check_user_name()) {
         $_SESSION['session_token'] = $User_Account_Check_obj->get_session_token();
         $_SESSION['user_id'] = $User_Account_Check_obj->get_user_id();
         $_SESSION['user_name'] = $User_Account_Check_obj->get_user_name();
+        $_SESSION['first_name'] = $User_Account_Check_obj->get_first_name();
+        $_SESSION['last_name'] = $User_Account_Check_obj->get_last_name();
+        $_SESSION['name_show'] = $User_Account_Check_obj->get_name_show();
+        $_SESSION['image_url'] = $User_Account_Check_obj->get_image_url();
 
         // Check main_user_account_access_level_list_id and get url_home
         $access_level_id = $User_Account_Check_obj->get_main_user_account_access_level_list_id();
@@ -68,14 +81,63 @@ if ($User_Account_Check_obj->check_user_name()) {
             $user_role = $User_Account_Check_obj->get_ac_type();
         }
 
-        if (empty($url_home)) {
-            if (strtolower($user_role) === 'admin' || (int)$access_level_id === 1) {
-                $url_home = 'UxUi/Admin_user_dashboard.php';
-                $user_role = 'admin';
-            } else {
+        $isAdmin = (
+            strtolower((string)$user_role) === 'admin' ||
+            (int)$access_level_id === 1 ||
+            strtolower((string)$User_Account_Check_obj->get_ac_type()) === 'admin' ||
+            (int)$User_Account_Check_obj->get_user_id() === 1
+        );
+
+        if ($isAdmin) {
+            $url_home = 'UxUi/Admin_user_dashboard.php';
+            $user_role = 'admin';
+            $_SESSION['full_name'] = 'Admin';
+            $_SESSION['first_name'] = 'Admin';
+            $_SESSION['last_name'] = 'User';
+            $_SESSION['job_title'] = 'System Administrator';
+            $_SESSION['department'] = 'Administration';
+            $_SESSION['employee_id_code'] = 'ADM-001';
+            $_SESSION['user_role'] = 'admin';
+            $_SESSION['ac_type'] = 'admin';
+        } else {
+            if (empty($url_home)) {
                 $url_home = 'UxUi/Employee_user_dashboard.php';
                 $user_role = 'Employee';
             }
+            $_SESSION['user_role'] = $user_role;
+            $_SESSION['ac_type'] = $user_role;
+
+            // Resolve display/full name and employee details
+            $resolved_name = !empty($_SESSION['name_show']) ? $_SESSION['name_show'] : trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+            if (empty($resolved_name)) {
+                $resolved_name = $_SESSION['user_name'];
+            }
+            $_SESSION['full_name'] = $resolved_name;
+
+            try {
+                $login_db = new DataBase();
+                $lconn = $login_db->get_data_base_connction();
+                $safeUid = (int)$_SESSION['user_id'];
+                $safeUemail = addslashes($_SESSION['user_name']);
+
+                // Only query employee tables for non-admin accounts
+                $chkEmpProf = $lconn->query("SELECT * FROM `employee_profiles` WHERE `user_id` = '{$safeUid}' OR (`email` != '' AND `email` = '{$safeUemail}') LIMIT 1");
+                if ($chkEmpProf && $ep = $chkEmpProf->fetch_assoc()) {
+                    if (!empty($ep['full_name'])) $_SESSION['full_name'] = $ep['full_name'];
+                    if (!empty($ep['job_title'])) $_SESSION['job_title'] = $ep['job_title'];
+                    if (!empty($ep['department'])) $_SESSION['department'] = $ep['department'];
+                    if (!empty($ep['profile_pic'])) $_SESSION['profile_pic'] = $ep['profile_pic'];
+                    if (!empty($ep['employee_id_code'])) $_SESSION['employee_id_code'] = $ep['employee_id_code'];
+                    if (!empty($ep['id'])) $_SESSION['employee_profile_id'] = (int)$ep['id'];
+                } else {
+                    $chkEmp = $lconn->query("SELECT * FROM `employees` WHERE (`main_user_login_id` = '{$safeUid}' AND `main_user_login_id` > 1) OR (`email_address` != '' AND `email_address` = '{$safeUemail}') LIMIT 1");
+                    if ($chkEmp && $emp = $chkEmp->fetch_assoc()) {
+                        if (!empty($emp['fullname'])) $_SESSION['full_name'] = $emp['fullname'];
+                        if (!empty($emp['job_roles'])) $_SESSION['job_title'] = $emp['job_roles'];
+                        if (!empty($emp['departments'])) $_SESSION['department'] = $emp['departments'];
+                    }
+                }
+            } catch (\Throwable $e) {}
         }
 
         $_SESSION['main_user_account_access_level_list_id'] = $access_level_id;
