@@ -1,12 +1,12 @@
 <?php
 
-include_once '../../../imports/need/session_setup.php';
-include_once '../../../imports/need/DB.php';
-include_once '../../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
-include_once '../../../Controllers/Main/main_user_login/main_user_login_LIST.php';
-include_once '../../../imports/Company_Info/Company_Info_Variable_List.php';
-include_once '../../../imports/security/encrypt_decrypt.php';
-include_once '../../../imports/security/key_list.php';
+include_once __DIR__ . '/../../../imports/need/session_setup.php';
+include_once __DIR__ . '/../../../imports/need/DB.php';
+include_once __DIR__ . '/../../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
+include_once __DIR__ . '/../../../Controllers/Main/main_user_login/main_user_login_LIST.php';
+include_once __DIR__ . '/../../../imports/Company_Info/Company_Info_Variable_List.php';
+include_once __DIR__ . '/../../../imports/security/encrypt_decrypt.php';
+include_once __DIR__ . '/../../../imports/security/key_list.php';
 
 
 $json = array();
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $state['error'] = "0";
                 $state['id'] = $new_id;
 
-                // If Employee account, ensure employee_profiles and employees records exist
+                // If Employee account, ensure employee_profiles, employees, and bank_details records exist
                 if ($ac_type === 'Employee') {
                     $db = new DataBase();
                     $conn = $db->get_data_base_connction();
@@ -98,26 +98,48 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $safe_job = addslashes($job_title ?: 'Staff');
                     $safe_ref = addslashes($ref_key);
 
-                    // Insert into employee_profiles if not exists
+                    // 1. Insert into employee_profiles if not exists
                     $chk_ep = $conn->query("SELECT id FROM `employee_profiles` WHERE `user_id` = {$new_id} OR `email` = '{$safe_email}' LIMIT 1");
                     if (!$chk_ep || $chk_ep->num_rows === 0) {
+                        $default_roster = '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}';
                         $conn->query("INSERT INTO `employee_profiles` (
                             `user_id`, `full_name`, `email`, `department`, `job_title`, `status`, `join_date`,
-                            `employee_id_code`, `employment_type`, `work_location`
+                            `employee_id_code`, `employment_type`, `work_location`, `work_shift`, `working_days`,
+                            `weekly_roster`, `work_mode`, `updated_at`
                         ) VALUES (
                             {$new_id}, '{$safe_name}', '{$safe_email}', 'Engineering', '{$safe_job}', 'active', CURDATE(),
-                            '{$safe_ref}', 'Full-Time', 'Colombo HQ'
+                            '{$safe_ref}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri',
+                            '" . addslashes($default_roster) . "', 'On-Site (Active)', NOW()
                         )");
                     }
 
-                    // Insert into employees if not exists
-                    $chk_e = $conn->query("SELECT id FROM `employees` WHERE `email_address` = '{$safe_email}' LIMIT 1");
+                    // 2. Insert into employees if not exists (phpMyAdmin exact table schema)
+                    $chk_e = $conn->query("SELECT id FROM `employees` WHERE `email_address` = '{$safe_email}' OR `main_user_login_id` = {$new_id} LIMIT 1");
                     if (!$chk_e || $chk_e->num_rows === 0) {
                         $conn->query("INSERT INTO `employees` (
-                            `name`, `email_address`, `departments`, `job_roles`, `status`, `joined_date`
+                            `fullname`, `email_address`, `departments`, `job_roles`, `status`, `joined_date`, `main_user_login_id`
                         ) VALUES (
-                            '{$safe_name}', '{$safe_email}', 'Engineering', '{$safe_job}', 'active', CURDATE()
+                            '{$safe_name}', '{$safe_email}', 'Engineering', '{$safe_job}', 'active', CURDATE(), {$new_id}
                         )");
+                    }
+
+                    // 3. Create default bank_details entry
+                    $chk_b = $conn->query("SELECT id FROM `bank_details` WHERE `user_id` = {$new_id} OR `employee_id` = '{$safe_ref}' LIMIT 1");
+                    if (!$chk_b || $chk_b->num_rows === 0) {
+                        $conn->query("INSERT INTO `bank_details` (
+                            `user_id`, `employee_id`, `employee_name`, `holder_name`, `status`, `ast`, `sdt`
+                        ) VALUES (
+                            {$new_id}, '{$safe_ref}', '{$safe_name}', '{$safe_name}', 'Active', '1', NOW()
+                        )");
+                    }
+
+                    // 4. Sync job roles count
+                    $syncJrPath = __DIR__ . '/../../../UxUi-Back/Job_Roles/sync_job_roles_count.php';
+                    if (file_exists($syncJrPath)) {
+                        include_once $syncJrPath;
+                        if (function_exists('sync_job_role_employee_counts')) {
+                            sync_job_role_employee_counts($conn);
+                        }
                     }
                 }
             } else {
