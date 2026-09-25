@@ -1257,11 +1257,11 @@
             <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Full Name</label>
-                <input type="text" name="name" id="editEmpName" readonly placeholder="e.g. Kasun Kalhara" style="background-color: #f1f5f9; cursor: not-allowed;">
+                <input type="text" name="name" id="editEmpName" placeholder="e.g. Kasun Kalhara">
               </div>
               <div class="w3-form-group">
                 <label>Email Address</label>
-                <input type="email" name="email" id="editEmpEmail" readonly placeholder="e.g. kasun@office.com" style="background-color: #f1f5f9; cursor: not-allowed;">
+                <input type="email" name="email" id="editEmpEmail" placeholder="e.g. kasun@office.com">
               </div>
             </div>
             
@@ -1285,8 +1285,8 @@
               <div class="w3-form-group">
                 <label>Status</label>
                 <select name="status" id="editEmpStatus">
-                  <option value="active">On-Site (Active)</option>
-                  <option value="inactive">Remote</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </div>
               <div class="w3-form-group">
@@ -1312,12 +1312,12 @@
             </div>
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Emergency Contact Name <span style="font-size:10px; color:#94a3b8; font-weight:700;">(Employee Managed - Locked)</span></label>
-                <input type="text" name="emergency_contact_name" id="editEmpEmName" placeholder="e.g. Nimal Perera (Father)" readonly tabindex="-1" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+                <label>Emergency Contact Name</label>
+                <input type="text" name="emergency_contact_name" id="editEmpEmName" placeholder="e.g. Nimal Perera (Father)">
               </div>
               <div class="w3-form-group">
-                <label>Emergency Contact Phone <span style="font-size:10px; color:#94a3b8; font-weight:700;">(Employee Managed - Locked)</span></label>
-                <input type="text" name="emergency_contact_phone" id="editEmpEmPhone" placeholder="e.g. +94 77 123 4567" readonly tabindex="-1" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+                <label>Emergency Contact Phone</label>
+                <input type="text" name="emergency_contact_phone" id="editEmpEmPhone" placeholder="e.g. +94 77 123 4567">
               </div>
             </div>
             <!-- Work Schedule Section -->
@@ -1429,24 +1429,24 @@
 
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Account Holder Name <span style="font-size:10px; color:#94a3b8;">(Locked)</span></label>
-                <input type="text" name="holder_name" id="editEmpHolderName" readonly tabindex="-1" placeholder="Employee Account Holder" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+                <label>Account Holder Name</label>
+                <input type="text" name="holder_name" id="editEmpHolderName" placeholder="Employee Account Holder">
               </div>
               <div class="w3-form-group">
-                <label>Bank Name <span style="font-size:10px; color:#94a3b8;">(Locked)</span></label>
-                <input type="text" name="bank_name" id="editEmpBankName" readonly tabindex="-1" placeholder="Bank Name" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+                <label>Bank Name</label>
+                <input type="text" name="bank_name" id="editEmpBankName" placeholder="Bank Name">
               </div>
             </div>
 
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Branch Name <span style="font-size:10px; color:#94a3b8;">(Locked)</span></label>
-                <input type="text" name="branch" id="editEmpBranch" readonly tabindex="-1" placeholder="Branch Name" style="background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+                <label>Branch Name</label>
+                <input type="text" name="branch" id="editEmpBranch" placeholder="Branch Name">
               </div>
               <div class="w3-form-group">
-                <label>Account Number <span style="font-size:10px; color:#94a3b8;">(Locked)</span></label>
+                <label>Account Number</label>
                 <div style="position:relative; display:flex; align-items:center;">
-                  <input type="text" name="account_number" id="editEmpAccNumber" readonly tabindex="-1" placeholder="Account Number" style="width:100%; font-family:monospace; padding-right:38px; background:#f8fafc; color:#64748b; cursor:not-allowed; border:1px dashed #cbd5e1;">
+                  <input type="text" name="account_number" id="editEmpAccNumber" placeholder="Account Number" style="width:100%; font-family:monospace; padding-right:38px;">
                   <button type="button" onclick="toggleAccVisibility('editEmpAccNumber', this)" style="position:absolute; right:8px; background:none; border:none; color:#64748b; cursor:pointer; font-size:14px;" title="Show/Hide">
                     <i class="fa-solid fa-eye"></i>
                   </button>
