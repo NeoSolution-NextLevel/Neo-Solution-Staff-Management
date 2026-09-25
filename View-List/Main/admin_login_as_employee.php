@@ -49,6 +49,7 @@ try {
     include_once __DIR__ . '/../../imports/need/session_setup.php';
     include_once __DIR__ . '/../../imports/need/DB.php';
     include_once __DIR__ . '/../../imports/security/encrypt_decrypt.php';
+    include_once __DIR__ . '/../../imports/Company_Info/Company_Info_Variable_List.php';
 } catch (Throwable $ex) {
     admin_login_as_employee_fail('BOOTSTRAP_FAILED');
 }
@@ -222,7 +223,7 @@ if (!$valid_login) {
         2, 'Employee', 1, 1, 1, NOW()
     )";
     if ($db->get_result($insSql)) {
-        $emp_user_id = (int)$conn->insert_id;
+        $emp_user_id = (int)$db->get_id();
         if ($emp_user_id > 0) {
             $valid_login = true;
             if ($emp_profile_id > 0 && admin_login_as_employee_has_col($db, 'employee_profiles', 'user_id')) {
@@ -255,7 +256,7 @@ if (!$epChk || $epChk->num_rows === 0) {
         $values[] = 'NOW()';
     }
     $db->get_result('INSERT INTO `employee_profiles` (`' . implode('`, `', $fields) . '`) VALUES (' . implode(', ', $values) . ')');
-    $emp_profile_id = (int)$conn->insert_id;
+    $emp_profile_id = (int)$db->get_id();
 } else {
     $epRow = $epChk->fetch_assoc();
     $emp_profile_id = (int)$epRow['id'];
@@ -341,3 +342,4 @@ admin_login_as_employee_respond(array(
     'emp_name' => $emp_name,
     'emp_code' => $emp_code
 ));
+
