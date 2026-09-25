@@ -70,7 +70,7 @@ if ($res) {
             2, 'Employee', 1, 1, 1, NOW()
         )";
         if ($conn->query($insUserSql)) {
-            $login_user_id = (int)$conn->insert_id;
+            $login_user_id = (int)$db->get_id();
         }
     }
 
