@@ -105,7 +105,7 @@
                 <div class="row-actions" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">
                   <button class="action-btn view" title="View Profile" onclick="viewEmp(${e.id})">${iconEye}</button>
                   <button class="action-btn edit" title="Edit Employee" onclick="editEmp(${e.id})">${iconEdit}</button>
-                  <button class="action-btn" title="Auto Login as ${e.name}" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')}, ${Number(e.id)})"
+                  <button class="action-btn" title="Auto Login as Employee" onclick="window.loginAsEmpByProfileId(${Number(e.id)})"
                     style="background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:8px; width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(99,102,241,.35); transition:all .2s;" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">${iconLoginAs}</button>
                 </div>
               </td>
@@ -339,12 +339,9 @@
           <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; gap:6px;">
             <i class="fa-solid fa-building-columns" style="color:#2563eb;"></i> Bank Account & Compensation
           </div>
-          <button type="button" id="btnToggleBankEdit" onclick="toggleBankTabEdit(true)"
-            style="padding:6px 14px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e293b; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all .2s;"
-            onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#94a3b8';"
-            onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1';">
-            <i class="fa-solid fa-pen-to-square" style="color:#2563eb;"></i> ${hasBank ? 'Edit Bank Details' : 'Add Bank Details'}
-          </button>
+          <span style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; padding:3px 10px; border-radius:12px; border:1px solid #fde68a; display:inline-flex; align-items:center; gap:4px;">
+            <i class="fa-solid fa-lock"></i> Read-Only (Managed by Employee)
+          </span>
         </div>
 
         <!-- Display Mode -->
@@ -389,50 +386,9 @@
             <div style="text-align:center; padding:36px 16px; color:#94a3b8; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">
               <i class="fa-solid fa-building-columns" style="font-size:32px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
               <strong style="color:#475569; font-size:14px;">No Bank Account Registered</strong>
-              <p style="font-size:12px; margin:4px 0 14px;">No banking or salary details recorded for this employee.</p>
-              <button type="button" onclick="toggleBankTabEdit(true)" style="padding:8px 18px; border-radius:8px; background:#2563eb; color:#fff; border:none; font-weight:700; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(37,99,235,0.3);">
-                <i class="fa-solid fa-plus"></i> Add Bank Account
-              </button>
+              <p style="font-size:12px; margin:4px 0 0;">Employee has not added their bank details yet. Bank details are entered by the employee in their portal profile.</p>
             </div>
           `}
-        </div>
-
-        <!-- Inline Edit Mode Form -->
-        <div id="bankTabEditMode" style="display:none;">
-          <form id="bankTabInlineForm" onsubmit="saveBankDetailsInline(event)" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;">
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Account Holder Name *</label>
-                <input type="text" id="inlineBankHolder" value="${escapeHtml(holderName)}" required placeholder="e.g. Kasun Kalhara" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Bank Name *</label>
-                <input type="text" id="inlineBankName" list="sriLankaBanksList" value="${escapeHtml(bank ? bank.bank_name : '')}" required placeholder="e.g. Commercial Bank of Ceylon" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Branch Name *</label>
-                <input type="text" id="inlineBankBranch" value="${escapeHtml(bank ? bank.branch : '')}" required placeholder="e.g. Colombo Fort" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Account Number *</label>
-                <input type="text" id="inlineBankAccNumber" value="${escapeHtml(rawAcc)}" required placeholder="e.g. 100012345678" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:monospace; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Basic Salary (LKR)</label>
-                <input type="number" step="0.01" id="inlineBankBasicSalary" value="${basicSal > 0 ? basicSal : ''}" placeholder="0.00" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Net Salary (LKR)</label>
-                <input type="number" step="0.01" id="inlineBankNetSalary" value="${netSal > 0 ? netSal : ''}" placeholder="0.00" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-              <button type="button" onclick="toggleBankTabEdit(false)" style="padding:8px 16px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#475569; font-weight:700; font-size:12.5px; cursor:pointer;">Cancel</button>
-              <button type="submit" id="btnSaveInlineBank" style="padding:8px 20px; border:none; border-radius:8px; background:#2563eb; color:#fff; font-weight:700; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(37,99,235,0.3);">
-                <i class="fa-solid fa-floppy-disk"></i> Save Bank Details
-              </button>
-            </div>
-          </form>
         </div>
       `;
     };
@@ -790,6 +746,15 @@
         });
     };
 
+    window.loginAsEmpByProfileId = function (profId) {
+      const emp = employees.find(e => Number(e.id) === Number(profId));
+      if (emp) {
+        window.loginAsEmp(Number(emp.account_id || emp.id), emp.name || '', Number(emp.id));
+      } else {
+        window.loginAsEmp(profId, '', profId);
+      }
+    };
+
     window.loginAsCurrentEmp = function () {
       const targetId = currentlyViewingEmpId || currentlyViewingAccountId;
       if (targetId) {
@@ -986,10 +951,6 @@
         if (accountId) {
           formData.append('account_id', accountId);
         }
-        formData.append('holder_name', document.getElementById('editEmpHolderName')?.value.trim() || '');
-        formData.append('bank_name', document.getElementById('editEmpBankName')?.value.trim() || '');
-        formData.append('branch', document.getElementById('editEmpBranch')?.value.trim() || '');
-        formData.append('account_number', document.getElementById('editEmpAccNumber')?.value.trim() || '');
         formData.append('basic_salary', document.getElementById('editEmpBasicSalary')?.value || '0');
         formData.append('net_salary', document.getElementById('editEmpNetSalary')?.value || '0');
 
