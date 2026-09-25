@@ -738,7 +738,9 @@
       toast.innerHTML = `<svg style="animation:spin 1s linear infinite; width:18px; height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg> Auto Logging in as <strong>${displayName}</strong>...`;
       toast.style.display = 'flex';
 
-      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const pth = (typeof window.homePage !== 'undefined' && window.homePage)
+        ? window.homePage
+        : (typeof window.pth !== 'undefined' ? window.pth : '../');
       const formData = new FormData();
       formData.append('employee_user_id', id);
       if (profileId) {
@@ -752,9 +754,19 @@
       fetch(pth + 'View-List/Main/admin_login_as_employee.php', {
         method: 'POST',
         body: formData,
-        credentials: 'same-origin'
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
       })
-        .then(res => res.json())
+        .then(res => res.text())
+        .then(raw => {
+          let res;
+          try {
+            res = JSON.parse(raw);
+          } catch (e) {
+            throw new Error(raw ? String(raw).slice(0, 180) : 'Invalid JSON');
+          }
+          return res;
+        })
         .then(res => {
           if (Array.isArray(res) && res[0] && res[0].error === '0') {
             toast.innerHTML = `<span style="font-size:18px;">✅</span> Welcome, ${res[0].emp_name || displayName}! Redirecting...`;
@@ -769,10 +781,11 @@
             if (btn && btn.tagName === 'BUTTON') { btn.disabled = false; btn.style.opacity = '1'; }
           }
         })
-        .catch(() => {
+        .catch((err) => {
           toast.style.background = '#e11d48';
-          toast.innerHTML = `<span>❌</span> Network error. Please try again.`;
-          setTimeout(() => { toast.style.display = 'none'; }, 3000);
+          const msg = (err && err.message) ? String(err.message).replace(/</g, '') : 'Network error. Please try again.';
+          toast.innerHTML = `<span>❌</span> ${msg}`;
+          setTimeout(() => { toast.style.display = 'none'; }, 4000);
           if (btn && btn.tagName === 'BUTTON') { btn.disabled = false; btn.style.opacity = '1'; }
         });
     };
