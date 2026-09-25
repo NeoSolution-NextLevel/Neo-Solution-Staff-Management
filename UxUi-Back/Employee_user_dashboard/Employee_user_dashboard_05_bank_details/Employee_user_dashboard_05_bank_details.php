@@ -806,9 +806,12 @@
   function fetchEmployeeBankDetails() {
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
     var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : 'EMP-001';
+    var userId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.id) ? window.userProfileData.id : '';
+    var uName = (typeof window.userProfileData !== 'undefined' && window.userProfileData.full_name) ? window.userProfileData.full_name : '';
+    var queryParams = "employee_id=" + encodeURIComponent(empId) + (userId ? "&user_id=" + encodeURIComponent(userId) : "") + (uName ? "&name=" + encodeURIComponent(uName) : "");
 
     $.ajax({
-      url: pth + "UxUi-Back/Bank_Details/account_number.php?employee_id=" + encodeURIComponent(empId),
+      url: pth + "UxUi-Back/Bank_Details/account_number.php?" + queryParams,
       type: "GET",
       dataType: "json",
       success: function(response) {
