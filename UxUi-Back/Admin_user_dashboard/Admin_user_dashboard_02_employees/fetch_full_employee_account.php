@@ -61,22 +61,52 @@ if (!$profile && $empId > 0) {
 // Employee login accounts can exist before an employee profile is created.
 if (!$profile && $empId > 0) {
     $aRes = $db->get_result("SELECT l.* FROM `main_user_login` l
-        INNER JOIN `main_user_account_access_level_list` a
+        LEFT JOIN `main_user_account_access_level_list` a
             ON a.id = l.main_user_account_access_level_list_id
-        WHERE l.id = {$empId} AND LOWER(a.type_of_access) = 'employee' LIMIT 1");
+        WHERE l.id = {$empId}
+          AND l.id != 1
+          AND (
+              LOWER(TRIM(COALESCE(a.type_of_access, ''))) != 'admin'
+              AND LOWER(TRIM(COALESCE(l.ac_type, ''))) != 'admin'
+          ) LIMIT 1");
     if ($aRes && ($a = $aRes->fetch_assoc())) {
         $accountName = trim((string)($a['name_show'] ?? ''));
         if ($accountName === '') $accountName = trim((string)($a['first_name'] ?? '') . ' ' . (string)($a['last_name'] ?? ''));
         if ($accountName === '') $accountName = (string)($a['user_name'] ?? 'Employee');
+        $accountEmail = (string)($a['user_name'] ?? '');
+        $accountPhone = (string)($a['phone_number'] ?? '');
+        $empCodeVal = 'EMP-' . str_pad((int)$a['id'], 3, '0', STR_PAD_LEFT);
+        $accountActive = ((int)($a['account_active_state'] ?? 1) === 1) ? 'active' : 'inactive';
+        $defaultRoster = '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}';
+
+        // Auto-provision into employee_profiles
+        $newProfId = (int)$a['id'];
+        try {
+            $safeName = addslashes($accountName);
+            $safeEmail = addslashes($accountEmail);
+            $safePhone = addslashes($accountPhone);
+            $db->get_result("INSERT INTO `employee_profiles` (
+                `user_id`, `full_name`, `email`, `phone`, `department`, `job_title`, `status`, `join_date`,
+                `employee_id_code`, `employment_type`, `work_location`, `work_shift`, `working_days`,
+                `weekly_roster`, `work_mode`, `updated_at`
+            ) VALUES (
+                {$newProfId}, '{$safeName}', '{$safeEmail}', '{$safePhone}', 'Engineering', 'Staff', '{$accountActive}', CURDATE(),
+                '{$empCodeVal}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri',
+                '" . addslashes($defaultRoster) . "', 'On-Site (Active)', NOW()
+            )");
+            $insId = (int)$db->get_id();
+            if ($insId > 0) $newProfId = $insId;
+        } catch (\Throwable $e) {}
+
         $profile = [
-            'id' => (int)$a['id'], 'user_id' => (int)$a['id'], 'full_name' => $accountName,
-            'email' => $a['user_name'] ?? '', 'phone' => $a['phone_number'] ?? '',
-            'department' => '—', 'job_title' => 'Employee Account',
-            'status' => ((int)($a['account_active_state'] ?? 1) === 1) ? 'active' : 'inactive',
-            'join_date' => '', 'nic' => '', 'dob' => '', 'gender' => '', 'address' => '',
-            'employee_id_code' => 'ACCOUNT-' . str_pad((int)$a['id'], 3, '0', STR_PAD_LEFT),
-            'work_location' => '', 'work_shift' => '', 'working_days' => '',
-            'weekly_roster' => '', 'employment_type' => 'Employee Account'
+            'id' => $newProfId, 'user_id' => (int)$a['id'], 'full_name' => $accountName,
+            'email' => $accountEmail, 'phone' => $accountPhone,
+            'department' => 'Engineering', 'job_title' => 'Staff',
+            'status' => $accountActive,
+            'join_date' => date('Y-m-d'), 'nic' => '', 'dob' => '', 'gender' => 'Male', 'address' => '',
+            'employee_id_code' => $empCodeVal,
+            'work_location' => 'Colombo HQ', 'work_shift' => '08:30 AM – 05:30 PM', 'working_days' => 'Mon,Tue,Wed,Thu,Fri',
+            'weekly_roster' => $defaultRoster, 'employment_type' => 'Full-Time (Permanent)'
         ];
     }
 }
