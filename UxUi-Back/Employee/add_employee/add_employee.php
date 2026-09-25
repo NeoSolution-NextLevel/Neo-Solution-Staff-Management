@@ -1,10 +1,15 @@
 <?php
+@ini_set('display_errors', '0');
+@ini_set('html_errors', '0');
+ob_start();
 header('Content-Type: application/json; charset=utf-8');
 
-include_once __DIR__ . '/../../../imports/need/DB.php';
-include_once __DIR__ . '/../../../Controllers/Main/Employees/employee_ADD_UPDATE.php';
+try {
+    include_once __DIR__ . '/../../../imports/need/DB.php';
+    include_once __DIR__ . '/../../../Controllers/Main/Employees/employee_ADD_UPDATE.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    ob_end_clean();
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
     exit;
 }
@@ -17,6 +22,7 @@ $status = isset($_POST['status']) ? trim($_POST['status']) : 'active';
 $joined = isset($_POST['joined']) && !empty($_POST['joined']) ? trim($_POST['joined']) : (isset($_POST['joined_date']) && !empty($_POST['joined_date']) ? trim($_POST['joined_date']) : date('Y-m-d'));
 
 if (empty($name) || empty($email)) {
+    ob_end_clean();
     echo json_encode([
         'status' => 'error',
         'message' => 'Full name and Email address are required.'
@@ -84,11 +90,11 @@ if ($res) {
     $empCode = 'EMP-' . str_pad($new_emp_id, 3, '0', STR_PAD_LEFT);
     $conn->query("INSERT INTO `employee_profiles` (
         `user_id`, `full_name`, `email`, `department`, `job_title`, `status`, `join_date`,
-        `employee_id_code`, `work_shift`, `working_days`, `weekly_roster`, `work_location`, `employment_type`, `created_at`
+        `employee_id_code`, `work_shift`, `working_days`, `weekly_roster`, `work_location`, `employment_type`, `updated_at`
     ) VALUES (
         '$login_user_id', '" . addslashes($name) . "', '" . addslashes($email) . "', '" . addslashes($dept) . "', '" . addslashes($role) . "', '" . addslashes($status) . "', '" . addslashes($joined) . "',
         '{$empCode}', '" . addslashes($work_shift) . "', '" . addslashes($working_days) . "', '" . addslashes($weekly_roster) . "', '" . addslashes($work_location) . "', '" . addslashes($employment_type) . "', NOW()
-    ) ON DUPLICATE KEY UPDATE `user_id` = '$login_user_id', `status` = '" . addslashes($status) . "', `join_date` = '" . addslashes($joined) . "', `work_shift` = '" . addslashes($work_shift) . "', `working_days` = '" . addslashes($working_days) . "', `weekly_roster` = '" . addslashes($weekly_roster) . "', `work_location` = '" . addslashes($work_location) . "', `employment_type` = '" . addslashes($employment_type) . "'");
+    ) ON DUPLICATE KEY UPDATE `user_id` = '$login_user_id', `full_name` = '" . addslashes($name) . "', `department` = '" . addslashes($dept) . "', `job_title` = '" . addslashes($role) . "', `status` = '" . addslashes($status) . "', `join_date` = '" . addslashes($joined) . "', `work_shift` = '" . addslashes($work_shift) . "', `working_days` = '" . addslashes($working_days) . "', `weekly_roster` = '" . addslashes($weekly_roster) . "', `work_location` = '" . addslashes($work_location) . "', `employment_type` = '" . addslashes($employment_type) . "', `updated_at` = NOW()");
 
     $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$login_user_id'");
 
@@ -106,6 +112,7 @@ if ($res) {
     include_once __DIR__ . '/../../Job_Roles/sync_job_roles_count.php';
     sync_job_role_employee_counts($conn);
 
+    ob_end_clean();
     echo json_encode([
         'status'  => 'success',
         'message' => 'Employee and login account created successfully in database.',
@@ -122,10 +129,21 @@ if ($res) {
         ]
     ]);
 } else {
+    ob_end_clean();
     echo json_encode([
         'status'  => 'error',
         'message' => 'Database error: ' . $add_obj->get_error()
     ]);
 }
+
 exit;
+
+} catch (\Throwable $e) {
+    ob_end_clean();
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Server error: ' . $e->getMessage()
+    ]);
+    exit;
+}
 ?>

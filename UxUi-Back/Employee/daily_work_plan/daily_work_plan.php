@@ -1,13 +1,19 @@
 <?php
+@ini_set('display_errors', '0');
+@ini_set('html_errors', '0');
+ob_start();
 header('Content-Type: application/json; charset=utf-8');
+
+try {
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-include_once __DIR__ . '/../../../imports/need/session_setup.php';
+// NOTE: Do NOT include session_setup.php here — it triggers auth redirects (HTML)
+// which would corrupt the JSON response.
 include_once __DIR__ . '/../../../imports/need/DB.php';
-include_once __DIR__ . '/../../../imports/email/Email_Send.php';
+// Email_Send is optional; only load if it does not output HTML
 
 $db = new DataBase();
 
@@ -176,7 +182,7 @@ if ($action === 'shift_end_update' || isset($_POST['evening_update'])) {
 
     if ($taskId === 0) {
         $insSql = "INSERT INTO `system_tasks`
-            (`title`, `description`, `department`, `assigned_to`, `mode`, `status`, `deadline`, `progress`, `created_at`)
+            (`title`, `description`, `department`, `assigned_to`, `mode`, `priority`, `status`, `deadline`, `progress`, `created_at`)
             VALUES
             ('{$taskTitleSql}', '{$fullDescSql}', '{$deptSql}', '{$nameSql}', 'Online', 'Medium', '{$taskStatusSql}', '{$today}', {$progress}, '{$now}')";
         if ($db->get_result($insSql)) {
@@ -334,11 +340,19 @@ try {
     }
 } catch (Exception $e) {}
 
+ob_end_clean();
 echo json_encode([
-    'status' => 'success',
+    'status'  => 'success',
     'message' => $startWork ? 'Work started! You are active today with your planned tasks.' : 'Daily work plan saved successfully!',
-    'data' => $plan,
-    'date' => $today
-]);
-?>
+    'data'    => $plan,
+    'date'    => $today
+], JSON_INVALID_UTF8_SUBSTITUTE);
 
+} catch (\Throwable $e) {
+    ob_end_clean();
+    echo json_encode([
+        'status'  => 'error',
+        'message' => 'Server error: ' . $e->getMessage()
+    ]);
+}
+?>
