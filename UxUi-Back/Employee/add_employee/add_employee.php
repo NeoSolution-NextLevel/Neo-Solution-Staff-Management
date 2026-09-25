@@ -38,11 +38,6 @@ if ($res) {
 
     $db = new DataBase();
     $conn = $db->get_data_base_connction();
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_shift` VARCHAR(100) DEFAULT '08:30 AM – 05:30 PM'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `working_days` VARCHAR(255) DEFAULT 'Mon,Tue,Wed,Thu,Fri'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `weekly_roster` TEXT DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_location` VARCHAR(255) DEFAULT 'Colombo HQ'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `employment_type` VARCHAR(100) DEFAULT 'Full-Time (Permanent)'");
 
     // Auto-create or link login account in main_user_login
     include_once __DIR__ . '/../../../imports/security/encrypt_decrypt.php';
@@ -83,10 +78,29 @@ if ($res) {
         $login_user_id = $new_emp_id;
     }
 
-    $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `email`, `department`, `job_title`, `join_date`, `work_shift`, `working_days`, `weekly_roster`, `work_location`, `employment_type`, `created_at`) 
-                  VALUES ('$login_user_id', '" . addslashes($name) . "', '" . addslashes($email) . "', '" . addslashes($dept) . "', '" . addslashes($role) . "', '" . addslashes($joined) . "', '" . addslashes($work_shift) . "', '" . addslashes($working_days) . "', '" . addslashes($weekly_roster) . "', '" . addslashes($work_location) . "', '" . addslashes($employment_type) . "', NOW())
-                  ON DUPLICATE KEY UPDATE `user_id` = '$login_user_id', `join_date` = '" . addslashes($joined) . "', `work_shift` = '" . addslashes($work_shift) . "', `working_days` = '" . addslashes($working_days) . "', `weekly_roster` = '" . addslashes($weekly_roster) . "', `work_location` = '" . addslashes($work_location) . "', `employment_type` = '" . addslashes($employment_type) . "'");
+    // Link employees record to main_user_login_id
+    $conn->query("UPDATE `employees` SET `main_user_login_id` = '{$login_user_id}' WHERE `id` = '{$new_emp_id}'");
+
+    $empCode = 'EMP-' . str_pad($new_emp_id, 3, '0', STR_PAD_LEFT);
+    $conn->query("INSERT INTO `employee_profiles` (
+        `user_id`, `full_name`, `email`, `department`, `job_title`, `status`, `join_date`,
+        `employee_id_code`, `work_shift`, `working_days`, `weekly_roster`, `work_location`, `employment_type`, `created_at`
+    ) VALUES (
+        '$login_user_id', '" . addslashes($name) . "', '" . addslashes($email) . "', '" . addslashes($dept) . "', '" . addslashes($role) . "', '" . addslashes($status) . "', '" . addslashes($joined) . "',
+        '{$empCode}', '" . addslashes($work_shift) . "', '" . addslashes($working_days) . "', '" . addslashes($weekly_roster) . "', '" . addslashes($work_location) . "', '" . addslashes($employment_type) . "', NOW()
+    ) ON DUPLICATE KEY UPDATE `user_id` = '$login_user_id', `status` = '" . addslashes($status) . "', `join_date` = '" . addslashes($joined) . "', `work_shift` = '" . addslashes($work_shift) . "', `working_days` = '" . addslashes($working_days) . "', `weekly_roster` = '" . addslashes($weekly_roster) . "', `work_location` = '" . addslashes($work_location) . "', `employment_type` = '" . addslashes($employment_type) . "'");
+
     $conn->query("UPDATE `main_user_login` SET `sdt` = '" . addslashes($joined) . " 00:00:00' WHERE `id` = '$login_user_id'");
+
+    // Create default bank_details entry
+    $chk_b = $conn->query("SELECT id FROM `bank_details` WHERE `user_id` = '{$login_user_id}' OR `employee_id` = '{$empCode}' LIMIT 1");
+    if (!$chk_b || $chk_b->num_rows === 0) {
+        $conn->query("INSERT INTO `bank_details` (
+            `user_id`, `employee_id`, `employee_name`, `holder_name`, `status`, `ast`, `sdt`
+        ) VALUES (
+            '{$login_user_id}', '{$empCode}', '" . addslashes($name) . "', '" . addslashes($name) . "', 'Active', '1', NOW()
+        )");
+    }
 
     // Sync job roles employee count according to department
     include_once __DIR__ . '/../../Job_Roles/sync_job_roles_count.php';
