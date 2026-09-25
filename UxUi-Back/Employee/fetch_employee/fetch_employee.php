@@ -4,10 +4,11 @@
 ob_start();
 header('Content-Type: application/json; charset=utf-8');
 
-include_once __DIR__ . '/../../../imports/need/DB.php';
-include_once __DIR__ . '/../../../Controllers/Main/Employees/employee_details_LIST.php';
+try {
+    include_once __DIR__ . '/../../../imports/need/DB.php';
+    include_once __DIR__ . '/../../../Controllers/Main/Employees/employee_details_LIST.php';
 
-$db = new DataBase();
+    $db = new DataBase();
 $employees = [];
 
 // 1. Fetch live employee profile(s) from employee_profiles table
@@ -268,6 +269,15 @@ echo json_encode([
     'status' => 'success',
     'total'  => count($employees),
     'data'   => $employees
-]);
+], JSON_INVALID_UTF8_SUBSTITUTE);
 exit;
+
+} catch (\Throwable $e) {
+    ob_end_clean();
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Server error: ' . $e->getMessage()
+    ]);
+    exit;
+}
 ?>
