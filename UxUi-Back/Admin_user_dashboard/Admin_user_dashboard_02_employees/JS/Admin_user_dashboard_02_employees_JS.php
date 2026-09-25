@@ -964,9 +964,15 @@
         formData.append('weekly_roster', weekly_roster);
         formData.append('employment_type', employment_type);
         formData.append('work_location', work_location);
-        formData.append('emergency_contact_name', document.getElementById('editEmpEmName').value.trim());
-        formData.append('emergency_contact_phone', document.getElementById('editEmpEmPhone').value.trim());
-        formData.append('employee_id_code', 'EMP-' + String(id).padStart(3, '0'));
+        formData.append('emergency_contact_name', document.getElementById('editEmpEmName')?.value.trim() || '');
+        formData.append('emergency_contact_phone', document.getElementById('editEmpEmPhone')?.value.trim() || '');
+        const currEmp = employees.find(emp => Number(emp.id) === Number(id));
+        const empCode = currEmp?.emp_code || currEmp?.employee_id_code || ('EMP-' + String(id).padStart(3, '0'));
+        const accountId = currEmp?.account_id || '';
+        formData.append('employee_id_code', empCode);
+        if (accountId) {
+          formData.append('account_id', accountId);
+        }
         formData.append('holder_name', document.getElementById('editEmpHolderName')?.value.trim() || '');
         formData.append('bank_name', document.getElementById('editEmpBankName')?.value.trim() || '');
         formData.append('branch', document.getElementById('editEmpBranch')?.value.trim() || '');
@@ -981,6 +987,9 @@
               window.fetchAdminEmployees();
               if (typeof window.fetchAdminJobRoles === 'function') {
                 window.fetchAdminJobRoles();
+              }
+              if (typeof window.fetchLiveDashboardData === 'function') {
+                window.fetchLiveDashboardData();
               }
               alert('Employee details updated successfully in database!');
               closeEditModal();
