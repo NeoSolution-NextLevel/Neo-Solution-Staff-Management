@@ -1,6 +1,6 @@
 <?php 
 include_once __DIR__ . '/../imports/need/session_setup.php';
-require_login(['admin', 'manager', 'super']);
+require_login(['admin']);
 ?>
 
 <!DOCTYPE html>
@@ -23,12 +23,11 @@ require_login(['admin', 'manager', 'super']);
 
 
 <script type="text/javascript">
+        window.pth = <?php echo json_encode(isset($pth) && $pth !== '' ? $pth : '../'); ?>;
+        window.homePage = <?php echo json_encode(isset($home_page) ? rtrim($home_page, '/') . '/' : '../'); ?>;
         document.addEventListener("DOMContentLoaded", function() {
             Admin_user_dashboard_close_all();
-           
-            
             Admin_user_dashboard_01_OPEN();
-            
         });
 </script>
 
