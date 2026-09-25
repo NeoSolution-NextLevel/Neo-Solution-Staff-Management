@@ -68,9 +68,9 @@ if ($prof_res && $prof_res->num_rows > 0) {
             'initials'        => $initials,
             'name'            => $name,
             'email'           => !empty($p['email']) ? $p['email'] : '',
-            'dept'            => !empty($p['department']) ? $p['department'] : '',
-            'role'            => !empty($p['job_title']) ? $p['job_title'] : '',
-            'status'          => 'active',
+            'dept'            => !empty($p['department']) ? $p['department'] : 'Engineering',
+            'role'            => !empty($p['job_title']) ? $p['job_title'] : 'Staff',
+            'status'          => !empty($p['status']) ? strtolower($p['status']) : 'active',
             'joined'          => !empty($p['join_date']) ? $p['join_date'] : '',
             'phone'           => !empty($p['phone']) ? $p['phone'] : '',
             'nic'             => !empty($p['nic']) ? $p['nic'] : '',
@@ -79,14 +79,14 @@ if ($prof_res && $prof_res->num_rows > 0) {
             'address'         => !empty($p['address']) ? $p['address'] : '',
             'profile_pic'     => !empty($p['profile_pic']) ? $p['profile_pic'] : '',
             'emp_code'        => !empty($p['employee_id_code']) ? $p['employee_id_code'] : 'EMP-' . str_pad($p['id'], 3, '0', STR_PAD_LEFT),
-            'location'        => !empty($p['work_location']) ? $p['work_location'] : '',
+            'location'        => !empty($p['work_location']) ? $p['work_location'] : 'Colombo HQ',
             'work_shift'      => !empty($p['work_shift']) ? $p['work_shift'] : '08:30 AM – 05:30 PM',
             'working_days'    => !empty($p['working_days']) ? $p['working_days'] : 'Mon,Tue,Wed,Thu,Fri',
-            'weekly_roster'   => !empty($p['weekly_roster']) ? $p['weekly_roster'] : '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"wfh","Sat":"leave","Sun":"leave"}',
+            'weekly_roster'   => !empty($p['weekly_roster']) ? $p['weekly_roster'] : '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}',
             'work_mode'       => $dailyWorkMode,
             'today_work_mode' => $dailyWorkMode,
             'today_mode_type' => $dailyModeType,
-            'employment_type' => !empty($p['employment_type']) ? $p['employment_type'] : 'Full-Time',
+            'employment_type' => !empty($p['employment_type']) ? $p['employment_type'] : 'Full-Time (Permanent)',
             'em_name'         => !empty($p['emergency_contact_name']) ? $p['emergency_contact_name'] : '',
             'em_phone'        => !empty($p['emergency_contact_phone']) ? $p['emergency_contact_phone'] : ''
         ];
@@ -188,30 +188,73 @@ if ($account_res && $account_res->num_rows > 0) {
             if ($word !== '') $initials .= strtoupper($word[0]);
         }
         $initials = substr($initials, 0, 2) ?: 'EM';
+        $u_id = (int)$account['id'];
+        $safe_u_email = addslashes($accountEmail);
+        $safe_u_name = addslashes($accountName);
+        $empCodeVal = 'EMP-' . str_pad($u_id, 3, '0', STR_PAD_LEFT);
         $accountActive = $account['account_active_state'] === null || (int)$account['account_active_state'] === 1;
+        $default_status = $accountActive ? 'active' : 'inactive';
+        $default_roster = '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}';
+
+        // Auto-provision profile row in employee_profiles
+        $db->get_result("INSERT INTO `employee_profiles` (
+            `user_id`, `full_name`, `email`, `department`, `job_title`, `status`, `join_date`,
+            `employee_id_code`, `employment_type`, `work_location`, `work_shift`, `working_days`,
+            `weekly_roster`, `work_mode`, `updated_at`
+        ) VALUES (
+            {$u_id}, '{$safe_u_name}', '{$safe_u_email}', 'Engineering', 'Staff', '{$default_status}', CURDATE(),
+            '{$empCodeVal}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri',
+            '" . addslashes($default_roster) . "', 'On-Site (Active)', NOW()
+        )");
+        $conn = $db->get_data_base_connction();
+        $profId = (int)$conn->insert_id;
+        if ($profId <= 0) $profId = $u_id;
+
+        // Auto-provision in employees table
+        $chkE = $db->get_result("SELECT id FROM `employees` WHERE `email_address` = '{$safe_u_email}' OR `main_user_login_id` = {$u_id} LIMIT 1");
+        if (!$chkE || $chkE->num_rows === 0) {
+            $db->get_result("INSERT INTO `employees` (
+                `fullname`, `email_address`, `departments`, `job_roles`, `status`, `joined_date`, `main_user_login_id`
+            ) VALUES (
+                '{$safe_u_name}', '{$safe_u_email}', 'Engineering', 'Staff', '{$default_status}', CURDATE(), {$u_id}
+            )");
+        }
+
+        // Auto-provision in bank_details table
+        $chkB = $db->get_result("SELECT id FROM `bank_details` WHERE `user_id` = {$u_id} OR `employee_id` = '{$empCodeVal}' LIMIT 1");
+        if (!$chkB || $chkB->num_rows === 0) {
+            $db->get_result("INSERT INTO `bank_details` (
+                `user_id`, `employee_id`, `employee_name`, `holder_name`, `status`, `ast`, `sdt`
+            ) VALUES (
+                {$u_id}, '{$empCodeVal}', '{$safe_u_name}', '{$safe_u_name}', 'Active', '1', NOW()
+            )");
+        }
 
         $employees[] = [
-            'id'              => (int)$account['id'],
-            'account_id'      => (int)$account['id'],
+            'id'              => $profId,
+            'account_id'      => $u_id,
             'initials'        => $initials,
             'name'            => $accountName,
             'email'           => $accountEmail,
-            'dept'            => '',
-            'role'            => 'Employee Account',
-            'status'          => $accountActive ? 'active' : 'inactive',
-            'joined'          => '',
+            'dept'            => 'Engineering',
+            'role'            => 'Staff',
+            'status'          => $default_status,
+            'joined'          => date('Y-m-d'),
             'phone'           => (string)($account['phone_number'] ?? ''),
             'nic'             => '',
             'dob'             => '',
-            'gender'          => '',
+            'gender'          => 'Male',
             'address'         => '',
             'profile_pic'     => '',
-            'emp_code'        => 'ACCOUNT-' . str_pad((int)$account['id'], 3, '0', STR_PAD_LEFT),
-            'location'        => '',
-            'work_shift'      => '',
-            'working_days'    => '',
-            'weekly_roster'   => '',
-            'employment_type' => 'Employee Account',
+            'emp_code'        => $empCodeVal,
+            'location'        => 'Colombo HQ',
+            'work_shift'      => '08:30 AM – 05:30 PM',
+            'working_days'    => 'Mon,Tue,Wed,Thu,Fri',
+            'weekly_roster'   => $default_roster,
+            'work_mode'       => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+            'today_work_mode' => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+            'today_mode_type' => (date('D') === 'Sat' || date('D') === 'Sun') ? 'leave' : 'onsite',
+            'employment_type' => 'Full-Time (Permanent)',
             'em_name'         => '',
             'em_phone'        => ''
         ];
