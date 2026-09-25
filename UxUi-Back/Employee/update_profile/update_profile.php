@@ -247,38 +247,54 @@ include_once __DIR__ . '/../../Job_Roles/sync_job_roles_count.php';
 sync_job_role_employee_counts($conn);
 
 // 5. Sync with bank_details table
-if (!empty($bankName) || !empty($accNumber) || (!$isEmployeeSelf && (isset($_POST['basic_salary']) || isset($_POST['net_salary'])))) {
+// Admin cannot edit employee bank account details (bank name, branch, account number, holder name).
+// Admin can only set salary compensation (basic_salary, net_salary).
+// Bank account details are self-managed exclusively by employees ($isEmployeeSelf).
+if ($isEmployeeSelf || isset($_POST['basic_salary']) || isset($_POST['net_salary'])) {
     include_once __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
-    $encAcc = !empty($accNumber) ? Bank_Security::encrypt($accNumber) : '';
     $bTargetUserId = $main_user_id > 0 ? $main_user_id : $userId;
-    $bCheck = $conn->query("SELECT id, bank_account_number, account_number FROM `bank_details` 
+    $bCheck = $conn->query("SELECT id, bank_account_number, account_number, holder_name, bank_name, branch FROM `bank_details` 
         WHERE `user_id` = '{$bTargetUserId}' OR `employee_id` = '" . addslashes($empCode) . "' OR `employee_name` = '{$safeFullName}' OR `holder_name` = '{$safeFullName}' 
         ORDER BY `id` DESC LIMIT 1");
     if ($bCheck && $bCheck->num_rows > 0) {
         $bRow = $bCheck->fetch_assoc();
         $bId = (int)$bRow['id'];
         $bUpdates = [];
-        if (!empty($bankName) && $bankName !== 'Bank Name') $bUpdates[] = "`bank_name` = '" . addslashes($bankName) . "'";
-        if (!empty($branch) && $branch !== 'Branch Name') $bUpdates[] = "`branch` = '" . addslashes($branch) . "'";
-        if (!empty($encAcc)) {
-            $bUpdates[] = "`bank_account_number` = '" . addslashes($encAcc) . "'";
-            $bUpdates[] = "`account_number` = '" . addslashes($encAcc) . "'";
+
+        // ONLY allow updating bank credentials if this is an employee self-action
+        if ($isEmployeeSelf) {
+            if (!empty($bankName) && $bankName !== 'Bank Name') $bUpdates[] = "`bank_name` = '" . addslashes($bankName) . "'";
+            if (!empty($branch) && $branch !== 'Branch Name') $bUpdates[] = "`branch` = '" . addslashes($branch) . "'";
+            if (!empty($accNumber)) {
+                $encAcc = Bank_Security::encrypt($accNumber);
+                $bUpdates[] = "`bank_account_number` = '" . addslashes($encAcc) . "'";
+                $bUpdates[] = "`account_number` = '" . addslashes($encAcc) . "'";
+            }
+            if (!empty($holderName) && $holderName !== 'Employee Account Holder') $bUpdates[] = "`holder_name` = '" . addslashes($holderName) . "'";
         }
-        if (!empty($holderName) && $holderName !== 'Employee Account Holder') $bUpdates[] = "`holder_name` = '" . addslashes($holderName) . "'";
+
+        // Always sync employee name & id code if available
         if (!empty($fullName)) $bUpdates[] = "`employee_name` = '{$safeFullName}'";
         if (!empty($empCode))  $bUpdates[] = "`employee_id` = '" . addslashes($empCode) . "'";
+        if ($bTargetUserId > 0) $bUpdates[] = "`user_id` = '{$bTargetUserId}'";
+
+        // Admin updates salary
         if (!$isEmployeeSelf && isset($_POST['basic_salary'])) $bUpdates[] = "`basic_salary` = " . (float)$basicSal;
         if (!$isEmployeeSelf && isset($_POST['net_salary']))   $bUpdates[] = "`net_salary` = " . (float)$netSal;
-        if ($bTargetUserId > 0) $bUpdates[] = "`user_id` = '{$bTargetUserId}'";
+
         if (!empty($bUpdates)) {
             $conn->query("UPDATE `bank_details` SET " . implode(", ", $bUpdates) . " WHERE `id` = '$bId'");
         }
     } else {
-        $bHolder = !empty($holderName) && $holderName !== 'Employee Account Holder' ? $holderName : $fullName;
+        // Row doesn't exist yet: create with empty bank details if admin, or employee-supplied details if employee
+        $encAcc = ($isEmployeeSelf && !empty($accNumber)) ? Bank_Security::encrypt($accNumber) : '';
+        $bBankName = $isEmployeeSelf ? $bankName : '';
+        $bBranch = $isEmployeeSelf ? $branch : '';
+        $bHolder = ($isEmployeeSelf && !empty($holderName) && $holderName !== 'Employee Account Holder') ? $holderName : $fullName;
         $conn->query("INSERT INTO `bank_details` 
             (`user_id`, `employee_id`, `employee_name`, `holder_name`, `bank_name`, `branch`, `bank_account_number`, `account_number`, `basic_salary`, `net_salary`, `status`, `ast`, `sdt`) 
             VALUES 
-            ('{$bTargetUserId}', '" . addslashes($empCode) . "', '{$safeFullName}', '" . addslashes($bHolder) . "', '" . addslashes($bankName) . "', '" . addslashes($branch) . "', '" . addslashes($encAcc) . "', '" . addslashes($encAcc) . "', " . (float)$basicSal . ", " . (float)$netSal . ", 'Active', '1', NOW())");
+            ('{$bTargetUserId}', '" . addslashes($empCode) . "', '{$safeFullName}', '" . addslashes($bHolder) . "', '" . addslashes($bBankName) . "', '" . addslashes($bBranch) . "', '" . addslashes($encAcc) . "', '" . addslashes($encAcc) . "', " . (float)$basicSal . ", " . (float)$netSal . ", 'Active', '1', NOW())");
     }
 }
 
