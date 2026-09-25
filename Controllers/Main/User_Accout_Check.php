@@ -25,6 +25,11 @@ class User_Account_Check
     private $main_user_account_access_level_list_id = '';
     private $ac_type = '';
 
+    private $first_name = "";
+    private $last_name = "";
+    private $name_show = "";
+    private $image_url = "";
+
     private $raw_password = "";
 
     public function __construct($user_name, $password)
@@ -149,6 +154,10 @@ class User_Account_Check
             $this->phone_number = $row['phone_number'];
             $this->main_user_account_access_level_list_id = $row['main_user_account_access_level_list_id'] ?? '';
             $this->ac_type = $row['ac_type'] ?? '';
+            $this->first_name = $row['first_name'] ?? '';
+            $this->last_name = $row['last_name'] ?? '';
+            $this->name_show = $row['name_show'] ?? '';
+            $this->image_url = $row['image_url'] ?? '';
 
             $User_Accout_Check_Device_obj = new User_Accout_Check_Device();
             $User_Accout_Check_Device_obj->set_main_user_login_id($this->user_id);
@@ -246,5 +255,25 @@ class User_Account_Check
     public function get_ac_type()
     {
         return $this->ac_type;
+    }
+
+    public function get_first_name()
+    {
+        return $this->first_name;
+    }
+
+    public function get_last_name()
+    {
+        return $this->last_name;
+    }
+
+    public function get_name_show()
+    {
+        return $this->name_show;
+    }
+
+    public function get_image_url()
+    {
+        return $this->image_url;
     }
 }
