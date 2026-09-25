@@ -4,11 +4,12 @@
 ob_start();
 header('Content-Type: application/json; charset=utf-8');
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+try {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-include_once __DIR__ . '/../../../imports/need/DB.php';
+    include_once __DIR__ . '/../../../imports/need/DB.php';
 
 $db = new DataBase();
 
@@ -172,6 +173,15 @@ echo json_encode([
         'tasks'      => $tasks,
         'leaves'     => $leaves
     ]
-]);
+], JSON_INVALID_UTF8_SUBSTITUTE);
 exit;
+
+} catch (\Throwable $e) {
+    ob_end_clean();
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Server error: ' . $e->getMessage()
+    ]);
+    exit;
+}
 ?>
