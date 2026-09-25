@@ -1,4 +1,7 @@
 <?php
+@ini_set('display_errors', '0');
+@ini_set('html_errors', '0');
+ob_start();
 header('Content-Type: application/json; charset=utf-8');
 
 include_once __DIR__ . '/../../../imports/need/DB.php';
@@ -206,8 +209,7 @@ if ($account_res && $account_res->num_rows > 0) {
             '{$empCodeVal}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri',
             '" . addslashes($default_roster) . "', 'On-Site (Active)', NOW()
         )");
-        $conn = $db->get_data_base_connction();
-        $profId = (int)$conn->insert_id;
+        $profId = (int)$db->get_id();
         if ($profId <= 0) $profId = $u_id;
 
         // Auto-provision in employees table
@@ -261,6 +263,7 @@ if ($account_res && $account_res->num_rows > 0) {
     }
 }
 
+ob_end_clean();
 echo json_encode([
     'status' => 'success',
     'total'  => count($employees),
