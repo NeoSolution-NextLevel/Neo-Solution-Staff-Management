@@ -1,23 +1,7 @@
-<?php 
-include_once '../imports/need/session_setup.php';
+<?php
+include_once __DIR__ . '/../imports/need/session_setup.php';
 require_login();
-
-// --- Admin Impersonation Banner ---
-// $is_impersonating  = !empty($_SESSION['admin_impersonating']) && $_SESSION['admin_impersonating'] === true;
-// $admin_name        = $is_impersonating && !empty($_SESSION['admin_impersonating_name'])
-//                      ? htmlspecialchars($_SESSION['admin_impersonating_name'])
-//                      : 'Admin';
-// $restore_url       = rtrim($home_page, '/') . '/View-List/Main/admin_restore_session.php';
-// $admin_dash_url    = rtrim($home_page, '/') . '/UxUi/Admin_user_dashboard.php';
-// if (!empty($_SESSION['admin_original_session']['url_home'])) {
-//     $orig_url = trim($_SESSION['admin_original_session']['url_home']);
-//     if (stripos($orig_url, 'http') === 0) {
-//         $admin_dash_url = $orig_url;
-//     } else {
-//         $admin_dash_url = rtrim($home_page, '/') . '/' . ltrim($orig_url, '/');
-//     }
-// }
-// ?>
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,6 +22,11 @@ require_login();
 <body>
 
     <script type="text/javascript">
+        window.pth = "<?php echo isset($pth) ? $pth : '../'; ?>";
+        window.homePage = "<?php echo isset($home_page) ? $home_page : '../'; ?>";
+        window.currentEmployeeName = "<?php echo addslashes($logged_user_name ?? ''); ?>";
+        window.currentEmployeeFirstName = "<?php echo addslashes($logged_user_first_name ?? ''); ?>";
+
         document.addEventListener("DOMContentLoaded", function() {
             Employee_user_dashboard_close_all();
             Employee_user_dashboard_01_OPEN();
