@@ -232,15 +232,21 @@ class dashboard_details_LIST
             LEFT JOIN `employees` e ON (e.id = d.employee_profile_id OR e.id = d.user_id OR e.main_user_login_id = d.user_id)
             LEFT JOIN `main_user_login` l ON (l.id = d.user_id OR l.id = p.user_id OR l.id = e.main_user_login_id)
             WHERE d.presence_date = CURDATE()
-            GROUP BY COALESCE(p.id, e.id, d.employee_profile_id, d.user_id)
-            ORDER BY d.last_seen_at DESC, full_name ASC";
+            ORDER BY d.last_seen_at DESC";
 
         $res = $data_base_obj->get_result($query);
+        $seenMembers = [];
         if ($res && $res->num_rows > 0) {
             while ($row = $res->fetch_assoc()) {
+                $pId = (int)$row['profile_id'];
+                $uId = (int)$row['user_id'];
+                $dedupKey = $pId > 0 ? "p_{$pId}" : "u_{$uId}";
+                if (isset($seenMembers[$dedupKey])) continue;
+                $seenMembers[$dedupKey] = true;
+
                 $members[] = [
-                    'profile_id' => (int)$row['profile_id'],
-                    'user_id' => (int)$row['user_id'],
+                    'profile_id' => $pId,
+                    'user_id' => $uId,
                     'name' => $row['full_name'] ?? 'Employee',
                     'email' => $row['email'] ?? '',
                     'department' => $row['department'] ?? '',
