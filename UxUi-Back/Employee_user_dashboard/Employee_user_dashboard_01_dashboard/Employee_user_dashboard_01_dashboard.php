@@ -501,8 +501,15 @@
         </div>
 
         <div class="admin-pill" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); }">
-          <div class="avatar" id="dashTopAvatar"></div>
-          <span id="dashTopEmpName"></span>
+          <div class="avatar" id="dashTopAvatar"><?php 
+              if (!empty($logged_user_pic)) {
+                  $top_pic = (isset($home_page) ? $home_page : '../') . htmlspecialchars($logged_user_pic);
+                  echo '<img src="' . $top_pic . '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />';
+              } else {
+                  echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'EM');
+              }
+          ?></div>
+          <span id="dashTopEmpName"><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></span>
         </div>
       </div>
     </div>
@@ -512,13 +519,13 @@
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; position: relative; flex-wrap: wrap; gap: 8px;">
         <div class="date"><?php echo date('l, F j, Y'); ?></div>
         <div style="display: flex; gap: 8px; align-items: center;">
-          <span id="dashEmpCode" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;"></span>
-          <span id="dashEmpDept" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;"></span>
+          <span id="dashEmpCode" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;"><?php echo htmlspecialchars(!empty($logged_user_emp_code) ? $logged_user_emp_code : 'EMP-001'); ?></span>
+          <span id="dashEmpDept" style="background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 3px 12px; border-radius: 999px;"><?php echo htmlspecialchars(!empty($logged_user_dept) ? $logged_user_dept : 'General'); ?></span>
         </div>
       </div>
 
-      <h3 id="dashWelcomeTitle" style="margin:0 0 4px 0;">Welcome back, </h3>
-      <p id="dashWelcomeSubtitle" style="margin:0;">Here's your work overview for today.</p>
+      <h3 id="dashWelcomeTitle" style="margin:0 0 4px 0;">Welcome back, <?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></h3>
+      <p id="dashWelcomeSubtitle" style="margin:0;">Here's your work overview for today<?php echo !empty($logged_user_dept) ? ' in ' . htmlspecialchars($logged_user_dept) : ''; ?>.</p>
 
       <!-- Work Schedule & Shift Strip for Employee Visibility -->
       <div style="display:flex; align-items:center; gap:16px; margin-top:12px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.18); border-radius:10px; padding:8px 14px; font-size:12.5px; color:#ffffff; flex-wrap:wrap;">

@@ -987,8 +987,8 @@
         </div>
 
         <div class="admin-pill" onclick="typeof Employee_user_dashboard_02_OPEN === 'function' ? Employee_user_dashboard_02_OPEN() : null">
-          <div class="avatar" id="topAvatarPlanPreview">--</div>
-          <span id="topEmpPlanName">Loading...</span>
+          <div class="avatar" id="topAvatarPlanPreview"><?php echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'EM'); ?></div>
+          <span id="topEmpPlanName"><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></span>
         </div>
       </div>
     </div>

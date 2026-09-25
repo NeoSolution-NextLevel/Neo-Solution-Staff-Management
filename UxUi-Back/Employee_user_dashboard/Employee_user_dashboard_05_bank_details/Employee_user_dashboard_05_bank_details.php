@@ -583,8 +583,8 @@
           <span class="dot"></span>
         </div>
         <div class="admin-pill" onclick="typeof Employee_user_dashboard_02_OPEN === 'function' ? Employee_user_dashboard_02_OPEN() : null">
-          <div class="avatar" id="empTopBankAvatar">EM</div>
-          <span id="empTopBankName">Employee</span>
+          <div class="avatar" id="empTopBankAvatar"><?php echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'EM'); ?></div>
+          <span id="empTopBankName"><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></span>
         </div>
       </div>
     </div>

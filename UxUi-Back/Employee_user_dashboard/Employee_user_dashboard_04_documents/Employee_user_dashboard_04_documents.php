@@ -526,8 +526,8 @@
         </div>
 
         <div class="admin-pill" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); }">
-          <div class="avatar" id="topAvatarDocPreview">--</div>
-          <span id="topEmpDocName">Loading...</span>
+          <div class="avatar" id="topAvatarDocPreview"><?php echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'EM'); ?></div>
+          <span id="topEmpDocName"><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></span>
         </div>
       </div>
     </div>
