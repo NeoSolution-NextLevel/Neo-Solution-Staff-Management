@@ -1,4 +1,7 @@
 <?php
+@ini_set('display_errors', '0');
+@ini_set('html_errors', '0');
+ob_start();
 header('Content-Type: application/json; charset=utf-8');
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -78,6 +81,7 @@ if (!$profile && $empId > 0) {
 }
 
 if (!$profile) {
+    ob_end_clean();
     echo json_encode(['status' => 'error', 'message' => 'Employee profile not found.']);
     exit;
 }
@@ -112,12 +116,14 @@ if ($bRes && ($b = $bRes->fetch_assoc())) {
             : __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
         if (file_exists($bsPath)) include_once $bsPath;
     }
-    $stored_acc = !empty($b['bank_account_number']) ? $b['bank_account_number'] : (!empty($b['account_number']) ? $b['account_number'] : '');
-    $decrypted_acc = Bank_Security::decrypt($stored_acc);
-    $masked_acc = Bank_Security::mask($decrypted_acc);
-    $b['raw_account_number'] = $decrypted_acc;
-    $b['account_number'] = $decrypted_acc;
-    $b['masked_account_number'] = $masked_acc;
+    if (class_exists('Bank_Security')) {
+        $stored_acc = !empty($b['bank_account_number']) ? $b['bank_account_number'] : (!empty($b['account_number']) ? $b['account_number'] : '');
+        $decrypted_acc = Bank_Security::decrypt($stored_acc);
+        $masked_acc = Bank_Security::mask($decrypted_acc);
+        $b['raw_account_number'] = $decrypted_acc;
+        $b['account_number'] = $decrypted_acc;
+        $b['masked_account_number'] = $masked_acc;
+    }
     $bank = $b;
 }
 
@@ -155,6 +161,7 @@ if ($lRes && $lRes->num_rows > 0) {
     }
 }
 
+ob_end_clean();
 echo json_encode([
     'status' => 'success',
     'data' => [
@@ -166,4 +173,5 @@ echo json_encode([
         'leaves'     => $leaves
     ]
 ]);
+exit;
 ?>
