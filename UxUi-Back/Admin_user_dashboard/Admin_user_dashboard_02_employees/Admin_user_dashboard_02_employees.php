@@ -1419,34 +1419,38 @@
 
 
             <!-- Bank & Compensation Section -->
-            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 6px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
               <span><i class="fa-solid fa-building-columns" style="color:#2563eb; margin-right:4px;"></i> Employee Bank Account</span>
               <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:11px; font-weight:700; color:#475569; background:#f1f5f9; padding:2px 8px; border-radius:12px; border:1px solid #cbd5e1; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-lock" style="color:#64748b;"></i> </span>
+                <span style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; padding:2px 10px; border-radius:12px; border:1px solid #fde68a; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-lock"></i> Read-Only (Managed by Employee)</span>
                 <span style="font-size:11px; font-weight:600; color:#10b981; text-transform:none;"><i class="fa-solid fa-shield-halved"></i> AES-256</span>
               </div>
             </div>
+            <div style="font-size:11.5px; color:#64748b; margin-bottom:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:7px 12px; display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-circle-info" style="color:#3b82f6; font-size:13px;"></i>
+              <span>Employee bank details are managed directly by each employee in their portal profile. Admin can view but cannot edit them.</span>
+            </div>
 
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Account Holder Name</label>
-                <input type="text" name="holder_name" id="editEmpHolderName" placeholder="Employee Account Holder">
+                <label>Account Holder Name <span style="font-size:10px; color:#94a3b8; font-weight:600;">(Read-Only)</span></label>
+                <input type="text" id="editEmpHolderName" placeholder="Not entered by employee yet" readonly style="background:#f8fafc; color:#475569; border:1px solid #cbd5e1; cursor:not-allowed;" title="Managed by employee">
               </div>
               <div class="w3-form-group">
-                <label>Bank Name</label>
-                <input type="text" name="bank_name" id="editEmpBankName" placeholder="Bank Name">
+                <label>Bank Name <span style="font-size:10px; color:#94a3b8; font-weight:600;">(Read-Only)</span></label>
+                <input type="text" id="editEmpBankName" placeholder="Not entered by employee yet" readonly style="background:#f8fafc; color:#475569; border:1px solid #cbd5e1; cursor:not-allowed;" title="Managed by employee">
               </div>
             </div>
 
             <div class="w3-form-row">
               <div class="w3-form-group">
-                <label>Branch Name</label>
-                <input type="text" name="branch" id="editEmpBranch" placeholder="Branch Name">
+                <label>Branch Name <span style="font-size:10px; color:#94a3b8; font-weight:600;">(Read-Only)</span></label>
+                <input type="text" id="editEmpBranch" placeholder="Not entered by employee yet" readonly style="background:#f8fafc; color:#475569; border:1px solid #cbd5e1; cursor:not-allowed;" title="Managed by employee">
               </div>
               <div class="w3-form-group">
-                <label>Account Number</label>
+                <label>Account Number <span style="font-size:10px; color:#94a3b8; font-weight:600;">(Read-Only)</span></label>
                 <div style="position:relative; display:flex; align-items:center;">
-                  <input type="text" name="account_number" id="editEmpAccNumber" placeholder="Account Number" style="width:100%; font-family:monospace; padding-right:38px;">
+                  <input type="text" id="editEmpAccNumber" placeholder="Not entered by employee yet" readonly style="width:100%; font-family:monospace; padding-right:38px; background:#f8fafc; color:#475569; border:1px solid #cbd5e1; cursor:not-allowed;" title="Managed by employee">
                   <button type="button" onclick="toggleAccVisibility('editEmpAccNumber', this)" style="position:absolute; right:8px; background:none; border:none; color:#64748b; cursor:pointer; font-size:14px;" title="Show/Hide">
                     <i class="fa-solid fa-eye"></i>
                   </button>
