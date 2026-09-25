@@ -120,6 +120,45 @@ if ($User_Account_Check_obj->check_user_name()) {
                 $safeUid = (int)$_SESSION['user_id'];
                 $safeUemail = addslashes($_SESSION['user_name']);
 
+                // 0. Ensure employee_profiles table exists
+                $lconn->query("CREATE TABLE IF NOT EXISTS `employee_profiles` (
+                    `id` int NOT NULL AUTO_INCREMENT,
+                    `user_id` int NOT NULL,
+                    `full_name` varchar(255) DEFAULT NULL,
+                    `email` varchar(255) DEFAULT NULL,
+                    `phone` varchar(50) DEFAULT NULL,
+                    `department` varchar(100) DEFAULT 'Engineering',
+                    `job_title` varchar(100) DEFAULT 'Staff',
+                    `join_date` date DEFAULT NULL,
+                    `nic` varchar(50) DEFAULT NULL,
+                    `dob` date DEFAULT NULL,
+                    `gender` varchar(20) DEFAULT 'Male',
+                    `address` text DEFAULT NULL,
+                    `emergency_contact_name` varchar(255) DEFAULT NULL,
+                    `emergency_contact_phone` varchar(50) DEFAULT NULL,
+                    `employee_id_code` varchar(50) DEFAULT NULL,
+                    `employment_type` varchar(50) DEFAULT 'Full-Time (Permanent)',
+                    `work_location` varchar(100) DEFAULT 'Colombo HQ',
+                    `work_shift` varchar(100) DEFAULT '08:30 AM – 05:30 PM',
+                    `working_days` varchar(255) DEFAULT 'Mon,Tue,Wed,Thu,Fri',
+                    `weekly_roster` text DEFAULT NULL,
+                    `schedule_start_date` date DEFAULT NULL,
+                    `schedule_end_date` date DEFAULT NULL,
+                    `work_mode` varchar(100) DEFAULT 'On-Site (Active)',
+                    `probation_status` varchar(100) DEFAULT 'In Progress',
+                    `probation_start_date` date DEFAULT NULL,
+                    `probation_end_date` date DEFAULT NULL,
+                    `official_start_date` date DEFAULT NULL,
+                    `attendance_days` int DEFAULT 0,
+                    `last_attendance_date` date DEFAULT NULL,
+                    `profile_pic` varchar(500) DEFAULT NULL,
+                    `status` varchar(50) DEFAULT 'active',
+                    `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`id`),
+                    KEY `idx_user_id` (`user_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+
                 // Only query employee tables for non-admin accounts
                 $chkEmpProf = $lconn->query("SELECT * FROM `employee_profiles` WHERE `user_id` = '{$safeUid}' OR (`email` != '' AND `email` = '{$safeUemail}') LIMIT 1");
                 if ($chkEmpProf && $ep = $chkEmpProf->fetch_assoc()) {
@@ -130,12 +169,41 @@ if ($User_Account_Check_obj->check_user_name()) {
                     if (!empty($ep['employee_id_code'])) $_SESSION['employee_id_code'] = $ep['employee_id_code'];
                     if (!empty($ep['id'])) $_SESSION['employee_profile_id'] = (int)$ep['id'];
                 } else {
+                    $deptVal = 'Engineering';
+                    $roleVal = 'Staff';
+                    $phoneVal = '';
                     $chkEmp = $lconn->query("SELECT * FROM `employees` WHERE (`main_user_login_id` = '{$safeUid}' AND `main_user_login_id` > 1) OR (`email_address` != '' AND `email_address` = '{$safeUemail}') LIMIT 1");
                     if ($chkEmp && $emp = $chkEmp->fetch_assoc()) {
                         if (!empty($emp['fullname'])) $_SESSION['full_name'] = $emp['fullname'];
-                        if (!empty($emp['job_roles'])) $_SESSION['job_title'] = $emp['job_roles'];
-                        if (!empty($emp['departments'])) $_SESSION['department'] = $emp['departments'];
+                        if (!empty($emp['job_roles'])) $roleVal = $emp['job_roles'];
+                        if (!empty($emp['departments'])) $deptVal = $emp['departments'];
+                        if (!empty($emp['phone_number'])) $phoneVal = $emp['phone_number'];
+                        $_SESSION['job_title'] = $roleVal;
+                        $_SESSION['department'] = $deptVal;
                     }
+
+                    // Auto-provision in employee_profiles so employee appears everywhere in admin dashboard
+                    $safeResolvedName = addslashes($_SESSION['full_name']);
+                    $empCodeVal = 'EMP-' . str_pad($safeUid, 3, '0', STR_PAD_LEFT);
+                    $default_roster = '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}';
+                    $lconn->query("INSERT INTO `employee_profiles` (
+                        `user_id`, `full_name`, `email`, `phone`, `department`, `job_title`, `status`, `join_date`,
+                        `employee_id_code`, `employment_type`, `work_location`, `work_shift`, `working_days`,
+                        `weekly_roster`, `work_mode`, `updated_at`
+                    ) VALUES (
+                        {$safeUid}, '{$safeResolvedName}', '{$safeUemail}', '{$phoneVal}', '{$deptVal}', '{$roleVal}', 'active', CURDATE(),
+                        '{$empCodeVal}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri',
+                        '" . addslashes($default_roster) . "', 'On-Site (Active)', NOW()
+                    )");
+                    $newId = (int)$lconn->insert_id;
+                    if ($newId > 0) {
+                        $_SESSION['employee_profile_id'] = $newId;
+                        $_SESSION['employee_id_code'] = $empCodeVal;
+                    }
+                }
+
+                if (function_exists('update_daily_employee_presence')) {
+                    update_daily_employee_presence();
                 }
             } catch (\Throwable $e) {}
         }
