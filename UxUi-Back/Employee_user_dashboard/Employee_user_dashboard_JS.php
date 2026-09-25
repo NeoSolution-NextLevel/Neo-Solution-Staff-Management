@@ -97,12 +97,32 @@
           });
 
           // 4. Sync Welcome Banner on Dashboard
+          var firstName = name.trim().split(/\s+/)[0] || name;
           var bannerName = document.getElementById('empWelcomeBannerName');
           var bannerDept = document.getElementById('empWelcomeBannerDept');
           var bannerTag = document.getElementById('empBannerDeptTag');
           if (bannerName) bannerName.textContent = name;
           if (bannerDept) bannerDept.textContent = dept;
           if (bannerTag) bannerTag.textContent = dept;
+
+          var dashWelcome = document.getElementById('dashWelcomeTitle');
+          if (dashWelcome) dashWelcome.textContent = 'Welcome back, ' + firstName;
+          var dashSubtitle = document.getElementById('dashWelcomeSubtitle');
+          if (dashSubtitle) dashSubtitle.textContent = "Here's your work overview for today in " + dept + ".";
+          var dashDept = document.getElementById('dashEmpDept');
+          if (dashDept) dashDept.textContent = dept;
+          var dashCode = document.getElementById('dashEmpCode');
+          if (dashCode) dashCode.textContent = empId;
+          var dashTopName = document.getElementById('dashTopEmpName');
+          if (dashTopName) dashTopName.textContent = firstName;
+          var dashTopAv = document.getElementById('dashTopAvatar');
+          if (dashTopAv) {
+            if (pic) {
+              dashTopAv.innerHTML = '<img src="' + pic + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />';
+            } else {
+              dashTopAv.textContent = initials;
+            }
+          }
         }
       })
       .catch(function(err) {});
