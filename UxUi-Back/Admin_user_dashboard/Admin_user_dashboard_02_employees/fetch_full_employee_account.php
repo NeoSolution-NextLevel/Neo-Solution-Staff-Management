@@ -105,6 +105,7 @@ $bank = null;
 $bRes = $db->get_result("SELECT * FROM `bank_details` 
     WHERE `user_id` = {$userId} OR `employee_id` = '{$safeEmpCode}' OR `employee_name` = '{$safeFullName}' 
     ORDER BY `id` DESC LIMIT 1");
+if ($bRes && ($b = $bRes->fetch_assoc())) {
     if (!class_exists('Bank_Security')) {
         $bsPath = file_exists(__DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php')
             ? __DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php'
