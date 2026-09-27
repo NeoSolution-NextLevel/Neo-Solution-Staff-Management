@@ -310,16 +310,29 @@
     const file = input.files[0];
     const formData = new FormData();
     formData.append('avatar_file', file);
-    const userId = userProfileData.id || userProfileData.user_id || 1;
-    formData.append('user_id', userId);
+    if (userProfileData && userProfileData.id) {
+      formData.append('profile_id', userProfileData.id);
+    }
+    if (userProfileData && userProfileData.user_id) {
+      formData.append('user_id', userProfileData.user_id);
+    }
 
     const uploadUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/upload_avatar/upload_avatar.php';
 
     fetch(uploadUrl, { method: 'POST', body: formData })
       .then(res => res.json())
       .then(res => {
+        input.value = '';
         if (res.status === 'success') {
           showProfileToast('Profile photo updated successfully!', 'success');
+          const newUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + res.avatar_url;
+          const picImg = document.getElementById('myProfilePicImg');
+          const placeholder = document.getElementById('myProfilePicPlaceholder');
+          const topAvatar = document.getElementById('topAvatarPreview');
+          if (picImg) { picImg.src = newUrl; picImg.style.display = 'block'; }
+          if (placeholder) placeholder.style.display = 'none';
+          if (topAvatar) topAvatar.innerHTML = `<img src="${newUrl}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
+
           window.fetchEmployeeProfileData();
           if (typeof window.fetchPersonalDetails === 'function') window.fetchPersonalDetails();
           if (typeof window.fetchEmployeeDashboardData === 'function') window.fetchEmployeeDashboardData();
@@ -327,7 +340,9 @@
           showProfileToast(res.message || 'Failed to upload photo.', 'error');
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        input.value = '';
+        console.error('Avatar upload error:', err);
         showProfileToast('Failed to upload profile photo.', 'error');
       });
   };
