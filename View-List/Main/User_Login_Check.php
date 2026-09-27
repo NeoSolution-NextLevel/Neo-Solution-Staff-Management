@@ -165,7 +165,13 @@ if ($User_Account_Check_obj->check_user_name()) {
                     if (!empty($ep['full_name'])) $_SESSION['full_name'] = $ep['full_name'];
                     if (!empty($ep['job_title'])) $_SESSION['job_title'] = $ep['job_title'];
                     if (!empty($ep['department'])) $_SESSION['department'] = $ep['department'];
-                    if (!empty($ep['profile_pic'])) $_SESSION['profile_pic'] = $ep['profile_pic'];
+                    if (!empty($ep['profile_pic'])) {
+                        $_SESSION['profile_pic'] = $ep['profile_pic'];
+                        if (empty($_SESSION['image_url'])) $_SESSION['image_url'] = $ep['profile_pic'];
+                    }
+                    if (empty($_SESSION['profile_pic']) && !empty($_SESSION['image_url'])) {
+                        $_SESSION['profile_pic'] = $_SESSION['image_url'];
+                    }
                     if (!empty($ep['employee_id_code'])) $_SESSION['employee_id_code'] = $ep['employee_id_code'];
                     if (!empty($ep['id'])) $_SESSION['employee_profile_id'] = (int)$ep['id'];
                 } else {
