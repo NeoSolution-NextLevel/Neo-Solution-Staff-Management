@@ -975,6 +975,16 @@
                 </select>
               </div>
             </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Emergency Contact Name</label>
+                <input type="text" name="emergency_contact_name" id="addEmpEmName" placeholder="e.g. Contact Name (Relationship)">
+              </div>
+              <div class="w3-form-group">
+                <label>Emergency Contact Phone</label>
+                <input type="text" name="emergency_contact_phone" id="addEmpEmPhone" placeholder="e.g. +94 77 123 4567">
+              </div>
+            </div>
 
             <!-- Work Schedule Section -->
             <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px; border-top:1px solid #e2e8f0; padding-top:12px;">Work Schedule & Shift Timing</div>
@@ -1313,7 +1323,7 @@
             <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Emergency Contact Name</label>
-                <input type="text" name="emergency_contact_name" id="editEmpEmName" placeholder="e.g. Nimal Perera (Father)">
+                <input type="text" name="emergency_contact_name" id="editEmpEmName" placeholder="e.g. Contact Name (Relationship)">
               </div>
               <div class="w3-form-group">
                 <label>Emergency Contact Phone</label>
