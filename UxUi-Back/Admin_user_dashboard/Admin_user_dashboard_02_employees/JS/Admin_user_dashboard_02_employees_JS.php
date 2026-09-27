@@ -954,15 +954,9 @@
         formData.append('basic_salary', document.getElementById('editEmpBasicSalary')?.value || '0');
         formData.append('net_salary', document.getElementById('editEmpNetSalary')?.value || '0');
 
-        const avInput = document.getElementById('editEmpAvatarFile');
-        if (avInput && avInput.files && avInput.files[0]) {
-          formData.append('avatar_file', avInput.files[0]);
-        }
-
         fetch(updateUrl, { method: 'POST', body: formData })
           .then(res => res.json())
           .then(res => {
-            if (avInput) avInput.value = '';
             if (res.status === 'success') {
               window.fetchAdminEmployees();
               if (typeof window.fetchAdminJobRoles === 'function') {
