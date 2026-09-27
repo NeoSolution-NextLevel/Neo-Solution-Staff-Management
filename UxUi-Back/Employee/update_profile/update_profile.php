@@ -158,6 +158,30 @@ if ($prof_id > 0) {
         }
     }
 
+    // Process Avatar/Profile Picture upload if provided in form
+    $avatarFileKey = isset($_FILES['avatar_file']) ? 'avatar_file' : (isset($_FILES['profile_pic']) ? 'profile_pic' : null);
+    if ($avatarFileKey && isset($_FILES[$avatarFileKey]) && $_FILES[$avatarFileKey]['error'] === UPLOAD_ERR_OK) {
+        $avFile = $_FILES[$avatarFileKey];
+        $avExt = strtolower(pathinfo($avFile['name'], PATHINFO_EXTENSION));
+        if (in_array($avExt, ['jpg', 'jpeg', 'png', 'webp', 'gif']) && $avFile['size'] <= 8 * 1024 * 1024) {
+            $avDir = __DIR__ . '/../../../uploads/avatars/';
+            if (!is_dir($avDir)) @mkdir($avDir, 0777, true);
+            $avSafeName = 'avatar_' . time() . '_' . rand(1000, 9999) . '.' . $avExt;
+            if (move_uploaded_file($avFile['tmp_name'], $avDir . $avSafeName)) {
+                $relativeAvatar = 'uploads/avatars/' . $avSafeName;
+                $updates[] = "`profile_pic` = '" . addslashes($relativeAvatar) . "'";
+                if ($main_user_id > 0) {
+                    $conn->query("UPDATE `main_user_login` SET `image_url` = '" . addslashes($relativeAvatar) . "' WHERE `id` = {$main_user_id}");
+                }
+                if (session_status() === PHP_SESSION_NONE) session_start();
+                if ((int)($_SESSION['employee_profile_id'] ?? 0) === $prof_id || (int)($_SESSION['user_id'] ?? 0) === $main_user_id) {
+                    $_SESSION['profile_pic'] = $relativeAvatar;
+                    $_SESSION['image_url']   = $relativeAvatar;
+                }
+            }
+        }
+    }
+
     if (!empty($updates)) {
         if (!$conn->query("UPDATE `employee_profiles` SET " . implode(", ", $updates) . " WHERE `id` = '$prof_id'")) {
             error_log("DB Error UPDATE employee_profiles: " . $conn->error);
