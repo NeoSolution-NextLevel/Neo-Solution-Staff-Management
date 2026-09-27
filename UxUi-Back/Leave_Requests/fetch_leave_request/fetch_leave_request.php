@@ -34,6 +34,11 @@ if ($res && $res->num_rows > 0) {
     }
 }
 
+// Ensure leave requests are always returned newest first (newest at the top, oldest at the bottom)
+usort($leaves, function ($a, $b) {
+    return (int)$b['id'] - (int)$a['id'];
+});
+
 echo json_encode([
     'status' => 'success',
     'total'  => count($leaves),
