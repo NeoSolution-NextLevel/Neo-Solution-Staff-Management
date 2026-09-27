@@ -563,6 +563,13 @@
   }
 </style>
 
+<?php
+$emp_session_user = function_exists('get_current_logged_user_info') ? get_current_logged_user_info() : [];
+$emp_session_code = !empty($emp_session_user['emp_code']) ? $emp_session_user['emp_code'] : (isset($_SESSION['employee_id_code']) ? $_SESSION['employee_id_code'] : '');
+$emp_session_name = !empty($emp_session_user['full_name']) && $emp_session_user['full_name'] !== 'Guest' ? $emp_session_user['full_name'] : (isset($_SESSION['full_name']) ? $_SESSION['full_name'] : '');
+$emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+?>
+
 <div id="Employee_user_dashboard_05_bank_details" style="display:none;">
   <main class="main">
 
@@ -798,6 +805,10 @@
 
 <script>
 (function() {
+  var currentLoggedEmpCode = <?php echo json_encode($emp_session_code); ?>;
+  var currentLoggedEmpName = <?php echo json_encode($emp_session_name); ?>;
+  var currentLoggedUserId  = <?php echo (int)$emp_session_uid; ?>;
+
   function initEmployeeBankDetails() {
     fetchEmployeeBankDetails();
     fetchEmployeeSalaryReceipts();
@@ -805,9 +816,9 @@
 
   function fetchEmployeeBankDetails() {
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
-    var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : 'EMP-001';
-    var userId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.id) ? window.userProfileData.id : '';
-    var uName = (typeof window.userProfileData !== 'undefined' && window.userProfileData.full_name) ? window.userProfileData.full_name : '';
+    var empId = currentLoggedEmpCode || (window.userProfileData ? window.userProfileData.employee_id_code : '');
+    var userId = currentLoggedUserId || (window.userProfileData ? window.userProfileData.id : '');
+    var uName = currentLoggedEmpName || (window.userProfileData ? window.userProfileData.full_name : '');
     var queryParams = "employee_id=" + encodeURIComponent(empId) + (userId ? "&user_id=" + encodeURIComponent(userId) : "") + (uName ? "&name=" + encodeURIComponent(uName) : "");
 
     $.ajax({
@@ -819,7 +830,7 @@
         var data = resObj.data || {};
         window.currentEmpBankData = data;
 
-        var empName = data.account_holder_name || data.holder_name || (window.userProfileData ? window.userProfileData.full_name : 'Employee');
+        var empName = data.account_holder_name || data.holder_name || currentLoggedEmpName || (window.userProfileData ? window.userProfileData.full_name : 'Employee');
         var bankName = data.bank_name || '-';
         var branch = data.branch || '-';
         var rawAcc = data.account_number || data.bank_account_number || '-';
@@ -844,7 +855,7 @@
         }
       },
       error: function() {
-        document.getElementById('empBankHolderName').innerText = 'Employee';
+        document.getElementById('empBankHolderName').innerText = currentLoggedEmpName || 'Employee';
         document.getElementById('empBankName').innerText = '-';
         document.getElementById('empBankBranch').innerText = '-';
         document.getElementById('empBankAccNumber').innerText = '••••••••';
@@ -854,9 +865,10 @@
 
   function fetchEmployeeSalaryReceipts() {
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
-    var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : '';
-    var empName = (typeof window.userProfileData !== 'undefined' && window.userProfileData.full_name) ? window.userProfileData.full_name : '';
-    var searchParam = empId ? ('?employee_id=' + encodeURIComponent(empId)) : (empName ? ('?employee_id=' + encodeURIComponent(empName)) : '');
+    var empId = currentLoggedEmpCode || (window.userProfileData ? window.userProfileData.employee_id_code : '');
+    var empName = currentLoggedEmpName || (window.userProfileData ? window.userProfileData.full_name : '');
+    var userId = currentLoggedUserId || (window.userProfileData ? window.userProfileData.id : '');
+    var searchParam = '?employee_id=' + encodeURIComponent(empId) + '&user_id=' + encodeURIComponent(userId);
 
     $.ajax({
       url: pth + "View-List/Salary_Payments/List_Salary_Payments.php" + searchParam,
@@ -1034,8 +1046,8 @@
   window.saveEmployeeSelfBankDetails = function(ev) {
     if (ev) ev.preventDefault();
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
-    var empId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.employee_id_code) ? window.userProfileData.employee_id_code : 'EMP-001';
-    var userId = (typeof window.userProfileData !== 'undefined' && window.userProfileData.id) ? window.userProfileData.id : 1;
+    var empId = currentLoggedEmpCode || (window.userProfileData ? window.userProfileData.employee_id_code : 'EMP-001');
+    var userId = currentLoggedUserId || (window.userProfileData ? window.userProfileData.id : 1);
 
     var holder = document.getElementById('empSelfBankHolder').value.trim();
     var bank = document.getElementById('empSelfBankName').value.trim();
