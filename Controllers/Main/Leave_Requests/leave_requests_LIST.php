@@ -59,10 +59,11 @@ class leave_requests_LIST
     public function get_result()
     {
         $data_base_obj = new DataBase();
+        $order_clause = !empty($this->pagination_data_result) ? $this->pagination_data_result : " ORDER BY id DESC";
         $get_sql_query = "SELECT " . $this->sql_process_data .
             " FROM leave_requests WHERE 1=1 " .
             $this->sql_search_data .
-            $this->pagination_data_result;
+            $order_clause;
 
         return $data_base_obj->get_result($get_sql_query);
     }
