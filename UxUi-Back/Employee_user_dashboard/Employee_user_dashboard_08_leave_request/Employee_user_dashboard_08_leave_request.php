@@ -710,7 +710,9 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === 'success' && Array.isArray(res.data)) {
-          renderEmpLeaveHistory(res.data);
+          const list = res.data;
+          list.sort((a, b) => Number(b.id) - Number(a.id));
+          renderEmpLeaveHistory(list);
         } else {
           renderEmpLeaveHistory([]);
         }
