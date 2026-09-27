@@ -189,11 +189,11 @@ if ($User_Account_Check_obj->check_user_name()) {
                     $lconn->query("INSERT INTO `employee_profiles` (
                         `user_id`, `full_name`, `email`, `phone`, `department`, `job_title`, `status`, `join_date`,
                         `employee_id_code`, `employment_type`, `work_location`, `work_shift`, `working_days`,
-                        `weekly_roster`, `work_mode`, `updated_at`
+                        `weekly_roster`, `work_mode`, `emergency_contact_name`, `emergency_contact_phone`, `updated_at`
                     ) VALUES (
                         {$safeUid}, '{$safeResolvedName}', '{$safeUemail}', '{$phoneVal}', '{$deptVal}', '{$roleVal}', 'active', CURDATE(),
                         '{$empCodeVal}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri',
-                        '" . addslashes($default_roster) . "', 'On-Site (Active)', NOW()
+                        '" . addslashes($default_roster) . "', 'On-Site (Active)', NULL, NULL, NOW()
                     )");
                     $newId = (int)$lconn->insert_id;
                     if ($newId > 0) {
