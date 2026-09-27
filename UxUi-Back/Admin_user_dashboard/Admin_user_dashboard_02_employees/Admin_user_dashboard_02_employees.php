@@ -1097,8 +1097,12 @@
       <div class="w3-modal-card w3-emp-profile-modal" style="max-width: 760px; width: 95%;">
         <div class="w3-emp-profile-header" style="height: 100px; background: linear-gradient(135deg, #14204d 0%, #1c2b63 50%, #2e4cad 100%);">
           <button type="button" class="w3-modal-close" id="closeViewEmpModal" style="top:12px; right:16px;">&times;</button>
-          <div class="w3-emp-profile-avatar-wrap" style="bottom:-32px;">
+          <div class="w3-emp-profile-avatar-wrap" style="bottom:-32px; position:relative;">
             <div class="w3-emp-profile-avatar" id="viewEmpAvatar" style="width:72px; height:72px; font-size:24px; border:4px solid #ffffff; overflow:hidden;">--</div>
+            <label for="adminEmpAvatarInput" style="position:absolute; bottom:0; right:0; background:#2563eb; color:#ffffff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.3); border:2px solid #ffffff;" title="Upload or Change Employee Photo">
+              <i class="fa-solid fa-camera" style="font-size:11px;"></i>
+            </label>
+            <input type="file" id="adminEmpAvatarInput" accept="image/*" style="display:none;" onchange="uploadAdminEmployeeAvatar(this)" />
           </div>
         </div>
 
@@ -1264,6 +1268,13 @@
         <form id="editEmpForm" class="w3-modal-form-wrapper">
           <input type="hidden" name="id" id="editEmpId">
           <div class="w3-modal-body-scroll">
+            <div class="w3-form-row">
+              <div class="w3-form-group" style="flex:1;">
+                <label>Profile Photo</label>
+                <input type="file" name="avatar_file" id="editEmpAvatarFile" accept="image/*" class="w3-input" style="padding:6px 8px; border:1px solid #cbd5e1; border-radius:8px; font-size:12px; background:#ffffff;">
+                <span style="font-size:11px; color:#64748b; margin-top:2px; display:block;">Supported: JPG, PNG, WEBP, GIF (Max 8MB)</span>
+              </div>
+            </div>
             <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Full Name</label>

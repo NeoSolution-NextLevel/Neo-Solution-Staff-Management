@@ -954,9 +954,15 @@
         formData.append('basic_salary', document.getElementById('editEmpBasicSalary')?.value || '0');
         formData.append('net_salary', document.getElementById('editEmpNetSalary')?.value || '0');
 
+        const avInput = document.getElementById('editEmpAvatarFile');
+        if (avInput && avInput.files && avInput.files[0]) {
+          formData.append('avatar_file', avInput.files[0]);
+        }
+
         fetch(updateUrl, { method: 'POST', body: formData })
           .then(res => res.json())
           .then(res => {
+            if (avInput) avInput.value = '';
             if (res.status === 'success') {
               window.fetchAdminEmployees();
               if (typeof window.fetchAdminJobRoles === 'function') {
@@ -972,6 +978,7 @@
             }
           })
           .catch(() => {
+            if (avInput) avInput.value = '';
             window.fetchAdminEmployees();
             if (typeof window.fetchAdminJobRoles === 'function') {
               window.fetchAdminJobRoles();
@@ -981,6 +988,48 @@
           });
       });
     }
+
+    // Direct Avatar Upload from Admin View Employee Modal
+    window.uploadAdminEmployeeAvatar = function (input) {
+      if (!input.files || !input.files[0]) return;
+      if (!currentlyViewingEmpId && !currentlyViewingAccountId) {
+        alert('Please select an employee first.');
+        return;
+      }
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('avatar_file', file);
+      if (currentlyViewingEmpId) formData.append('id', currentlyViewingEmpId);
+      if (currentlyViewingEmpId) formData.append('profile_id', currentlyViewingEmpId);
+      if (currentlyViewingAccountId) formData.append('user_id', currentlyViewingAccountId);
+
+      const uploadUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/upload_avatar/upload_avatar.php';
+
+      fetch(uploadUrl, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(res => {
+          input.value = '';
+          if (res.status === 'success') {
+            const avatarWrap = document.getElementById('viewEmpAvatar');
+            if (avatarWrap) {
+              const pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + res.avatar_url;
+              avatarWrap.innerHTML = `<img src="${pth}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
+            }
+            if (currentlyViewingEmployee) {
+              currentlyViewingEmployee.profile_pic = res.avatar_url;
+            }
+            alert('Employee profile photo updated successfully!');
+            window.fetchAdminEmployees();
+          } else {
+            alert(res.message || 'Failed to upload photo.');
+          }
+        })
+        .catch(err => {
+          input.value = '';
+          console.error('Admin avatar upload error:', err);
+          alert('Failed to upload employee profile photo.');
+        });
+    };
 
     // ---- Add Employee Modal Handler ----
     const addEmpModal = document.getElementById('addEmpModal');

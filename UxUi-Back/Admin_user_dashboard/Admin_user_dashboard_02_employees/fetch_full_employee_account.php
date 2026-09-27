@@ -104,6 +104,7 @@ if (!$profile && $empId > 0) {
             'department' => 'Engineering', 'job_title' => 'Staff',
             'status' => $accountActive,
             'join_date' => date('Y-m-d'), 'nic' => '', 'dob' => '', 'gender' => 'Male', 'address' => '',
+            'profile_pic' => '',
             'employee_id_code' => $empCodeVal,
             'work_location' => 'Colombo HQ', 'work_shift' => '08:30 AM – 05:30 PM', 'working_days' => 'Mon,Tue,Wed,Thu,Fri',
             'weekly_roster' => $defaultRoster, 'employment_type' => 'Full-Time (Permanent)'
