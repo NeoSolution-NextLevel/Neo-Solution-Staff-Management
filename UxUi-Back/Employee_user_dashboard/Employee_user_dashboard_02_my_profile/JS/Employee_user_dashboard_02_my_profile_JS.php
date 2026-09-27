@@ -50,7 +50,8 @@
   }
 
   window.fetchEmployeeProfileData = function () {
-    const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/fetch_profile/fetch_profile.php';
+    const baseUrl = (typeof window.homePage !== 'undefined' && window.homePage) ? window.homePage : (typeof window.pth !== 'undefined' ? window.pth : '../');
+    const fetchUrl = baseUrl + 'UxUi-Back/Employee/fetch_profile/fetch_profile.php?_t=' + new Date().getTime();
 
     fetch(fetchUrl)
       .then(res => res.json())

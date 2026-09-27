@@ -969,7 +969,7 @@
         <div class="profile-avatar-row">
           <div class="profile-avatar-wrapper">
             <img id="myProfilePicImg" class="profile-avatar-img" style="display:none;" alt="Profile Picture" />
-            <div id="myProfilePicPlaceholder" class="profile-avatar-placeholder">--</div>
+            <div id="myProfilePicPlaceholder" class="profile-avatar-placeholder"></div>
             
             <label for="avatarFileInput" class="avatar-upload-badge" title="Change Profile Picture">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -984,8 +984,8 @@
           </div>
         </div>
 
-        <h1 class="profile-name" id="viewProfileName">Loading Profile...</h1>
-        <p class="profile-title" id="viewProfileTitle">—</p>
+        <h1 class="profile-name" id="viewProfileName"><?php echo htmlspecialchars($logged_user_name ?? 'Loading Profile...'); ?></h1>
+        <p class="profile-title" id="viewProfileTitle"></p>
       </div>
     </div>
 

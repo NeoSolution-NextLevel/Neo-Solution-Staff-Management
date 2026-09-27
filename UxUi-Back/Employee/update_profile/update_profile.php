@@ -159,7 +159,9 @@ if ($prof_id > 0) {
     }
 
     if (!empty($updates)) {
-        $conn->query("UPDATE `employee_profiles` SET " . implode(", ", $updates) . " WHERE `id` = '$prof_id'");
+        if (!$conn->query("UPDATE `employee_profiles` SET " . implode(", ", $updates) . " WHERE `id` = '$prof_id'")) {
+            error_log("DB Error UPDATE employee_profiles: " . $conn->error);
+        }
     }
 } else {
     // Insert new profile record
