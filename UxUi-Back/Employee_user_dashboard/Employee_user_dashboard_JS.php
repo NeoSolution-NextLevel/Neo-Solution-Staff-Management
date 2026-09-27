@@ -45,6 +45,7 @@
           var pic = (d.profile_pic && d.profile_pic.trim() !== '') ? ((typeof window.pth !== 'undefined' ? window.pth : '../') + d.profile_pic) : null;
           
           window.currentEmployeeName = name;
+          window.userProfileData = d;
 
           // 1. Sync Sidebar User Block
           var sbName = document.getElementById('empSidebarName');
