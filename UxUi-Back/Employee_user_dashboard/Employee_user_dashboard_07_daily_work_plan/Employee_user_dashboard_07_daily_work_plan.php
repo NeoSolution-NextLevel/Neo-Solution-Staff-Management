@@ -2226,8 +2226,12 @@
   window.fetchEmployeeWorkplanTasks = function () {
     const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
     let fetchUrl = pth + 'UxUi-Back/Tasks/fetch_tasks/fetch_tasks.php';
-    if (window.currentEmployeeName) {
-      fetchUrl += '?employee=' + encodeURIComponent(window.currentEmployeeName);
+    const empName = window.currentEmployeeName 
+      || (document.getElementById('empSidebarName') && document.getElementById('empSidebarName').textContent.trim()) 
+      || (document.getElementById('dashTopEmpName') && document.getElementById('dashTopEmpName').textContent.trim()) 
+      || '';
+    if (empName && empName !== 'Loading...' && empName !== 'Employee') {
+      fetchUrl += '?employee=' + encodeURIComponent(empName);
     }
 
     fetch(fetchUrl)
