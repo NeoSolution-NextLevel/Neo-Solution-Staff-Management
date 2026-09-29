@@ -21,20 +21,24 @@
     }
 
     // ---- Fetch Employee Live Profile, Department, Tasks, Notifications ----
+    // ---- Fetch Employee Live Profile, Department, Tasks, Notifications ----
     window.fetchEmployeeDashboardData = function () {
       const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const baseEmpName = (window.currentEmployeeName || '').trim();
 
       // 1. Fetch Profile & Department
       fetch(pth + 'UxUi-Back/Employee/fetch_profile/fetch_profile.php')
         .then(res => res.json())
         .then(res => {
+          let activeName = baseEmpName;
           if (res.status === 'success' && res.data) {
             const p = res.data;
-            const fullName = p.full_name || '';
-            const firstName = fullName ? fullName.split(' ')[0] : 'Employee';
-            const dept = p.department || 'General';
-            const empCode = p.employee_id_code || 'EMP-001';
-            const initials = fullName ? fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'EM';
+            const fullName = p.full_name || baseEmpName;
+            activeName = fullName;
+            const firstName = fullName ? fullName.split(' ')[0] : (window.currentEmployeeFirstName || 'Employee');
+            const dept = p.department || window.currentEmployeeDept || 'Engineering';
+            const empCode = p.employee_id_code || window.currentEmployeeCode || 'EMP-001';
+            const initials = fullName ? fullName.split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'EM';
 
             const el = id => document.getElementById(id);
             if (el('dashEmpDept')) el('dashEmpDept').textContent = dept;
@@ -85,21 +89,22 @@
                 topAvatar.textContent = initials;
               }
             }
-            
-            fetchTasksForEmployee(fullName, pth);
-          } else {
-            fetchTasksForEmployee('', pth);
           }
+
+          fetchTasksForEmployee(activeName, pth);
+          fetchLeaveRequestsForEmployee(activeName, pth);
         })
         .catch(() => {
-          fetchTasksForEmployee('', pth);
+          fetchTasksForEmployee(baseEmpName, pth);
+          fetchLeaveRequestsForEmployee(baseEmpName, pth);
         });
 
       // 2. Fetch Tasks for KPIs and Today's Work Plan
       function fetchTasksForEmployee(employeeName, pth) {
+        const empName = (employeeName || baseEmpName || '').trim();
         let taskUrl = pth + 'UxUi-Back/Tasks/fetch_tasks/fetch_tasks.php';
-        if (employeeName) {
-            taskUrl += '?employee=' + encodeURIComponent(employeeName);
+        if (empName) {
+            taskUrl += '?employee=' + encodeURIComponent(empName);
         }
         
         fetch(taskUrl)
@@ -120,7 +125,13 @@
             const planContainer = el('dashTodayWorkPlanContainer');
             if (planContainer) {
               if (tasks.length === 0) {
-                planContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: #64748b;">No tasks assigned yet.</div>';
+                planContainer.innerHTML = `
+                  <div style="text-align:center; padding: 26px 16px; color: #64748b; background: #fafbfd; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                    <div style="font-size: 24px; margin-bottom: 6px;">📋</div>
+                    <div style="font-weight: 700; color: #334155; font-size: 13.5px;">No tasks assigned to you yet</div>
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Tasks assigned to you by admin will appear here.</div>
+                  </div>
+                `;
               } else {
                 planContainer.innerHTML = tasks.slice(0, 3).map(t => {
                   let pillClass = 'var(--amber-bg)';
@@ -135,7 +146,7 @@
                         <span style="font-size: 14px; font-weight: 700; color: var(--ink);">${t.title}</span>
                         <span style="background: ${pillClass}; color: ${pillColor}; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px;">${t.status}</span>
                       </div>
-                      <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Deadline: ${t.deadline} · ${t.mode || 'Online'}</div>
+                      <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Deadline: ${t.deadline || '—'} · ${t.mode || 'Online'}</div>
                       <div style="width: 100%; height: 4px; background: #e8eaf0; border-radius: 999px; overflow: hidden;">
                         <div style="width: ${progressWidth}; height: 100%; background: ${pillColor}; border-radius: 999px;"></div>
                       </div>
@@ -149,28 +160,46 @@
             const deadContainer = el('dashDeadlinesContainer');
             if (deadContainer) {
               if (tasks.length === 0) {
-                deadContainer.innerHTML = '<div style="text-align:center; padding: 10px; color: #64748b;">No upcoming deadlines.</div>';
+                deadContainer.innerHTML = '<div style="text-align:center; padding: 12px; color: #64748b; font-size: 12.5px;">No upcoming deadlines.</div>';
               } else {
                 deadContainer.innerHTML = tasks.slice(0, 2).map(t => `
                   <div style="display: flex; align-items: flex-start; gap: 10px;">
                     <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--blue); margin-top: 5px; flex-shrink: 0;"></span>
                     <div>
                       <div style="font-size: 13.5px; font-weight: 700; color: var(--ink);">${t.title}</div>
-                      <div style="font-size: 12px; font-weight: 600; color: var(--muted); margin-top: 2px;">Due: ${t.deadline}</div>
+                      <div style="font-size: 12px; font-weight: 600; color: var(--muted); margin-top: 2px;">Due: ${t.deadline || '—'}</div>
                     </div>
                   </div>
                 `).join('');
               }
             }
+          } else {
+            const el = id => document.getElementById(id);
+            if (el('kpiTodayTasks')) el('kpiTodayTasks').textContent = 0;
+            if (el('kpiPendingTasks')) el('kpiPendingTasks').textContent = 0;
+            if (el('kpiCompletedTasks')) el('kpiCompletedTasks').textContent = 0;
+            const planContainer = el('dashTodayWorkPlanContainer');
+            if (planContainer) {
+              planContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: #64748b;">No tasks assigned to you yet.</div>';
+            }
+            const deadContainer = el('dashDeadlinesContainer');
+            if (deadContainer) {
+              deadContainer.innerHTML = '<div style="text-align:center; padding: 10px; color: #64748b;">No upcoming deadlines.</div>';
+            }
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          const el = id => document.getElementById(id);
+          if (el('kpiTodayTasks')) el('kpiTodayTasks').textContent = 0;
+          if (el('kpiPendingTasks')) el('kpiPendingTasks').textContent = 0;
+          if (el('kpiCompletedTasks')) el('kpiCompletedTasks').textContent = 0;
+        });
       }
 
       // 3. Fetch Notifications for Dashboard Widget
       let notifUrl = pth + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php?role=employee';
-      if (window.currentEmployeeName) {
-        notifUrl += '&user=' + encodeURIComponent(window.currentEmployeeName);
+      if (baseEmpName) {
+        notifUrl += '&user=' + encodeURIComponent(baseEmpName);
       }
       fetch(notifUrl)
         .then(res => res.json())
@@ -206,16 +235,28 @@
         .catch(() => {});
 
       // 4. Fetch Leave Requests for KPI
-      fetch(pth + 'UxUi-Back/Leave_Requests/fetch_leave_request/fetch_leave_request.php')
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success' && Array.isArray(res.data)) {
-            const count = res.data.length;
+      function fetchLeaveRequestsForEmployee(empName, pth) {
+        let leaveUrl = pth + 'UxUi-Back/Leave_Requests/fetch_leave_request/fetch_leave_request.php';
+        if (empName) {
+          leaveUrl += '?employee=' + encodeURIComponent(empName);
+        }
+        fetch(leaveUrl)
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === 'success' && Array.isArray(res.data)) {
+              const count = res.data.length;
+              const el = document.getElementById('kpiLeaveRequests');
+              if (el) el.textContent = count;
+            } else {
+              const el = document.getElementById('kpiLeaveRequests');
+              if (el) el.textContent = 0;
+            }
+          })
+          .catch(() => {
             const el = document.getElementById('kpiLeaveRequests');
-            if (el) el.textContent = count;
-          }
-        })
-        .catch(() => {});
+            if (el) el.textContent = 0;
+          });
+      }
     };
 
     function showDashToast(msg, type = 'success') {
