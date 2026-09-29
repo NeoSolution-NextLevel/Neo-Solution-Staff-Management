@@ -26,6 +26,9 @@ require_login();
         window.homePage = "<?php echo isset($home_page) ? $home_page : '../'; ?>";
         window.currentEmployeeName = "<?php echo addslashes($logged_user_name ?? ''); ?>";
         window.currentEmployeeFirstName = "<?php echo addslashes($logged_user_first_name ?? ''); ?>";
+        window.currentEmployeeDept = "<?php echo addslashes($logged_user_dept ?? ''); ?>";
+        window.currentEmployeeCode = "<?php echo addslashes($logged_user_emp_code ?? ''); ?>";
+        window.currentEmployeeEmail = "<?php echo addslashes($_SESSION['user_name'] ?? ''); ?>";
 
         document.addEventListener("DOMContentLoaded", function() {
             Employee_user_dashboard_close_all();
