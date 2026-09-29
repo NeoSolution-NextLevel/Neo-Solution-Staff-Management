@@ -1,4 +1,8 @@
 <?php
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
+
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Cache-Control: post-check=0, pre-check=0', false);
@@ -35,6 +39,10 @@ try {
     }
     if ($empProfileId > 0) {
         $whereClauses[] = "`id` = '{$empProfileId}'";
+    }
+    if (!empty($_SESSION['employee_id_code'])) {
+        $safeCode = addslashes((string)$_SESSION['employee_id_code']);
+        $whereClauses[] = "`employee_id_code` = '{$safeCode}'";
     }
     if ($mainUserId > 0) {
         $whereClauses[] = "(`user_id` = '{$mainUserId}'" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ")";
@@ -149,7 +157,7 @@ try {
         }
     }
 
-        // 2. Fallback to employees table
+    // 2. Fallback to employees table
     if (!$profile) {
         $empWhereClauses = [];
         if (!empty($safeEmail)) {
@@ -158,15 +166,25 @@ try {
         if ($empProfileId > 0) {
             $empWhereClauses[] = "`id` = '{$empProfileId}'";
         }
+        if (!empty($_SESSION['employee_id_code'])) {
+            $codeNum = (int)preg_replace('/[^0-9]/', '', (string)$_SESSION['employee_id_code']);
+            if ($codeNum > 0) {
+                $empWhereClauses[] = "`id` = {$codeNum}";
+            }
+        }
+        if (!empty($_SESSION['full_name']) && strtolower((string)$_SESSION['full_name']) !== 'guest') {
+            $safeSessName = addslashes((string)$_SESSION['full_name']);
+            $empWhereClauses[] = "`fullname` = '{$safeSessName}'";
+        }
         if ($userId > 0) {
             $empWhereClauses[] = "(`main_user_login_id` = '{$userId}'" . (!empty($safeEmail) ? " AND (`email_address` = '' OR `email_address` IS NULL OR `email_address` = '{$safeEmail}')" : "") . ")";
         }
 
         if (!empty($empWhereClauses)) {
             $empWhereSql = implode(' OR ', $empWhereClauses);
-        $empCheck = $conn->query("SELECT * FROM `employees` WHERE {$empWhereSql} LIMIT 1");
-        if ($empCheck && $empCheck->num_rows > 0) {
-            $e = $empCheck->fetch_assoc();
+            $empCheck = $conn->query("SELECT * FROM `employees` WHERE {$empWhereSql} LIMIT 1");
+            if ($empCheck && $empCheck->num_rows > 0) {
+                $e = $empCheck->fetch_assoc();
                 $fullname = !empty($e['fullname']) ? $e['fullname'] : 'Employee';
                 $email = !empty($e['email_address']) ? $e['email_address'] : '';
                 $dept = !empty($e['departments']) ? $e['departments'] : 'Engineering';
@@ -174,34 +192,35 @@ try {
                 $phone = !empty($e['phone_number']) ? $e['phone_number'] : '';
                 $joined = !empty($e['joined_date']) ? $e['joined_date'] : date('Y-m-d');
 
-            $profile = [
-                'id'                      => (int)$e['id'],
+                $profile = [
+                    'id'                      => (int)$e['id'],
                     'user_id'                 => (int)($e['main_user_login_id'] ?? $userId),
-                'full_name'               => $fullname,
-                'email'                   => $email,
-                'phone'                   => $phone,
-                'department'              => $dept,
-                'job_title'               => $role,
-                'status'                  => !empty($e['status']) ? strtolower($e['status']) : 'active',
-                'join_date'               => $joined,
-                'nic'                     => !empty($e['nic_number']) ? $e['nic_number'] : '',
-                'dob'                     => !empty($e['date_of_birth']) ? $e['date_of_birth'] : '',
-                'gender'                  => !empty($e['gender']) ? $e['gender'] : 'Male',
-                'address'                 => !empty($e['address']) ? $e['address'] : '',
-                'emergency_contact_name'  => '',
-                'emergency_contact_phone' => '',
-                'employee_id_code'        => 'EMP-' . str_pad($e['id'], 3, '0', STR_PAD_LEFT),
-                'employment_type'         => 'Full-Time',
-                'work_location'           => 'Colombo HQ',
-                'work_shift'              => '08:30 AM – 05:30 PM',
-                'working_days'            => 'Mon,Tue,Wed,Thu,Fri',
-                'weekly_roster'           => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}',
-                'work_mode'               => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
-                'today_work_mode'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
-                'today_mode_type'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'leave' : 'onsite',
-                'today_day'               => date('D'),
-                'profile_pic'             => ''
-            ];
+                    'full_name'               => $fullname,
+                    'email'                   => $email,
+                    'phone'                   => $phone,
+                    'department'              => $dept,
+                    'job_title'               => $role,
+                    'status'                  => !empty($e['status']) ? strtolower($e['status']) : 'active',
+                    'join_date'               => $joined,
+                    'nic'                     => !empty($e['nic_number']) ? $e['nic_number'] : '',
+                    'dob'                     => !empty($e['date_of_birth']) ? $e['date_of_birth'] : '',
+                    'gender'                  => !empty($e['gender']) ? $e['gender'] : 'Male',
+                    'address'                 => !empty($e['address']) ? $e['address'] : '',
+                    'emergency_contact_name'  => '',
+                    'emergency_contact_phone' => '',
+                    'employee_id_code'        => 'EMP-' . str_pad($e['id'], 3, '0', STR_PAD_LEFT),
+                    'employment_type'         => 'Full-Time',
+                    'work_location'           => 'Colombo HQ',
+                    'work_shift'              => '08:30 AM – 05:30 PM',
+                    'working_days'            => 'Mon,Tue,Wed,Thu,Fri',
+                    'weekly_roster'           => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}',
+                    'work_mode'               => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+                    'today_work_mode'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+                    'today_mode_type'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'leave' : 'onsite',
+                    'today_day'               => date('D'),
+                    'profile_pic'             => ''
+                ];
+            }
         }
     }
 
@@ -242,10 +261,11 @@ try {
             'profile_pic'             => $sessPic
         ];
     }
-} catch (Exception $ex) {
+} catch (\Throwable $ex) {
     $profile = null;
 }
 
+ob_clean();
 echo json_encode([
     'status' => 'success',
     'data'   => $profile
