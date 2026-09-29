@@ -24,6 +24,7 @@ require_login();
     <script type="text/javascript">
         window.pth = "<?php echo isset($pth) ? $pth : '../'; ?>";
         window.homePage = "<?php echo isset($home_page) ? $home_page : '../'; ?>";
+        window.empSessionUserId = <?php echo isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0; ?>;
         window.currentEmployeeName = "<?php echo addslashes($logged_user_name ?? ''); ?>";
         window.currentEmployeeFirstName = "<?php echo addslashes($logged_user_first_name ?? ''); ?>";
         window.currentEmployeeDept = "<?php echo addslashes($logged_user_dept ?? ''); ?>";
