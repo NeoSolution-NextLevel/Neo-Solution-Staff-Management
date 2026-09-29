@@ -961,6 +961,338 @@
       padding: 5px;
     }
   }
+
+  /* Work Plan Upload & Attachments System */
+  .workplan-upload-section {
+    margin-top: 14px;
+    margin-bottom: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  .workplan-upload-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .upload-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #1e293b;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .upload-hint {
+    font-size: 11.5px;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .workplan-dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 14px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .workplan-dropzone:hover,
+  .workplan-dropzone.dragover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+  }
+
+  .dropzone-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .dropzone-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .dropzone-text {
+    font-size: 13px;
+    color: #475569;
+  }
+
+  .dropzone-text strong {
+    color: #2563eb;
+  }
+
+  /* Pending Files Tray */
+  .workplan-pending-tray {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pending-file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 5px 10px 5px 6px;
+    font-size: 12px;
+    color: #1e293b;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  .pending-thumb {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .pending-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    background: #e2e8f0;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .pending-file-info {
+    display: flex;
+    flex-direction: column;
+    max-width: 140px;
+  }
+
+  .pending-name {
+    font-weight: 700;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pending-size {
+    font-size: 10.5px;
+    color: #64748b;
+  }
+
+  .pending-remove-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 4px;
+  }
+
+  /* Saved Attachments Gallery */
+  .workplan-saved-gallery {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .gallery-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+  }
+
+  .wp-photo-card {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    aspect-ratio: 1;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .wp-photo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .wp-photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .wp-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .wp-photo-card:hover .wp-photo-overlay {
+    opacity: 1;
+  }
+
+  .wp-card-action-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: #ffffff;
+    border: none;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 11px;
+    transition: background 0.15s;
+  }
+
+  .wp-card-action-btn:hover {
+    background: #f1f5f9;
+  }
+
+  .wp-card-action-btn.delete-btn {
+    color: #ef4444;
+  }
+  .wp-card-action-btn.delete-btn:hover {
+    background: #fee2e2;
+  }
+
+  .wp-docs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .wp-doc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 7px 10px;
+    gap: 8px;
+  }
+
+  .wp-doc-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .wp-doc-icon-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .wp-doc-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wp-doc-meta {
+    font-size: 10.5px;
+    color: #64748b;
+  }
+
+  .wp-doc-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .wp-doc-btn {
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    border: 1px solid transparent;
+  }
+
+  .wp-doc-btn.view-btn-doc {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+  }
+
+  .wp-doc-btn.dl-btn-doc {
+    background: #ecfdf5;
+    color: #059669;
+    border-color: #a7f3d0;
+  }
+
+  .wp-doc-btn.del-btn-doc {
+    background: #fef2f2;
+    color: #ef4444;
+    border-color: #fecaca;
+    cursor: pointer;
+  }
 </style>
 
 <div id="Employee_user_dashboard_07_daily_work_plan" style="display:none;">
@@ -1006,6 +1338,35 @@
         <p class="step-subtext">Write down the tasks you plan to accomplish today. Click <b>Start Work</b> to activate your shift for the day.</p>
         
         <textarea id="dailyWorkPlanText" class="daily-plan-input" placeholder="Enter today's planned tasks:"></textarea>
+
+        <!-- Step 1 File Upload Section -->
+        <div class="workplan-upload-section" id="step1UploadSection">
+          <div class="workplan-upload-header">
+            <span class="upload-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              Plan Documents & Photos (Optional)
+            </span>
+            <span class="upload-hint">Upload task specs, reference docs, or photos (JPG, PNG, PDF, DOCX up to 15MB)</span>
+          </div>
+
+          <div class="workplan-dropzone" id="step1Dropzone" onclick="document.getElementById('step1FileInput').click()">
+            <input type="file" id="step1FileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,image/*" style="display:none;" onchange="handleStepFileSelect('step1', this.files)">
+            <div class="dropzone-content">
+              <div class="dropzone-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div class="dropzone-text">
+                <strong>Click to browse</strong> or drag &amp; drop plan documents &amp; photos here
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending Files Tray -->
+          <div class="workplan-pending-tray" id="step1PendingTray" style="display:none;"></div>
+
+          <!-- Saved Attachments Gallery -->
+          <div class="workplan-saved-gallery" id="step1SavedGallery"></div>
+        </div>
         
         <div class="daily-plan-actions">
           <button type="button" id="saveDailyPlanBtn" class="save-plan-btn">
@@ -1042,6 +1403,35 @@
           What did you complete from this plan?:
         </label>
         <textarea id="shiftEndNotes" class="daily-plan-input" placeholder="Write what you finished from the morning plan, what remains pending, or any end-of-shift notes..."></textarea>
+
+        <!-- Step 2 File Upload Section -->
+        <div class="workplan-upload-section" id="step2UploadSection">
+          <div class="workplan-upload-header">
+            <span class="upload-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Work Proof, Photos &amp; Documents (Optional)
+            </span>
+            <span class="upload-hint">Upload completed work proof photos, receipts, or summary PDFs</span>
+          </div>
+
+          <div class="workplan-dropzone" id="step2Dropzone" onclick="document.getElementById('step2FileInput').click()">
+            <input type="file" id="step2FileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,image/*" style="display:none;" onchange="handleStepFileSelect('step2', this.files)">
+            <div class="dropzone-content">
+              <div class="dropzone-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div class="dropzone-text">
+                <strong>Click to browse</strong> or drag &amp; drop proof photos &amp; completion documents here
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending Files Tray -->
+          <div class="workplan-pending-tray" id="step2PendingTray" style="display:none;"></div>
+
+          <!-- Saved Attachments Gallery -->
+          <div class="workplan-saved-gallery" id="step2SavedGallery"></div>
+        </div>
 
         <div class="shift-ctrls-row">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -1164,9 +1554,36 @@
           <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px;">Description / Work Plan Details</div>
           <div id="modalTaskDesc" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; color: #334155; line-height: 1.5; white-space: pre-wrap; max-height: 220px; overflow-y: auto;"></div>
         </div>
+
+        <div id="modalTaskAttachmentsWrap" style="display:none; margin-top: 10px;">
+          <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px;">Work Proof &amp; Attachments</div>
+          <div id="modalTaskAttachmentsList" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+        </div>
       </div>
       <div class="emp-modal-footer">
         <button type="button" class="save-plan-btn" onclick="closeWorkplanTaskModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo Preview / Lightbox Modal -->
+  <div class="emp-modal-overlay" id="workplanPhotoPreviewModal" style="display:none;" onclick="if(event.target===this) closeWorkplanPhotoModal();">
+    <div class="emp-modal-card" style="max-width: 680px; width: 95%; padding: 0; overflow: hidden; background: #0f172a; border-radius: 14px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: #1e293b; color: #ffffff;">
+        <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span id="photoPreviewModalTitle" style="font-weight: 700; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #f8fafc;">Photo Preview</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <a id="photoPreviewDownloadBtn" href="#" download class="save-plan-btn" style="padding: 5px 12px; font-size: 12px; background: #334155; color: #ffffff; border: none; text-decoration: none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+          </a>
+          <button type="button" class="emp-modal-close" style="color: #94a3b8; font-size: 22px; cursor: pointer; background: none; border: none;" onclick="closeWorkplanPhotoModal()">&times;</button>
+        </div>
+      </div>
+      <div style="padding: 16px; display: flex; align-items: center; justify-content: center; min-height: 260px; max-height: 70vh; overflow: auto; background: #0b1120;">
+        <img id="photoPreviewModalImg" src="" alt="Work plan photo" style="max-width: 100%; max-height: 65vh; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" />
       </div>
     </div>
   </div>
@@ -1190,6 +1607,240 @@
   const submitShiftEndBtn = document.getElementById('submitShiftEndBtn');
   const shiftEndStatusMsg = document.getElementById('shiftEndStatusMsg');
   const shiftStatusBadge = document.getElementById('shiftStatusBadge');
+
+  function escapeHtml(str) {
+    return (str || '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[m]);
+  }
+
+  let step1SelectedFiles = [];
+  let step2SelectedFiles = [];
+  let currentPlanAttachments = [];
+  let currentShiftAttachments = [];
+
+  const photoExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'bmp'];
+
+  window.handleStepFileSelect = function (step, files) {
+    if (!files || !files.length) return;
+    const targetArr = step === 'step1' ? step1SelectedFiles : step2SelectedFiles;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.size > 20 * 1024 * 1024) {
+        alert('File "' + file.name + '" exceeds the 20MB limit.');
+        continue;
+      }
+      if (!targetArr.some(f => f.name === file.name && f.size === file.size)) {
+        targetArr.push(file);
+      }
+    }
+    renderPendingTray(step);
+  };
+
+  function renderPendingTray(step) {
+    const tray = document.getElementById(step + 'PendingTray');
+    if (!tray) return;
+    const targetArr = step === 'step1' ? step1SelectedFiles : step2SelectedFiles;
+    if (targetArr.length === 0) {
+      tray.style.display = 'none';
+      tray.innerHTML = '';
+      return;
+    }
+    tray.style.display = 'flex';
+    tray.innerHTML = targetArr.map((f, idx) => {
+      const ext = (f.name.split('.').pop() || '').toLowerCase();
+      const isPhoto = photoExtensions.includes(ext);
+      const sizeStr = f.size >= 1048576 ? (f.size / 1048576).toFixed(1) + ' MB' : (f.size / 1024).toFixed(0) + ' KB';
+
+      let previewThumb = '';
+      if (isPhoto) {
+        const tempUrl = URL.createObjectURL(f);
+        previewThumb = `<img src="${tempUrl}" class="pending-thumb" alt="${escapeHtml(f.name)}" />`;
+      } else {
+        previewThumb = `<div class="pending-icon">${escapeHtml(ext.toUpperCase().substring(0, 3))}</div>`;
+      }
+
+      return `
+        <div class="pending-file-chip">
+          ${previewThumb}
+          <div class="pending-file-info">
+            <span class="pending-name" title="${escapeHtml(f.name)}">${escapeHtml(f.name)}</span>
+            <span class="pending-size">${sizeStr} (ready to upload)</span>
+          </div>
+          <button type="button" class="pending-remove-btn" title="Remove" onclick="removePendingStepFile('${step}', ${idx})">&times;</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.removePendingStepFile = function (step, idx) {
+    const targetArr = step === 'step1' ? step1SelectedFiles : step2SelectedFiles;
+    targetArr.splice(idx, 1);
+    renderPendingTray(step);
+  };
+
+  function renderSavedGallery(step, attachments) {
+    const gallery = document.getElementById(step + 'SavedGallery');
+    if (!gallery) return;
+    if (!attachments || attachments.length === 0) {
+      gallery.innerHTML = '';
+      return;
+    }
+
+    const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+    const photos = attachments.filter(a => a.file_type === 'photo');
+    const docs = attachments.filter(a => a.file_type !== 'photo');
+
+    let html = '';
+
+    if (photos.length > 0) {
+      html += `
+        <div style="margin-bottom:8px;">
+          <div class="gallery-group-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Photos (${photos.length})
+          </div>
+          <div class="gallery-grid">
+            ${photos.map(ph => {
+              const fullSrc = pth + ph.file_path;
+              return `
+                <div class="wp-photo-card" onclick="openWorkplanPhotoModal('${escapeHtml(ph.name)}', '${fullSrc}', '${escapeHtml(ph.file_size)}')">
+                  <img src="${fullSrc}" alt="${escapeHtml(ph.name)}" />
+                  <div class="wp-photo-overlay" onclick="event.stopPropagation()">
+                    <button type="button" class="wp-card-action-btn" title="View Photo" onclick="openWorkplanPhotoModal('${escapeHtml(ph.name)}', '${fullSrc}', '${escapeHtml(ph.file_size)}')">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+                    </button>
+                    <a href="${fullSrc}" download="${escapeHtml(ph.name)}" class="wp-card-action-btn" title="Download">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </a>
+                    <button type="button" class="wp-card-action-btn delete-btn" title="Delete attachment" onclick="deleteWorkplanAttachment('${ph.id}', '${step}')">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    if (docs.length > 0) {
+      html += `
+        <div>
+          <div class="gallery-group-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Documents (${docs.length})
+          </div>
+          <div class="wp-docs-list">
+            ${docs.map(doc => {
+              const fullSrc = pth + doc.file_path;
+              return `
+                <div class="wp-doc-row">
+                  <div class="wp-doc-left">
+                    <div class="wp-doc-icon-badge">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <div>
+                      <div class="wp-doc-name" title="${escapeHtml(doc.name)}">${escapeHtml(doc.name)}</div>
+                      <div class="wp-doc-meta">${escapeHtml(doc.file_size)} • ${escapeHtml(doc.uploaded_at || '')}</div>
+                    </div>
+                  </div>
+                  <div class="wp-doc-actions">
+                    <a href="${fullSrc}" target="_blank" class="wp-doc-btn view-btn-doc" title="View file in new tab">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      View
+                    </a>
+                    <a href="${fullSrc}" download="${escapeHtml(doc.name)}" class="wp-doc-btn dl-btn-doc" title="Download">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Download
+                    </a>
+                    <button type="button" class="wp-doc-btn del-btn-doc" title="Delete attachment" onclick="deleteWorkplanAttachment('${doc.id}', '${step}')">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    gallery.innerHTML = html;
+  }
+
+  window.openWorkplanPhotoModal = function (title, src, size) {
+    const modal = document.getElementById('workplanPhotoPreviewModal');
+    const img = document.getElementById('photoPreviewModalImg');
+    const titleEl = document.getElementById('photoPreviewModalTitle');
+    const dlBtn = document.getElementById('photoPreviewDownloadBtn');
+    if (!modal || !img) return;
+    img.src = src;
+    if (titleEl) titleEl.textContent = title + (size ? ' (' + size + ')' : '');
+    if (dlBtn) {
+      dlBtn.href = src;
+      dlBtn.setAttribute('download', title || 'photo');
+    }
+    modal.style.display = 'flex';
+  };
+
+  window.closeWorkplanPhotoModal = function () {
+    const modal = document.getElementById('workplanPhotoPreviewModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.deleteWorkplanAttachment = function (attId, step) {
+    if (!confirm('Are you sure you want to remove this attachment?')) return;
+    const body = new FormData();
+    body.append('action', 'delete_attachment');
+    body.append('attachment_id', attId);
+
+    fetch(dailyPlanUrl(), { method: 'POST', body, credentials: 'same-origin' })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === 'success') {
+          if (step === 'step1') {
+            currentPlanAttachments = res.plan_attachments || [];
+            renderSavedGallery('step1', currentPlanAttachments);
+          } else {
+            currentShiftAttachments = res.shift_attachments || [];
+            renderSavedGallery('step2', currentShiftAttachments);
+          }
+        } else {
+          alert(res.message || 'Unable to delete attachment');
+        }
+      })
+      .catch(() => alert('Network error while deleting attachment.'));
+  };
+
+  function setupDropzoneEvents(zoneId, step) {
+    const zone = document.getElementById(zoneId);
+    if (!zone) return;
+    ['dragenter', 'dragover'].forEach(eventName => {
+      zone.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        zone.classList.add('dragover');
+      }, false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      zone.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        zone.classList.remove('dragover');
+      }, false);
+    });
+    zone.addEventListener('drop', e => {
+      const dt = e.dataTransfer;
+      if (dt && dt.files && dt.files.length) {
+        handleStepFileSelect(step, dt.files);
+      }
+    }, false);
+  }
+
+  setTimeout(() => {
+    setupDropzoneEvents('step1Dropzone', 'step1');
+    setupDropzoneEvents('step2Dropzone', 'step2');
+  }, 100);
 
   function formatTimeStr(dtStr) {
     if (!dtStr) return '';
@@ -1233,6 +1884,10 @@
       .then(res => {
         if (!res.data) {
           updatePlanPreviewText('');
+          currentPlanAttachments = [];
+          currentShiftAttachments = [];
+          renderSavedGallery('step1', []);
+          renderSavedGallery('step2', []);
           if (morningStatusBadge) {
             morningStatusBadge.className = 'shift-wrapup-badge pending';
             morningStatusBadge.textContent = '⚪ Shift Not Started';
@@ -1247,6 +1902,11 @@
         const currentPlan = res.data.plan_text || '';
         if (planText) planText.value = currentPlan;
         updatePlanPreviewText(currentPlan);
+
+        currentPlanAttachments = res.data.plan_attachments || [];
+        currentShiftAttachments = res.data.shift_attachments || [];
+        renderSavedGallery('step1', currentPlanAttachments);
+        renderSavedGallery('step2', currentShiftAttachments);
 
         if (res.data.started_at && startWorkBtn) {
           startWorkBtn.textContent = 'Active Today';
@@ -1324,11 +1984,23 @@
     const body = new FormData();
     body.append('plan_text', text);
     body.append('start_work', startWork ? '1' : '0');
+    step1SelectedFiles.forEach(f => {
+      body.append('plan_files[]', f);
+    });
 
     fetch(dailyPlanUrl(), { method: 'POST', body, credentials: 'same-origin' })
       .then(res => res.json())
       .then(res => {
         if (res.status !== 'success') throw new Error(res.message || 'Unable to save plan');
+
+        step1SelectedFiles = [];
+        renderPendingTray('step1');
+        const fileInp = document.getElementById('step1FileInput');
+        if (fileInp) fileInp.value = '';
+        if (res.data && res.data.plan_attachments) {
+          currentPlanAttachments = res.data.plan_attachments;
+          renderSavedGallery('step1', currentPlanAttachments);
+        }
         if (planStatus) {
           planStatus.style.color = '#15803d';
           planStatus.textContent = startWork ? 'Work started! You are active today.' : 'Daily plan saved.';
@@ -1377,6 +2049,9 @@
     body.append('action', 'shift_end_update');
     body.append('evening_update', notes);
     body.append('task_status', statusVal);
+    step2SelectedFiles.forEach(f => {
+      body.append('shift_files[]', f);
+    });
 
     fetch(dailyPlanUrl(), { method: 'POST', body, credentials: 'same-origin' })
       .then(res => res.json())
@@ -1387,6 +2062,15 @@
         }
         if (res.status !== 'success') {
           throw new Error(res.message || 'Unable to submit shift update');
+        }
+
+        step2SelectedFiles = [];
+        renderPendingTray('step2');
+        const fileInp2 = document.getElementById('step2FileInput');
+        if (fileInp2) fileInp2.value = '';
+        if (res.data && res.data.shift_attachments) {
+          currentShiftAttachments = res.data.shift_attachments;
+          renderSavedGallery('step2', currentShiftAttachments);
         }
 
         const viewShiftTaskBtn = document.getElementById('viewShiftTaskBtn');
@@ -1462,6 +2146,38 @@
     const descEl = el('modalTaskDesc');
     if (descEl) {
       descEl.textContent = task.description || 'No additional work plan details.';
+    }
+
+    const attWrap = el('modalTaskAttachmentsWrap');
+    const attList = el('modalTaskAttachmentsList');
+    if (attWrap && attList) {
+      const allAtts = [...currentPlanAttachments, ...currentShiftAttachments];
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      if (allAtts.length > 0) {
+        attWrap.style.display = 'block';
+        attList.innerHTML = allAtts.map(a => {
+          const src = pth + a.file_path;
+          if (a.file_type === 'photo') {
+            return `
+              <div class="wp-photo-card" style="width:58px; height:58px;" onclick="openWorkplanPhotoModal('${escapeHtml(a.name)}', '${src}', '${escapeHtml(a.file_size)}')">
+                <img src="${src}" alt="${escapeHtml(a.name)}" />
+                <div class="wp-photo-overlay">
+                  <span style="color:#ffffff; font-size:10px;"><i class="fa-solid fa-eye"></i></span>
+                </div>
+              </div>
+            `;
+          } else {
+            return `
+              <a href="${src}" target="_blank" style="display:inline-flex; align-items:center; gap:5px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; font-size:12px; color:#1e293b; text-decoration:none;" title="${escapeHtml(a.name)}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span style="max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600;">${escapeHtml(a.name)}</span>
+              </a>
+            `;
+          }
+        }).join('');
+      } else {
+        attWrap.style.display = 'none';
+      }
     }
 
     const modal = document.getElementById('workplanTaskDetailsModal');
