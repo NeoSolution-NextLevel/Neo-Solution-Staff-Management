@@ -204,7 +204,44 @@ try {
             ];
         }
     }
-}
+
+    // 3. Fallback to active employee session info
+    if (!$profile && !empty($_SESSION['full_name']) && strtolower((string)$_SESSION['full_name']) !== 'guest') {
+        $sessName = trim((string)$_SESSION['full_name']);
+        $sessRole = !empty($_SESSION['job_title']) ? $_SESSION['job_title'] : 'Staff';
+        $sessDept = !empty($_SESSION['department']) ? $_SESSION['department'] : 'Engineering';
+        $sessCode = !empty($_SESSION['employee_id_code']) ? $_SESSION['employee_id_code'] : ('EMP-' . str_pad((string)$userId, 3, '0', STR_PAD_LEFT));
+        $sessPic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : (!empty($_SESSION['image_url']) ? $_SESSION['image_url'] : '');
+
+        $profile = [
+            'id'                      => $empProfileId > 0 ? $empProfileId : ($userId > 0 ? $userId : 1),
+            'user_id'                 => $userId,
+            'full_name'               => $sessName,
+            'email'                   => $userEmail,
+            'phone'                   => '',
+            'department'              => $sessDept,
+            'job_title'               => $sessRole,
+            'status'                  => 'active',
+            'join_date'               => date('Y-m-d'),
+            'nic'                     => '',
+            'dob'                     => '',
+            'gender'                  => 'Male',
+            'address'                 => '',
+            'emergency_contact_name'  => '',
+            'emergency_contact_phone' => '',
+            'employee_id_code'        => $sessCode,
+            'employment_type'         => 'Full-Time',
+            'work_location'           => 'Colombo HQ',
+            'work_shift'              => '08:30 AM – 05:30 PM',
+            'working_days'            => 'Mon,Tue,Wed,Thu,Fri',
+            'weekly_roster'           => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}',
+            'work_mode'               => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+            'today_work_mode'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+            'today_mode_type'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'leave' : 'onsite',
+            'today_day'               => date('D'),
+            'profile_pic'             => $sessPic
+        ];
+    }
 } catch (Exception $ex) {
     $profile = null;
 }
