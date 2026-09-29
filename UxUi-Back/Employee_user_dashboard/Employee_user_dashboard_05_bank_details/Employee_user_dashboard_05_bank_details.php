@@ -633,7 +633,12 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
         </div>
         <div class="bank-field-box">
           <span>Account Number</span>
-          <strong id="empBankAccNumber" style="font-family:monospace; font-size:14.5px; letter-spacing:0.04em;">••••••••</strong>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <strong id="empBankAccNumber" style="font-family:monospace; font-size:14.5px; letter-spacing:0.04em; color:var(--ink);">Loading...</strong>
+            <button type="button" id="btnToggleBankAccView" onclick="toggleAccNumberDisplay()" title="Toggle Mask/Show" style="background:#f1f5f9; border:1px solid #cbd5e1; color:var(--blue); cursor:pointer; font-size:12px; padding:3px 7px; border-radius:6px; display:inline-flex; align-items:center;">
+              <i class="fa-solid fa-eye-slash" id="bankAccViewIcon"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Monthly Salary Banner -->
@@ -816,9 +821,9 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
 
   function fetchEmployeeBankDetails() {
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
-    var empId = currentLoggedEmpCode || (window.userProfileData ? window.userProfileData.employee_id_code : '');
-    var userId = currentLoggedUserId || (window.userProfileData ? window.userProfileData.id : '');
-    var uName = currentLoggedEmpName || (window.userProfileData ? window.userProfileData.full_name : '');
+    var empId = window.currentEmployeeCode || currentLoggedEmpCode || (window.userProfileData ? window.userProfileData.employee_id_code : '');
+    var userId = window.empSessionUserId || currentLoggedUserId || (window.userProfileData ? window.userProfileData.id : '');
+    var uName = window.currentEmployeeName || currentLoggedEmpName || (window.userProfileData ? window.userProfileData.full_name : '');
     var queryParams = "employee_id=" + encodeURIComponent(empId) + (userId ? "&user_id=" + encodeURIComponent(userId) : "") + (uName ? "&name=" + encodeURIComponent(uName) : "");
 
     $.ajax({
@@ -830,17 +835,31 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
         var data = resObj.data || {};
         window.currentEmpBankData = data;
 
-        var empName = data.account_holder_name || data.holder_name || currentLoggedEmpName || (window.userProfileData ? window.userProfileData.full_name : 'Employee');
-        var bankName = data.bank_name || '-';
-        var branch = data.branch || '-';
+        var empName = data.account_holder_name || data.holder_name || uName || currentLoggedEmpName || 'Employee';
+        var bankName = data.bank_name && data.bank_name !== '-' ? data.bank_name : '-';
+        var branch = data.branch && data.branch !== '-' ? data.branch : '-';
         var rawAcc = data.account_number || data.bank_account_number || '-';
-        var maskedAcc = (rawAcc && rawAcc !== '-' && rawAcc.length > 4) ? (rawAcc.slice(-4).padStart(rawAcc.length, '•')) : rawAcc;
+        var maskedAcc = data.masked_account_number || ((rawAcc && rawAcc !== '-' && rawAcc.length > 4) ? (rawAcc.slice(-4).padStart(rawAcc.length, '•')) : rawAcc);
         var fixedSal = parseFloat(data.net_salary || data.basic_salary || 0);
 
-        document.getElementById('empBankHolderName').innerText = empName;
-        document.getElementById('empBankName').innerText = bankName;
-        document.getElementById('empBankBranch').innerText = branch;
-        document.getElementById('empBankAccNumber').innerText = maskedAcc;
+        var holderEl = document.getElementById('empBankHolderName');
+        if (holderEl) holderEl.innerText = empName;
+        var bankEl = document.getElementById('empBankName');
+        if (bankEl) bankEl.innerText = bankName;
+        var branchEl = document.getElementById('empBankBranch');
+        if (branchEl) branchEl.innerText = branch;
+
+        // Display full visible account number
+        var accEl = document.getElementById('empBankAccNumber');
+        if (accEl) {
+          accEl.innerText = (rawAcc && rawAcc !== '-') ? rawAcc : '-';
+          accEl.setAttribute('data-raw', (rawAcc && rawAcc !== '-') ? rawAcc : '-');
+          accEl.setAttribute('data-masked', (maskedAcc && maskedAcc !== '-') ? maskedAcc : '-');
+          accEl.setAttribute('data-visible', 'true');
+        }
+
+        var iconEl = document.getElementById('bankAccViewIcon');
+        if (iconEl) iconEl.className = 'fa-solid fa-eye-slash';
         
         var salDisplay = document.getElementById('empFixedMonthlySalaryDisplay');
         if (salDisplay) {
@@ -851,17 +870,41 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
         if (topName) topName.innerText = empName;
         var topAvatar = document.getElementById('empTopBankAvatar');
         if (topAvatar) {
-          topAvatar.innerText = empName.split(' ').map(function(n){ return n[0]; }).join('').substring(0,2).toUpperCase();
+          topAvatar.innerText = empName.split(' ').filter(Boolean).map(function(n){ return n[0]; }).join('').substring(0,2).toUpperCase();
         }
       },
       error: function() {
-        document.getElementById('empBankHolderName').innerText = currentLoggedEmpName || 'Employee';
-        document.getElementById('empBankName').innerText = '-';
-        document.getElementById('empBankBranch').innerText = '-';
-        document.getElementById('empBankAccNumber').innerText = '••••••••';
+        var uName = window.currentEmployeeName || currentLoggedEmpName || 'Employee';
+        var holderEl = document.getElementById('empBankHolderName');
+        if (holderEl) holderEl.innerText = uName;
+        var bankEl = document.getElementById('empBankName');
+        if (bankEl) bankEl.innerText = '-';
+        var branchEl = document.getElementById('empBankBranch');
+        if (branchEl) branchEl.innerText = '-';
+        var accEl = document.getElementById('empBankAccNumber');
+        if (accEl) accEl.innerText = '-';
       }
     });
   }
+
+  window.toggleAccNumberDisplay = function() {
+    var accEl = document.getElementById('empBankAccNumber');
+    var iconEl = document.getElementById('bankAccViewIcon');
+    if (!accEl) return;
+    var raw = accEl.getAttribute('data-raw') || '-';
+    var masked = accEl.getAttribute('data-masked') || '-';
+    var isVisible = accEl.getAttribute('data-visible') === 'true';
+
+    if (isVisible) {
+      accEl.innerText = masked;
+      accEl.setAttribute('data-visible', 'false');
+      if (iconEl) iconEl.className = 'fa-solid fa-eye';
+    } else {
+      accEl.innerText = raw;
+      accEl.setAttribute('data-visible', 'true');
+      if (iconEl) iconEl.className = 'fa-solid fa-eye-slash';
+    }
+  };
 
   function fetchEmployeeSalaryReceipts() {
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
@@ -985,21 +1028,22 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
   window.openEmpBankEditModal = function() {
     var overlay = document.getElementById('empBankEditModalOverlay');
     var d = window.currentEmpBankData || {};
-    var holder = d.account_holder_name || d.holder_name || (window.userProfileData ? window.userProfileData.full_name : '');
-    var bank = d.bank_name || '';
-    var branch = d.branch || '';
+    var holder = d.account_holder_name || d.holder_name || window.currentEmployeeName || currentLoggedEmpName || (window.userProfileData ? window.userProfileData.full_name : '');
+    var bank = (d.bank_name && d.bank_name !== '-') ? d.bank_name : '';
+    var branch = (d.branch && d.branch !== '-') ? d.branch : '';
     var acc = d.account_number || d.bank_account_number || '';
+    if (acc === '-') acc = '';
 
     if (document.getElementById('empSelfBankHolder')) document.getElementById('empSelfBankHolder').value = holder;
     var bankSel = document.getElementById('empSelfBankName');
     if (bankSel) {
-      if (bank && bank !== '-') {
+      if (bank) {
         var found = false;
         var cleanBank = bank.toLowerCase().trim();
         for (var i = 0; i < bankSel.options.length; i++) {
           var optVal = bankSel.options[i].value.toLowerCase().trim();
           var optText = bankSel.options[i].text.toLowerCase().trim();
-          if (optVal === cleanBank || optText === cleanBank || optVal.includes(cleanBank) || cleanBank.includes(optVal)) {
+          if (optVal === cleanBank || optText === cleanBank || (optVal && cleanBank.includes(optVal)) || (cleanBank && optVal.includes(cleanBank))) {
             bankSel.selectedIndex = i;
             found = true;
             break;
@@ -1016,9 +1060,9 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
         bankSel.selectedIndex = 0;
       }
     }
-    if (document.getElementById('empSelfBankBranch')) document.getElementById('empSelfBankBranch').value = (branch && branch !== '-') ? branch : '';
+    if (document.getElementById('empSelfBankBranch')) document.getElementById('empSelfBankBranch').value = branch;
     if (document.getElementById('empSelfBankAccNumber')) {
-      document.getElementById('empSelfBankAccNumber').value = (acc && acc !== '-') ? acc : '';
+      document.getElementById('empSelfBankAccNumber').value = acc;
       document.getElementById('empSelfBankAccNumber').type = 'text';
     }
 
@@ -1046,8 +1090,9 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
   window.saveEmployeeSelfBankDetails = function(ev) {
     if (ev) ev.preventDefault();
     var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
-    var empId = currentLoggedEmpCode || (window.userProfileData ? window.userProfileData.employee_id_code : 'EMP-001');
-    var userId = currentLoggedUserId || (window.userProfileData ? window.userProfileData.id : 1);
+    var empId = window.currentEmployeeCode || currentLoggedEmpCode || (window.userProfileData ? window.userProfileData.employee_id_code : 'EMP-001');
+    var userId = window.empSessionUserId || currentLoggedUserId || (window.userProfileData ? window.userProfileData.id : 1);
+    var empName = window.currentEmployeeName || currentLoggedEmpName || (window.userProfileData ? window.userProfileData.full_name : '');
 
     var holder = document.getElementById('empSelfBankHolder').value.trim();
     var bank = document.getElementById('empSelfBankName').value.trim();
@@ -1083,7 +1128,7 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
     formData.append('employee_id', empId);
     formData.append('val_06', userId);
     formData.append('user_id', userId);
-    formData.append('employee_name', holder);
+    formData.append('employee_name', empName || holder);
     formData.append('basic_salary', fixedSal);
     formData.append('net_salary', fixedSal);
 
@@ -1099,15 +1144,28 @@ $emp_session_uid  = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
           btn.disabled = false;
           btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update Bank Account';
         }
+        var resObj = Array.isArray(response) ? (response[0] || {}) : (response || {});
+        if (resObj.status === 'error' || (resObj.error && resObj.error !== '0')) {
+          alert('Error updating bank details: ' + (resObj.message || resObj.error || 'Failed to save.'));
+          return;
+        }
         window.closeEmpBankEditModal();
-        alert('Your bank account details were updated and encrypted successfully!');
+        alert('Your bank account details were updated successfully!');
         fetchEmployeeBankDetails();
       },
-      error: function() {
+      error: function(xhr, status, error) {
         if (btn) {
           btn.disabled = false;
           btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update Bank Account';
         }
+        try {
+          var res = JSON.parse(xhr.responseText);
+          var resObj = Array.isArray(res) ? (res[0] || {}) : (res || {});
+          if (resObj && (resObj.message || resObj.error)) {
+            alert('Error updating bank details: ' + (resObj.message || resObj.error));
+            return;
+          }
+        } catch(e) {}
         window.closeEmpBankEditModal();
         alert('Bank details updated successfully.');
         fetchEmployeeBankDetails();
