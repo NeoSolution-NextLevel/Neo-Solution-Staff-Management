@@ -511,20 +511,107 @@
         const plans = data.work_plans || [];
         if (plans.length > 0) {
           wpWrap.innerHTML = `
-            <div style="display:flex; flex-direction:column; gap:12px;">
-              ${plans.map((p, idx) => `
-                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px 16px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              ${plans.map((p, idx) => {
+                const planAtts = p.plan_attachments || [];
+                const shiftAtts = p.shift_attachments || [];
+                const planPhotos = planAtts.filter(a => a.file_type === 'photo');
+                const planDocs = planAtts.filter(a => a.file_type !== 'photo');
+                const shiftPhotos = shiftAtts.filter(a => a.file_type === 'photo');
+                const shiftDocs = shiftAtts.filter(a => a.file_type !== 'photo');
+                const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+
+                return `
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
                     <div style="display:flex; align-items:center; gap:8px;">
-                      <span style="font-weight:800; font-size:13.5px; color:#14204d;">${idx === 0 ? 'Today’s Work Plan' : 'Plan for ' + escapeHtml(p.plan_date)}</span>
+                      <span style="font-weight:800; font-size:14px; color:#14204d;">${idx === 0 ? 'Today’s Work Plan (' + escapeHtml(p.plan_date) + ')' : 'Work Plan: ' + escapeHtml(p.plan_date)}</span>
                       <span class="status-badge ${p.started_at ? 'active' : ''}" style="font-size:11px; padding:3px 9px;">${p.started_at ? 'Active Today' : 'Submitted'}</span>
                     </div>
                     <span style="font-size:11.5px; color:#64748b; font-weight:600;"><i class="fa-regular fa-clock"></i> ${escapeHtml(p.updated_at || p.submitted_at || p.plan_date)}</span>
                   </div>
-                  <div style="font-size:13.5px; color:#334155; line-height:1.5; background:#ffffff; border:1px solid #f1f5f9; border-radius:8px; padding:10px 12px; white-space:pre-wrap;">${escapeHtml(p.plan_text)}</div>
-                  ${p.started_at ? `<div style="font-size:11.5px; color:#16a34a; font-weight:700; margin-top:6px;"><i class="fa-solid fa-circle-check"></i> Work started at ${escapeHtml(p.started_at)}</div>` : ''}
+
+                  <!-- Morning Plan Section -->
+                  <div style="margin-bottom:12px;">
+                    <span style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:#64748b; letter-spacing:0.4px; margin-bottom:4px;">Morning Work Plan</span>
+                    <div style="font-size:13.5px; color:#334155; line-height:1.5; background:#f8fafc; border:1px solid #f1f5f9; border-radius:8px; padding:10px 12px; white-space:pre-wrap;">${escapeHtml(p.plan_text)}</div>
+                    
+                    ${planPhotos.length > 0 ? `
+                      <div style="margin-top:8px;">
+                        <span style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;"><i class="fa-solid fa-camera"></i> Plan Photos (${planPhotos.length}):</span>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                          ${planPhotos.map(ph => `
+                            <a href="${pth + ph.file_path}" target="_blank" style="display:inline-block; border-radius:8px; overflow:hidden; border:1px solid #cbd5e1; width:64px; height:64px; background:#f1f5f9; box-shadow:0 1px 2px rgba(0,0,0,0.06);" title="${escapeHtml(ph.name)}">
+                              <img src="${pth + ph.file_path}" alt="${escapeHtml(ph.name)}" style="width:100%; height:100%; object-fit:cover;" />
+                            </a>
+                          `).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
+
+                    ${planDocs.length > 0 ? `
+                      <div style="margin-top:8px;">
+                        <span style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;"><i class="fa-solid fa-paperclip"></i> Plan Documents (${planDocs.length}):</span>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                          ${planDocs.map(d => `
+                            <div style="display:inline-flex; align-items:center; gap:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:5px 9px; font-size:12px;">
+                              <i class="fa-solid fa-file-lines" style="color:#2563eb;"></i>
+                              <span style="font-weight:600; color:#1e293b; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(d.name)}">${escapeHtml(d.name)}</span>
+                              <span style="color:#64748b; font-size:10.5px;">(${escapeHtml(d.file_size)})</span>
+                              <a href="${pth + d.file_path}" target="_blank" style="color:#2563eb; font-weight:700; text-decoration:none; margin-left:4px;" title="View"><i class="fa-solid fa-eye"></i></a>
+                              <a href="${pth + d.file_path}" download style="color:#059669; font-weight:700; text-decoration:none; margin-left:2px;" title="Download"><i class="fa-solid fa-download"></i></a>
+                            </div>
+                          `).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
+                  </div>
+
+                  <!-- Evening Shift End Update Section -->
+                  ${p.evening_update || p.shift_ended_at ? `
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px 14px; margin-top:10px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+                        <span style="font-size:11.5px; font-weight:800; text-transform:uppercase; color:#166534; letter-spacing:0.4px;">
+                          <i class="fa-solid fa-circle-check"></i> Shift Wrap-Up (${escapeHtml(p.task_status || 'Completed')})
+                        </span>
+                        ${p.shift_ended_at ? `<span style="font-size:11px; color:#15803d; font-weight:600;">Ended: ${escapeHtml(p.shift_ended_at)}</span>` : ''}
+                      </div>
+                      ${p.evening_update ? `<div style="font-size:13px; color:#1e293b; line-height:1.5; white-space:pre-wrap; margin-bottom:8px;">${escapeHtml(p.evening_update)}</div>` : ''}
+
+                      ${shiftPhotos.length > 0 ? `
+                        <div style="margin-top:8px;">
+                          <span style="font-size:11px; font-weight:700; color:#166534; display:block; margin-bottom:4px;"><i class="fa-solid fa-camera"></i> Shift Proof & Completion Photos (${shiftPhotos.length}):</span>
+                          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                            ${shiftPhotos.map(ph => `
+                              <a href="${pth + ph.file_path}" target="_blank" style="display:inline-block; border-radius:8px; overflow:hidden; border:1px solid #86efac; width:64px; height:64px; background:#ffffff; box-shadow:0 1px 2px rgba(0,0,0,0.06);" title="${escapeHtml(ph.name)}">
+                                <img src="${pth + ph.file_path}" alt="${escapeHtml(ph.name)}" style="width:100%; height:100%; object-fit:cover;" />
+                              </a>
+                            `).join('')}
+                          </div>
+                        </div>
+                      ` : ''}
+
+                      ${shiftDocs.length > 0 ? `
+                        <div style="margin-top:8px;">
+                          <span style="font-size:11px; font-weight:700; color:#166534; display:block; margin-bottom:4px;"><i class="fa-solid fa-paperclip"></i> Shift Completion Documents (${shiftDocs.length}):</span>
+                          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                            ${shiftDocs.map(d => `
+                              <div style="display:inline-flex; align-items:center; gap:6px; background:#ffffff; border:1px solid #bbf7d0; border-radius:6px; padding:5px 9px; font-size:12px;">
+                                <i class="fa-solid fa-file-lines" style="color:#16a34a;"></i>
+                                <span style="font-weight:600; color:#1e293b; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(d.name)}">${escapeHtml(d.name)}</span>
+                                <span style="color:#64748b; font-size:10.5px;">(${escapeHtml(d.file_size)})</span>
+                                <a href="${pth + d.file_path}" target="_blank" style="color:#2563eb; font-weight:700; text-decoration:none; margin-left:4px;" title="View"><i class="fa-solid fa-eye"></i></a>
+                                <a href="${pth + d.file_path}" download style="color:#059669; font-weight:700; text-decoration:none; margin-left:2px;" title="Download"><i class="fa-solid fa-download"></i></a>
+                              </div>
+                            `).join('')}
+                          </div>
+                        </div>
+                      ` : ''}
+                    </div>
+                  ` : ''}
                 </div>
-              `).join('')}
+                `;
+              }).join('')}
             </div>
           `;
         } else {
