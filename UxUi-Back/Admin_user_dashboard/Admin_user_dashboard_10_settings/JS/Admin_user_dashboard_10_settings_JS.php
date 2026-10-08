@@ -20,7 +20,7 @@
 
     // ---- Fetch General Admin Settings ----
     function fetchSettings() {
-      const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/fetch_settings/fetch_settings.php?role=admin';
+      const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/fetch_settings/fetch_settings.php';
       fetch(fetchUrl)
         .then(res => res.json())
         .then(res => {
@@ -126,16 +126,14 @@
         fetch(updateUrl, { method: 'POST', body: formData })
           .then(res => res.json())
           .then(res => {
-            if (res.status === 'success') {
-              alert('Leave Email & SMTP settings saved successfully!');
-              fetchSmtpSettings();
-            } else {
-              alert(res.message || 'Error saving email settings.');
+            if (!res || res.status !== 'success') {
+              throw new Error((res && res.message) || 'Error saving email settings.');
             }
-          })
-          .catch(() => {
-            alert('Settings saved successfully!');
+            alert('Leave Email & SMTP settings saved successfully!');
             fetchSmtpSettings();
+          })
+          .catch((error) => {
+            alert(error.message || 'Could not save email settings.');
           })
           .finally(() => {
             btnSaveSmtp.disabled = false;
@@ -165,10 +163,12 @@
         fetch(testUrl, { method: 'POST', body: fd })
           .then(res => res.json())
           .then(res => {
+            if (!res || res.status !== 'success') {
+              throw new Error((res && res.message) || 'Test email failed.');
+            }
             alert(res.message || 'Test email completed.');
-          })
-          .catch(() => {
-            alert('Test email request completed.');
+          }).catch((error) => {
+            alert(error.message || 'Could not send the test email.');
           })
           .finally(() => {
             btnTestEmail.disabled = false;
@@ -252,7 +252,6 @@
         const updateUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/update_settings/update_settings.php';
         const formData = new FormData();
 
-        formData.append('role', 'admin');
         formData.append('email_notifications', document.getElementById('setting_email_notifications')?.checked ? 'true' : 'false');
         formData.append('task_updates', document.getElementById('setting_task_updates')?.checked ? 'true' : 'false');
         formData.append('leave_status', document.getElementById('setting_leave_status')?.checked ? 'true' : 'false');
@@ -272,11 +271,11 @@
             if (res.status === 'success') {
               alert('General settings saved successfully!');
             } else {
-              alert(res.message || 'Error saving settings.');
+              throw new Error(res.message || 'Error saving settings.');
             }
           })
-          .catch(() => {
-            alert('Settings updated successfully!');
+          .catch((error) => {
+            alert(error.message || 'Could not save settings.');
           })
           .finally(() => {
             if (btn) {
