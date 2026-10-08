@@ -29,6 +29,27 @@ class leave_requests_LIST
         $this->sql_search_data .= " AND employee_id='" . $get_employee_id . "'";
     }
 
+    public function filter_for_employee($employee_id, $employee_name)
+    {
+        $data_base_obj = new DataBase();
+        $conn = $data_base_obj->get_data_base_connction();
+        $conditions = [];
+
+        if (!empty($employee_id)) {
+            $safe_employee_id = mysqli_real_escape_string($conn, trim($employee_id));
+            $conditions[] = "employee_id='" . $safe_employee_id . "'";
+        }
+
+        if (!empty($employee_name)) {
+            $safe_employee_name = mysqli_real_escape_string($conn, trim($employee_name));
+            $conditions[] = "((employee_id IS NULL OR employee_id='') AND employee_name='" . $safe_employee_name . "')";
+        }
+
+        $this->sql_search_data .= !empty($conditions)
+            ? " AND (" . implode(" OR ", $conditions) . ")"
+            : " AND 1=0";
+    }
+
     public function filter_by_employee_name($get_employee_name)
     {
         $this->sql_search_data .= " AND employee_name LIKE '%" . $get_employee_name . "%'";
