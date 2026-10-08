@@ -535,7 +535,7 @@
 
 <script>
   function fetchEmployeeSettings() {
-    var fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/fetch_settings/fetch_settings.php?role=employee';
+    var fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/fetch_settings/fetch_settings.php';
     fetch(fetchUrl)
       .then(function(res) { return res.json(); })
       .then(function(res) {
@@ -589,7 +589,6 @@
     var updateUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/update_settings/update_settings.php';
     var formData = new FormData();
 
-    formData.append('role', 'employee');
     formData.append('email_notifications', document.getElementById('settingEmailNotif')?.checked ? 'true' : 'false');
     formData.append('task_updates', document.getElementById('settingTaskUpdates')?.checked ? 'true' : 'false');
     formData.append('leave_status', document.getElementById('settingLeaveStatus')?.checked ? 'true' : 'false');
@@ -600,6 +599,9 @@
     fetch(updateUrl, { method: 'POST', body: formData })
       .then(function(res) { return res.json(); })
       .then(function(res) {
+        if (!res || res.status !== 'success') {
+          throw new Error((res && res.message) || 'Could not save preferences.');
+        }
         if (btn) {
           btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (res.message || 'Preferences Saved Successfully');
           btn.style.background = '#16a34a';
@@ -612,8 +614,8 @@
       })
       .catch(function(err) {
         if (btn) {
-          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Preferences Saved';
-          btn.style.background = '#16a34a';
+          btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + (err.message || 'Save failed');
+          btn.style.background = '#dc2626';
           setTimeout(function() {
             btn.innerHTML = originalText;
             btn.style.background = '#14204d';
