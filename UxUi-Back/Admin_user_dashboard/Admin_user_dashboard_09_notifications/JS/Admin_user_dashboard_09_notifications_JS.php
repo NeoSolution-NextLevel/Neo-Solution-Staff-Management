@@ -126,7 +126,7 @@
 
     // ---- Fetch Notifications from MySQL Database ----
     window.fetchAdminNotifications = function () {
-      const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php?role=admin';
+      const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php';
       fetch(fetchUrl)
         .then(res => res.json())
         .then(res => {
