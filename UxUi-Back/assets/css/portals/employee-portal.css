@@ -449,3 +449,74 @@ header.topbar,
         min-width: 550px !important;
     }
 }
+
+@media (max-width: 900px) {
+    [id^="Employee_user_dashboard_"] {
+        padding: 0 12px 32px !important;
+        min-width: 0 !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .content,
+    [id^="Employee_user_dashboard_"] .main,
+    [id^="Employee_user_dashboard_"] .emp-main,
+    [id^="Employee_user_dashboard_"] .main-wrapper,
+    [id^="Employee_user_dashboard_"] .content-wrapper,
+    [id^="Employee_user_dashboard_"] .dashboard-content {
+        min-width: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .content-header,
+    [id^="Employee_user_dashboard_"] .header-row,
+    [id^="Employee_user_dashboard_"] .page-header {
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .stats-grid,
+    [id^="Employee_user_dashboard_"] .stats,
+    [id^="Employee_user_dashboard_"] .charts-row,
+    [id^="Employee_user_dashboard_"] .bottom-row,
+    [id^="Employee_user_dashboard_"] .docs-grid {
+        min-width: 0 !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    [id^="Employee_user_dashboard_"] input:not([type="checkbox"]):not([type="radio"]),
+    [id^="Employee_user_dashboard_"] select,
+    [id^="Employee_user_dashboard_"] textarea {
+        max-width: 100% !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .table-wrap,
+    [id^="Employee_user_dashboard_"] .table-card,
+    [id^="Employee_user_dashboard_"] .table-responsive,
+    [id^="Employee_user_dashboard_"] .table-container {
+        min-width: 0 !important;
+    }
+
+    [id^="Employee_user_dashboard_"] img,
+    [id^="Employee_user_dashboard_"] canvas,
+    [id^="Employee_user_dashboard_"] svg {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    [id^="Employee_user_dashboard_"] {
+        padding: 0 10px 28px !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .stats-grid,
+    [id^="Employee_user_dashboard_"] .stats,
+    [id^="Employee_user_dashboard_"] .charts-row,
+    [id^="Employee_user_dashboard_"] .bottom-row,
+    [id^="Employee_user_dashboard_"] .docs-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .topbar-right {
+        gap: 6px !important;
+    }
+}
