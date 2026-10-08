@@ -1,15 +1,37 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+include_once __DIR__ . '/../../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../Controllers/Main/Leave_Requests/leave_requests_ADD_UPDATE.php';
 include_once __DIR__ . '/../../../imports/need/SystemNotifications.php';
 include_once __DIR__ . '/../../../imports/email/Email_Send.php';
 
+if (empty($_SESSION['user_id']) || (int)$_SESSION['user_id'] === 0 || !empty($_SESSION['otp_pending'])) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Authentication required.']);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
     exit;
 }
+
+$current_user = get_current_logged_user_info();
+$user_role = strtolower(trim(
+    isset($_SESSION['user_role']) && $_SESSION['user_role'] !== ''
+        ? $_SESSION['user_role']
+        : (isset($_SESSION['ac_type']) ? $_SESSION['ac_type'] : '')
+));
+$access_level = isset($_SESSION['main_user_account_access_level_list_id'])
+    ? (int)$_SESSION['main_user_account_access_level_list_id']
+    : 0;
+$is_admin = ($user_role === 'admin' || $access_level === 1 || ((int)$_SESSION['user_id'] === 1 && empty($_SESSION['admin_impersonating'])));
 
 $employee = isset($_POST['employee']) && !empty($_POST['employee']) ? trim($_POST['employee']) : 'Employee';
 $type     = isset($_POST['type']) && !empty($_POST['type']) ? trim($_POST['type']) : 'Annual Leave';
@@ -18,6 +40,15 @@ $to       = isset($_POST['to']) && !empty($_POST['to']) ? trim($_POST['to']) : $
 $days     = isset($_POST['days']) ? (int)$_POST['days'] : 1;
 $reason   = isset($_POST['reason']) ? trim($_POST['reason']) : 'Personal Leave';
 $email    = isset($_POST['email']) && !empty($_POST['email']) ? trim($_POST['email']) : '';
+$employee_id = '';
+
+if (!$is_admin) {
+    $employee = !empty($current_user['full_name']) && $current_user['full_name'] !== 'Guest'
+        ? $current_user['full_name']
+        : 'Employee';
+    $email = isset($_SESSION['user_name']) ? trim((string)$_SESSION['user_name']) : '';
+    $employee_id = !empty($current_user['emp_code']) ? $current_user['emp_code'] : '';
+}
 
 if ($days <= 0) $days = 1;
 
@@ -40,7 +71,7 @@ if ($to < $from) {
 }
 
 $leave_obj = new leave_requests_ADD_UPDATE();
-$leave_obj->set_data($employee, $type, $from, $to, $days, $reason, "Pending");
+$leave_obj->set_data($employee, $type, $from, $to, $days, $reason, "Pending", $employee_id);
 $res = $leave_obj->process_new_record();
 
 if ($res) {
