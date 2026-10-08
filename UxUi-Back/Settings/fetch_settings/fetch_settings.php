@@ -5,7 +5,26 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+include_once __DIR__ . '/../../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../../imports/need/DB.php';
+
+$session_user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+if ($session_user_id === 0 || !empty($_SESSION['otp_pending'])) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Authentication required.']);
+    exit;
+}
+
+$session_role = strtolower(trim(
+    isset($_SESSION['user_role']) && $_SESSION['user_role'] !== ''
+        ? $_SESSION['user_role']
+        : (isset($_SESSION['ac_type']) ? $_SESSION['ac_type'] : '')
+));
+$access_level = isset($_SESSION['main_user_account_access_level_list_id'])
+    ? (int)$_SESSION['main_user_account_access_level_list_id']
+    : 0;
+$is_admin = (strpos($session_role, 'admin') !== false || $access_level === 1 || ($session_user_id === 1 && empty($_SESSION['admin_impersonating'])));
+$role_param = $is_admin ? 'admin' : 'employee';
 
 $default_settings = [
     'email_notifications' => true,
@@ -35,7 +54,9 @@ try {
         PRIMARY KEY (`id`),
         UNIQUE KEY `unique_admin_user_id` (`user_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
-    $conn->query($create_admin_table);
+    if (!$conn->query($create_admin_table)) {
+        throw new RuntimeException('Could not initialize admin settings.');
+    }
 
     $create_emp_table = "CREATE TABLE IF NOT EXISTS `employee_settings` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -51,28 +72,21 @@ try {
         PRIMARY KEY (`id`),
         UNIQUE KEY `unique_employee_user_id` (`user_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
-    $conn->query($create_emp_table);
-
-    // 2. Determine target table based on requested role or session
-    $role_param = isset($_GET['role']) ? strtolower(trim($_GET['role'])) : (isset($_GET['type']) ? strtolower(trim($_GET['type'])) : '');
-    if (empty($role_param)) {
-        $sess_role = strtolower($_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? '');
-        $role_param = (strpos($sess_role, 'admin') !== false) ? 'admin' : 'employee';
+    if (!$conn->query($create_emp_table)) {
+        throw new RuntimeException('Could not initialize employee settings.');
     }
 
     $target_table = ($role_param === 'admin') ? 'admin_settings' : 'employee_settings';
 
-    // 3. Identify user
-    $user_id = $_SESSION['user_id'] ?? $_SESSION['main_user_login_id'] ?? $_SESSION['user_name'] ?? $_SESSION['user'] ?? '';
-    $user_id_esc = !empty($user_id) ? $conn->real_escape_string((string)$user_id) : '';
+    $user_id_esc = $conn->real_escape_string((string)$session_user_id);
 
-    // Fetch user settings from respective table
-    $query = !empty($user_id_esc) 
-        ? "SELECT * FROM `$target_table` WHERE `user_id` = '$user_id_esc' LIMIT 1"
-        : "SELECT * FROM `$target_table` ORDER BY `id` ASC LIMIT 1";
+    $query = "SELECT * FROM `$target_table` WHERE `user_id` = '$user_id_esc' LIMIT 1";
     $res = $conn->query($query);
+    if (!$res) {
+        throw new RuntimeException('Could not load your settings.');
+    }
 
-    if ($res && $res->num_rows > 0 && $row = $res->fetch_assoc()) {
+    if ($res->num_rows > 0 && $row = $res->fetch_assoc()) {
         $settings = [
             'email_notifications' => isset($row['email_notifications']) ? (bool)$row['email_notifications'] : true,
             'task_updates'        => isset($row['task_updates']) ? (bool)$row['task_updates'] : true,
@@ -83,11 +97,13 @@ try {
         ];
     } else {
         $settings = $default_settings;
-        $insert_uid = !empty($user_id_esc) ? $user_id_esc : '1';
+        $insert_uid = $user_id_esc;
         $ins = "INSERT INTO `$target_table` 
                 (`user_id`, `email_notifications`, `task_updates`, `leave_status`, `system_alerts`, `profile_visibility`, `activity_status`, `created_at`, `updated_at`) 
                 VALUES ('$insert_uid', 1, 1, 1, 0, 1, 0, NOW(), NOW())";
-        @$conn->query($ins);
+        if (!$conn->query($ins)) {
+            throw new RuntimeException('Could not initialize your settings.');
+        }
     }
 
     $_SESSION['app_settings'] = $settings;
@@ -104,11 +120,7 @@ try {
     $found_user_id = 0;
     $found_user_name = '';
 
-    $u_query = !empty($user_id_esc) 
-        ? "SELECT `id`, `user_name`, `ac_type`, `account_active_state`, `last_login`, `sdt` FROM `main_user_login` WHERE `id` = '$user_id_esc' OR `user_name` = '$user_id_esc' LIMIT 1"
-        : ($role_param === 'admin' 
-            ? "SELECT `id`, `user_name`, `ac_type`, `account_active_state`, `last_login`, `sdt` FROM `main_user_login` WHERE `ac_type` LIKE '%Admin%' OR `main_user_account_access_level_list_id` = '1' ORDER BY `id` ASC LIMIT 1"
-            : "SELECT `id`, `user_name`, `ac_type`, `account_active_state`, `last_login`, `sdt` FROM `main_user_login` ORDER BY `id` ASC LIMIT 1");
+    $u_query = "SELECT `id`, `user_name`, `ac_type`, `account_active_state`, `last_login`, `sdt` FROM `main_user_login` WHERE `id` = '$user_id_esc' LIMIT 1";
 
     $u_res = $conn->query($u_query);
     if ($u_res && $u_row = $u_res->fetch_assoc()) {
@@ -152,19 +164,12 @@ try {
         'data'         => $settings,
         'account_info' => $account_info
     ]);
-} catch (Exception $e) {
-    if (!isset($_SESSION['app_settings'])) {
-        $_SESSION['app_settings'] = $default_settings;
-    }
+} catch (Throwable $e) {
+    error_log('Settings fetch failed: ' . $e->getMessage());
+    http_response_code(500);
     echo json_encode([
-        'status'       => 'success',
-        'data'         => $_SESSION['app_settings'],
-        'account_info' => [
-            'account_type'   => $_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? 'User',
-            'account_status' => 'Active',
-            'last_login'     => date('Y-m-d'),
-            'member_since'   => date('Y-m-d')
-        ]
+        'status'  => 'error',
+        'message' => 'Could not load your settings.'
     ]);
 }
 exit;
