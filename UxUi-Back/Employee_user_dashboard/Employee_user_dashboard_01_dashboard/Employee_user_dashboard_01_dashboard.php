@@ -398,14 +398,16 @@
     }
 
     #Employee_user_dashboard_01 .stats {
-      gap: 8px !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 10px !important;
       margin-bottom: 11px !important;
     }
 
     #Employee_user_dashboard_01 .stat-card {
       min-width: 0 !important;
-      padding: 11px !important;
-      gap: 7px !important;
+      min-height: 112px !important;
+      padding: 12px !important;
+      gap: 8px !important;
       border-radius: 12px !important;
     }
 
@@ -468,7 +470,13 @@
 
   @media (max-width: 360px) {
     #Employee_user_dashboard_01 .stats {
-      grid-template-columns: 1fr !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 8px !important;
+    }
+
+    #Employee_user_dashboard_01 .stat-card {
+      min-height: 104px !important;
+      padding: 10px !important;
     }
   }
 </style>
