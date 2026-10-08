@@ -197,10 +197,7 @@
       }
 
       // 3. Fetch Notifications for Dashboard Widget
-      let notifUrl = pth + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php?role=employee';
-      if (baseEmpName) {
-        notifUrl += '&user=' + encodeURIComponent(baseEmpName);
-      }
+      const notifUrl = pth + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php';
       fetch(notifUrl)
         .then(res => res.json())
         .then(res => {
