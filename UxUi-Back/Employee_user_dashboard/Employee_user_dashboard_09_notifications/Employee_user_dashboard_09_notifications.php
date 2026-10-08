@@ -458,9 +458,7 @@
   }
 
   window.fetchEmpNotifications = function () {
-    const currentName = document.getElementById('empSidebarName') ? document.getElementById('empSidebarName').textContent.trim() : '';
-    const nameParam = currentName ? ('&user=' + encodeURIComponent(currentName)) : '';
-    const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php?role=employee' + nameParam;
+    const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php';
     fetch(fetchUrl)
       .then(res => res.json())
       .then(res => {
