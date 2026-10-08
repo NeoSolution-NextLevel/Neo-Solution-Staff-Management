@@ -490,7 +490,7 @@ class dashboard_details_LIST
         $activities = [];
 
         // 1. Try system_notifications table
-        $res = $data_base_obj->get_result("SELECT id, title, message, type, created_at FROM `system_notifications` ORDER BY id DESC LIMIT " . (int)$limit);
+        $res = $data_base_obj->get_result("SELECT id, title, message, type, created_at FROM `system_notifications` WHERE recipient_role = 'admin' OR recipient_role = 'all' ORDER BY id DESC LIMIT " . (int)$limit);
         if ($res && $res->num_rows > 0) {
             while ($row = $res->fetch_assoc()) {
                 $activities[] = [
