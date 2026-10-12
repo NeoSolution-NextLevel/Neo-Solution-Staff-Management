@@ -18,25 +18,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </div>
 
-    <!-- User Info (Integrated Compact) -->
-    <div class="sidebar-user">
-        <div class="sidebar-user-avatar-wrap">
-            <div class="sidebar-user-avatar"><?php 
-                if (!empty($logged_user_pic) && strtolower($logged_user_pic) !== 'null' && file_exists(__DIR__ . '/../../' . ltrim($logged_user_pic, '/\\'))) {
-                    $sb_pic = (isset($home_page) ? $home_page : '../') . htmlspecialchars($logged_user_pic);
-                    echo '<img src="' . $sb_pic . '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />';
-                } else {
-                    echo 'AD';
-                }
-            ?></div>
-            <span class="user-status-dot"></span>
-        </div>
-        <div class="sidebar-user-info">
-            <strong>Admin</strong>
-            <span>System Administrator</span>
-        </div>
-    </div>
-
     <!-- Navigation Links -->
     <nav class="sidebar-menu">
         <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_01_OPEN==='function'){ Admin_user_dashboard_01_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
@@ -136,9 +117,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     function openAdminSidebar() {
         var sb = document.getElementById('adminSidebar');
         var ov = document.getElementById('sidebarOverlay');
-        if (sb) sb.classList.add('mobile-open');
-        if (ov) ov.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        if (!sb) return;
+
+        if (window.matchMedia('(max-width: 900px)').matches) {
+            sb.classList.add('mobile-open');
+            if (ov) ov.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            return;
+        }
+
+        document.body.classList.toggle('admin-sidebar-hidden');
     }
 
     if (typeof window.logoutUser !== 'function') {
