@@ -23,6 +23,22 @@
 
   *{ box-sizing:border-box; margin:0; padding:0; }
 
+  #Employee_user_dashboard_01 {
+    padding: 0 !important;
+  }
+
+  #Employee_user_dashboard_01 .main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  #Employee_user_dashboard_01 .topbar {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 12px 0 !important;
+    padding: 0 !important;
+  }
 
   /* ---------- Welcome banner ---------- */
   .banner {
@@ -318,13 +334,16 @@
     #Employee_user_dashboard_01 .main {
       min-width: 0 !important;
       width: 100% !important;
-      padding: 0 10px 64px !important;
+      padding: 0 0 64px !important;
     }
 
     #Employee_user_dashboard_01 .topbar {
       min-width: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
       height: 56px !important;
-      padding: 8px 0 !important;
+      padding: 0 !important;
+      margin: 0 0 12px !important;
       gap: 8px !important;
     }
 
