@@ -41,6 +41,7 @@ require_login();
     include_once __DIR__ . '/../UxUi-Back/Includes/sidebar_user.php';
     ?>
 
+    <main class="employee-dashboard-content">
     <?php
     include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_JS.php';
 
@@ -77,6 +78,7 @@ require_login();
     // 10 Settings
     include_once __DIR__ . '/../UxUi-Back/Employee_user_dashboard/Employee_user_dashboard_10_settings/Employee_user_dashboard_10_settings.php';
     ?>
+    </main>
 
     <?php 
     include_once __DIR__ . '/../UxUi-Back/Includes/footer.php'; 
