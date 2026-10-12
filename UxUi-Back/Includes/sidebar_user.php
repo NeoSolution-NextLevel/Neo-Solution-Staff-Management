@@ -137,9 +137,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     function openEmployeeSidebar() {
         var sb = document.getElementById('employeeSidebar');
         var ov = document.getElementById('employeeSidebarOverlay');
-        if (sb) sb.classList.add('mobile-open');
-        if (ov) ov.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        if (!sb) return;
+
+        if (window.matchMedia('(max-width: 900px)').matches) {
+            sb.classList.add('mobile-open');
+            if (ov) ov.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            return;
+        }
+
+        document.body.classList.toggle('employee-sidebar-hidden');
     }
 
     if (typeof window.logoutUser !== 'function') {
