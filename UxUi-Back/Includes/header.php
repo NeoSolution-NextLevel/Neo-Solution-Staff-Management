@@ -158,30 +158,6 @@
             color: #14204d;
         }
 
-        .erp-mobile-toggle {
-            display: none;
-            position: fixed;
-            top: 58px;
-            left: 16px;
-            z-index: 104;
-            background: #eef2ff;
-            color: #14204d;
-            border: 1px solid #e0edff;
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .erp-mobile-toggle svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
         .erp-sidebar-overlay {
             display: none;
             position: fixed;
@@ -194,10 +170,6 @@
         }
 
         @media (max-width: 768px) {
-            .erp-mobile-toggle {
-                display: flex;
-            }
-
             .erp-header {
                 padding: 0 16px;
                 height: 58px;
@@ -226,23 +198,13 @@
             }
         }
 
-        @media (max-width: 480px) {
-            .erp-header__title-text {
-                display: none;
-            }
-        }
     </style>
 
-    <button class="erp-mobile-toggle" id="mobileToggleBtn" aria-label="Open menu" type="button">
-        <svg viewBox="0 0 24 24">
-            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-        </svg>
-    </button>
     <div class="erp-sidebar-overlay" id="sidebarOverlay"></div>
 
     <header class="erp-header">
         <div class="erp-header__title">
-            <button class="erp-header__menu" aria-label="Open menu" type="button">
+            <button class="erp-header__menu" id="mobileToggleBtn" aria-label="Open menu" type="button">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M3 12h18"/>
                     <path d="M3 6h18"/>
