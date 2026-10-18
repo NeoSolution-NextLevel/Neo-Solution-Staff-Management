@@ -10,22 +10,16 @@
   }
 
   @media (min-width: 901px) {
-    #Employee_user_dashboard_07_daily_work_plan {
-      margin-left: 260px !important;
-      width: calc(100% - 260px) !important;
-      max-width: calc(100% - 260px) !important;
-      padding: 0 24px 80px !important;
-      box-sizing: border-box !important;
+    #Employee_user_dashboard_07_daily_work_plan .workplan-step-container {
+      padding: 0 20px 36px 20px;
+      box-sizing: border-box;
     }
   }
 
   @media (max-width: 900px) {
-    #Employee_user_dashboard_07_daily_work_plan {
-      margin-left: 0 !important;
-      width: 100% !important;
-      max-width: 100vw !important;
-      padding: 0 12px 80px !important;
-      box-sizing: border-box !important;
+    #Employee_user_dashboard_07_daily_work_plan .workplan-step-container {
+      padding: 0 0 36px 0 !important;
+      box-sizing: border-box;
     }
   }
 
