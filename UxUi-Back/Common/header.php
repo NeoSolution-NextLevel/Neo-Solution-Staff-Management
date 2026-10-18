@@ -3,220 +3,327 @@
     <?php $header_included = true; ?>
 
     <style>
-        /* =========================================================
-       ERP HEADER
-       ========================================================= */
         .erp-header {
-            height: 50px;
-            background: var(--erp-primary-dark);
-            color: #fff;
+            height: 64px;
+            background: #ffffff;
+            color: #14204d;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 24px;
             font-size: 14px;
-            position: fixed;
-            width: 100%;
+            position: sticky;
             top: 0;
-            z-index: 103;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            left: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(20, 25, 60, 0.03);
             box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
         }
 
         .erp-header__title {
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .erp-header__menu {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: 12px;
+            border: 1px solid #e0edff;
+            background: #eef2ff;
+            color: #14204d;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .erp-header__menu:hover {
+            background: #e0e7ff;
+            transform: translateY(-1px);
+        }
+
+        .erp-header__menu svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .erp-header__title-text {
+            color: #14204d;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            flex-shrink: 1;
         }
 
         .erp-header__icons {
             display: flex;
-            gap: 16px;
             align-items: center;
+            gap: 12px;
             flex-shrink: 0;
         }
 
         .erp-header__icon {
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 4px;
-            transition: background 0.2s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eef2ff;
+            border: 1px solid #e0edff;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #14204d;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.15s ease, background 0.15s ease;
         }
 
         .erp-header__icon:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: #e0e7ff;
+            transform: translateY(-1px);
         }
 
-        /* Mobile Menu Toggle */
-        .erp-mobile-toggle {
-            display: none;
-            position: fixed;
-            top: 58px;
-            left: 16px;
-            z-index: 104;
-            background: var(--erp-primary);
-            color: white;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
+        .erp-header__icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .erp-header__icon--alert::after {
+            content: "";
+            position: absolute;
+            top: 7px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        .erp-header__user-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            padding: 4px 14px 4px 5px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .erp-header__user-pill:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .erp-header__user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #14204d;
+            color: #ffffff;
+            display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 11px;
+            font-weight: 800;
         }
 
-        .erp-mobile-toggle svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
+        .erp-header__user-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #14204d;
         }
 
-        /* Overlay for mobile */
+        .erp-header__auth-items {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .erp-header__portal-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #14204d;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 6px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.2px;
+        }
+
+        .erp-header__portal-link {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #14204d;
+            font-size: 12.5px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        .erp-header__brand-auth {
+            display: flex;
+            align-items: center;
+        }
+
+        .erp-header__brand-text {
+            color: #14204d;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .erp-header__portal-link:hover {
+            background: #f1f5f9;
+        }
+
         .erp-sidebar-overlay {
             display: none;
             position: fixed;
-            top: 50px;
+            top: 64px;
             left: 0;
             width: 100%;
-            height: calc(100% - 50px - 32px);
-            background: rgba(0, 0, 0, 0.5);
+            height: calc(100% - 64px);
+            background: rgba(15, 23, 42, 0.35);
             z-index: 101;
         }
 
         @media (max-width: 768px) {
-            .erp-mobile-toggle {
-                display: flex;
-            }
-
             .erp-header {
                 padding: 0 16px;
+                height: 58px;
             }
 
-            .erp-header__title {
-                font-size: 13px;
-                max-width: 180px;
-            }
-
-            .erp-header__icons {
-                gap: 6px;
+            .erp-header__title-text {
+                font-size: 18px;
+                max-width: 210px;
             }
 
             .erp-header__icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .erp-header__user-name {
+                display: none;
+            }
+
+            .erp-header__user-pill {
                 padding: 4px;
             }
 
-            .erp-header__icon svg {
-                width: 18px;
-                height: 18px;
+            .erp-header__portal-badge {
+                display: none;
             }
 
             .erp-sidebar-overlay.active {
                 display: block;
             }
-
-            @media (max-width: 480px) {
-                .erp-header__title {
-                    display: none;
-                }
-
-                .erp-header {
-                    justify-content: flex-end;
-                }
-
-                .erp-header__icons {
-                    width: 100%;
-                    justify-content: space-around;
-                }
-            }
         }
+
     </style>
 
-
-    <button class="erp-mobile-toggle" id="mobileToggleBtn">
-        <svg viewBox="0 0 24 24">
-            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-        </svg>
-    </button>
     <div class="erp-sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ================= TOP BAR ================= -->
+    <?php
+    $current_script_name = basename($_SERVER['PHP_SELF'] ?? '');
+    $is_auth_screen = (isset($is_auth_page) && $is_auth_page)
+        || (isset($page_is_auth) && $page_is_auth)
+        || in_array($current_script_name, ['User-Login.php', 'Successful-Page.php', 'User_Login_A_01.php', 'Forgot-Password.php', 'Reset-Password.php']);
+    ?>
+
     <header class="erp-header">
-
-        <div class="erp-header__title">Welcome To Metro International Duty Free (Pvt) Ltd Dashboardll</div>
-        <div class="erp-header__icons">
-            <span class="erp-header__icon" title="Notifications">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-                </svg>
-            </span>
-            <span class="erp-header__icon" title="Item Service Management" onclick="Item_Service_Management_OPEN()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                </svg>
-            </span>
-            <span class="erp-header__icon" title="User Profile" onclick="User_Profile_OPEN()" id="main_profile_page_user_profile_icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
-            </span>
-            <span class="erp-header__icon" title="Messages">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" />
-                </svg>
-            </span>
-            <span class="erp-header__icon" title="Logout" onclick="logoutUser()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
-                </svg>
-            </span>
-
-
-
-        </div>
-
+        <?php if (!$is_auth_screen && isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])): ?>
+            <div class="erp-header__title">
+                <button class="erp-header__menu" id="mobileToggleBtn" aria-label="Open menu" type="button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 12h18"/>
+                        <path d="M3 6h18"/>
+                        <path d="M3 18h18"/>
+                    </svg>
+                </button>
+                <span class="erp-header__title-text"><?php echo htmlspecialchars(!empty($page_title) ? $page_title : 'Dashboard'); ?></span>
+            </div>
+            <div class="erp-header__icons">
+                <span class="erp-header__icon erp-header__icon--alert" title="Notifications" aria-label="Notifications">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                    </svg>
+                </span>
+                <div class="erp-header__user-pill" onclick="User_Profile_OPEN()" title="Profile &amp; Settings" aria-label="User profile">
+                    <div class="erp-header__user-avatar"><?php echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'AU'); ?></div>
+                    <span class="erp-header__user-name"><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Admin'); ?></span>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="erp-header__brand-auth">
+                <span class="erp-header__brand-text">NEO Solution</span>
+            </div>
+            <div class="erp-header__auth-items">
+                <span class="erp-header__portal-badge">
+                    <i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i>
+                    Enterprise Portal
+                </span>
+                <a href="mailto:admin@neosolution.lk" class="erp-header__portal-link" title="Contact Support">
+                    <i class="fa-solid fa-circle-question" style="margin-right: 5px;"></i>
+                    Support
+                </a>
+            </div>
+        <?php endif; ?>
     </header>
 
     <script>
         function User_Profile_OPEN() {
-            window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>User-Profile<?php echo $online_offline_extention ?>"
+            window.location.href = "<?php echo isset($home_page) ? $home_page : '../'; ?><?php echo isset($User_login_url) ? $User_login_url : 'UxUi/Main/'; ?>User-Profile<?php echo isset($online_offline_extention) ? $online_offline_extention : '.php'; ?>";
         }
 
         function Item_Service_Management_OPEN() {
-            window.location.href = "<?php echo $home_page ?>/UxUi/Item-Service/Item-Service-Settings<?php echo $online_offline_extention ?>"
+            window.location.href = "<?php echo isset($home_page) ? $home_page : '../'; ?>UxUi/Item-Service/Item-Service-Settings<?php echo isset($online_offline_extention) ? $online_offline_extention : '.php'; ?>";
         }
 
         function logoutUser() {
-
             $.ajax({
-                url: "<?php echo $pth; ?>View-List/Main/Main_User_Logout.php",
+                url: "<?php echo isset($pth) ? $pth : ''; ?>View-List/Main/Main_User_Logout.php",
                 type: "POST",
                 dataType: "json",
                 success: function(json) {
-
-                    console.log(json);
-
-                    if (json[0].error === "0") {
-
+                    if (json && json[0] && json[0].error === "0") {
                         document.cookie.split(";").forEach(function(cookie) {
                             document.cookie = cookie
                                 .replace(/^ +/, "")
                                 .replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
                         });
-
                         sessionStorage.clear();
                         localStorage.clear();
-
-                        window.location.href = "<?php echo $home_page ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention ?>"
-
-
+                        window.location.href = "<?php echo isset($home_page) ? $home_page : '../'; ?><?php echo isset($User_login_url) ? $User_login_url : 'UxUi/Main/'; ?>User-Login<?php echo isset($online_offline_extention) ? $online_offline_extention : '.php'; ?>";
                     } else {
-                        alert("Logout failed: " + json[0].error);
+                        alert("Logout failed: " + (json && json[0] ? json[0].error : "Unknown error"));
                     }
                 },
                 error: function(xhr, status, error) {
@@ -226,28 +333,24 @@
             });
         }
 
-        // Header-specific JavaScript
+        // Mobile sidebar toggle if a sidebar exists on the page
         document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
             const mobileToggleBtn = document.getElementById('mobileToggleBtn');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-            if (mobileToggleBtn) {
+            if (sidebar && mobileToggleBtn) {
+                mobileToggleBtn.style.display = 'flex';
                 mobileToggleBtn.addEventListener('click', () => {
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar) {
-                        sidebar.classList.add('mobile-open');
-                        sidebarOverlay.classList.add('active');
-                    }
+                    sidebar.classList.add('mobile-open');
+                    if (sidebarOverlay) sidebarOverlay.classList.add('active');
                 });
             }
 
-            if (sidebarOverlay) {
+            if (sidebarOverlay && sidebar) {
                 sidebarOverlay.addEventListener('click', () => {
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar) {
-                        sidebar.classList.remove('mobile-open');
-                        sidebarOverlay.classList.remove('active');
-                    }
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('active');
                 });
             }
         });
