@@ -3,18 +3,15 @@
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
-    overflow-x: hidden;
   }
 
   .emp-notif-container {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
     min-width: 0;
   }
 
-  #Employee_user_dashboard_09_notifications .topbar,
   #Employee_user_dashboard_09_notifications .topbar-left,
   #Employee_user_dashboard_09_notifications .topbar-right,
   #Employee_user_dashboard_09_notifications .emp-notif-card,
@@ -222,7 +219,7 @@
   @media (max-width: 768px) {
     #Employee_user_dashboard_09_notifications .topbar {
       gap: 10px;
-      padding: 12px 14px;
+      padding: 0 12px;
     }
 
     #Employee_user_dashboard_09_notifications .topbar-left {
@@ -352,8 +349,8 @@
           <span class="dot" id="empTopNotifDot"></span>
         </div>
         <div class="admin-pill" onclick="typeof Employee_user_dashboard_02_OPEN === 'function' ? Employee_user_dashboard_02_OPEN() : null">
-          <div class="avatar" id="topAvatarNotifPreview">--</div>
-          <span id="topEmpNotifName">Loading...</span>
+          <div class="avatar" id="topAvatarNotifPreview"><?php echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'EM'); ?></div>
+          <span id="topEmpNotifName"><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></span>
         </div>
       </div>
     </div>
@@ -461,9 +458,7 @@
   }
 
   window.fetchEmpNotifications = function () {
-    const currentName = document.getElementById('empSidebarName') ? document.getElementById('empSidebarName').textContent.trim() : '';
-    const nameParam = currentName ? ('&user=' + encodeURIComponent(currentName)) : '';
-    const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php?role=employee' + nameParam;
+    const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Notifications/fetch_notification/fetch_notification.php';
     fetch(fetchUrl)
       .then(res => res.json())
       .then(res => {

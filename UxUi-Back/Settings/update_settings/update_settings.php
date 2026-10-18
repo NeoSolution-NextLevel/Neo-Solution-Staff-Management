@@ -5,7 +5,20 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+include_once __DIR__ . '/../../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../../imports/need/DB.php';
+
+if (empty($_SESSION['user_id']) || (int)$_SESSION['user_id'] === 0 || !empty($_SESSION['otp_pending'])) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Authentication required.']);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+    exit;
+}
 
 $email_notifications = isset($_POST['email_notifications']) ? ($_POST['email_notifications'] === 'true' || $_POST['email_notifications'] === '1' || $_POST['email_notifications'] === 'on' || $_POST['email_notifications'] === true) : false;
 $task_updates        = isset($_POST['task_updates']) ? ($_POST['task_updates'] === 'true' || $_POST['task_updates'] === '1' || $_POST['task_updates'] === 'on' || $_POST['task_updates'] === true) : false;
@@ -42,7 +55,9 @@ try {
         PRIMARY KEY (`id`),
         UNIQUE KEY `unique_admin_user_id` (`user_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
-    $conn->query($create_admin_table);
+    if (!$conn->query($create_admin_table)) {
+        throw new RuntimeException('Could not initialize admin settings.');
+    }
 
     $create_emp_table = "CREATE TABLE IF NOT EXISTS `employee_settings` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -58,20 +73,24 @@ try {
         PRIMARY KEY (`id`),
         UNIQUE KEY `unique_employee_user_id` (`user_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
-    $conn->query($create_emp_table);
-
-    // 2. Determine target table
-    $role_param = isset($_POST['role']) ? strtolower(trim($_POST['role'])) : '';
-    if (empty($role_param)) {
-        $sess_role = strtolower($_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? '');
-        $role_param = (strpos($sess_role, 'admin') !== false) ? 'admin' : 'employee';
+    if (!$conn->query($create_emp_table)) {
+        throw new RuntimeException('Could not initialize employee settings.');
     }
 
+    $session_user_id = (int)$_SESSION['user_id'];
+    $session_role = strtolower(trim(
+        isset($_SESSION['user_role']) && $_SESSION['user_role'] !== ''
+            ? $_SESSION['user_role']
+            : (isset($_SESSION['ac_type']) ? $_SESSION['ac_type'] : '')
+    ));
+    $access_level = isset($_SESSION['main_user_account_access_level_list_id'])
+        ? (int)$_SESSION['main_user_account_access_level_list_id']
+        : 0;
+    $is_admin = (strpos($session_role, 'admin') !== false || $access_level === 1 || ($session_user_id === 1 && empty($_SESSION['admin_impersonating'])));
+    $role_param = $is_admin ? 'admin' : 'employee';
     $target_table = ($role_param === 'admin') ? 'admin_settings' : 'employee_settings';
 
-    // 3. User identification
-    $user_id = $_SESSION['user_id'] ?? $_SESSION['main_user_login_id'] ?? $_SESSION['user_name'] ?? $_SESSION['user'] ?? '1';
-    $user_id_esc = $conn->real_escape_string((string)$user_id);
+    $user_id_esc = $conn->real_escape_string((string)$session_user_id);
 
     $en_val = $email_notifications ? 1 : 0;
     $tu_val = $task_updates ? 1 : 0;
@@ -82,7 +101,11 @@ try {
 
     // Check if record exists for this user in target table
     $chk_rec = $conn->query("SELECT `id` FROM `$target_table` WHERE `user_id` = '$user_id_esc' LIMIT 1");
-    if ($chk_rec && $chk_rec->num_rows > 0) {
+    if (!$chk_rec) {
+        throw new RuntimeException('Could not check your settings.');
+    }
+
+    if ($chk_rec->num_rows > 0) {
         $update_sql = "UPDATE `$target_table` SET 
             `email_notifications` = $en_val,
             `task_updates`        = $tu_val,
@@ -92,12 +115,16 @@ try {
             `activity_status`     = $as_val,
             `updated_at`          = NOW()
             WHERE `user_id` = '$user_id_esc'";
-        $conn->query($update_sql);
+        if (!$conn->query($update_sql)) {
+            throw new RuntimeException('Could not save your settings.');
+        }
     } else {
         $insert_sql = "INSERT INTO `$target_table` 
             (`user_id`, `email_notifications`, `task_updates`, `leave_status`, `system_alerts`, `profile_visibility`, `activity_status`, `created_at`, `updated_at`) 
             VALUES ('$user_id_esc', $en_val, $tu_val, $ls_val, $sa_val, $pv_val, $as_val, NOW(), NOW())";
-        $conn->query($insert_sql);
+        if (!$conn->query($insert_sql)) {
+            throw new RuntimeException('Could not save your settings.');
+        }
     }
 
     $_SESSION['app_settings'] = $settings;
@@ -109,12 +136,12 @@ try {
         'message' => 'Settings saved successfully.',
         'data'    => $settings
     ]);
-} catch (Exception $e) {
-    $_SESSION['app_settings'] = $settings;
+} catch (Throwable $e) {
+    error_log('Settings update failed: ' . $e->getMessage());
+    http_response_code(500);
     echo json_encode([
-        'status'  => 'success',
-        'message' => 'Settings saved.',
-        'data'    => $settings
+        'status'  => 'error',
+        'message' => 'Could not save your settings.'
     ]);
 }
 exit;

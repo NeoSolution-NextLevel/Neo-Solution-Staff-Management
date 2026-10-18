@@ -59,6 +59,9 @@
                             var errorMsg = encodeURIComponent("Temporary-Lock");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
+                        } else if (json[0].error === "Admin Access Only") {
+                            var errorMsg = encodeURIComponent("Admin-Access-Only");
+                            window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
                         } else {
 

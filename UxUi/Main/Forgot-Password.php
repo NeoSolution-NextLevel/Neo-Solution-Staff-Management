@@ -369,7 +369,7 @@
 </head>
 
 <body>
-    <?php include_once '../../UxUI-Back/Common/header.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/header.php'; ?>
     <div class="erp-container erp-container--login">
         <div class="erp-login-card">
             <!-- Header Section: Displays company branding and reset password title -->
@@ -491,7 +491,7 @@
             document.getElementById('reset-message').style.display = 'block';
         });
     </script>
-    <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
 </body>
 
 </html>

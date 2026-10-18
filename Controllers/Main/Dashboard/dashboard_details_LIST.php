@@ -222,6 +222,9 @@ class dashboard_details_LIST
                 COALESCE(NULLIF(p.department, ''), NULLIF(e.departments, ''), '') AS department,
                 COALESCE(NULLIF(p.job_title, ''), NULLIF(e.job_roles, ''), '') AS job_title,
                 COALESCE(p.profile_pic, '') AS profile_pic,
+                COALESCE((SELECT d2.ip_address FROM `main_user_login_device` d2
+                    WHERE d2.main_user_login_id = d.user_id AND d2.ast = 1
+                    ORDER BY d2.is_active DESC, d2.last_activity DESC LIMIT 1), '') AS ip_address,
                 d.first_seen_at,
                 d.last_seen_at
             FROM `daily_employee_presence` d
@@ -229,20 +232,27 @@ class dashboard_details_LIST
             LEFT JOIN `employees` e ON (e.id = d.employee_profile_id OR e.id = d.user_id OR e.main_user_login_id = d.user_id)
             LEFT JOIN `main_user_login` l ON (l.id = d.user_id OR l.id = p.user_id OR l.id = e.main_user_login_id)
             WHERE d.presence_date = CURDATE()
-            GROUP BY COALESCE(p.id, e.id, d.employee_profile_id, d.user_id)
-            ORDER BY d.last_seen_at DESC, full_name ASC";
+            ORDER BY d.last_seen_at DESC";
 
         $res = $data_base_obj->get_result($query);
+        $seenMembers = [];
         if ($res && $res->num_rows > 0) {
             while ($row = $res->fetch_assoc()) {
+                $pId = (int)$row['profile_id'];
+                $uId = (int)$row['user_id'];
+                $dedupKey = $pId > 0 ? "p_{$pId}" : "u_{$uId}";
+                if (isset($seenMembers[$dedupKey])) continue;
+                $seenMembers[$dedupKey] = true;
+
                 $members[] = [
-                    'profile_id' => (int)$row['profile_id'],
-                    'user_id' => (int)$row['user_id'],
+                    'profile_id' => $pId,
+                    'user_id' => $uId,
                     'name' => $row['full_name'] ?? 'Employee',
                     'email' => $row['email'] ?? '',
                     'department' => $row['department'] ?? '',
                     'role' => $row['job_title'] ?? '',
                     'profile_pic' => $row['profile_pic'] ?? '',
+                    'ip_address' => $row['ip_address'] ?? '',
                     'first_seen_at' => $row['first_seen_at'] ?? '',
                     'last_seen_at' => $row['last_seen_at'] ?? ''
                 ];
@@ -270,6 +280,9 @@ class dashboard_details_LIST
 
         $today = date('Y-m-d');
         $query = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
+            COALESCE((SELECT d.ip_address FROM `main_user_login_device` d
+                WHERE d.main_user_login_id = w.user_id AND d.ast = 1
+                ORDER BY d.is_active DESC, d.last_activity DESC LIMIT 1), '') AS ip_address,
                 w.submitted_at, w.updated_at, w.plan_date,
                 COALESCE(NULLIF(w.employee_name, ''), NULLIF(p.full_name, ''), NULLIF(e.fullname, ''), NULLIF(l.name_show, ''),
                     NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name, 'Employee') AS full_name,
@@ -285,7 +298,10 @@ class dashboard_details_LIST
             ORDER BY w.updated_at DESC, w.id DESC";
         $res = $data_base_obj->get_result($query);
         if (!$res || $res->num_rows === 0) {
-            $fallbackQuery = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
+                $fallbackQuery = "SELECT w.id, w.user_id, w.plan_text, w.status, w.started_at,
+                    COALESCE((SELECT d.ip_address FROM `main_user_login_device` d
+                    WHERE d.main_user_login_id = w.user_id AND d.ast = 1
+                    ORDER BY d.is_active DESC, d.last_activity DESC LIMIT 1), '') AS ip_address,
                     w.submitted_at, w.updated_at, w.plan_date,
                     COALESCE(NULLIF(w.employee_name, ''), NULLIF(p.full_name, ''), NULLIF(e.fullname, ''), NULLIF(l.name_show, ''),
                         NULLIF(CONCAT_WS(' ', l.first_name, l.last_name), ''), l.user_name, 'Employee') AS full_name,
@@ -312,6 +328,7 @@ class dashboard_details_LIST
                     'plan_text' => $row['plan_text'] ?? '',
                     'status' => $row['status'] ?? 'submitted',
                     'started_at' => $row['started_at'] ?? '',
+                    'ip_address' => $row['ip_address'] ?? '',
                     'submitted_at' => $row['submitted_at'] ?? '',
                     'updated_at' => $row['updated_at'] ?? '',
                     'plan_date' => $row['plan_date'] ?? $today
@@ -409,26 +426,38 @@ class dashboard_details_LIST
         }
 
         // Add employees from employees table if not duplicate
-        $emp_res = $data_base_obj->get_result("SELECT departments, fullname, email_address FROM `employees`");
-        if ($emp_res && $emp_res->num_rows > 0) {
-            while ($e = $emp_res->fetch_assoc()) {
-                $name = trim($e['fullname'] ?? '');
-                $email = trim($e['email_address'] ?? '');
-                if (empty($name) && empty($email)) continue;
-                if (!empty($email) && isset($seen_emails[strtolower($email)])) continue;
-                if (!empty($name) && isset($seen_names[strtolower($name)])) continue;
-
-                $dept = trim($e['departments'] ?? 'General');
-                if (empty($dept)) $dept = 'General';
-                $dept_key = strtolower($dept);
-                if (!isset($dept_counts[$dept_key])) {
-                    $dept_counts[$dept_key] = ['name' => $dept, 'count' => 0];
+        try {
+            $col_res = $data_base_obj->get_result("SHOW COLUMNS FROM `employees`");
+            $emp_cols = [];
+            if ($col_res && $col_res->num_rows > 0) {
+                while ($c = $col_res->fetch_assoc()) {
+                    $emp_cols[] = strtolower($c['Field']);
                 }
-                $dept_counts[$dept_key]['count']++;
-                if (!empty($email)) $seen_emails[strtolower($email)] = true;
-                if (!empty($name)) $seen_names[strtolower($name)] = true;
             }
-        }
+            $dept_col = in_array('department', $emp_cols) ? 'department' : (in_array('departments', $emp_cols) ? 'departments' : '');
+            if (!empty($dept_col)) {
+                $emp_res = $data_base_obj->get_result("SELECT `{$dept_col}` AS departments, fullname, email_address FROM `employees`");
+                if ($emp_res && $emp_res->num_rows > 0) {
+                    while ($e = $emp_res->fetch_assoc()) {
+                        $name = trim($e['fullname'] ?? '');
+                        $email = trim($e['email_address'] ?? '');
+                        if (empty($name) && empty($email)) continue;
+                        if (!empty($email) && isset($seen_emails[strtolower($email)])) continue;
+                        if (!empty($name) && isset($seen_names[strtolower($name)])) continue;
+
+                        $dept = trim($e['departments'] ?? 'General');
+                        if (empty($dept)) $dept = 'General';
+                        $dept_key = strtolower($dept);
+                        if (!isset($dept_counts[$dept_key])) {
+                            $dept_counts[$dept_key] = ['name' => $dept, 'count' => 0];
+                        }
+                        $dept_counts[$dept_key]['count']++;
+                        if (!empty($email)) $seen_emails[strtolower($email)] = true;
+                        if (!empty($name)) $seen_names[strtolower($name)] = true;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {}
 
         // Also ensure all registered departments from `departments` table are included
         $d_res = $data_base_obj->get_result("SELECT name, employees FROM `departments` WHERE ast = '1' OR ast IS NULL ORDER BY id ASC");
@@ -461,7 +490,7 @@ class dashboard_details_LIST
         $activities = [];
 
         // 1. Try system_notifications table
-        $res = $data_base_obj->get_result("SELECT id, title, message, type, created_at FROM `system_notifications` ORDER BY id DESC LIMIT " . (int)$limit);
+        $res = $data_base_obj->get_result("SELECT id, title, message, type, created_at FROM `system_notifications` WHERE recipient_role = 'admin' OR recipient_role = 'all' ORDER BY id DESC LIMIT " . (int)$limit);
         if ($res && $res->num_rows > 0) {
             while ($row = $res->fetch_assoc()) {
                 $activities[] = [

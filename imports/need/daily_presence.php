@@ -2,6 +2,30 @@
 
 include_once __DIR__ . '/DB.php';
 
+function get_request_ip_address()
+{
+    $addresses = array();
+
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $addresses[] = $_SERVER['HTTP_CLIENT_IP'];
+    }
+    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $addresses = array_merge($addresses, explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']));
+    }
+    if (!empty($_SERVER['REMOTE_ADDR'])) {
+        $addresses[] = $_SERVER['REMOTE_ADDR'];
+    }
+
+    foreach ($addresses as $address) {
+        $address = trim((string)$address);
+        if (filter_var($address, FILTER_VALIDATE_IP)) {
+            return $address;
+        }
+    }
+
+    return '0.0.0.0';
+}
+
 /**
  * Create today's presence record for the authenticated employee.
  * Employment status and daily activity are intentionally separate concepts.

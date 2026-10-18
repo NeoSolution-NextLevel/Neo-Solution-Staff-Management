@@ -45,6 +45,7 @@
           var pic = (d.profile_pic && d.profile_pic.trim() !== '') ? ((typeof window.pth !== 'undefined' ? window.pth : '../') + d.profile_pic) : null;
           
           window.currentEmployeeName = name;
+          window.userProfileData = d;
 
           // 1. Sync Sidebar User Block
           var sbName = document.getElementById('empSidebarName');
@@ -70,7 +71,12 @@
           document.querySelectorAll('.admin-pill, .emp-pill, .profile-pill').forEach(function(pill) {
             var nameSpan = pill.querySelector('span');
             var avatarEl = pill.querySelector('.avatar, .avatar-sm');
-            if (nameSpan) nameSpan.textContent = name;
+            if (nameSpan) {
+              var firstName = name.trim().split(/\s+/)[0] || name;
+              nameSpan.textContent = firstName;
+              nameSpan.title = name;
+              pill.title = name;
+            }
             if (avatarEl) {
               if (pic) {
                 avatarEl.innerHTML = '<img src="' + pic + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />';
@@ -84,16 +90,40 @@
           var topNameIds = ['topEmpName', 'topEmpLeaveName', 'topEmpDocName', 'topEmpNotifName'];
           topNameIds.forEach(function(id) {
             var el = document.getElementById(id);
-            if (el) el.textContent = name;
+            if (el) {
+              var firstName = name.trim().split(/\s+/)[0] || name;
+              el.textContent = firstName;
+              el.title = name;
+            }
           });
 
           // 4. Sync Welcome Banner on Dashboard
+          var firstName = name.trim().split(/\s+/)[0] || name;
           var bannerName = document.getElementById('empWelcomeBannerName');
           var bannerDept = document.getElementById('empWelcomeBannerDept');
           var bannerTag = document.getElementById('empBannerDeptTag');
           if (bannerName) bannerName.textContent = name;
           if (bannerDept) bannerDept.textContent = dept;
           if (bannerTag) bannerTag.textContent = dept;
+
+          var dashWelcome = document.getElementById('dashWelcomeTitle');
+          if (dashWelcome) dashWelcome.textContent = 'Welcome back, ' + firstName;
+          var dashSubtitle = document.getElementById('dashWelcomeSubtitle');
+          if (dashSubtitle) dashSubtitle.textContent = "Here's your work overview for today in " + dept + ".";
+          var dashDept = document.getElementById('dashEmpDept');
+          if (dashDept) dashDept.textContent = dept;
+          var dashCode = document.getElementById('dashEmpCode');
+          if (dashCode) dashCode.textContent = empId;
+          var dashTopName = document.getElementById('dashTopEmpName');
+          if (dashTopName) dashTopName.textContent = firstName;
+          var dashTopAv = document.getElementById('dashTopAvatar');
+          if (dashTopAv) {
+            if (pic) {
+              dashTopAv.innerHTML = '<img src="' + pic + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />';
+            } else {
+              dashTopAv.textContent = initials;
+            }
+          }
         }
       })
       .catch(function(err) {});

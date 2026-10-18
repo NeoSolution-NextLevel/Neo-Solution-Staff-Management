@@ -390,7 +390,7 @@
 
 <body>
     <?php
-    include_once '../../UxUI-Back/Common/header.php';
+    include_once '../../UxUi-Back/Common/header.php';
     ?>
     <div class="erp-container erp-container--login">
         <div class="erp-login-card">
@@ -777,7 +777,7 @@
             });
         });
     </script>
-    <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
 </body>
 
 </html>

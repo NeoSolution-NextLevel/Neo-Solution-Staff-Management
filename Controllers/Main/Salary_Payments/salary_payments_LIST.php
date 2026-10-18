@@ -46,6 +46,37 @@ class salary_payments_LIST
         }
     }
 
+    public function filter_for_employee($emp_id, $user_id, $emp_name) {
+        $db = new DataBase();
+        $conn = $db->get_data_base_connction();
+        $conditions = [];
+
+        if (!empty($emp_id) && trim($emp_id) !== '' && trim($emp_id) !== 'EMP-001') {
+            $cleanId = mysqli_real_escape_string($conn, trim($emp_id));
+            $conditions[] = "employee_id = '$cleanId'";
+        } elseif (!empty($emp_id) && trim($emp_id) === 'EMP-001') {
+            $cleanId = mysqli_real_escape_string($conn, trim($emp_id));
+            $conditions[] = "employee_id = '$cleanId'";
+        }
+
+        if (!empty($user_id) && (int)$user_id > 1) {
+            $uId = (int)$user_id;
+            $conditions[] = "user_id = $uId";
+        }
+
+        if (!empty($emp_name) && trim($emp_name) !== '' && trim($emp_name) !== 'Guest' && trim($emp_name) !== 'Employee') {
+            $cleanName = mysqli_real_escape_string($conn, trim($emp_name));
+            $conditions[] = "employee_name = '$cleanName'";
+        }
+
+        if (!empty($conditions)) {
+            $this->sql_search .= " AND (" . implode(" OR ", $conditions) . ")";
+        } else {
+            // No valid employee identity found; return no records
+            $this->sql_search .= " AND 1=0";
+        }
+    }
+
     public function set_limit($start, $count) {
         $this->limit = " LIMIT " . (int)$start . ", " . (int)$count;
     }
@@ -88,6 +119,18 @@ class salary_payments_LIST
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
         $conn->query($sql);
         @$conn->query("ALTER TABLE `salary_payments` ADD COLUMN IF NOT EXISTS `receipt_image` VARCHAR(500) DEFAULT ''");
+
+        // One-time cleanup of initial dummy/unassigned payment receipts
+        static $cleaned = false;
+        if (!$cleaned) {
+            $cleaned = true;
+            $flagFile = __DIR__ . '/.cleaned_dummy_receipts_v1';
+            if (!file_exists($flagFile)) {
+                $conn->query("TRUNCATE TABLE `salary_payments`");
+                $conn->query("DELETE FROM `documents` WHERE `doc_type` = 'Salary Slip / Payment Receipt'");
+                @file_put_contents($flagFile, date('Y-m-d H:i:s'));
+            }
+        }
     }
 
     public function get_all_payments() {

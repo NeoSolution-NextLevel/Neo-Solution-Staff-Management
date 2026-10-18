@@ -1,11 +1,19 @@
 <?php
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
+
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 include_once __DIR__ . '/../../../imports/need/DB.php';
+include_once __DIR__ . '/../../../imports/need/session_setup.php';
 
 $db = new DataBase();
 $conn = $db->get_data_base_connction();
@@ -24,26 +32,26 @@ $safeEmail = addslashes($userEmail);
 $profile = null;
 
 try {
-    // 0. Ensure columns exist
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `probation_start_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `probation_end_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `official_start_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `probation_status` VARCHAR(100) DEFAULT 'In Progress'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_shift` VARCHAR(100) DEFAULT '08:30 AM – 05:30 PM'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `working_days` VARCHAR(255) DEFAULT 'Mon,Tue,Wed,Thu,Fri'");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `weekly_roster` TEXT DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `schedule_start_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `schedule_end_date` DATE DEFAULT NULL");
-    @$conn->query("ALTER TABLE `employee_profiles` ADD COLUMN IF NOT EXISTS `work_mode` VARCHAR(100) DEFAULT 'On-Site (Active)'");
-
     // 1. Try to find in employee_profiles table
     $whereClauses = [];
-    if ($empProfileId > 0)  $whereClauses[] = "`id` = '{$empProfileId}'";
-    if ($mainUserId > 0)    $whereClauses[] = "`user_id` = '{$mainUserId}'";
-    if ($userId > 0)        $whereClauses[] = "(`user_id` = '{$userId}' OR `id` = '{$userId}')";
-    if (!empty($safeEmail)) $whereClauses[] = "`email` = '{$safeEmail}'";
+    if (!empty($safeEmail)) {
+        $whereClauses[] = "(`email` != '' AND `email` = '{$safeEmail}')";
+    }
+    if ($empProfileId > 0) {
+        $whereClauses[] = "`id` = '{$empProfileId}'";
+    }
+    if (!empty($_SESSION['employee_id_code'])) {
+        $safeCode = addslashes((string)$_SESSION['employee_id_code']);
+        $whereClauses[] = "`employee_id_code` = '{$safeCode}'";
+    }
+    if ($mainUserId > 0) {
+        $whereClauses[] = "(`user_id` = '{$mainUserId}'" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ")";
+    } elseif ($userId > 0) {
+        $whereClauses[] = "(`user_id` = '{$userId}'" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ")";
+    }
 
-    $whereSql = !empty($whereClauses) ? implode(' OR ', $whereClauses) : "1=1";
+    if (!empty($whereClauses)) {
+        $whereSql = implode(' OR ', $whereClauses);
     $check = $conn->query("SELECT * FROM `employee_profiles` WHERE {$whereSql} ORDER BY `id` ASC LIMIT 1");
     if ($check && $check->num_rows > 0) {
         $p = $check->fetch_assoc();
@@ -51,17 +59,21 @@ try {
 
         // Dynamic Daily Work Mode Calculation for Today
         $todayDate = date('Y-m-d');
-        $todayDay = date('D'); // 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
+            $todayDay = date('D');
         $dailyWorkMode = 'On-Site (Active)';
         $dailyModeType = 'onsite';
 
         $safeName = addslashes($name);
-        $empEmail = !empty($p['email']) ? addslashes($p['email']) : $safeEmail;
-        $chkLeave = $conn->query("SELECT id FROM `leave_requests` 
-            WHERE (`employee` = '{$safeName}' OR `email` = '{$empEmail}') 
-            AND `status` = 'Approved' 
-            AND '{$todayDate}' BETWEEN `from_date` AND `to_date` 
-            LIMIT 1");
+        $empIdVal = !empty($p['employee_id']) ? addslashes($p['employee_id']) : (!empty($p['id']) ? addslashes($p['id']) : '');
+        try {
+            $chkLeave = $conn->query("SELECT id FROM `leave_requests` 
+                WHERE (`employee_name` = '{$safeName}'" . (!empty($empIdVal) ? " OR `employee_id` = '{$empIdVal}'" : "") . ") 
+                AND `status` = 'Approved' 
+                AND '{$todayDate}' BETWEEN `from_date` AND `to_date` 
+                LIMIT 1");
+        } catch (\Throwable $e) {
+            $chkLeave = false;
+        }
 
         if ($chkLeave && $chkLeave->num_rows > 0) {
             $dailyWorkMode = 'On Leave';
@@ -93,8 +105,10 @@ try {
             }
         }
 
-        // Sync computed daily work mode to database column
+            // Sync computed daily work mode if column exists
+            try {
         @$conn->query("UPDATE `employee_profiles` SET `work_mode` = '" . addslashes($dailyWorkMode) . "' WHERE `id` = '{$p['id']}'");
+            } catch (\Throwable $e) {}
 
         $profile = [
             'id'                      => (int)$p['id'],
@@ -104,7 +118,7 @@ try {
             'phone'                   => !empty($p['phone']) ? $p['phone'] : '',
             'department'              => !empty($p['department']) ? $p['department'] : 'Engineering',
             'job_title'               => !empty($p['job_title']) ? $p['job_title'] : 'Staff',
-            'status'                  => 'active',
+                'status'                  => !empty($p['status']) ? $p['status'] : 'active',
             'join_date'               => !empty($p['join_date']) ? $p['join_date'] : date('Y-m-d'),
             'nic'                     => !empty($p['nic']) ? $p['nic'] : '',
             'dob'                     => !empty($p['dob']) ? $p['dob'] : '',
@@ -133,61 +147,125 @@ try {
         ];
 
         // Fetch employee activity_status preference
+            try {
         $empUid = !empty($p['user_id']) ? $conn->real_escape_string((string)$p['user_id']) : (string)$p['id'];
         $qSet = $conn->query("SELECT `activity_status` FROM `employee_settings` WHERE `user_id` = '$empUid' LIMIT 1");
         $profile['activity_status'] = ($qSet && $rSet = $qSet->fetch_assoc()) ? (int)$rSet['activity_status'] : 1;
-    } else {
-        // 2. Fallback to employees table
-        $empWhereClauses = [];
-        if ($empProfileId > 0)  $empWhereClauses[] = "`id` = '{$empProfileId}'";
-        if ($userId > 0)        $empWhereClauses[] = "`id` = '{$userId}'";
-        if (!empty($safeEmail)) $empWhereClauses[] = "(`email_address` = '{$safeEmail}' OR `email` = '{$safeEmail}')";
-
-        $empWhereSql = !empty($empWhereClauses) ? implode(' OR ', $empWhereClauses) : "`id` = '{$userId}'";
-        $empCheck = $conn->query("SELECT * FROM `employees` WHERE {$empWhereSql} LIMIT 1");
-        if ($empCheck && $empCheck->num_rows > 0) {
-            $e = $empCheck->fetch_assoc();
-            $fullname = !empty($e['fullname']) ? $e['fullname'] : (!empty($e['name']) ? $e['name'] : 'Employee');
-            $email = !empty($e['email_address']) ? $e['email_address'] : (!empty($e['email']) ? $e['email'] : '');
-            $dept = !empty($e['departments']) ? $e['departments'] : (!empty($e['department']) ? $e['department'] : 'Engineering');
-            $role = !empty($e['job_roles']) ? $e['job_roles'] : (!empty($e['job_role']) ? $e['job_role'] : 'Staff');
-            $phone = !empty($e['phone_number']) ? $e['phone_number'] : (!empty($e['phone']) ? $e['phone'] : '');
-            $joined = !empty($e['joined_date']) ? $e['joined_date'] : (!empty($e['joined']) ? $e['joined'] : date('Y-m-d'));
-
-            $profile = [
-                'id'                      => (int)$e['id'],
-                'user_id'                 => (int)$e['id'],
-                'full_name'               => $fullname,
-                'email'                   => $email,
-                'phone'                   => $phone,
-                'department'              => $dept,
-                'job_title'               => $role,
-                'status'                  => !empty($e['status']) ? strtolower($e['status']) : 'active',
-                'join_date'               => $joined,
-                'nic'                     => !empty($e['nic_number']) ? $e['nic_number'] : '',
-                'dob'                     => !empty($e['date_of_birth']) ? $e['date_of_birth'] : '',
-                'gender'                  => !empty($e['gender']) ? $e['gender'] : 'Male',
-                'address'                 => !empty($e['address']) ? $e['address'] : '',
-                'emergency_contact_name'  => '',
-                'emergency_contact_phone' => '',
-                'employee_id_code'        => 'EMP-' . str_pad($e['id'], 3, '0', STR_PAD_LEFT),
-                'employment_type'         => 'Full-Time',
-                'work_location'           => 'Colombo HQ',
-                'work_shift'              => '08:30 AM – 05:30 PM',
-                'working_days'            => 'Mon,Tue,Wed,Thu,Fri',
-                'weekly_roster'           => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}',
-                'work_mode'               => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
-                'today_work_mode'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
-                'today_mode_type'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'leave' : 'onsite',
-                'today_day'               => date('D'),
-                'profile_pic'             => ''
-            ];
+            } catch (\Throwable $e) {
+                $profile['activity_status'] = 1;
+            }
         }
     }
-} catch (Exception $ex) {
+
+    // 2. Fallback to employees table
+    if (!$profile) {
+        $empWhereClauses = [];
+        if (!empty($safeEmail)) {
+            $empWhereClauses[] = "(`email_address` != '' AND `email_address` = '{$safeEmail}')";
+        }
+        if ($empProfileId > 0) {
+            $empWhereClauses[] = "`id` = '{$empProfileId}'";
+        }
+        if (!empty($_SESSION['employee_id_code'])) {
+            $codeNum = (int)preg_replace('/[^0-9]/', '', (string)$_SESSION['employee_id_code']);
+            if ($codeNum > 0) {
+                $empWhereClauses[] = "`id` = {$codeNum}";
+            }
+        }
+        if (!empty($_SESSION['full_name']) && strtolower((string)$_SESSION['full_name']) !== 'guest') {
+            $safeSessName = addslashes((string)$_SESSION['full_name']);
+            $empWhereClauses[] = "`fullname` = '{$safeSessName}'";
+        }
+        if ($userId > 0) {
+            $empWhereClauses[] = "(`main_user_login_id` = '{$userId}'" . (!empty($safeEmail) ? " AND (`email_address` = '' OR `email_address` IS NULL OR `email_address` = '{$safeEmail}')" : "") . ")";
+        }
+
+        if (!empty($empWhereClauses)) {
+            $empWhereSql = implode(' OR ', $empWhereClauses);
+            $empCheck = $conn->query("SELECT * FROM `employees` WHERE {$empWhereSql} LIMIT 1");
+            if ($empCheck && $empCheck->num_rows > 0) {
+                $e = $empCheck->fetch_assoc();
+                $fullname = !empty($e['fullname']) ? $e['fullname'] : 'Employee';
+                $email = !empty($e['email_address']) ? $e['email_address'] : '';
+                $dept = !empty($e['departments']) ? $e['departments'] : 'Engineering';
+                $role = !empty($e['job_roles']) ? $e['job_roles'] : 'Staff';
+                $phone = !empty($e['phone_number']) ? $e['phone_number'] : '';
+                $joined = !empty($e['joined_date']) ? $e['joined_date'] : date('Y-m-d');
+
+                $profile = [
+                    'id'                      => (int)$e['id'],
+                    'user_id'                 => (int)($e['main_user_login_id'] ?? $userId),
+                    'full_name'               => $fullname,
+                    'email'                   => $email,
+                    'phone'                   => $phone,
+                    'department'              => $dept,
+                    'job_title'               => $role,
+                    'status'                  => !empty($e['status']) ? strtolower($e['status']) : 'active',
+                    'join_date'               => $joined,
+                    'nic'                     => !empty($e['nic_number']) ? $e['nic_number'] : '',
+                    'dob'                     => !empty($e['date_of_birth']) ? $e['date_of_birth'] : '',
+                    'gender'                  => !empty($e['gender']) ? $e['gender'] : 'Male',
+                    'address'                 => !empty($e['address']) ? $e['address'] : '',
+                    'emergency_contact_name'  => '',
+                    'emergency_contact_phone' => '',
+                    'employee_id_code'        => 'EMP-' . str_pad($e['id'], 3, '0', STR_PAD_LEFT),
+                    'employment_type'         => 'Full-Time',
+                    'work_location'           => 'Colombo HQ',
+                    'work_shift'              => '08:30 AM – 05:30 PM',
+                    'working_days'            => 'Mon,Tue,Wed,Thu,Fri',
+                    'weekly_roster'           => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}',
+                    'work_mode'               => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+                    'today_work_mode'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+                    'today_mode_type'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'leave' : 'onsite',
+                    'today_day'               => date('D'),
+                    'profile_pic'             => ''
+                ];
+            }
+        }
+    }
+
+    // 3. Fallback to active employee session info
+    if (!$profile && !empty($_SESSION['full_name']) && strtolower((string)$_SESSION['full_name']) !== 'guest') {
+        $sessName = trim((string)$_SESSION['full_name']);
+        $sessRole = !empty($_SESSION['job_title']) ? $_SESSION['job_title'] : 'Staff';
+        $sessDept = !empty($_SESSION['department']) ? $_SESSION['department'] : 'Engineering';
+        $sessCode = !empty($_SESSION['employee_id_code']) ? $_SESSION['employee_id_code'] : ('EMP-' . str_pad((string)$userId, 3, '0', STR_PAD_LEFT));
+        $sessPic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : (!empty($_SESSION['image_url']) ? $_SESSION['image_url'] : '');
+
+        $profile = [
+            'id'                      => $empProfileId > 0 ? $empProfileId : ($userId > 0 ? $userId : 1),
+            'user_id'                 => $userId,
+            'full_name'               => $sessName,
+            'email'                   => $userEmail,
+            'phone'                   => '',
+            'department'              => $sessDept,
+            'job_title'               => $sessRole,
+            'status'                  => 'active',
+            'join_date'               => date('Y-m-d'),
+            'nic'                     => '',
+            'dob'                     => '',
+            'gender'                  => 'Male',
+            'address'                 => '',
+            'emergency_contact_name'  => '',
+            'emergency_contact_phone' => '',
+            'employee_id_code'        => $sessCode,
+            'employment_type'         => 'Full-Time',
+            'work_location'           => 'Colombo HQ',
+            'work_shift'              => '08:30 AM – 05:30 PM',
+            'working_days'            => 'Mon,Tue,Wed,Thu,Fri',
+            'weekly_roster'           => '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}',
+            'work_mode'               => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+            'today_work_mode'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'On Leave' : 'On-Site (Active)',
+            'today_mode_type'         => (date('D') === 'Sat' || date('D') === 'Sun') ? 'leave' : 'onsite',
+            'today_day'               => date('D'),
+            'profile_pic'             => $sessPic
+        ];
+    }
+} catch (\Throwable $ex) {
     $profile = null;
 }
 
+ob_clean();
 echo json_encode([
     'status' => 'success',
     'data'   => $profile

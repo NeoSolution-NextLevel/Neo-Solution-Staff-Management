@@ -11,7 +11,6 @@
 
   #Employee_user_dashboard_10_settings,
   #Employee_user_dashboard_10_settings .main,
-  #Employee_user_dashboard_10_settings .topbar,
   #Employee_user_dashboard_10_settings .topbar-left,
   #Employee_user_dashboard_10_settings .topbar-right,
   #Employee_user_dashboard_10_settings .settings-box-card,
@@ -23,8 +22,22 @@
     box-sizing: border-box;
   }
 
-  #Employee_user_dashboard_10_settings {
-    overflow-x: hidden;
+  @media (min-width: 901px) {
+    #Employee_user_dashboard_10_settings {
+      margin-left: 260px !important;
+      width: calc(100% - 260px) !important;
+      max-width: calc(100% - 260px) !important;
+      padding: 0 24px 80px !important;
+      box-sizing: border-box !important;
+    }
+
+    #Employee_user_dashboard_10_settings > .main {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
   }
 
   #Employee_user_dashboard_10_settings .settings-page-head p,
@@ -347,8 +360,8 @@
         </div>
 
         <div class="admin-pill" onclick="if(typeof Employee_user_dashboard_02_OPEN==='function'){ Employee_user_dashboard_02_OPEN(); }">
-          <div class="avatar">AP</div>
-          <span>Amal</span>
+          <div class="avatar"><?php echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'EM'); ?></div>
+          <span><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></span>
         </div>
       </div>
     </div>
@@ -522,7 +535,7 @@
 
 <script>
   function fetchEmployeeSettings() {
-    var fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/fetch_settings/fetch_settings.php?role=employee';
+    var fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/fetch_settings/fetch_settings.php';
     fetch(fetchUrl)
       .then(function(res) { return res.json(); })
       .then(function(res) {
@@ -576,7 +589,6 @@
     var updateUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/update_settings/update_settings.php';
     var formData = new FormData();
 
-    formData.append('role', 'employee');
     formData.append('email_notifications', document.getElementById('settingEmailNotif')?.checked ? 'true' : 'false');
     formData.append('task_updates', document.getElementById('settingTaskUpdates')?.checked ? 'true' : 'false');
     formData.append('leave_status', document.getElementById('settingLeaveStatus')?.checked ? 'true' : 'false');
@@ -587,6 +599,9 @@
     fetch(updateUrl, { method: 'POST', body: formData })
       .then(function(res) { return res.json(); })
       .then(function(res) {
+        if (!res || res.status !== 'success') {
+          throw new Error((res && res.message) || 'Could not save preferences.');
+        }
         if (btn) {
           btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (res.message || 'Preferences Saved Successfully');
           btn.style.background = '#16a34a';
@@ -599,8 +614,8 @@
       })
       .catch(function(err) {
         if (btn) {
-          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Preferences Saved';
-          btn.style.background = '#16a34a';
+          btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + (err.message || 'Save failed');
+          btn.style.background = '#dc2626';
           setTimeout(function() {
             btn.innerHTML = originalText;
             btn.style.background = '#14204d';

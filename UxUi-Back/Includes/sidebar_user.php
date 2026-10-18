@@ -21,12 +21,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- User Profile Block (Integrated Compact) -->
     <div class="sidebar-user" id="empSidebarUserBlock">
         <div class="sidebar-user-avatar-wrap">
-            <div class="sidebar-user-avatar" id="empSidebarAvatar">--</div>
+            <div class="sidebar-user-avatar" id="empSidebarAvatar"><?php 
+                if (!empty($logged_user_pic)) {
+                    $sb_pic = (isset($home_page) ? $home_page : '../') . htmlspecialchars($logged_user_pic);
+                    echo '<img src="' . $sb_pic . '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />';
+                } else {
+                    echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : '--');
+                }
+            ?></div>
             <span class="user-status-dot"></span>
         </div>
         <div class="sidebar-user-info">
-            <strong id="empSidebarName">Loading...</strong>
-            <span id="empSidebarRole">Staff</span>
+            <strong id="empSidebarName"><?php echo htmlspecialchars(!empty($logged_user_name) && $logged_user_name !== 'Guest' ? $logged_user_name : 'Loading...'); ?></strong>
+            <span id="empSidebarRole"><?php echo htmlspecialchars(!empty($logged_user_role) ? $logged_user_role : 'Staff'); ?></span>
         </div>
     </div>
 
@@ -130,9 +137,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     function openEmployeeSidebar() {
         var sb = document.getElementById('employeeSidebar');
         var ov = document.getElementById('employeeSidebarOverlay');
-        if (sb) sb.classList.add('mobile-open');
-        if (ov) ov.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        if (!sb) return;
+
+        if (window.matchMedia('(max-width: 900px)').matches) {
+            sb.classList.add('mobile-open');
+            if (ov) ov.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            return;
+        }
+
+        document.body.classList.toggle('employee-sidebar-hidden');
     }
 
     if (typeof window.logoutUser !== 'function') {

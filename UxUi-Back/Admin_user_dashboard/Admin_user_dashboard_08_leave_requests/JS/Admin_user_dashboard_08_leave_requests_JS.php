@@ -208,6 +208,7 @@
         .then(res => {
           if (res.status === 'success' && Array.isArray(res.data)) {
             leaveRequests = res.data;
+            leaveRequests.sort((a, b) => Number(b.id) - Number(a.id));
           } else {
             leaveRequests = [];
           }

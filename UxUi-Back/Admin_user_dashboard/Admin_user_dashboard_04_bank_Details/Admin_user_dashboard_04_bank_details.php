@@ -1232,7 +1232,10 @@
         '<td><strong style="font-size:12px; white-space:nowrap;">' + month + '</strong></td>' +
         '<td><strong style="color:#059669; font-size:12px; white-space:nowrap;">LKR ' + amount + '</strong></td>' +
         '<td style="text-align:center; vertical-align:middle;">' +
-          (hasImg ? '<img src="' + imgUrl + '" style="height:30px; max-width:50px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; cursor:pointer; margin:0 auto; display:inline-block;" onclick="openAdminViewReceiptModal(\'' + jsonPayload + '\')" title="View PNG Receipt">' : '<span style="color:#94a3b8; font-size:11.5px;">No PNG</span>') +
+          '<div style="display:flex; align-items:center; justify-content:center; gap:8px;">' +
+            (hasImg ? '<img src="' + imgUrl + '" style="height:30px; max-width:44px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; cursor:pointer;" onclick="openAdminViewReceiptModal(\'' + jsonPayload + '\')" title="View PNG Receipt">' : '<span style="color:#94a3b8; font-size:11.5px;">No PNG</span>') +
+            '<button type="button" class="view-acc-btn" style="padding:4px 8px; color:#ef4444; border-color:#fecaca;" onclick="deleteAdminPaymentReceipt(' + row.id + ')" title="Delete Payment Receipt"><i class="fa-solid fa-trash-can"></i></button>' +
+          '</div>' +
         '</td>'; 
         
       tbody.appendChild(tr);
@@ -1248,11 +1251,36 @@
           '<div><span style="color:#64748b;">Employee:</span> <strong>' + empName + ' (' + empId + ')</strong></div>' +
           '<div><span style="color:#64748b;">Period:</span> <strong>' + month + '</strong></div>' +
           '<div><span style="color:#64748b;">Paid Amount:</span> <strong style="color:#059669;">LKR ' + amount + '</strong></div>' +
-        '</div>' ;
+        '</div>' +
+        '<div style="display:flex; gap:8px; margin-top:8px;">' +
+          (hasImg ? '<button type="button" class="view-acc-btn" style="flex:1; justify-content:center; padding:7px;" onclick="openAdminViewReceiptModal(\'' + jsonPayload + '\')"><i class="fa-solid fa-image"></i> View PNG</button>' : '') +
+          '<button type="button" class="view-acc-btn" style="padding:7px 12px; color:#ef4444; border-color:#fecaca;" onclick="deleteAdminPaymentReceipt(' + row.id + ')"><i class="fa-solid fa-trash-can"></i> Delete</button>' +
+        '</div>';
         mobContainer.appendChild(card);
       }
     });
   }
+
+  window.deleteAdminPaymentReceipt = function(id) {
+    if (!confirm('Are you sure you want to delete this payment receipt? It will also be removed from the employee\'s dashboard.')) return;
+    var pth = (typeof window.pth !== 'undefined' ? window.pth : '../');
+    $.ajax({
+      url: pth + "View-List/Salary_Payments/Delete_Payment.php",
+      type: "POST",
+      data: { id: id },
+      dataType: "json",
+      success: function(res) {
+        if (res && res.status === 'success') {
+          window.loadAdminPaymentReceipts();
+        } else {
+          alert((res && res.message) ? res.message : 'Could not delete payment receipt.');
+        }
+      },
+      error: function() {
+        window.loadAdminPaymentReceipts();
+      }
+    });
+  };
 
   // 3. Upload Modal Logic
   function populateUploadEmployeeDropdown(bankList) {

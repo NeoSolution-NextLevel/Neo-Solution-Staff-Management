@@ -1,11 +1,15 @@
 <?php
+@ini_set('display_errors', '0');
+@ini_set('html_errors', '0');
+ob_start();
 header('Content-Type: application/json; charset=utf-8');
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+try {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-include_once __DIR__ . '/../../../imports/need/DB.php';
+    include_once __DIR__ . '/../../../imports/need/DB.php';
 
 $db = new DataBase();
 
@@ -57,27 +61,59 @@ if (!$profile && $empId > 0) {
 // Employee login accounts can exist before an employee profile is created.
 if (!$profile && $empId > 0) {
     $aRes = $db->get_result("SELECT l.* FROM `main_user_login` l
-        INNER JOIN `main_user_account_access_level_list` a
+        LEFT JOIN `main_user_account_access_level_list` a
             ON a.id = l.main_user_account_access_level_list_id
-        WHERE l.id = {$empId} AND LOWER(a.type_of_access) = 'employee' LIMIT 1");
+        WHERE l.id = {$empId}
+          AND l.id != 1
+          AND (
+              LOWER(TRIM(COALESCE(a.type_of_access, ''))) != 'admin'
+              AND LOWER(TRIM(COALESCE(l.ac_type, ''))) != 'admin'
+          ) LIMIT 1");
     if ($aRes && ($a = $aRes->fetch_assoc())) {
         $accountName = trim((string)($a['name_show'] ?? ''));
         if ($accountName === '') $accountName = trim((string)($a['first_name'] ?? '') . ' ' . (string)($a['last_name'] ?? ''));
         if ($accountName === '') $accountName = (string)($a['user_name'] ?? 'Employee');
+        $accountEmail = (string)($a['user_name'] ?? '');
+        $accountPhone = (string)($a['phone_number'] ?? '');
+        $empCodeVal = 'EMP-' . str_pad((int)$a['id'], 3, '0', STR_PAD_LEFT);
+        $accountActive = ((int)($a['account_active_state'] ?? 1) === 1) ? 'active' : 'inactive';
+        $defaultRoster = '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}';
+
+        // Auto-provision into employee_profiles
+        $newProfId = (int)$a['id'];
+        try {
+            $safeName = addslashes($accountName);
+            $safeEmail = addslashes($accountEmail);
+            $safePhone = addslashes($accountPhone);
+            $db->get_result("INSERT INTO `employee_profiles` (
+                `user_id`, `full_name`, `email`, `phone`, `department`, `job_title`, `status`, `join_date`,
+                `employee_id_code`, `employment_type`, `work_location`, `work_shift`, `working_days`,
+                `weekly_roster`, `work_mode`, `updated_at`
+            ) VALUES (
+                {$newProfId}, '{$safeName}', '{$safeEmail}', '{$safePhone}', 'Engineering', 'Staff', '{$accountActive}', CURDATE(),
+                '{$empCodeVal}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri',
+                '" . addslashes($defaultRoster) . "', 'On-Site (Active)', NOW()
+            )");
+            $insId = (int)$db->get_id();
+            if ($insId > 0) $newProfId = $insId;
+        } catch (\Throwable $e) {}
+
         $profile = [
-            'id' => (int)$a['id'], 'user_id' => (int)$a['id'], 'full_name' => $accountName,
-            'email' => $a['user_name'] ?? '', 'phone' => $a['phone_number'] ?? '',
-            'department' => '—', 'job_title' => 'Employee Account',
-            'status' => ((int)($a['account_active_state'] ?? 1) === 1) ? 'active' : 'inactive',
-            'join_date' => '', 'nic' => '', 'dob' => '', 'gender' => '', 'address' => '',
-            'employee_id_code' => 'ACCOUNT-' . str_pad((int)$a['id'], 3, '0', STR_PAD_LEFT),
-            'work_location' => '', 'work_shift' => '', 'working_days' => '',
-            'weekly_roster' => '', 'employment_type' => 'Employee Account'
+            'id' => $newProfId, 'user_id' => (int)$a['id'], 'full_name' => $accountName,
+            'email' => $accountEmail, 'phone' => $accountPhone,
+            'department' => 'Engineering', 'job_title' => 'Staff',
+            'status' => $accountActive,
+            'join_date' => date('Y-m-d'), 'nic' => '', 'dob' => '', 'gender' => 'Male', 'address' => '',
+            'profile_pic' => '',
+            'employee_id_code' => $empCodeVal,
+            'work_location' => 'Colombo HQ', 'work_shift' => '08:30 AM – 05:30 PM', 'working_days' => 'Mon,Tue,Wed,Thu,Fri',
+            'weekly_roster' => $defaultRoster, 'employment_type' => 'Full-Time (Permanent)'
         ];
     }
 }
 
 if (!$profile) {
+    ob_end_clean();
     echo json_encode(['status' => 'error', 'message' => 'Employee profile not found.']);
     exit;
 }
@@ -106,13 +142,20 @@ $bRes = $db->get_result("SELECT * FROM `bank_details`
     WHERE `user_id` = {$userId} OR `employee_id` = '{$safeEmpCode}' OR `employee_name` = '{$safeFullName}' 
     ORDER BY `id` DESC LIMIT 1");
 if ($bRes && ($b = $bRes->fetch_assoc())) {
-    include_once __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
-    $stored_acc = !empty($b['bank_account_number']) ? $b['bank_account_number'] : (!empty($b['account_number']) ? $b['account_number'] : '');
-    $decrypted_acc = Bank_Security::decrypt($stored_acc);
-    $masked_acc = Bank_Security::mask($decrypted_acc);
-    $b['raw_account_number'] = $decrypted_acc;
-    $b['account_number'] = $decrypted_acc;
-    $b['masked_account_number'] = $masked_acc;
+    if (!class_exists('Bank_Security')) {
+        $bsPath = file_exists(__DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php')
+            ? __DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php'
+            : __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
+        if (file_exists($bsPath)) include_once $bsPath;
+    }
+    if (class_exists('Bank_Security')) {
+        $stored_acc = !empty($b['bank_account_number']) ? $b['bank_account_number'] : (!empty($b['account_number']) ? $b['account_number'] : '');
+        $decrypted_acc = Bank_Security::decrypt($stored_acc);
+        $masked_acc = Bank_Security::mask($decrypted_acc);
+        $b['raw_account_number'] = $decrypted_acc;
+        $b['account_number'] = $decrypted_acc;
+        $b['masked_account_number'] = $masked_acc;
+    }
     $bank = $b;
 }
 
@@ -150,6 +193,7 @@ if ($lRes && $lRes->num_rows > 0) {
     }
 }
 
+ob_end_clean();
 echo json_encode([
     'status' => 'success',
     'data' => [
@@ -160,5 +204,15 @@ echo json_encode([
         'tasks'      => $tasks,
         'leaves'     => $leaves
     ]
-]);
+], JSON_INVALID_UTF8_SUBSTITUTE);
+exit;
+
+} catch (\Throwable $e) {
+    ob_end_clean();
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Server error: ' . $e->getMessage()
+    ]);
+    exit;
+}
 ?>

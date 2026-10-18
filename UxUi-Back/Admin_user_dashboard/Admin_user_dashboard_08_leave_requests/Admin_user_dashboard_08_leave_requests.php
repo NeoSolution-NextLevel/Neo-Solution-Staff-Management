@@ -5,14 +5,10 @@
     min-height: 100vh;
   }
 
-  .main-wrapper {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    max-width: calc(100% - 250px);
-    min-height: 100vh;
-    padding: 16px 24px 36px;
+  .leave-main-wrapper {
+    width: 100%;
     box-sizing: border-box;
-    transition: margin-left 0.3s ease, width 0.3s ease;
+    padding: 0 20px 36px 20px;
   }
 
   /* Topbar */
@@ -38,54 +34,6 @@
     display: flex;
     align-items: center;
     gap: 12px;
-  }
-  .icon-btn {
-    background: #eef2ff;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-  }
-  .icon-btn svg { width: 18px; height: 18px; color: #14204d; }
-  .notif-dot {
-    position: absolute;
-    top: 8px;
-    right: 9px;
-    width: 7px;
-    height: 7px;
-    background: #ef4444;
-    border-radius: 50%;
-    border: 2px solid white;
-  }
-
-  .profile-pill {
-    background: #eef2ff;
-    padding: 5px 14px 5px 5px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13.5px;
-    font-weight: 700;
-    color: #14204d;
-    cursor: pointer;
-  }
-  .avatar-sm {
-    width: 30px;
-    height: 30px;
-    background: #14204d;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11.5px;
-    font-weight: 700;
   }
 
   .menu-btn {
@@ -361,12 +309,12 @@
   }
 
   /* Mobile */
-  @media (max-width: 768px) {
-    .main-wrapper {
-      margin-left: 0 !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      padding: 0 0 70px 0 !important;
+  @media (max-width: 900px) {
+    #Admin_user_dashboard_08_leave_requests {
+      padding: 0 12px 64px !important;
+    }
+    .leave-main-wrapper {
+      padding: 0 0 36px 0 !important;
     }
     .header-row {
       flex-direction: column !important;
@@ -473,10 +421,7 @@
   @media (max-width: 600px) {
     #Admin_user_dashboard_08_leave_requests {
       overflow-x: hidden !important;
-    }
-
-    #Admin_user_dashboard_08_leave_requests .main-wrapper {
-      padding: 8px 10px 64px !important;
+      padding: 0 10px 56px !important;
     }
 
     #Admin_user_dashboard_08_leave_requests .topbar {
@@ -500,19 +445,6 @@
     #Admin_user_dashboard_08_leave_requests .topbar-right {
       gap: 7px !important;
       flex-shrink: 0 !important;
-    }
-
-    #Admin_user_dashboard_08_leave_requests .profile-pill {
-      padding: 4px !important;
-    }
-
-    #Admin_user_dashboard_08_leave_requests .profile-pill > span {
-      display: none !important;
-    }
-
-    #Admin_user_dashboard_08_leave_requests .avatar-sm {
-      width: 28px !important;
-      height: 28px !important;
     }
 
     #Admin_user_dashboard_08_leave_requests .header-row {
@@ -633,29 +565,29 @@
   }
 </style>
 
-<div id="Admin_user_dashboard_08_leave_requests" style="display:none;">
-  <div class="main-wrapper">
-    
-    <!-- Topbar -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="menu-btn" id="menuBtn_08" aria-label="Open menu" onclick="typeof openAdminSidebar === 'function' ? openAdminSidebar() : null">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg>
-        </button>
-        <h2>Leave Requests</h2>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-btn" aria-label="Notifications" onclick="Admin_user_dashboard_09_OPEN();">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span class="notif-dot"></span>
-        </button>
-        <div class="profile-pill">
-          <div class="avatar-sm">AU</div>
-          <span>Admin</span>
-        </div>
-      </div>
-    </header>
+<div id="Admin_user_dashboard_08_leave_requests" style="display:none; padding: 0;">
 
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" id="menuBtn_08" aria-label="Open menu" onclick="typeof openAdminSidebar === 'function' ? openAdminSidebar() : null">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg>
+      </button>
+      <h2>Leave Requests</h2>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn" onclick="Admin_user_dashboard_09_OPEN();" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="dot"></span>
+      </div>
+      <div class="admin-pill" onclick="Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
+        <div class="avatar">AU</div>
+        <span>Admin</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="leave-main-wrapper">
     <!-- Main Content -->
     <main style="width: 100%;">
       

@@ -80,14 +80,35 @@ header.topbar,
     z-index: 99 !important;
 }
 
-/* Desktop Layout (>= 769px) */
-@media (min-width: 769px) {
-    [id^="Employee_user_dashboard_"] {
-        margin-left: 250px !important;
-        width: calc(100% - 250px) !important;
-        max-width: calc(100% - 250px) !important;
-        padding: 0 24px 80px !important;
+/* Desktop Layout (>= 901px) */
+@media (min-width: 901px) {
+    .employee-dashboard-content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        max-width: calc(100% - 260px);
+        min-height: 100vh;
+        box-sizing: border-box;
         transition: margin-left 0.3s ease, width 0.3s ease;
+    }
+
+    [id^="Employee_user_dashboard_"] {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        overflow-x: visible !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .emp-notif-container,
+    [id^="Employee_user_dashboard_"] .emp-leave-container,
+    [id^="Employee_user_dashboard_"] .workplan-container,
+    [id^="Employee_user_dashboard_"] .job-info-container,
+    [id^="Employee_user_dashboard_"] .docs-container,
+    [id^="Employee_user_dashboard_"] .emp-pd-container,
+    [id^="Employee_user_dashboard_"] .emp-prof-container,
+    [id^="Employee_user_dashboard_"] .main {
+        overflow: visible !important;
+        overflow-x: visible !important;
     }
 
     .topbar,
@@ -96,9 +117,10 @@ header.topbar,
         height: 64px !important;
         min-height: 64px !important;
         max-height: 64px !important;
-        padding: 0 24px !important;
-        margin: 0 -24px 22px -24px !important;
-        width: calc(100% + 48px) !important;
+        padding: 0 16px !important;
+        margin: 0 0 16px 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 }
 
@@ -158,6 +180,7 @@ header.topbar,
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
 }
 
 .icon-btn {
@@ -226,11 +249,12 @@ header.topbar,
     font-size: 13.5px;
     font-weight: 700;
     color: var(--navy);
-}
-
-.menu-btn,
-.toggle-menu {
-    display: none !important;
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* full screen */
@@ -369,8 +393,9 @@ header.topbar,
         align-items: center !important;
         justify-content: space-between !important;
         padding: 0 12px !important;
-        margin: 0 -12px 16px -12px !important;
-        width: calc(100% + 24px) !important;
+        margin: 0 0 16px 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
         height: 58px !important;
         min-height: 58px !important;
         max-height: 58px !important;
@@ -426,5 +451,599 @@ header.topbar,
 
     [id^="Employee_user_dashboard_"] table {
         min-width: 550px !important;
+    }
+}
+
+@media (max-width: 900px) {
+    [id^="Employee_user_dashboard_"] {
+        padding: 0 12px 32px !important;
+        min-width: 0 !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .content,
+    [id^="Employee_user_dashboard_"] .main,
+    [id^="Employee_user_dashboard_"] .emp-main,
+    [id^="Employee_user_dashboard_"] .main-wrapper,
+    [id^="Employee_user_dashboard_"] .content-wrapper,
+    [id^="Employee_user_dashboard_"] .dashboard-content {
+        min-width: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .content-header,
+    [id^="Employee_user_dashboard_"] .header-row,
+    [id^="Employee_user_dashboard_"] .page-header {
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .stats-grid,
+    [id^="Employee_user_dashboard_"] .stats,
+    [id^="Employee_user_dashboard_"] .charts-row,
+    [id^="Employee_user_dashboard_"] .bottom-row,
+    [id^="Employee_user_dashboard_"] .docs-grid {
+        min-width: 0 !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    [id^="Employee_user_dashboard_"] input:not([type="checkbox"]):not([type="radio"]),
+    [id^="Employee_user_dashboard_"] select,
+    [id^="Employee_user_dashboard_"] textarea {
+        max-width: 100% !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .table-wrap,
+    [id^="Employee_user_dashboard_"] .table-card,
+    [id^="Employee_user_dashboard_"] .table-responsive,
+    [id^="Employee_user_dashboard_"] .table-container {
+        min-width: 0 !important;
+    }
+
+    [id^="Employee_user_dashboard_"] img,
+    [id^="Employee_user_dashboard_"] canvas,
+    [id^="Employee_user_dashboard_"] svg {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    [id^="Employee_user_dashboard_"] {
+        padding: 0 10px 28px !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .stats-grid,
+    [id^="Employee_user_dashboard_"] .stats,
+    [id^="Employee_user_dashboard_"] .charts-row,
+    [id^="Employee_user_dashboard_"] .bottom-row,
+    [id^="Employee_user_dashboard_"] .docs-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    [id^="Employee_user_dashboard_"] .topbar-right {
+        gap: 6px !important;
+    }
+}
+
+:is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .topbar.topbar {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Keep the employee sidebar offset and dashboard header consistent on every page. */
+body :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .topbar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 16px !important;
+    padding: 0 16px !important;
+    background: #ffffff !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-radius: 0 !important;
+    box-shadow: 0 1px 3px rgba(20, 25, 60, .03) !important;
+    box-sizing: border-box !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 99 !important;
+}
+
+body :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .menu-btn,
+body :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .toggle-menu {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    margin: 0 6px 0 0 !important;
+    padding: 0 !important;
+    border: 1px solid #e0edff !important;
+    border-radius: 10px !important;
+    background: #eef2ff !important;
+    color: #14204d !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+}
+
+body :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .topbar h2 {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    color: #14204d !important;
+    letter-spacing: -0.3px !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+@media (min-width: 901px) {
+    body.employee-sidebar-hidden :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.employee-sidebar-hidden .employee-dashboard-content {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    body.employee-sidebar-hidden .admin-sidebar {
+        transform: translateX(-100%);
+    }
+}
+
+@media (max-width: 900px) {
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar {
+        height: 58px !important;
+        min-height: 58px !important;
+        max-height: 58px !important;
+        padding: 0 12px !important;
+    }
+}
+
+@media (min-width: 901px) {
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar {
+        height: 64px !important;
+        min-height: 64px !important;
+        max-height: 64px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 16px !important;
+        padding: 0 16px !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .employee-dashboard-content {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar {
+        height: 58px !important;
+        min-height: 58px !important;
+        max-height: 58px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 16px !important;
+        padding: 0 12px !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar {
+        width: calc(100% + 24px) !important;
+        max-width: none !important;
+        margin-left: -12px !important;
+    }
+}
+
+@media (max-width: 600px) {
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar {
+        width: calc(100% + 20px) !important;
+        max-width: none !important;
+        margin-left: -10px !important;
+    }
+
+    body #Employee_user_dashboard_02_my_profile > .emp-prof-container > .topbar,
+    body #Employee_user_dashboard_03_personal_details > .emp-pd-container > .topbar,
+    body #Employee_user_dashboard_04_documents > .docs-container > .topbar {
+        width: calc(100% + 40px) !important;
+        margin-left: -20px !important;
+    }
+}
+
+@media (max-width: 900px) {
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin-left: calc(50% - 50vw) !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ),
+    body :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) :is(.main, .emp-main, .main-wrapper, .content-wrapper, .emp-prof-container, .emp-pd-container, .docs-container) {
+        overflow: visible !important;
+    }
+}
+
+@media (max-width: 600px) {
+    body .employee-dashboard-content #Employee_user_dashboard_02_my_profile > .emp-prof-container > .topbar,
+    body .employee-dashboard-content #Employee_user_dashboard_03_personal_details > .emp-pd-container > .topbar,
+    body .employee-dashboard-content #Employee_user_dashboard_04_documents > .docs-container > .topbar {
+        width: calc(100% + 40px) !important;
+        max-width: none !important;
+        margin-left: -20px !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media (max-width: 900px) {
+    body .employee-dashboard-content :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin-left: calc(50% - 50vw) !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body .employee-dashboard-content #Employee_user_dashboard_02_my_profile > .emp-prof-container > .topbar,
+    body .employee-dashboard-content #Employee_user_dashboard_03_personal_details > .emp-pd-container > .topbar,
+    body .employee-dashboard-content #Employee_user_dashboard_04_documents > .docs-container > .topbar {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin-left: calc(50% - 50vw) !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+}
+
+body .employee-dashboard-content :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .topbar-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+}
+
+body .employee-dashboard-content :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .topbar-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 0 0 auto !important;
+}
+
+body .employee-dashboard-content :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .topbar :is(.menu-btn, .toggle-menu) {
+    margin: 0 !important;
+    flex: 0 0 38px !important;
+}
+
+body .employee-dashboard-content :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .topbar :is(.icon-btn, .admin-pill, .emp-pill, .profile-pill) {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+}
+
+body .employee-dashboard-content :is(
+    #Employee_user_dashboard_01,
+    #Employee_user_dashboard_02_my_profile,
+    #Employee_user_dashboard_03_personal_details,
+    #Employee_user_dashboard_04_documents,
+    #Employee_user_dashboard_05_bank_details,
+    #Employee_user_dashboard_06_job_information,
+    #Employee_user_dashboard_07_daily_work_plan,
+    #Employee_user_dashboard_08_leave_request,
+    #Employee_user_dashboard_09_notifications,
+    #Employee_user_dashboard_10_settings
+) .topbar :is(.admin-pill, .emp-pill, .profile-pill) .avatar {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    flex: 0 0 28px !important;
+}
+
+@media (max-width: 900px) {
+    body .employee-dashboard-content :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar :is(.admin-pill, .emp-pill, .profile-pill) {
+        width: 38px !important;
+        min-width: 38px !important;
+        max-width: 38px !important;
+        justify-content: center !important;
+        padding: 4px !important;
+    }
+
+    body .employee-dashboard-content :is(
+        #Employee_user_dashboard_01,
+        #Employee_user_dashboard_02_my_profile,
+        #Employee_user_dashboard_03_personal_details,
+        #Employee_user_dashboard_04_documents,
+        #Employee_user_dashboard_05_bank_details,
+        #Employee_user_dashboard_06_job_information,
+        #Employee_user_dashboard_07_daily_work_plan,
+        #Employee_user_dashboard_08_leave_request,
+        #Employee_user_dashboard_09_notifications,
+        #Employee_user_dashboard_10_settings
+    ) .topbar :is(.admin-pill, .emp-pill, .profile-pill) > span {
+        display: none !important;
     }
 }

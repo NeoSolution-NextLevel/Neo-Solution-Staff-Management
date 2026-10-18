@@ -53,7 +53,8 @@
    * Fetch and populate Employee Personal Details
    */
   window.fetchPersonalDetails = function () {
-    const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/fetch_profile/fetch_profile.php';
+    const baseUrl = (typeof window.homePage !== 'undefined' && window.homePage) ? window.homePage : (typeof window.pth !== 'undefined' ? window.pth : '../');
+    const fetchUrl = baseUrl + 'UxUi-Back/Employee/fetch_profile/fetch_profile.php?_t=' + new Date().getTime();
 
     fetch(fetchUrl)
       .then(res => res.json())
@@ -123,7 +124,8 @@
   window.savePersonalDetailsEdits = function (e) {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
-    const saveUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/update_profile/update_profile.php';
+    const baseUrl = (typeof window.homePage !== 'undefined' && window.homePage) ? window.homePage : ((typeof window.pth !== 'undefined' ? window.pth : '../'));
+    const saveUrl = baseUrl + 'UxUi-Back/Employee/update_profile/update_profile.php';
     const form = document.getElementById('editPersonalDetailsForm');
     const formData = new FormData(form);
     const userId = personalDetailsData.id || personalDetailsData.user_id || 1;
@@ -147,12 +149,10 @@
           showPdToast(res.message || 'Error saving changes.', 'error');
         }
       })
-      .catch(() => {
+      .catch((err) => {
         if (btn) btn.disabled = false;
-        showPdToast('Personal details updated successfully.', 'success');
-        window.closeEditPersonalDetailsModal();
-        window.fetchPersonalDetails();
-        if (typeof window.fetchEmployeeProfileData === 'function') window.fetchEmployeeProfileData();
+        showPdToast('Connection error. Please check your network and try again.', 'error');
+        console.error('Save personal details error:', err);
       });
   };
 

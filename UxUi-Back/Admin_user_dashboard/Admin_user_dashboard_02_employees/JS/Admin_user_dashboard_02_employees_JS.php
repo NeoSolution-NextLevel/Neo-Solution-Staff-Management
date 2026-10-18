@@ -105,7 +105,7 @@
                 <div class="row-actions" style="display:flex; align-items:center; justify-content:center; margin:0 auto; gap:6px;">
                   <button class="action-btn view" title="View Profile" onclick="viewEmp(${e.id})">${iconEye}</button>
                   <button class="action-btn edit" title="Edit Employee" onclick="editEmp(${e.id})">${iconEdit}</button>
-                  <button class="action-btn" title="Auto Login as ${e.name}" onclick="loginAsEmp(${Number(e.account_id || e.id)}, ${JSON.stringify(e.name || '')}, ${Number(e.id)})"
+                  <button class="action-btn" title="Auto Login as Employee" onclick="window.loginAsEmpByProfileId(${Number(e.id)})"
                     style="background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:8px; width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(99,102,241,.35); transition:all .2s;" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">${iconLoginAs}</button>
                 </div>
               </td>
@@ -339,12 +339,9 @@
           <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; gap:6px;">
             <i class="fa-solid fa-building-columns" style="color:#2563eb;"></i> Bank Account & Compensation
           </div>
-          <button type="button" id="btnToggleBankEdit" onclick="toggleBankTabEdit(true)"
-            style="padding:6px 14px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#1e293b; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05); transition:all .2s;"
-            onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#94a3b8';"
-            onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1';">
-            <i class="fa-solid fa-pen-to-square" style="color:#2563eb;"></i> ${hasBank ? 'Edit Bank Details' : 'Add Bank Details'}
-          </button>
+          <span style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; padding:3px 10px; border-radius:12px; border:1px solid #fde68a; display:inline-flex; align-items:center; gap:4px;">
+            <i class="fa-solid fa-lock"></i> Read-Only (Managed by Employee)
+          </span>
         </div>
 
         <!-- Display Mode -->
@@ -389,50 +386,9 @@
             <div style="text-align:center; padding:36px 16px; color:#94a3b8; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">
               <i class="fa-solid fa-building-columns" style="font-size:32px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
               <strong style="color:#475569; font-size:14px;">No Bank Account Registered</strong>
-              <p style="font-size:12px; margin:4px 0 14px;">No banking or salary details recorded for this employee.</p>
-              <button type="button" onclick="toggleBankTabEdit(true)" style="padding:8px 18px; border-radius:8px; background:#2563eb; color:#fff; border:none; font-weight:700; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(37,99,235,0.3);">
-                <i class="fa-solid fa-plus"></i> Add Bank Account
-              </button>
+              <p style="font-size:12px; margin:4px 0 0;">Employee has not added their bank details yet. Bank details are entered by the employee in their portal profile.</p>
             </div>
           `}
-        </div>
-
-        <!-- Inline Edit Mode Form -->
-        <div id="bankTabEditMode" style="display:none;">
-          <form id="bankTabInlineForm" onsubmit="saveBankDetailsInline(event)" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;">
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Account Holder Name *</label>
-                <input type="text" id="inlineBankHolder" value="${escapeHtml(holderName)}" required placeholder="e.g. Kasun Kalhara" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Bank Name *</label>
-                <input type="text" id="inlineBankName" list="sriLankaBanksList" value="${escapeHtml(bank ? bank.bank_name : '')}" required placeholder="e.g. Commercial Bank of Ceylon" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Branch Name *</label>
-                <input type="text" id="inlineBankBranch" value="${escapeHtml(bank ? bank.branch : '')}" required placeholder="e.g. Colombo Fort" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Account Number *</label>
-                <input type="text" id="inlineBankAccNumber" value="${escapeHtml(rawAcc)}" required placeholder="e.g. 100012345678" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:monospace; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Basic Salary (LKR)</label>
-                <input type="number" step="0.01" id="inlineBankBasicSalary" value="${basicSal > 0 ? basicSal : ''}" placeholder="0.00" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-              <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">Net Salary (LKR)</label>
-                <input type="number" step="0.01" id="inlineBankNetSalary" value="${netSal > 0 ? netSal : ''}" placeholder="0.00" style="width:100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box;">
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-              <button type="button" onclick="toggleBankTabEdit(false)" style="padding:8px 16px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#475569; font-weight:700; font-size:12.5px; cursor:pointer;">Cancel</button>
-              <button type="submit" id="btnSaveInlineBank" style="padding:8px 20px; border:none; border-radius:8px; background:#2563eb; color:#fff; font-weight:700; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(37,99,235,0.3);">
-                <i class="fa-solid fa-floppy-disk"></i> Save Bank Details
-              </button>
-            </div>
-          </form>
         </div>
       `;
     };
@@ -555,20 +511,107 @@
         const plans = data.work_plans || [];
         if (plans.length > 0) {
           wpWrap.innerHTML = `
-            <div style="display:flex; flex-direction:column; gap:12px;">
-              ${plans.map((p, idx) => `
-                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px 16px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              ${plans.map((p, idx) => {
+                const planAtts = p.plan_attachments || [];
+                const shiftAtts = p.shift_attachments || [];
+                const planPhotos = planAtts.filter(a => a.file_type === 'photo');
+                const planDocs = planAtts.filter(a => a.file_type !== 'photo');
+                const shiftPhotos = shiftAtts.filter(a => a.file_type === 'photo');
+                const shiftDocs = shiftAtts.filter(a => a.file_type !== 'photo');
+                const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+
+                return `
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
                     <div style="display:flex; align-items:center; gap:8px;">
-                      <span style="font-weight:800; font-size:13.5px; color:#14204d;">${idx === 0 ? 'Today’s Work Plan' : 'Plan for ' + escapeHtml(p.plan_date)}</span>
+                      <span style="font-weight:800; font-size:14px; color:#14204d;">${idx === 0 ? 'Today’s Work Plan (' + escapeHtml(p.plan_date) + ')' : 'Work Plan: ' + escapeHtml(p.plan_date)}</span>
                       <span class="status-badge ${p.started_at ? 'active' : ''}" style="font-size:11px; padding:3px 9px;">${p.started_at ? 'Active Today' : 'Submitted'}</span>
                     </div>
                     <span style="font-size:11.5px; color:#64748b; font-weight:600;"><i class="fa-regular fa-clock"></i> ${escapeHtml(p.updated_at || p.submitted_at || p.plan_date)}</span>
                   </div>
-                  <div style="font-size:13.5px; color:#334155; line-height:1.5; background:#ffffff; border:1px solid #f1f5f9; border-radius:8px; padding:10px 12px; white-space:pre-wrap;">${escapeHtml(p.plan_text)}</div>
-                  ${p.started_at ? `<div style="font-size:11.5px; color:#16a34a; font-weight:700; margin-top:6px;"><i class="fa-solid fa-circle-check"></i> Work started at ${escapeHtml(p.started_at)}</div>` : ''}
+
+                  <!-- Morning Plan Section -->
+                  <div style="margin-bottom:12px;">
+                    <span style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:#64748b; letter-spacing:0.4px; margin-bottom:4px;">Morning Work Plan</span>
+                    <div style="font-size:13.5px; color:#334155; line-height:1.5; background:#f8fafc; border:1px solid #f1f5f9; border-radius:8px; padding:10px 12px; white-space:pre-wrap;">${escapeHtml(p.plan_text)}</div>
+                    
+                    ${planPhotos.length > 0 ? `
+                      <div style="margin-top:8px;">
+                        <span style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;"><i class="fa-solid fa-camera"></i> Plan Photos (${planPhotos.length}):</span>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                          ${planPhotos.map(ph => `
+                            <a href="${pth + ph.file_path}" target="_blank" style="display:inline-block; border-radius:8px; overflow:hidden; border:1px solid #cbd5e1; width:64px; height:64px; background:#f1f5f9; box-shadow:0 1px 2px rgba(0,0,0,0.06);" title="${escapeHtml(ph.name)}">
+                              <img src="${pth + ph.file_path}" alt="${escapeHtml(ph.name)}" style="width:100%; height:100%; object-fit:cover;" />
+                            </a>
+                          `).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
+
+                    ${planDocs.length > 0 ? `
+                      <div style="margin-top:8px;">
+                        <span style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;"><i class="fa-solid fa-paperclip"></i> Plan Documents (${planDocs.length}):</span>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                          ${planDocs.map(d => `
+                            <div style="display:inline-flex; align-items:center; gap:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:5px 9px; font-size:12px;">
+                              <i class="fa-solid fa-file-lines" style="color:#2563eb;"></i>
+                              <span style="font-weight:600; color:#1e293b; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(d.name)}">${escapeHtml(d.name)}</span>
+                              <span style="color:#64748b; font-size:10.5px;">(${escapeHtml(d.file_size)})</span>
+                              <a href="${pth + d.file_path}" target="_blank" style="color:#2563eb; font-weight:700; text-decoration:none; margin-left:4px;" title="View"><i class="fa-solid fa-eye"></i></a>
+                              <a href="${pth + d.file_path}" download style="color:#059669; font-weight:700; text-decoration:none; margin-left:2px;" title="Download"><i class="fa-solid fa-download"></i></a>
+                            </div>
+                          `).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
+                  </div>
+
+                  <!-- Evening Shift End Update Section -->
+                  ${p.evening_update || p.shift_ended_at ? `
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px 14px; margin-top:10px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+                        <span style="font-size:11.5px; font-weight:800; text-transform:uppercase; color:#166534; letter-spacing:0.4px;">
+                          <i class="fa-solid fa-circle-check"></i> Shift Wrap-Up (${escapeHtml(p.task_status || 'Completed')})
+                        </span>
+                        ${p.shift_ended_at ? `<span style="font-size:11px; color:#15803d; font-weight:600;">Ended: ${escapeHtml(p.shift_ended_at)}</span>` : ''}
+                      </div>
+                      ${p.evening_update ? `<div style="font-size:13px; color:#1e293b; line-height:1.5; white-space:pre-wrap; margin-bottom:8px;">${escapeHtml(p.evening_update)}</div>` : ''}
+
+                      ${shiftPhotos.length > 0 ? `
+                        <div style="margin-top:8px;">
+                          <span style="font-size:11px; font-weight:700; color:#166534; display:block; margin-bottom:4px;"><i class="fa-solid fa-camera"></i> Shift Proof & Completion Photos (${shiftPhotos.length}):</span>
+                          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                            ${shiftPhotos.map(ph => `
+                              <a href="${pth + ph.file_path}" target="_blank" style="display:inline-block; border-radius:8px; overflow:hidden; border:1px solid #86efac; width:64px; height:64px; background:#ffffff; box-shadow:0 1px 2px rgba(0,0,0,0.06);" title="${escapeHtml(ph.name)}">
+                                <img src="${pth + ph.file_path}" alt="${escapeHtml(ph.name)}" style="width:100%; height:100%; object-fit:cover;" />
+                              </a>
+                            `).join('')}
+                          </div>
+                        </div>
+                      ` : ''}
+
+                      ${shiftDocs.length > 0 ? `
+                        <div style="margin-top:8px;">
+                          <span style="font-size:11px; font-weight:700; color:#166534; display:block; margin-bottom:4px;"><i class="fa-solid fa-paperclip"></i> Shift Completion Documents (${shiftDocs.length}):</span>
+                          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                            ${shiftDocs.map(d => `
+                              <div style="display:inline-flex; align-items:center; gap:6px; background:#ffffff; border:1px solid #bbf7d0; border-radius:6px; padding:5px 9px; font-size:12px;">
+                                <i class="fa-solid fa-file-lines" style="color:#16a34a;"></i>
+                                <span style="font-weight:600; color:#1e293b; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(d.name)}">${escapeHtml(d.name)}</span>
+                                <span style="color:#64748b; font-size:10.5px;">(${escapeHtml(d.file_size)})</span>
+                                <a href="${pth + d.file_path}" target="_blank" style="color:#2563eb; font-weight:700; text-decoration:none; margin-left:4px;" title="View"><i class="fa-solid fa-eye"></i></a>
+                                <a href="${pth + d.file_path}" download style="color:#059669; font-weight:700; text-decoration:none; margin-left:2px;" title="Download"><i class="fa-solid fa-download"></i></a>
+                              </div>
+                            `).join('')}
+                          </div>
+                        </div>
+                      ` : ''}
+                    </div>
+                  ` : ''}
                 </div>
-              `).join('')}
+                `;
+              }).join('')}
             </div>
           `;
         } else {
@@ -738,7 +781,9 @@
       toast.innerHTML = `<svg style="animation:spin 1s linear infinite; width:18px; height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg> Auto Logging in as <strong>${displayName}</strong>...`;
       toast.style.display = 'flex';
 
-      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const pth = (typeof window.homePage !== 'undefined' && window.homePage)
+        ? window.homePage
+        : (typeof window.pth !== 'undefined' ? window.pth : '../');
       const formData = new FormData();
       formData.append('employee_user_id', id);
       if (profileId) {
@@ -752,9 +797,19 @@
       fetch(pth + 'View-List/Main/admin_login_as_employee.php', {
         method: 'POST',
         body: formData,
-        credentials: 'same-origin'
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
       })
-        .then(res => res.json())
+        .then(res => res.text())
+        .then(raw => {
+          let res;
+          try {
+            res = JSON.parse(raw);
+          } catch (e) {
+            throw new Error(raw ? String(raw).slice(0, 180) : 'Invalid JSON');
+          }
+          return res;
+        })
         .then(res => {
           if (Array.isArray(res) && res[0] && res[0].error === '0') {
             toast.innerHTML = `<span style="font-size:18px;">✅</span> Welcome, ${res[0].emp_name || displayName}! Redirecting...`;
@@ -769,12 +824,22 @@
             if (btn && btn.tagName === 'BUTTON') { btn.disabled = false; btn.style.opacity = '1'; }
           }
         })
-        .catch(() => {
+        .catch((err) => {
           toast.style.background = '#e11d48';
-          toast.innerHTML = `<span>❌</span> Network error. Please try again.`;
-          setTimeout(() => { toast.style.display = 'none'; }, 3000);
+          const msg = (err && err.message) ? String(err.message).replace(/</g, '') : 'Network error. Please try again.';
+          toast.innerHTML = `<span>❌</span> ${msg}`;
+          setTimeout(() => { toast.style.display = 'none'; }, 4000);
           if (btn && btn.tagName === 'BUTTON') { btn.disabled = false; btn.style.opacity = '1'; }
         });
+    };
+
+    window.loginAsEmpByProfileId = function (profId) {
+      const emp = employees.find(e => Number(e.id) === Number(profId));
+      if (emp) {
+        window.loginAsEmp(Number(emp.account_id || emp.id), emp.name || '', Number(emp.id));
+      } else {
+        window.loginAsEmp(profId, '', profId);
+      }
     };
 
     window.loginAsCurrentEmp = function () {
@@ -964,13 +1029,15 @@
         formData.append('weekly_roster', weekly_roster);
         formData.append('employment_type', employment_type);
         formData.append('work_location', work_location);
-        formData.append('emergency_contact_name', document.getElementById('editEmpEmName').value.trim());
-        formData.append('emergency_contact_phone', document.getElementById('editEmpEmPhone').value.trim());
-        formData.append('employee_id_code', 'EMP-' + String(id).padStart(3, '0'));
-        formData.append('holder_name', document.getElementById('editEmpHolderName')?.value.trim() || '');
-        formData.append('bank_name', document.getElementById('editEmpBankName')?.value.trim() || '');
-        formData.append('branch', document.getElementById('editEmpBranch')?.value.trim() || '');
-        formData.append('account_number', document.getElementById('editEmpAccNumber')?.value.trim() || '');
+        formData.append('emergency_contact_name', document.getElementById('editEmpEmName')?.value.trim() || '');
+        formData.append('emergency_contact_phone', document.getElementById('editEmpEmPhone')?.value.trim() || '');
+        const currEmp = employees.find(emp => Number(emp.id) === Number(id));
+        const empCode = currEmp?.emp_code || currEmp?.employee_id_code || ('EMP-' + String(id).padStart(3, '0'));
+        const accountId = currEmp?.account_id || '';
+        formData.append('employee_id_code', empCode);
+        if (accountId) {
+          formData.append('account_id', accountId);
+        }
         formData.append('basic_salary', document.getElementById('editEmpBasicSalary')?.value || '0');
         formData.append('net_salary', document.getElementById('editEmpNetSalary')?.value || '0');
 
@@ -982,6 +1049,9 @@
               if (typeof window.fetchAdminJobRoles === 'function') {
                 window.fetchAdminJobRoles();
               }
+              if (typeof window.fetchLiveDashboardData === 'function') {
+                window.fetchLiveDashboardData();
+              }
               alert('Employee details updated successfully in database!');
               closeEditModal();
             } else {
@@ -989,6 +1059,7 @@
             }
           })
           .catch(() => {
+            if (avInput) avInput.value = '';
             window.fetchAdminEmployees();
             if (typeof window.fetchAdminJobRoles === 'function') {
               window.fetchAdminJobRoles();
@@ -998,6 +1069,48 @@
           });
       });
     }
+
+    // Direct Avatar Upload from Admin View Employee Modal
+    window.uploadAdminEmployeeAvatar = function (input) {
+      if (!input.files || !input.files[0]) return;
+      if (!currentlyViewingEmpId && !currentlyViewingAccountId) {
+        alert('Please select an employee first.');
+        return;
+      }
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('avatar_file', file);
+      if (currentlyViewingEmpId) formData.append('id', currentlyViewingEmpId);
+      if (currentlyViewingEmpId) formData.append('profile_id', currentlyViewingEmpId);
+      if (currentlyViewingAccountId) formData.append('user_id', currentlyViewingAccountId);
+
+      const uploadUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/upload_avatar/upload_avatar.php';
+
+      fetch(uploadUrl, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(res => {
+          input.value = '';
+          if (res.status === 'success') {
+            const avatarWrap = document.getElementById('viewEmpAvatar');
+            if (avatarWrap) {
+              const pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + res.avatar_url;
+              avatarWrap.innerHTML = `<img src="${pth}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
+            }
+            if (currentlyViewingEmployee) {
+              currentlyViewingEmployee.profile_pic = res.avatar_url;
+            }
+            alert('Employee profile photo updated successfully!');
+            window.fetchAdminEmployees();
+          } else {
+            alert(res.message || 'Failed to upload photo.');
+          }
+        })
+        .catch(err => {
+          input.value = '';
+          console.error('Admin avatar upload error:', err);
+          alert('Failed to upload employee profile photo.');
+        });
+    };
 
     // ---- Add Employee Modal Handler ----
     const addEmpModal = document.getElementById('addEmpModal');
@@ -1146,14 +1259,9 @@
               alert(res.message || 'Error adding employee.');
             }
           })
-          .catch(() => {
-            alert('Employee added successfully.');
-            addEmpForm.reset();
-            closeAddModal();
-            window.fetchAdminEmployees();
-            if (typeof window.fetchAdminJobRoles === 'function') {
-              window.fetchAdminJobRoles();
-            }
+          .catch((err) => {
+            alert('Error adding employee: The server crashed or returned invalid data.');
+            console.error('Add employee error:', err);
           });
       });
     }

@@ -20,7 +20,7 @@ class Cook_Createing
         $data_base = $data_base_obj->get_data_base_connction();
         $sql_query = "select * from main_user_login where id='" . $this->user_id . "'";
         $result = $data_base->query($sql_query);
-        if ($result->num_rows > 0) {
+        if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $this->cook_id = $row['cook_key'];
                 $this->email = $row['user_name'];

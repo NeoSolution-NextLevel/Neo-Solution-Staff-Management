@@ -1,5 +1,6 @@
 <?php 
 include_once __DIR__ . '/../imports/need/session_setup.php';
+require_login(['admin']);
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +14,7 @@ include_once __DIR__ . '/../imports/need/session_setup.php';
     <link rel="stylesheet" href="../UxUi-Back/assets/css/erp-theme.css">
     <title>Admin Portal | NEO Solution</title>
     <link rel="stylesheet" href="../UxUi-Back/assets/css/portals/sidebar-admin.css">
-    <link rel="stylesheet" href="../UxUi-Back/assets/css/portals/admin-portal.css">
+    <link rel="stylesheet" href="../UxUi-Back/assets/css/portals/admin-portal.css?v=<?php echo filemtime(__DIR__ . '/../UxUi-Back/assets/css/portals/admin-portal.css'); ?>">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -22,12 +23,11 @@ include_once __DIR__ . '/../imports/need/session_setup.php';
 
 
 <script type="text/javascript">
+        window.pth = <?php echo json_encode(isset($pth) && $pth !== '' ? $pth : '../'); ?>;
+        window.homePage = <?php echo json_encode(isset($home_page) ? rtrim($home_page, '/') . '/' : '../'); ?>;
         document.addEventListener("DOMContentLoaded", function() {
             Admin_user_dashboard_close_all();
-           
-            
             Admin_user_dashboard_01_OPEN();
-            
         });
 </script>
 

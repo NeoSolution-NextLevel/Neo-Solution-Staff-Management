@@ -34,13 +34,17 @@
 
   a { text-decoration:none; color:inherit; }
 
+  #Admin_user_dashboard_01 {
+    padding: 0 !important;
+  }
+
   /* ---------- Main Dashboard Wrapper ---------- */
   .main {
     flex: 1;
     min-width: 0;
     width: 100%;
     max-width: 100%;
-    padding: 16px 20px 24px;
+    padding: 0;
     display: flex;
     flex-direction: column;
   }
@@ -50,9 +54,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
+    margin: 0 0 16px 0;
+    padding: 0 0 12px 0;
     border-bottom: 1px solid var(--border);
+    width: 100%;
+    max-width: 100%;
   }
 
   .topbar-left {
@@ -732,13 +738,14 @@
       width: 100% !important;
       max-width: 100% !important;
       min-width: 0 !important;
-      padding: 0 10px 72px !important;
+      padding: 0 0 72px !important;
       overflow-x: hidden !important;
     }
     #Admin_user_dashboard_01 .topbar {
-      width: calc(100% + 20px) !important;
-      margin: 0 -10px 12px !important;
-      padding: 0 10px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 0 12px !important;
+      padding: 0 !important;
       height: 58px !important;
       min-height: 58px !important;
       max-height: 58px !important;

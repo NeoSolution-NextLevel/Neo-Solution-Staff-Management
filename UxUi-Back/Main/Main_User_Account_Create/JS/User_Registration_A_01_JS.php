@@ -124,18 +124,17 @@
         opt1.textContent = "Employee";
         opt1.selected = true;
         container.appendChild(opt1);
-
-        var opt2 = document.createElement("option");
-        opt2.value = "1";
-        opt2.textContent = "Admin";
-        container.appendChild(opt2);
     }
 
     function User_Registration_A_01_main_user_account_access_level_list_SET_DATA(json) {
+        // Exclude Admin from public registration: only database admins are allowed
+        if (json.id == "1" || (json.type_of_access && json.type_of_access.toLowerCase() === 'admin')) {
+            return;
+        }
         var select = document.getElementById("User_Registration_A_01_val_05_select_obj");
         var option = document.createElement("option");
         option.value = json.id;
-        option.textContent = (json.type_of_access === 'admin' ? 'Admin' : json.type_of_access);
+        option.textContent = json.type_of_access;
         if (json.id == "2" || json.type_of_access.toLowerCase() === 'employee') {
             option.selected = true;
         }

@@ -1,5 +1,6 @@
 <?php
-include_once '../../imports/need/session_setup.php'
+include_once '../../imports/need/session_setup.php';
+require_login();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -490,15 +491,15 @@ include_once '../../imports/need/session_setup.php'
     </script>
 
 
-    <?php include_once '../../UxUI-Back/Common/header.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/header.php'; ?>
 
     <?php
-    include_once '../../UxUI-Back/Main/manage-logged-devices/manage_logged_devices.php';
-    include_once '../../UxUI-Back/Main/manage-logged-devices/JS/manage_logged_devices_JS.php';
+    include_once '../../UxUi-Back/Main/manage-logged-devices/manage_logged_devices.php';
+    include_once '../../UxUi-Back/Main/manage-logged-devices/JS/manage_logged_devices_JS.php';
     ?>
 
 
-    <?php include_once '../../UxUI-Back/Common/footer.php'; ?>
+    <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
 </body>
 
 </html>

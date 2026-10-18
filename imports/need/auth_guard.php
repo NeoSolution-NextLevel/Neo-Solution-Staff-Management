@@ -29,6 +29,18 @@ function get_user_access_level_id()
     return isset($_SESSION['main_user_account_access_level_list_id']) ? $_SESSION['main_user_account_access_level_list_id'] : '';
 }
 
+function is_logged_in()
+{
+    return !empty($_SESSION['user_id']) && (int)$_SESSION['user_id'] !== 0 && empty($_SESSION['otp_pending']);
+}
+
+function get_login_page_url()
+{
+    $base = isset($GLOBALS['home_page']) ? $GLOBALS['home_page'] : '/';
+    $ext = isset($GLOBALS['online_offline_extention']) ? $GLOBALS['online_offline_extention'] : '.php';
+    return rtrim($base, '/') . '/UxUi/Main/User-Login' . $ext;
+}
+
 function get_access_level_redirect_url($accessLevelId)
 {
     if (empty($accessLevelId)) {
@@ -56,10 +68,18 @@ function get_access_level_redirect_url($accessLevelId)
 
 function get_dashboard_redirect_url()
 {
-    $default = rtrim($GLOBALS['home_page'], '/') . '/UxUi/Main/Successful-Page.php';
-    $roleValue = normalize_role_value(get_user_role_value());
-    $accessLevelId = get_user_access_level_id();
+    $base = isset($GLOBALS['home_page']) ? $GLOBALS['home_page'] : '/';
+    $ext = isset($GLOBALS['online_offline_extention']) ? $GLOBALS['online_offline_extention'] : '.php';
 
+    if (!empty($_SESSION['url_home'])) {
+        $sessHome = trim($_SESSION['url_home']);
+        if (stripos($sessHome, 'http://') === 0 || stripos($sessHome, 'https://') === 0) {
+            return $sessHome;
+        }
+        return rtrim($base, '/') . '/' . ltrim($sessHome, '/');
+    }
+
+    $accessLevelId = get_user_access_level_id();
     if ($accessLevelId !== '') {
         $accessLevelTarget = get_access_level_redirect_url($accessLevelId);
         if ($accessLevelTarget !== '') {
@@ -70,24 +90,32 @@ function get_dashboard_redirect_url()
 
             $accessLevelTarget = normalize_role_value($accessLevelTarget);
             if (strpos($accessLevelTarget, 'admin') !== false) {
-                return rtrim($GLOBALS['home_page'], '/') . '/UxUi/Admin_user_dashboard.php';
+                return rtrim($base, '/') . '/UxUi/Admin_user_dashboard' . $ext;
             }
             if (strpos($accessLevelTarget, 'employee') !== false || strpos($accessLevelTarget, 'user') !== false || strpos($accessLevelTarget, 'staff') !== false) {
-                return rtrim($GLOBALS['home_page'], '/') . '/UxUi/Main-Dashboard.php';
+                return rtrim($base, '/') . '/UxUi/Employee_user_dashboard' . $ext;
             }
         }
     }
 
+    $roleValue = normalize_role_value(get_user_role_value());
     if ($roleValue !== '') {
         if (strpos($roleValue, 'admin') !== false || strpos($roleValue, 'manager') !== false || strpos($roleValue, 'super') !== false) {
-            return rtrim($GLOBALS['home_page'], '/') . '/UxUi/Admin_user_dashboard.php';
+            return rtrim($base, '/') . '/UxUi/Admin_user_dashboard' . $ext;
         }
         if (strpos($roleValue, 'employee') !== false || strpos($roleValue, 'user') !== false || strpos($roleValue, 'staff') !== false) {
-            return rtrim($GLOBALS['home_page'], '/') . '/UxUi/Main-Dashboard.php';
+            return rtrim($base, '/') . '/UxUi/Employee_user_dashboard' . $ext;
         }
     }
 
-    return $default;
+    return rtrim($base, '/') . '/UxUi/Employee_user_dashboard' . $ext;
+}
+
+function redirect_to_login_page()
+{
+    $loginUrl = get_login_page_url();
+    header('Location: ' . $loginUrl);
+    exit;
 }
 
 function redirect_to_failed_page($error = 'Authentication-Required')
@@ -97,20 +125,39 @@ function redirect_to_failed_page($error = 'Authentication-Required')
     exit;
 }
 
-function require_auth_guard($allowedRolePatterns = [])
+function require_login($allowedRolePatterns = [])
 {
-    if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] == 0) {
-        redirect_to_failed_page('Authentication-Required');
+    if (!is_logged_in()) {
+        redirect_to_login_page();
     }
 
     if (!empty($allowedRolePatterns)) {
         $roleValue = normalize_role_value(get_user_role_value());
+        $matched = false;
         foreach ($allowedRolePatterns as $pattern) {
             if (strpos($roleValue, normalize_role_value($pattern)) !== false) {
-                return;
+                $matched = true;
+                break;
             }
         }
 
-        redirect_to_failed_page('Access-Denied');
+        if (!$matched) {
+            header('Location: ' . get_dashboard_redirect_url());
+            exit;
+        }
     }
 }
+
+function require_auth_guard($allowedRolePatterns = [])
+{
+    require_login($allowedRolePatterns);
+}
+
+function redirect_if_logged_in()
+{
+    if (is_logged_in()) {
+        header('Location: ' . get_dashboard_redirect_url());
+        exit;
+    }
+}
+

@@ -38,7 +38,12 @@ class DataBase
 
     public function __destruct()
     {
-        $this->close_connction();
+        // Safe destructor: let PHP GC manage connection or close safely without throwing
+        try {
+            $this->close_connction();
+        } catch (\Throwable $e) {
+            // Never throw inside a destructor
+        }
     }
 
     public function get_data_base_connction()
@@ -47,7 +52,12 @@ class DataBase
             return $this->db_connction;
         }
 
-        $this->db_connction = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+        // Prevent fatal uncaught mysqli_sql_exception in PHP 8.1+
+        if (function_exists('mysqli_report')) {
+            @mysqli_report(MYSQLI_REPORT_OFF);
+        }
+
+        $this->db_connction = @new mysqli($this->servername, $this->username, $this->password, $this->dbname);
         if ($this->db_connction->connect_error) {
             die("Connection failed: " . $this->db_connction->connect_error);
         }
@@ -57,8 +67,13 @@ class DataBase
 
     public function close_connction()
     {
-        if ($this->db_connction) {
-            $this->db_connction->close();
+        try {
+            if ($this->db_connction instanceof mysqli) {
+                @$this->db_connction->close();
+            }
+        } catch (\Throwable $e) {
+            // Suppress any error if connection is already closed or has active results
+        } finally {
             $this->db_connction = null;
         }
     }
@@ -66,7 +81,11 @@ class DataBase
     public function get_result($get_sql_query)
     {
         $this->get_data_base_connction();
-        return $this->db_connction->query($get_sql_query);
+        try {
+            return $this->db_connction->query($get_sql_query);
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     public function get_id()

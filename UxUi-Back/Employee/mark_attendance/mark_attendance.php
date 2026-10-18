@@ -80,7 +80,7 @@ if ($res && $res->num_rows > 0) {
     ]);
 } else {
     // If no row exists, create initial row
-    $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `attendance_days`, `last_attendance_date`, `created_at`) VALUES ('$userId', 'Employee', 1, '$today', NOW())");
+    $conn->query("INSERT INTO `employee_profiles` (`user_id`, `full_name`, `attendance_days`, `last_attendance_date`, `updated_at`) VALUES ('$userId', 'Employee', 1, '$today', NOW())");
     echo json_encode([
         'status'               => 'success',
         'message'              => 'First day attendance marked successfully!',
