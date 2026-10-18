@@ -610,11 +610,32 @@ body.admin-sidebar-hidden .admin-sidebar {
         #Admin_user_dashboard_10_settings,
         #Employee_user_dashboard_03_personal_details
     ) .topbar.topbar {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        margin-left: calc(50% - 50vw) !important;
-        margin-right: 0 !important;
+        width: calc(100% + 24px) !important;
+        max-width: none !important;
+        margin-left: -12px !important;
+        margin-right: -12px !important;
         box-sizing: border-box !important;
+    }
+
+    @media (max-width: 600px) {
+        body :is(
+            #Admin_user_dashboard_01,
+            #Admin_user_dashboard_02_employees,
+            #Admin_user_dashboard_03_documents,
+            #Admin_user_dashboard_04_bank_details,
+            #Admin_user_dashboard_05_departments,
+            #Admin_user_dashboard_06_job_roles,
+            #Admin_user_dashboard_07_task_management,
+            #Admin_user_dashboard_08_leave_requests,
+            #Admin_user_dashboard_09_notifications,
+            #Admin_user_dashboard_10_settings,
+            #Employee_user_dashboard_03_personal_details
+        ) .topbar.topbar {
+            width: calc(100% + 20px) !important;
+            max-width: none !important;
+            margin-left: -10px !important;
+            margin-right: -10px !important;
+        }
     }
 
     body :is(
@@ -695,9 +716,10 @@ body :is(
         #Admin_user_dashboard_10_settings,
         #Employee_user_dashboard_03_personal_details
     ) .topbar.topbar {
-        width: calc(100vw - 260px) !important;
-        max-width: calc(100vw - 260px) !important;
+        width: 100% !important;
+        max-width: 100% !important;
         margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 
     body.admin-sidebar-hidden :is(
@@ -713,8 +735,10 @@ body :is(
         #Admin_user_dashboard_10_settings,
         #Employee_user_dashboard_03_personal_details
     ) .topbar.topbar {
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 }
 
