@@ -54,102 +54,23 @@
     word-break: break-word;
   }
 
-  /* Top Navigation Bar */
-  .emp-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
+  .emp-leave-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
   }
 
-  .emp-topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  @media (min-width: 901px) {
+    .emp-leave-container {
+      padding: 0 20px 36px 20px;
+    }
   }
 
-  .emp-topbar h2 {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--navy);
-    letter-spacing: -0.3px;
-    margin: 0;
-  }
-
-  .emp-menu-btn {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    background: var(--blue-lighter);
-    border: none;
-    cursor: pointer;
-    color: var(--navy);
-    margin-right: 6px;
-  }
-  .emp-menu-btn svg { width: 20px; height: 20px; }
-
-  .emp-topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .emp-icon-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--blue-lighter);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    cursor: pointer;
-    border: none;
-  }
-  .emp-icon-btn svg {
-    width: 18px;
-    height: 18px;
-    color: var(--navy);
-  }
-  .emp-dot {
-    position: absolute;
-    top: 8px;
-    right: 9px;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--red);
-    border: 2px solid var(--card);
-  }
-
-  .emp-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--blue-lighter);
-    padding: 5px 14px 5px 5px;
-    border-radius: 999px;
-    cursor: pointer;
-  }
-  .emp-pill .avatar {
-    width: 30px;
-    height: 30px;
-    font-size: 11.5px;
-    background: var(--blue);
-    color: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-  }
-  .emp-pill span {
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--navy);
+  @media (max-width: 900px) {
+    .emp-leave-container {
+      padding: 0 0 36px 0 !important;
+    }
   }
 
   /* Page Head */
@@ -572,28 +493,27 @@
 </style>
 
 <div id="Employee_user_dashboard_08_leave_request" class="emp-main" style="display:none; padding:0;">
-  <div class="emp-leave-container">
-    
-    <!-- Topbar Navigation -->
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="menu-btn" id="menuBtn_emp_08" aria-label="Open menu" onclick="typeof openEmployeeSidebar === 'function' ? openEmployeeSidebar() : null">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg>
-        </button>
-        <h2>Leave Requests</h2>
+  <!-- Topbar Navigation -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" id="menuBtn_emp_08" aria-label="Open menu" onclick="typeof openEmployeeSidebar === 'function' ? openEmployeeSidebar() : null">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg>
+      </button>
+      <h2>Leave Requests</h2>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn" onclick="typeof Employee_user_dashboard_09_OPEN === 'function' ? Employee_user_dashboard_09_OPEN() : null" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="dot"></span>
       </div>
-      <div class="topbar-right">
-        <div class="icon-btn" onclick="typeof Employee_user_dashboard_09_OPEN === 'function' ? Employee_user_dashboard_09_OPEN() : null" title="Notifications">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-          <span class="dot"></span>
-        </div>
-        <div class="admin-pill" onclick="typeof Employee_user_dashboard_02_OPEN === 'function' ? Employee_user_dashboard_02_OPEN() : null">
-          <div class="avatar" id="topAvatarLeavePreview"><?php echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'EM'); ?></div>
-          <span id="topEmpLeaveName"><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></span>
-        </div>
+      <div class="admin-pill" onclick="typeof Employee_user_dashboard_02_OPEN === 'function' ? Employee_user_dashboard_02_OPEN() : null">
+        <div class="avatar" id="topAvatarLeavePreview"><?php echo htmlspecialchars(!empty($logged_user_initials) ? $logged_user_initials : 'EM'); ?></div>
+        <span id="topEmpLeaveName"><?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></span>
       </div>
     </div>
+  </div>
 
+  <div class="emp-leave-container">
     <!-- Page Head -->
     <div class="leave-page-head">
       <p>Submit and track your leave requests with Admin approval</p>
