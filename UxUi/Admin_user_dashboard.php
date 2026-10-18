@@ -14,7 +14,7 @@ require_login(['admin']);
     <link rel="stylesheet" href="../UxUi-Back/assets/css/erp-theme.css">
     <title>Admin Portal | NEO Solution</title>
     <link rel="stylesheet" href="../UxUi-Back/assets/css/portals/sidebar-admin.css">
-    <link rel="stylesheet" href="../UxUi-Back/assets/css/portals/admin-portal.css">
+    <link rel="stylesheet" href="../UxUi-Back/assets/css/portals/admin-portal.css?v=<?php echo filemtime(__DIR__ . '/../UxUi-Back/assets/css/portals/admin-portal.css'); ?>">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
