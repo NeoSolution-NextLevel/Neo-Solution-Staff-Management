@@ -1,6 +1,8 @@
 <?php
 include_once '../../imports/need/session_setup.php';
 require_login();
+$is_auth_page = true;
+include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,30 +74,53 @@ require_login();
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
             color: var(--erp-text-primary);
             line-height: 1.5;
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--erp-space-xl);
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
             overflow-x: hidden;
+        }
+
+        .erp-header {
+            flex: 0 0 auto;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .erp-footer {
+            flex: 0 0 auto;
+            width: 100%;
+            position: static !important;
+            margin-top: auto;
         }
 
         /* ===== LAYOUT CONTAINERS ===== */
         .erp-container {
+            flex: 1 0 auto;
             width: 100%;
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 0 var(--erp-space-md);
-            margin-top: 100px;
-            margin-bottom: 100px;
+            padding: var(--erp-space-xl) var(--erp-space-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
         }
 
         .erp-container--login {
-            max-width: 600px;
+            max-width: 540px;
         }
 
         /* ===== LOGIN CARD ===== */
@@ -576,6 +601,9 @@ require_login();
 
         /* ===== RESPONSIVE ADJUSTMENTS ===== */
         @media (max-width: 640px) {
+            .erp-container {
+                padding: var(--erp-space-lg) var(--erp-space-sm) 40px;
+            }
 
             .erp-login-card__header,
             .erp-login-card__body {
@@ -587,20 +615,39 @@ require_login();
             }
 
             .erp-success-icon {
-                font-size: 60px;
+                font-size: 56px;
             }
 
             .erp-success-container {
-                width: 140px;
-                height: 140px;
+                width: 130px;
+                height: 130px;
             }
 
             body {
-                padding: var(--erp-space-sm);
+                padding: 0;
             }
 
             .erp-login-card__header::after {
-                font-size: 120px;
+                font-size: 110px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .erp-container {
+                padding: var(--erp-space-sm) 8px 32px;
+            }
+
+            .erp-login-card__header,
+            .erp-login-card__body {
+                padding: var(--erp-space-md) 14px;
+            }
+
+            .erp-login-card__title {
+                font-size: 22px;
+            }
+
+            .erp-login-card__subtitle {
+                font-size: 13px;
             }
         }
     </style>
