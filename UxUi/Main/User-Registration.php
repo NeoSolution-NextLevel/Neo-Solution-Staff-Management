@@ -1,6 +1,7 @@
 <?php
 include_once '../../imports/need/session_setup.php';
 redirect_if_logged_in();
+$is_auth_page = true;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +16,7 @@ redirect_if_logged_in();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../UxUi-Back/assets/css/portals/auth-portal.css">
+    <link rel="stylesheet" href="../../UxUi-Back/assets/css/portals/auth-portal.css?v=<?php echo filemtime(__DIR__ . '/../../UxUi-Back/assets/css/portals/auth-portal.css'); ?>">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
