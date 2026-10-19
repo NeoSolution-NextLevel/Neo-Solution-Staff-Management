@@ -129,7 +129,7 @@
     if (el('viewDeptTag')) el('viewDeptTag').textContent = dept;
     if (el('viewStatusTag')) el('viewStatusTag').textContent = (p.status || 'Active Staff').toUpperCase();
 
-    // 2. Primary Legal Identity (Merged from Personal Details)
+    // 2. Primary Legal Identity (Personal Details)
     if (el('pdFullName')) el('pdFullName').textContent = name;
     if (el('pdNic')) el('pdNic').textContent = p.nic || '—';
     if (el('pdDob')) el('pdDob').textContent = p.dob || '—';
@@ -148,15 +148,20 @@
     if (el('viewEmPhone')) el('viewEmPhone').textContent = p.emergency_contact_phone || '—';
     if (el('pdEmPhone')) el('pdEmPhone').textContent = p.emergency_contact_phone || '—';
 
-    // 5. Service & Placement Record
+    // 5. Job Information & Placement Record
     if (el('pdEmpCode')) el('pdEmpCode').textContent = empCode;
+    if (el('jobEmpId')) el('jobEmpId').textContent = empCode;
     if (el('viewDept')) el('viewDept').textContent = dept;
     if (el('pdDept')) el('pdDept').textContent = dept;
+    if (el('jobDept')) el('jobDept').textContent = dept;
     if (el('viewJobRole')) el('viewJobRole').textContent = role;
     if (el('pdJobTitle')) el('pdJobTitle').textContent = role;
+    if (el('jobRole')) el('jobRole').textContent = role;
     if (el('viewWorkLocation')) el('viewWorkLocation').textContent = location;
     if (el('pdLocation')) el('pdLocation').textContent = location;
+    if (el('jobLocation')) el('jobLocation').textContent = location;
     if (el('pdJoinDate')) el('pdJoinDate').textContent = joined;
+    if (el('jobJoined')) el('jobJoined').textContent = joined;
     if (el('pdEmpType')) el('pdEmpType').textContent = empType;
     if (el('pdProbationStatus')) {
       el('pdProbationStatus').textContent = probStatus;
@@ -169,6 +174,7 @@
 
     // 6. Work Schedule & Shift Timing
     if (el('viewWorkShift')) el('viewWorkShift').textContent = workShift;
+    if (el('jobWorkShift')) el('jobWorkShift').textContent = workShift;
     if (el('viewSchedStart')) el('viewSchedStart').textContent = schedStart;
     if (el('viewSchedEnd')) el('viewSchedEnd').textContent = schedEnd;
     if (el('viewSchedPeriod')) {
@@ -254,7 +260,21 @@
     if (el('statWfh')) el('statWfh').textContent = `WFH: ${countWfh} ${countWfh === 1 ? 'Day' : 'Days'}`;
     if (el('statLeave')) el('statLeave').textContent = `Leave / Off: ${countLeave} ${countLeave === 1 ? 'Day' : 'Days'}`;
 
-    // 8. Avatar / Profile Picture
+    // 8. Career Timeline & Service Milestones (Job Information)
+    const officialStart = p.official_start_date || joined || '—';
+    if (el('timelineJoinDate')) el('timelineJoinDate').textContent = officialStart;
+    if (el('timelineJoinDesc')) el('timelineJoinDesc').textContent = `Official appointment as ${role} in ${dept} department.`;
+
+    const probStart = p.probation_start_date || joined || '—';
+    const probEnd = p.probation_end_date ? ` to ${p.probation_end_date}` : '';
+    if (el('timelineProbDate')) el('timelineProbDate').textContent = probStart !== '—' ? `Review: ${probStart}${probEnd}` : 'Confirmation Review';
+    if (el('timelineProbTitle')) el('timelineProbTitle').textContent = `Probation Status: ${probStatus}`;
+    if (el('timelineProbDesc')) el('timelineProbDesc').textContent = `Employment evaluation in ${dept} department under ${empType} agreement.`;
+
+    if (el('timelineActiveTitle')) el('timelineActiveTitle').textContent = `Current Active Role (${empType})`;
+    if (el('timelineActiveDesc')) el('timelineActiveDesc').textContent = `Active member of ${dept} team at ${location} as ${role}.`;
+
+    // 9. Avatar / Profile Picture
     const picImg = el('myProfilePicImg');
     const placeholder = el('myProfilePicPlaceholder');
     const topAvatar = el('topAvatar_02');
@@ -331,10 +351,11 @@
     if (modal) modal.classList.remove('open');
   };
 
-  // Backward compatibility alias
+  // Backward compatibility aliases
   window.openEditPersonalDetailsModal = window.openEditProfileModal;
   window.closeEditPersonalDetailsModal = window.closeEditProfileModal;
   window.fetchPersonalDetails = window.fetchEmployeeProfileData;
+  window.fetchJobInformation = window.fetchEmployeeProfileData;
 
   // ---- Save Profile Edits via AJAX ----
   window.saveProfileEdits = function (e) {
@@ -356,7 +377,7 @@
       .then(res => {
         if (btn) btn.disabled = false;
         if (res.status === 'success') {
-          showProfileToast('Profile & personal details updated successfully!', 'success');
+          showProfileToast('Profile & job details updated successfully!', 'success');
           window.closeEditProfileModal();
           window.fetchEmployeeProfileData();
           if (typeof window.syncGlobalEmployeeData === 'function') window.syncGlobalEmployeeData();
