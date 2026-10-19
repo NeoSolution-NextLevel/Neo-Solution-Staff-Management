@@ -1,34 +1,14 @@
 <?php
-$target_dashboard_url = $home_page . 'UxUi/Admin_user_dashboard' . $online_offline_extention;
+include_once __DIR__ . '/../../../imports/need/auth_guard.php';
 
-$logged_user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
-
-if (!empty($logged_user_id)) {
-    include_once __DIR__ . '/../../../imports/need/DB.php';
-    include_once __DIR__ . '/../../../Controllers/Main/main_user_login/main_user_login_SINGLE_DATA.php';
-    include_once __DIR__ . '/../../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_SINGLE_DATA.php';
-
-    $access_level_id = isset($_SESSION['main_user_account_access_level_list_id']) ? $_SESSION['main_user_account_access_level_list_id'] : '';
-
-    if (empty($access_level_id)) {
-        $user_data = new main_user_login_SINGLE_DATA($logged_user_id);
-        if ($user_data->get_state()) {
-            $access_level_id = $user_data->get_main_user_account_access_level_list_id();
-        }
-    }
-
-    if (!empty($access_level_id)) {
-        $acl_data = new main_user_account_access_level_list_SINGLE_DATA($access_level_id);
-        if ($acl_data->get_state() && !empty($acl_data->get_url_home())) {
-            $raw_url = trim($acl_data->get_url_home());
-            if (stripos($raw_url, 'http://') === 0 || stripos($raw_url, 'https://') === 0) {
-                $target_dashboard_url = $raw_url;
-            } else {
-                $target_dashboard_url = rtrim($home_page, '/') . '/' . ltrim($raw_url, '/');
-            }
-        }
-    }
+$target_dashboard_url = get_dashboard_redirect_url();
+if (empty($target_dashboard_url)) {
+    $target_dashboard_url = rtrim($home_page, '/') . '/UxUi/Admin_user_dashboard' . $online_offline_extention;
 }
+
+$is_admin = (isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin');
+$portal_label = $is_admin ? 'Admin Portal' : 'Staff Portal';
+$dashboard_btn_text = $is_admin ? 'Continue to Admin Dashboard' : 'Continue to Employee Dashboard';
 ?>
 
   <div class="erp-container erp-container--login">
@@ -71,7 +51,7 @@ if (!empty($logged_user_id)) {
               <div class="erp-mt-xl">
                   <button type="button" class="erp-btn erp-btn--primary erp-btn--block" id="proceed-btn">
                       <i class="fas fa-arrow-right"></i>
-                      <span id="proceed-text">Continue to Dashboard</span>
+                      <span id="proceed-text"><?php echo $dashboard_btn_text; ?></span>
                   </button>
               </div>
 
@@ -86,7 +66,7 @@ if (!empty($logged_user_id)) {
 
           <!-- Footer: Displays copyright and version info -->
           <div class="erp-login-card__footer" id="footer-particles">
-              <p class="erp-footer__copyright" id="copyright">© <span id="current-year"></span> Enterprise Resource Planning System v4.2.1</p>
+              <p class="erp-footer__copyright" id="copyright">© <span id="current-year"></span> NEO Solution. All rights reserved.</p>
           </div>
       </div>
   </div>
@@ -275,8 +255,8 @@ if (!empty($logged_user_id)) {
 
               customizeSuccess(
                   'Registration Successful',
-                  'Welcome to the ERP System',
-                  'Your account has been created successfully. You can now log in using your email and password.',
+                  'Welcome to NEO Solution Portal',
+                  'Your employee account has been created successfully. You can now log in using your credentials.',
                   'Go to Login',
                   '<?php echo $home_page ?><?php echo $User_login_url ?>User-Login<?php echo $online_offline_extention ?>',
                   3000,
@@ -288,14 +268,14 @@ if (!empty($logged_user_id)) {
           } else if (sucessType === "User-Login-Successful") {
               customizeSuccess(
                   'Login Successful',
-                  'Welcome back to the ERP System',
-                  'Authentication successful. You are now logged in and your dashboard is loading.',
-                  'Go to Dashboard',
-                  '<?php echo $target_dashboard_url ?>',
-                  3000,
+                  'Welcome back to <?php echo $portal_label; ?>',
+                  'Authentication verified. Directing you to your <?php echo strtolower($portal_label); ?>...',
+                  '<?php echo $dashboard_btn_text; ?>',
+                  '<?php echo $target_dashboard_url; ?>',
+                  2500,
                   true,
-                  'Back to Home',
-                  '<?php echo $home_page ?>'
+                  'Direct Link',
+                  '<?php echo $target_dashboard_url; ?>'
               );
           } else if (sucessType === "<?php echo isset($_GET['message']) ? htmlspecialchars($_GET['message']) : '' ?>") {
 
