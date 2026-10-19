@@ -1,6 +1,7 @@
 <?php
 include_once '../../imports/need/session_setup.php';
 redirect_if_logged_in();
+$is_auth_page = true;
 ?>
 <!DOCTYPE html>
 <html lang="en">
