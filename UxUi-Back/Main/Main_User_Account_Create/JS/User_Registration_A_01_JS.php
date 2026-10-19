@@ -10,9 +10,9 @@
         var val_04_child_01 = document.getElementById("User_Registration_A_01_val_04_child_01"); // Password
         var val_04_child_02 = document.getElementById("User_Registration_A_01_val_04_child_02"); // confirm password 
 
-        var val_05 = document.getElementById("User_Registration_A_01_val_05_select_obj"); // Department
-        var val_06 = document.getElementById("User_Registration_A_01_val_06"); // Department
-
+        var val_05 = document.getElementById("User_Registration_A_01_val_05_select_obj"); // Role
+        var val_06 = document.getElementById("User_Registration_A_01_val_06"); // Job Title
+        var val_09 = document.getElementById("User_Registration_A_01_val_09"); // Department
 
         var agree_check_box = document.getElementById("User_Registration_A_01_val_07"); // Agree checkbox 
 
@@ -37,10 +37,11 @@
             "&val_02=" + encodeURIComponent(val_02.value) +
             "&val_03=" + encodeURIComponent(val_03.value) +
             "&val_04=" + encodeURIComponent(val_04_child_01.value) +
-            "&val_05=" + encodeURIComponent(val_05.value) +
+            "&val_05=" + encodeURIComponent(val_05 ? val_05.value : "2") +
             "&val_06=" + encodeURIComponent(val_06.value) +
             "&val_07=" + encodeURIComponent(val_01_child_01.value) +
-            "&val_08=" + encodeURIComponent(val_01_child_02.value);
+            "&val_08=" + encodeURIComponent(val_01_child_02.value) +
+            "&val_09=" + encodeURIComponent(val_09 ? val_09.value : "Engineering");
 
         $.ajax({
             url: "<?php echo $pth; ?>View-List/Main/Main_User_Login_Account_Create/New_Main_User_Login_Create.php",
@@ -82,62 +83,13 @@
     }
 
     function User_Registration_A_01_main_user_account_access_level_list() {
-
         var container = document.getElementById("User_Registration_A_01_val_05_select_obj");
-
-        // Clear existing options
+        if (!container) return;
         container.innerHTML = "";
-
-        // Add default option
-        var defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.disabled = true;
-        defaultOption.text = "Select Account Role";
-        container.appendChild(defaultOption);
-
-        $.ajax({
-            url: "<?php echo $pth; ?>View-List/Main/main_user_account_access_level_list/main_user_account_access_level_list_LIST.php",
-            type: "POST",
-            success: function(response) {
-                try {
-                    var json_data = JSON.parse(response);
-                    if (json_data && json_data.length > 0) {
-                        for (var i = 0; i < json_data.length; i++) {
-                            User_Registration_A_01_main_user_account_access_level_list_SET_DATA(json_data[i]);
-                        }
-                    } else {
-                        addDefaultRoleOptions(container);
-                    }
-                } catch(e) {
-                    addDefaultRoleOptions(container);
-                }
-            },
-            error: function(xhr, status, error) {
-                addDefaultRoleOptions(container);
-            }
-        });
-    }
-
-    function addDefaultRoleOptions(container) {
-        var opt1 = document.createElement("option");
-        opt1.value = "2";
-        opt1.textContent = "Employee";
-        opt1.selected = true;
-        container.appendChild(opt1);
-    }
-
-    function User_Registration_A_01_main_user_account_access_level_list_SET_DATA(json) {
-        // Exclude Admin from public registration: only database admins are allowed
-        if (json.id == "1" || (json.type_of_access && json.type_of_access.toLowerCase() === 'admin')) {
-            return;
-        }
-        var select = document.getElementById("User_Registration_A_01_val_05_select_obj");
-        var option = document.createElement("option");
-        option.value = json.id;
-        option.textContent = json.type_of_access;
-        if (json.id == "2" || json.type_of_access.toLowerCase() === 'employee') {
-            option.selected = true;
-        }
-        select.appendChild(option);
+        var opt = document.createElement("option");
+        opt.value = "2";
+        opt.textContent = "Employee (Staff Access)";
+        opt.selected = true;
+        container.appendChild(opt);
     }
 </script>
