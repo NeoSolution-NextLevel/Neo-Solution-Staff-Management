@@ -72,8 +72,8 @@
 
             <!-- Footer: Displays copyright and version info -->
             <div class="erp-error-card__footer" id="footer-particles">
-                <p class="erp-footer__copyright" id="copyright">© <span id="current-year"></span> Enterprise Resource Planning System v4.2.1</p>
-                <p class="erp-footer__version">Error Handling Module v2.1</p>
+                <p class="erp-footer__copyright" id="copyright">© <span id="current-year"></span> NEO Solution. All rights reserved.</p>
+                <p class="erp-footer__version">Security &amp; Identity Verification</p>
             </div>
         </div>
     </div>
