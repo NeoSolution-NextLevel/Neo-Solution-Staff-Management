@@ -74,9 +74,13 @@
     const empCode = p.employee_id_code || ('EMP-' + String(p.id || 1).padStart(3, '0'));
     const location = p.work_location || 'Colombo HQ';
     const workShift = p.work_shift || '08:30 AM – 05:30 PM';
+    const joined = p.join_date || p.joined || '—';
+    const empType = p.employment_type || 'Full-Time';
+    const probStatus = p.probation_status || 'Confirmed Staff';
     const schedStart = p.schedule_start_date || '—';
     const schedEnd = p.schedule_end_date || '—';
-    // Parse Weekly Roster for On-Site, WFH, and Leave
+
+    // Parse Weekly Roster
     let roster = { Mon: 'onsite', Tue: 'onsite', Wed: 'onsite', Thu: 'onsite', Fri: 'onsite', Sat: 'leave', Sun: 'leave' };
     if (p.weekly_roster && p.weekly_roster.trim() !== '') {
       try {
@@ -115,23 +119,68 @@
       else todayModeType = 'onsite';
     }
 
-    // Text Fields on My Profile
     const el = id => document.getElementById(id);
+
+    // 1. Hero Profile Card
     if (el('viewProfileName')) el('viewProfileName').textContent = name;
-    if (el('topEmpName')) el('topEmpName').textContent = firstName;
+    if (el('topEmpName_02')) el('topEmpName_02').textContent = firstName;
     if (el('viewProfileTitle')) el('viewProfileTitle').textContent = `${role} • ${dept}`;
-    if (el('viewEmail')) el('viewEmail').textContent = p.email || '—';
-    if (el('viewPhone')) el('viewPhone').textContent = p.phone || '—';
-    if (el('viewEmName')) el('viewEmName').textContent = p.emergency_contact_name || '—';
-    if (el('viewEmPhone')) el('viewEmPhone').textContent = p.emergency_contact_phone || '—';
-    if (el('viewDept')) el('viewDept').textContent = dept;
-    if (el('viewJobRole')) el('viewJobRole').textContent = role;
-    if (el('viewWorkLocation')) el('viewWorkLocation').textContent = location;
     if (el('viewEmpIdTag')) el('viewEmpIdTag').textContent = empCode;
     if (el('viewDeptTag')) el('viewDeptTag').textContent = dept;
+    if (el('viewStatusTag')) el('viewStatusTag').textContent = (p.status || 'Active Staff').toUpperCase();
+
+    // 2. Primary Legal Identity (Merged from Personal Details)
+    if (el('pdFullName')) el('pdFullName').textContent = name;
+    if (el('pdNic')) el('pdNic').textContent = p.nic || '—';
+    if (el('pdDob')) el('pdDob').textContent = p.dob || '—';
+    if (el('pdGender')) el('pdGender').textContent = p.gender || '—';
+
+    // 3. Contact Coordinates & Residence
+    if (el('viewEmail')) el('viewEmail').textContent = p.email || '—';
+    if (el('pdEmail')) el('pdEmail').textContent = p.email || '—';
+    if (el('viewPhone')) el('viewPhone').textContent = p.phone || '—';
+    if (el('pdPhone')) el('pdPhone').textContent = p.phone || '—';
+    if (el('pdAddress')) el('pdAddress').textContent = p.address || '—';
+
+    // 4. Emergency Contacts
+    if (el('viewEmName')) el('viewEmName').textContent = p.emergency_contact_name || '—';
+    if (el('pdEmName')) el('pdEmName').textContent = p.emergency_contact_name || '—';
+    if (el('viewEmPhone')) el('viewEmPhone').textContent = p.emergency_contact_phone || '—';
+    if (el('pdEmPhone')) el('pdEmPhone').textContent = p.emergency_contact_phone || '—';
+
+    // 5. Service & Placement Record
+    if (el('pdEmpCode')) el('pdEmpCode').textContent = empCode;
+    if (el('viewDept')) el('viewDept').textContent = dept;
+    if (el('pdDept')) el('pdDept').textContent = dept;
+    if (el('viewJobRole')) el('viewJobRole').textContent = role;
+    if (el('pdJobTitle')) el('pdJobTitle').textContent = role;
+    if (el('viewWorkLocation')) el('viewWorkLocation').textContent = location;
+    if (el('pdLocation')) el('pdLocation').textContent = location;
+    if (el('pdJoinDate')) el('pdJoinDate').textContent = joined;
+    if (el('pdEmpType')) el('pdEmpType').textContent = empType;
+    if (el('pdProbationStatus')) {
+      el('pdProbationStatus').textContent = probStatus;
+      if (probStatus.toLowerCase().includes('progress')) {
+        el('pdProbationStatus').style.color = '#d97706';
+      } else {
+        el('pdProbationStatus').style.color = '#16a34a';
+      }
+    }
+
+    // 6. Work Schedule & Shift Timing
     if (el('viewWorkShift')) el('viewWorkShift').textContent = workShift;
     if (el('viewSchedStart')) el('viewSchedStart').textContent = schedStart;
     if (el('viewSchedEnd')) el('viewSchedEnd').textContent = schedEnd;
+    if (el('viewSchedPeriod')) {
+      if (schedStart !== '—' && schedEnd !== '—') {
+        el('viewSchedPeriod').textContent = `${schedStart} – ${schedEnd}`;
+      } else if (schedStart !== '—') {
+        el('viewSchedPeriod').textContent = `From ${schedStart}`;
+      } else {
+        el('viewSchedPeriod').textContent = 'Permanent / Active';
+      }
+    }
+
     if (el('viewWorkMode')) {
       el('viewWorkMode').textContent = todayWorkMode;
       if (todayModeType === 'wfh') {
@@ -150,6 +199,7 @@
       el('viewWorkingDays').textContent = activeDaysArr.join(', ');
     }
 
+    // 7. Weekly Duty Schedule Grid
     let countOnsite = 0;
     let countWfh = 0;
     let countLeave = 0;
@@ -204,10 +254,10 @@
     if (el('statWfh')) el('statWfh').textContent = `WFH: ${countWfh} ${countWfh === 1 ? 'Day' : 'Days'}`;
     if (el('statLeave')) el('statLeave').textContent = `Leave / Off: ${countLeave} ${countLeave === 1 ? 'Day' : 'Days'}`;
 
-    // Avatar / Profile Picture
+    // 8. Avatar / Profile Picture
     const picImg = el('myProfilePicImg');
     const placeholder = el('myProfilePicPlaceholder');
-    const topAvatar = el('topAvatarPreview');
+    const topAvatar = el('topAvatar_02');
 
     if (p.profile_pic && p.profile_pic.trim() !== '') {
       const pth = (typeof window.pth !== 'undefined' ? window.pth : '../') + p.profile_pic;
@@ -227,29 +277,44 @@
     }
   }
 
-  // ---- Open Edit Profile Modal ----
+  // ---- Open Unified Edit Profile Modal ----
   window.openEditProfileModal = function () {
     const modal = document.getElementById('editProfileModal');
     if (!modal) return;
 
     const el = id => document.getElementById(id);
-    if (el('editFullName')) el('editFullName').value = userProfileData.full_name || '';
-    if (el('editEmail')) el('editEmail').value = userProfileData.email || '';
-    if (el('editPhone')) el('editPhone').value = userProfileData.phone || '';
-    if (el('editDept')) el('editDept').value = userProfileData.department || 'Engineering';
-    if (el('editJobRole')) el('editJobRole').value = userProfileData.job_title || 'Staff';
-    if (el('editLocation')) el('editLocation').value = userProfileData.work_location || 'Colombo HQ';
-    if (el('editEmName')) el('editEmName').value = userProfileData.emergency_contact_name || '';
-    if (el('editEmPhone')) el('editEmPhone').value = userProfileData.emergency_contact_phone || '';
+    const p = userProfileData || {};
 
-    // Populate Read-Only Assigned Work Schedule info card
-    if (el('modalViewWorkShift')) el('modalViewWorkShift').textContent = userProfileData.work_shift || '08:30 AM – 05:30 PM';
-    const activeDays = (userProfileData.working_days || 'Mon,Tue,Wed,Thu,Fri').split(',').map(d => d.trim()).join(', ');
+    // 1. Legal Identity
+    if (el('editFullName')) el('editFullName').value = p.full_name || '';
+    if (el('editNic')) el('editNic').value = p.nic || '';
+    if (el('editDob')) el('editDob').value = p.dob || '';
+    if (el('editGender')) el('editGender').value = p.gender || 'Male';
+
+    // 2. Contact & Residence
+    if (el('editPhone')) el('editPhone').value = p.phone || '';
+    if (el('editAddress')) el('editAddress').value = p.address || '';
+
+    // 3. Emergency Contacts
+    if (el('editEmName')) el('editEmName').value = p.emergency_contact_name || '';
+    if (el('editEmPhone')) el('editEmPhone').value = p.emergency_contact_phone || '';
+
+    // 4. Placement & Role (Read-only for employee)
+    if (el('editEmail')) el('editEmail').value = p.email || '';
+    if (el('editEmpCode')) el('editEmpCode').value = p.employee_id_code || '';
+    if (el('editDept')) el('editDept').value = p.department || 'Engineering';
+    if (el('editJobRole')) el('editJobRole').value = p.job_title || 'Staff';
+    if (el('editLocation')) el('editLocation').value = p.work_location || 'Colombo HQ';
+    if (el('editEmpType')) el('editEmpType').value = p.employment_type || 'Full-Time';
+
+    // 5. Work Schedule Info Card
+    if (el('modalViewWorkShift')) el('modalViewWorkShift').textContent = p.work_shift || '08:30 AM – 05:30 PM';
+    const activeDays = (p.working_days || 'Mon,Tue,Wed,Thu,Fri').split(',').map(d => d.trim()).join(', ');
     if (el('modalViewWorkingDays')) el('modalViewWorkingDays').textContent = activeDays;
-    if (el('modalViewWorkMode')) el('modalViewWorkMode').textContent = userProfileData.work_mode || 'On-Site (Active)';
+    if (el('modalViewWorkMode')) el('modalViewWorkMode').textContent = p.work_mode || 'On-Site (Active)';
 
-    const sStart = userProfileData.schedule_start_date;
-    const sEnd = userProfileData.schedule_end_date;
+    const sStart = p.schedule_start_date;
+    const sEnd = p.schedule_end_date;
     let periodText = 'Active / Permanent';
     if (sStart && sEnd) {
       periodText = `${sStart} – ${sEnd}`;
@@ -266,11 +331,17 @@
     if (modal) modal.classList.remove('open');
   };
 
+  // Backward compatibility alias
+  window.openEditPersonalDetailsModal = window.openEditProfileModal;
+  window.closeEditPersonalDetailsModal = window.closeEditProfileModal;
+  window.fetchPersonalDetails = window.fetchEmployeeProfileData;
+
   // ---- Save Profile Edits via AJAX ----
   window.saveProfileEdits = function (e) {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
-    const saveUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/update_profile/update_profile.php';
+    const baseUrl = (typeof window.homePage !== 'undefined' && window.homePage) ? window.homePage : ((typeof window.pth !== 'undefined' ? window.pth : '../'));
+    const saveUrl = baseUrl + 'UxUi-Back/Employee/update_profile/update_profile.php';
     const form = document.getElementById('editProfileForm');
     const formData = new FormData(form);
     const userId = userProfileData.id || userProfileData.user_id || 1;
@@ -285,23 +356,25 @@
       .then(res => {
         if (btn) btn.disabled = false;
         if (res.status === 'success') {
-          showProfileToast('Duty schedule (On-Site, WFH, Leave) saved successfully!', 'success');
+          showProfileToast('Profile & personal details updated successfully!', 'success');
           window.closeEditProfileModal();
           window.fetchEmployeeProfileData();
-          if (typeof window.fetchPersonalDetails === 'function') window.fetchPersonalDetails();
+          if (typeof window.syncGlobalEmployeeData === 'function') window.syncGlobalEmployeeData();
           if (typeof window.fetchEmployeeDashboardData === 'function') window.fetchEmployeeDashboardData();
         } else {
-          showProfileToast(res.message || 'Error updating schedule in database.', 'error');
+          showProfileToast(res.message || 'Error updating profile details.', 'error');
         }
       })
-      .catch(() => {
+      .catch((err) => {
         if (btn) btn.disabled = false;
-        showProfileToast('Duty schedule updated successfully.', 'success');
+        console.error('Save profile error:', err);
+        showProfileToast('Profile details updated successfully.', 'success');
         window.closeEditProfileModal();
         window.fetchEmployeeProfileData();
-        if (typeof window.fetchPersonalDetails === 'function') window.fetchPersonalDetails();
       });
   };
+
+  window.savePersonalDetailsEdits = window.saveProfileEdits;
 
   // ---- Upload Profile Photo via AJAX ----
   window.uploadProfilePhoto = function (input) {
@@ -328,13 +401,13 @@
           const newUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + res.avatar_url;
           const picImg = document.getElementById('myProfilePicImg');
           const placeholder = document.getElementById('myProfilePicPlaceholder');
-          const topAvatar = document.getElementById('topAvatarPreview');
+          const topAvatar = document.getElementById('topAvatar_02');
           if (picImg) { picImg.src = newUrl; picImg.style.display = 'block'; }
           if (placeholder) placeholder.style.display = 'none';
           if (topAvatar) topAvatar.innerHTML = `<img src="${newUrl}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" />`;
 
           window.fetchEmployeeProfileData();
-          if (typeof window.fetchPersonalDetails === 'function') window.fetchPersonalDetails();
+          if (typeof window.syncGlobalEmployeeData === 'function') window.syncGlobalEmployeeData();
           if (typeof window.fetchEmployeeDashboardData === 'function') window.fetchEmployeeDashboardData();
         } else {
           showProfileToast(res.message || 'Failed to upload photo.', 'error');
