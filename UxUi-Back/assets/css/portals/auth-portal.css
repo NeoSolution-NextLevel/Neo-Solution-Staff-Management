@@ -107,7 +107,16 @@ body {
 }
 
 .erp-container--registration {
-    max-width: 680px;
+    width: 100% !important;
+    max-width: 680px !important;
+    flex: 1 0 auto;
+    min-width: 0;
+    margin: 36px auto !important;
+    padding: 0 16px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 .erp-container--login {
@@ -879,19 +888,22 @@ body {
 }
 
 @media (max-width: 640px) {
-    .erp-container--login {
+    .erp-container--login,
+    .erp-container--registration {
         margin: 16px auto !important;
         padding: 0 14px !important;
         width: 100% !important;
         max-width: 100% !important;
     }
 
-    .erp-login-card {
+    .erp-login-card,
+    .erp-registration-card {
         border-radius: 14px;
         width: 100% !important;
     }
 
-    .erp-login-card__header {
+    .erp-login-card__header,
+    .erp-registration-card__header {
         padding: 24px 20px 20px;
     }
 
