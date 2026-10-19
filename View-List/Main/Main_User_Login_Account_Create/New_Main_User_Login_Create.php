@@ -21,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $job_title = isset($_POST['val_06']) ? trim($_POST['val_06']) : ""; // job title
     $first_name = isset($_POST['val_07']) ? trim($_POST['val_07']) : ""; // first name
     $last_name = isset($_POST['val_08']) ? trim($_POST['val_08']) : ""; // last name
+    $department = isset($_POST['val_09']) && !empty($_POST['val_09']) ? trim($_POST['val_09']) : 'Engineering'; // department
 
     if (empty($user_name) || empty($password)) {
         $state['error'] = "Missing required fields";
@@ -96,6 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $safe_email = addslashes($user_name);
                     $safe_name = addslashes($name_show);
                     $safe_job = addslashes($job_title ?: 'Staff');
+                    $safe_dept = addslashes($department ?: 'Engineering');
                     $safe_ref = addslashes($ref_key);
 
                     // 1. Insert into employee_profiles if not exists
@@ -107,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             `employee_id_code`, `employment_type`, `work_location`, `work_shift`, `working_days`,
                             `weekly_roster`, `work_mode`, `updated_at`
                         ) VALUES (
-                            {$new_id}, '{$safe_name}', '{$safe_email}', 'Engineering', '{$safe_job}', 'active', CURDATE(),
+                            {$new_id}, '{$safe_name}', '{$safe_email}', '{$safe_dept}', '{$safe_job}', 'active', CURDATE(),
                             '{$safe_ref}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri',
                             '" . addslashes($default_roster) . "', 'On-Site (Active)', NOW()
                         )");
@@ -119,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         $conn->query("INSERT INTO `employees` (
                             `fullname`, `email_address`, `departments`, `job_roles`, `status`, `joined_date`, `main_user_login_id`
                         ) VALUES (
-                            '{$safe_name}', '{$safe_email}', 'Engineering', '{$safe_job}', 'active', CURDATE(), {$new_id}
+                            '{$safe_name}', '{$safe_email}', '{$safe_dept}', '{$safe_job}', 'active', CURDATE(), {$new_id}
                         )");
                     }
 
