@@ -2,7 +2,8 @@
 include_once '../../imports/need/session_setup.php';
 require_login();
 $is_auth_page = true;
-include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
+$is_admin = (isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin');
+$portal_type = $is_admin ? 'Admin Portal' : 'Staff Portal';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,61 +13,23 @@ include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
-    <title>ERP Admin Portal | Success</title>
+    <title><?php echo $portal_type; ?> | Success - NEO Solution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../UxUi-Back/assets/css/portals/auth-portal.css?v=<?php echo filemtime(__DIR__ . '/../../UxUi-Back/assets/css/portals/auth-portal.css'); ?>">
     <style>
-        /* ===== GLOBAL COLOR SYSTEM ===== */
+        /* Modern Success Theme matching NEO Solution corporate design */
         :root {
-            /* Primary ERP Brand Colors - Updated to Green Theme */
-            --erp-primary: #2d8556;
-            --erp-primary-dark: #1e5b37;
-            --erp-primary-light: #48bb78;
-            --erp-primary-subtle: #f0fff4;
-
-            /* Success Colors */
-            --erp-success-light: #c6f6d5;
-            --erp-success-medium: #9ae6b4;
-            --erp-success-dark: #38a169;
-            --erp-success-darker: #276749;
-            --erp-success-glow: rgba(72, 187, 120, 0.3);
-
-            /* Neutral Colors */
-            --erp-surface: #ffffff;
-            --erp-surface-alt: #f7fafc;
-            --erp-border: #e2e8f0;
-            --erp-border-dark: #cbd5e0;
-            --erp-text-primary: #2d3748;
-            --erp-text-secondary: #4a5568;
-            --erp-text-tertiary: #718096;
-
-            /* Accent Colors */
-            --erp-accent-success: #38a169;
-            --erp-accent-warning: #d69e2e;
-            --erp-accent-error: #e53e3e;
-            --erp-accent-info: #3182ce;
-
-            /* Shadows */
-            --erp-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-            --erp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --erp-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            --erp-shadow-glow: 0 0 20px rgba(72, 187, 120, 0.4);
-
-            /* Border Radius */
-            --erp-radius-sm: 4px;
-            --erp-radius-md: 8px;
-            --erp-radius-lg: 12px;
-            --erp-radius-full: 50%;
-
-            /* Spacing Scale */
-            --erp-space-xs: 8px;
-            --erp-space-sm: 12px;
-            --erp-space-md: 16px;
-            --erp-space-lg: 24px;
-            --erp-space-xl: 32px;
-            --erp-space-2xl: 48px;
+            --erp-success-light: #ecfdf5;
+            --erp-success-border: #a7f3d0;
+            --erp-success-medium: #34d399;
+            --erp-success-dark: #10b981;
+            --erp-success-darker: #065f46;
+            --erp-success-glow: rgba(16, 185, 129, 0.25);
         }
 
-        /* ===== BASE RESET & GLOBAL STYLES ===== */
         * {
             margin: 0;
             padding: 0;
@@ -74,9 +37,9 @@ include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
-            color: var(--erp-text-primary);
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--erp-text-primary, #0f172a);
             line-height: 1.5;
             min-height: 100vh;
             min-height: 100dvh;
@@ -106,13 +69,12 @@ include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
             margin-top: auto;
         }
 
-        /* ===== LAYOUT CONTAINERS ===== */
         .erp-container {
             flex: 1 0 auto;
             width: 100%;
             max-width: 100%;
             margin: 0 auto;
-            padding: var(--erp-space-xl) var(--erp-space-md);
+            padding: 32px 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -120,201 +82,133 @@ include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
         }
 
         .erp-container--login {
-            max-width: 540px;
+            max-width: 520px;
+            width: 100%;
         }
 
-        /* ===== LOGIN CARD ===== */
+        /* ===== LOGIN / SUCCESS CARD ===== */
         .erp-login-card {
             width: 100%;
-            background-color: var(--erp-surface);
-            border-radius: var(--erp-radius-lg);
-            box-shadow: var(--erp-shadow-lg);
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid var(--erp-border, #e2e8f0);
+            box-shadow: 0 12px 32px -4px rgba(20, 32, 77, 0.08), 0 4px 12px -2px rgba(20, 32, 77, 0.04);
             overflow: hidden;
-            min-height: auto;
             position: relative;
             z-index: 1;
             border-top: 4px solid var(--erp-success-dark);
+            animation: card-appear 0.4s ease-out;
+        }
+
+        @keyframes card-appear {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .erp-login-card__header {
-            background: linear-gradient(90deg, var(--erp-success-dark) 0%, var(--erp-success-darker) 100%);
-            color: white;
-            padding: var(--erp-space-xl) var(--erp-space-xl) var(--erp-space-lg);
+            background: linear-gradient(135deg, #14204d 0%, #1c2b63 60%, #059669 100%);
+            color: #ffffff;
+            padding: 28px 24px 22px;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        /* Animated background in header */
-        .erp-login-card__header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-            animation: pulse-background 4s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse-background {
-            0% {
-                transform: scale(1);
-                opacity: 0.3;
-            }
-
-            100% {
-                transform: scale(1.2);
-                opacity: 0.5;
-            }
-        }
-
-        /* Add success symbol in header background */
-        .erp-login-card__header::after {
-            content: '✓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 200px;
-            color: rgba(255, 255, 255, 0.05);
-            font-weight: bold;
-            z-index: 0;
-        }
-
-        .erp-login-card__logo {
-            font-size: 40px;
-            margin-bottom: var(--erp-space-sm);
-            color: white;
-            position: relative;
-            z-index: 2;
-        }
-
         .erp-login-card__title {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: var(--erp-space-xs);
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
             position: relative;
             z-index: 2;
-            animation: text-glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes text-glow {
-            0% {
-                text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-            }
-
-            100% {
-                text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-            }
+            letter-spacing: -0.3px;
         }
 
         .erp-login-card__subtitle {
-            font-size: 14px;
-            opacity: 0.9;
-            font-weight: 400;
+            font-size: 13.5px;
+            color: #e2e8f0;
+            font-weight: 500;
             position: relative;
             z-index: 2;
         }
 
         .erp-login-card__body {
-            padding: var(--erp-space-xl);
+            padding: 28px 24px 24px;
             position: relative;
         }
 
-        /* ===== CREATIVE SUCCESS ANIMATIONS ===== */
+        /* Modern Success Badge Animation */
         .erp-success-container {
             position: relative;
-            width: 180px;
-            height: 180px;
-            margin: 0 auto var(--erp-space-xl);
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Outer animated ring */
         .erp-success-ring {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: var(--erp-radius-full);
-            border: 4px solid transparent;
-            border-top: 4px solid var(--erp-success-light);
-            animation: spin-ring 2s linear infinite;
-            z-index: 1;
-        }
-
-        .erp-success-ring:nth-child(2) {
-            border-top: 4px solid var(--erp-success-medium);
-            animation-delay: 0.2s;
-        }
-
-        .erp-success-ring:nth-child(3) {
-            border-top: 4px solid var(--erp-success-dark);
-            animation-delay: 0.4s;
-        }
-
-        @keyframes spin-ring {
-            0% {
-                transform: rotate(0deg);
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.7;
-            }
-
-            100% {
-                transform: rotate(360deg);
-                opacity: 1;
-            }
-        }
-
-        /* Main success icon with creative animation */
-        .erp-success-icon {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--erp-success-border);
+            animation: ring-pulse 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+        }
+
+        .erp-success-ring:nth-child(1) {
+            width: 90px;
+            height: 90px;
+            border-color: #a7f3d0;
+        }
+
+        .erp-success-ring:nth-child(2) {
+            width: 110px;
+            height: 110px;
+            border-color: #d1fae5;
+            animation-delay: 0.6s;
+        }
+
+        .erp-success-ring:nth-child(3) {
+            width: 130px;
+            height: 130px;
+            border-color: #ecfdf5;
+            animation-delay: 1.2s;
+        }
+
+        @keyframes ring-pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.85);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .erp-success-icon {
+            font-size: 64px;
             color: var(--erp-success-dark);
             z-index: 3;
-            animation: checkmark-pop 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards,
-                icon-pulse 2s 1s ease-in-out infinite;
-            filter: drop-shadow(0 5px 10px var(--erp-success-glow));
+            filter: drop-shadow(0 4px 10px var(--erp-success-glow));
+            animation: icon-scale 0.5s ease-out;
         }
 
-        @keyframes checkmark-pop {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0) rotate(-180deg);
-            }
-
-            70% {
-                transform: translate(-50%, -50%) scale(1.2) rotate(10deg);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1) rotate(0deg);
-            }
+        @keyframes icon-scale {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        @keyframes icon-pulse {
-
-            0%,
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                filter: drop-shadow(0 5px 10px var(--erp-success-glow));
-            }
-
-            50% {
-                transform: translate(-50%, -50%) scale(1.05);
-                filter: drop-shadow(0 10px 20px var(--erp-success-glow));
-            }
-        }
-
-        /* Confetti particles */
         .erp-confetti-container {
             position: absolute;
             top: 0;
@@ -322,122 +216,100 @@ include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 2;
             overflow: hidden;
+            z-index: 1;
         }
 
         .erp-confetti {
             position: absolute;
-            width: 8px;
-            height: 8px;
-            background-color: var(--erp-success-dark);
             border-radius: 2px;
-            opacity: 0;
-            animation: confetti-fall 5s ease-in forwards;
-        }
-
-        .erp-confetti:nth-child(2n) {
-            background-color: var(--erp-success-medium);
-        }
-
-        .erp-confetti:nth-child(3n) {
-            background-color: var(--erp-success-light);
-        }
-
-        .erp-confetti:nth-child(5n) {
-            background-color: var(--erp-primary-light);
+            background: #10b981;
+            opacity: 0.6;
+            animation: confetti-fall 3s linear infinite;
         }
 
         @keyframes confetti-fall {
-            0% {
-                opacity: 0;
-                transform: translateY(-100px) rotate(0deg);
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateY(500px) rotate(720deg);
-            }
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(140px) rotate(360deg); opacity: 0; }
         }
 
-        /* Success message with typewriter effect */
         .erp-success-message {
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--erp-text-primary);
-            margin-bottom: var(--erp-space-md);
+            font-size: 15.5px;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            min-height: 48px;
             text-align: center;
-            min-height: 60px;
-            position: relative;
         }
 
-        .erp-success-message::after {
-            content: '|';
-            animation: cursor-blink 1s infinite;
-            margin-left: 2px;
-            color: var(--erp-success-dark);
+        /* Countdown & Progress */
+        .erp-progress-container {
+            width: 100%;
+            max-width: 240px;
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 999px;
+            margin: 0 auto 12px;
+            overflow: hidden;
         }
 
-        @keyframes cursor-blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
+        .erp-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            border-radius: 999px;
+            animation: progress-fill 2.5s linear forwards;
         }
 
-        /* ===== BUTTON SYSTEM ===== */
+        @keyframes progress-fill {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        #countdown-text {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Buttons */
         .erp-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: var(--erp-space-sm) var(--erp-space-md);
-            border: none;
-            border-radius: var(--erp-radius-md);
-            font-size: 15px;
-            font-weight: 500;
+            padding: 0 16px;
+            height: 46px;
+            border-radius: 10px;
+            font-size: 14.5px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-decoration: none;
             gap: 8px;
-            height: 44px;
-            position: relative;
-            overflow: hidden;
+            border: none;
         }
 
         .erp-btn--primary {
-            background: linear-gradient(90deg, var(--erp-success-dark) 0%, var(--erp-success-darker) 100%);
-            color: white;
-            box-shadow: var(--erp-shadow-md);
+            background: linear-gradient(135deg, #14204d 0%, #1c2b63 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(20, 32, 77, 0.18);
         }
 
         .erp-btn--primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--erp-shadow-lg), var(--erp-shadow-glow);
+            background: linear-gradient(135deg, #1c2b63 0%, #2563eb 100%);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+            transform: translateY(-1px);
         }
 
-        .erp-btn--primary:active {
-            transform: translateY(0);
+        .erp-btn--block {
+            width: 100%;
         }
 
-        .erp-btn--primary:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px var(--erp-primary-subtle);
-        }
-
-        /* Button ripple effect */
         .erp-btn-ripple {
             position: absolute;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.6);
+            background-color: rgba(255, 255, 255, 0.5);
             transform: scale(0);
             animation: ripple 0.6s linear;
         }
@@ -449,205 +321,57 @@ include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
             }
         }
 
-        .erp-btn--block {
-            display: flex;
-            width: 100%;
-        }
-
-        /* ===== PROGRESS INDICATOR ===== */
-        .erp-progress-container {
-            width: 100%;
-            height: 6px;
-            background-color: var(--erp-border);
-            border-radius: 3px;
-            margin-top: var(--erp-space-lg);
-            overflow: hidden;
-        }
-
-        .erp-progress-bar {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, var(--erp-success-light) 0%, var(--erp-success-dark) 100%);
-            border-radius: 3px;
-            animation: progress-shrink 3s linear forwards;
-            transform-origin: left center;
-        }
-
-        @keyframes progress-shrink {
-            0% {
-                transform: scaleX(1);
-            }
-
-            100% {
-                transform: scaleX(0);
-            }
-        }
-
-        /* ===== UTILITY CLASSES ===== */
-        .erp-text-center {
-            text-align: center;
-        }
-
-        .erp-mt-xs {
-            margin-top: var(--erp-space-xs);
-        }
-
-        .erp-mt-sm {
-            margin-top: var(--erp-space-sm);
-        }
-
-        .erp-mt-md {
-            margin-top: var(--erp-space-md);
-        }
-
-        .erp-mt-lg {
-            margin-top: var(--erp-space-lg);
-        }
-
-        .erp-mt-xl {
-            margin-top: var(--erp-space-xl);
-        }
-
-        .erp-mb-xs {
-            margin-bottom: var(--erp-space-xs);
-        }
-
-        .erp-mb-sm {
-            margin-bottom: var(--erp-space-sm);
-        }
-
-        .erp-mb-md {
-            margin-bottom: var(--erp-space-md);
-        }
-
-        .erp-mb-lg {
-            margin-bottom: var(--erp-space-lg);
-        }
-
-        .erp-mb-xl {
-            margin-bottom: var(--erp-space-xl);
-        }
-
-        .erp-text-sm {
-            font-size: 14px;
-        }
-
-        .erp-text-tertiary {
-            color: var(--erp-text-tertiary);
-        }
-
         .erp-link {
-            color: var(--erp-success-dark);
+            color: #2563eb;
             text-decoration: none;
-            font-weight: 500;
+            font-size: 13.5px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             transition: color 0.2s;
         }
 
         .erp-link:hover {
-            color: var(--erp-success-darker);
+            color: #1d4ed8;
             text-decoration: underline;
         }
 
-        /* ===== FOOTER ===== */
         .erp-login-card__footer {
-            padding: var(--erp-space-lg) var(--erp-space-xl);
-            background-color: var(--erp-surface-alt);
-            border-top: 1px solid var(--erp-border);
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
 
         .erp-footer__copyright {
             font-size: 12px;
-            color: var(--erp-text-tertiary);
-            margin-bottom: var(--erp-space-xs);
-            position: relative;
-            z-index: 2;
+            color: #64748b;
+            margin: 0;
+            font-weight: 500;
         }
 
-        .erp-footer__version {
-            font-size: 11px;
-            color: var(--erp-text-tertiary);
-            opacity: 0.8;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Floating particles in footer */
-        .erp-footer-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background-color: var(--erp-success-light);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float-particle 15s infinite linear;
-        }
-
-        @keyframes float-particle {
-            0% {
-                transform: translateY(0) translateX(0);
-            }
-
-            50% {
-                transform: translateY(-20px) translateX(10px);
-            }
-
-            100% {
-                transform: translateY(0) translateX(0);
-            }
-        }
-
-        /* ===== RESPONSIVE ADJUSTMENTS ===== */
         @media (max-width: 640px) {
-            .erp-container {
-                padding: var(--erp-space-lg) var(--erp-space-sm) 40px;
+            .erp-container--login {
+                padding: 0 12px !important;
+                margin: 16px auto !important;
             }
 
-            .erp-login-card__header,
-            .erp-login-card__body {
-                padding: var(--erp-space-lg);
-            }
-
-            .erp-login-card__footer {
-                padding: var(--erp-space-md) var(--erp-space-lg);
-            }
-
-            .erp-success-icon {
-                font-size: 56px;
-            }
-
-            .erp-success-container {
-                width: 130px;
-                height: 130px;
-            }
-
-            body {
-                padding: 0;
-            }
-
-            .erp-login-card__header::after {
-                font-size: 110px;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .erp-container {
-                padding: var(--erp-space-sm) 8px 32px;
-            }
-
-            .erp-login-card__header,
-            .erp-login-card__body {
-                padding: var(--erp-space-md) 14px;
+            .erp-login-card__header {
+                padding: 22px 18px 18px;
             }
 
             .erp-login-card__title {
-                font-size: 22px;
+                font-size: 20px;
             }
 
-            .erp-login-card__subtitle {
-                font-size: 13px;
+            .erp-login-card__body {
+                padding: 22px 16px 18px;
+            }
+
+            .erp-btn {
+                height: 44px;
+                font-size: 14px;
             }
         }
     </style>
@@ -655,10 +379,7 @@ include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
 
 <body>
     <?php include_once '../../UxUi-Back/Common/header.php'; ?>
-    <?php
-    include_once '../../UxUi-Back/Main/Successful-Page/Successful-Page.php';
-    ?>
-
+    <?php include_once '../../UxUi-Back/Main/Successful-Page/Successful-Page.php'; ?>
     <?php include_once '../../UxUi-Back/Common/footer.php'; ?>
 </body>
 
