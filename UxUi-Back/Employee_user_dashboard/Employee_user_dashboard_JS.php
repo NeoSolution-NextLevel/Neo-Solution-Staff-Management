@@ -182,14 +182,7 @@
   }
 
   function Employee_user_dashboard_06_OPEN() {
-    Employee_user_dashboard_close_all();
-    var el = document.getElementById("Employee_user_dashboard_06_job_information");
-    if (el) el.style.display = "";
-    setEmployeeSidebarActive('job_information');
-    window.syncGlobalEmployeeData();
-    if (typeof window.fetchJobInformation === 'function') {
-      window.fetchJobInformation();
-    }
+    Employee_user_dashboard_02_OPEN();
   }
 
   function Employee_user_dashboard_07_OPEN() {
