@@ -69,12 +69,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span>Bank Details</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_06_OPEN==='function'){ Employee_user_dashboard_06_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
-           data-page="job_information"
-           class="sidebar-link">
-            <i class="fa-solid fa-briefcase"></i>
-            <span>Job Information</span>
-        </a>
 
         <a role="button" tabindex="0" onclick="if(typeof Employee_user_dashboard_07_OPEN==='function'){ Employee_user_dashboard_07_OPEN(); } if(typeof closeEmployeeSidebar==='function'){ closeEmployeeSidebar(); }"
            data-page="daily_work_plan"
