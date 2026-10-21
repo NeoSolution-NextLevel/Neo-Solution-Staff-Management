@@ -275,7 +275,17 @@ $dashboard_btn_text = $is_admin ? 'Continue to Admin Dashboard' : 'Continue to E
                   2500,
                   true,
                   'Direct Link',
-                  '<?php echo $target_dashboard_url; ?>'
+          } else if (sucessType === "Account-Verified-Successfully") {
+              customizeSuccess(
+                  'Account Verified Successfully!',
+                  'Mobile OTP Verification Completed',
+                  'Your contact number and employee account have been successfully verified and activated. Loading your dashboard...',
+                  'Continue to Employee Dashboard',
+                  '<?php echo $home_page ?>UxUi/Employee_user_dashboard<?php echo $online_offline_extention ?>',
+                  2500,
+                  true,
+                  'Employee Portal',
+                  '<?php echo $home_page ?>UxUi/Employee_user_dashboard<?php echo $online_offline_extention ?>'
               );
           } else if (sucessType === "<?php echo isset($_GET['message']) ? htmlspecialchars($_GET['message']) : '' ?>") {
 
