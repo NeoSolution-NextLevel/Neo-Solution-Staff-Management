@@ -38,13 +38,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     if (empty($ref_key)) {
-        $ref_key = 'EMP-' . strtoupper(substr(md5($user_name . time()), 0, 6));
+        $ref_key = 'ADM-' . strtoupper(substr(md5($user_name . time()), 0, 6));
     }
 
-    // Public registration is strictly for Employees.
-    // Admin accounts cannot be created via registration; only existing database admins can access admin portal.
-    $main_user_account_access_level_list_id = 2;
-    $ac_type = 'Employee';
+    // Public registration is strictly for Administrators.
+    // Employees can only register via Onboarding Forms created and issued by Super Admin.
+    $main_user_account_access_level_list_id = 1;
+    $ac_type = 'Admin';
 
     $main_user_login_ADD_UPDATE_obj = new main_user_login_ADD_UPDATE();
     $main_user_login_LIST_obj = new main_user_login_LIST();
@@ -90,10 +90,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $state['error'] = "0";
                 $state['id'] = $new_id;
 
+                $db = new DataBase();
+                $conn = $db->get_data_base_connction();
+                $conn->query("UPDATE `main_user_login` SET `account_active_state` = 1, `email_verify` = 1, `moible_verfiy` = 1, `ast` = 1 WHERE `id` = {$new_id}");
+
                 // If Employee account, ensure employee_profiles, employees, and bank_details records exist
                 if ($ac_type === 'Employee') {
-                    $db = new DataBase();
-                    $conn = $db->get_data_base_connction();
                     $safe_email = addslashes($user_name);
                     $safe_name = addslashes($name_show);
                     $safe_job = addslashes($job_title ?: 'Staff');
