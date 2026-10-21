@@ -49,7 +49,7 @@ $dashboard_btn_text = $is_admin ? 'Continue to Admin Dashboard' : 'Continue to E
 
               <!-- Proceed Button: Customizable button text and action -->
               <div class="erp-mt-xl">
-                  <button type="button" class="erp-btn erp-btn--primary erp-btn--block" id="proceed-btn">
+                  <button type="button" class="erp-btn erp-btn--primary erp-btn--block" id="proceed-btn" onclick="window.location.href='<?php echo $target_dashboard_url; ?>';">
                       <i class="fas fa-arrow-right"></i>
                       <span id="proceed-text"><?php echo $dashboard_btn_text; ?></span>
                   </button>
@@ -275,6 +275,8 @@ $dashboard_btn_text = $is_admin ? 'Continue to Admin Dashboard' : 'Continue to E
                   2500,
                   true,
                   'Direct Link',
+                  '<?php echo $target_dashboard_url; ?>'
+              );
           } else if (sucessType === "Account-Verified-Successfully") {
               customizeSuccess(
                   'Account Verified Successfully!',
