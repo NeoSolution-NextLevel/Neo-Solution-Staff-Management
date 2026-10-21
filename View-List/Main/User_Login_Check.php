@@ -217,11 +217,68 @@ if ($User_Account_Check_obj->check_user_name()) {
         $_SESSION['main_user_account_access_level_list_id'] = $access_level_id;
         $_SESSION['url_home'] = $url_home;
         $_SESSION['user_role'] = $user_role;
-        $_SESSION['ac_type'] = $user_role;
-
         $state['error'] = "0";
         $state['url_home'] = $url_home;
         $state['user_role'] = $user_role;
+
+        // Check if employee account requires mobile OTP verification
+        if (!$isAdmin) {
+            try {
+                $lconn = (new DataBase())->get_data_base_connction();
+                $safeUid = (int)$User_Account_Check_obj->get_user_id();
+                $safeEmail = addslashes($User_Account_Check_obj->get_user_name());
+                $chkVer = $lconn->query("SELECT account_active_state, moible_verfiy, phone_number FROM `main_user_login` WHERE `id` = {$safeUid} LIMIT 1");
+                if ($chkVer && ($vRow = $chkVer->fetch_assoc())) {
+                    if ((int)$vRow['account_active_state'] === 0 || (int)$vRow['moible_verfiy'] === 0) {
+                        // Generate fresh 6-digit OTP for login mobile verification
+                        $otp_code = str_pad((string)random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+                        $phone = !empty($vRow['phone_number']) ? trim($vRow['phone_number']) : '';
+
+                        // Update or locate in employee_form_submissions
+                        $subQ = $lconn->query("SELECT id, phone_number FROM `employee_form_submissions` WHERE `email` = '{$safeEmail}' OR `created_user_id` = {$safeUid} ORDER BY `id` DESC LIMIT 1");
+                        if ($subQ && ($sRow = $subQ->fetch_assoc())) {
+                            $subId = (int)$sRow['id'];
+                            if (empty($phone) && !empty($sRow['phone_number'])) {
+                                $phone = trim($sRow['phone_number']);
+                            }
+                            $lconn->query("UPDATE `employee_form_submissions` SET 
+                                `otp_code` = '{$otp_code}', 
+                                `otp_expires_at` = DATE_ADD(NOW(), INTERVAL 15 MINUTE),
+                                `is_otp_verified` = 0 
+                                WHERE `id` = {$subId}");
+                        }
+
+                        // Send fresh OTP via SMS to candidate phone
+                        if (!empty($phone)) {
+                            try {
+                                $comp_info = new Company_Info_Variable_List();
+                                $c_name = $comp_info->get_compnay_name();
+                                $sms_msg = "Your {$c_name} login OTP is: {$otp_code}. Valid for 15 minutes. Enter this code to verify your account.";
+                                $sms = new SMS_Sending($phone, $sms_msg);
+                                $sms->send_message();
+                            } catch (\Throwable $sEx) {}
+                        }
+
+                        // Store temporary verification session
+                        $_SESSION['temp_otp_user_id'] = $safeUid;
+                        $_SESSION['temp_otp_email'] = $User_Account_Check_obj->get_user_name();
+
+                        $masked_phone = '';
+                        if (strlen($phone) > 4) {
+                            $masked_phone = substr($phone, 0, 3) . '****' . substr($phone, -3);
+                        }
+
+                        $state['error'] = "0";
+                        $state['otp_verification_required'] = "1";
+                        $state['email'] = $User_Account_Check_obj->get_user_name();
+                        $state['phone_masked'] = $masked_phone;
+                        $json[] = $state;
+                        echo json_encode($json);
+                        exit;
+                    }
+                }
+            } catch (\Throwable $e) {}
+        }
 
         if ($User_Account_Check_obj->get_google_authentication()) {
             $_SESSION['otp_pending'] = true;
@@ -261,7 +318,22 @@ if ($User_Account_Check_obj->check_user_name()) {
         $json[] = $state;
     }
 } else {
-    $state['error'] = $User_Account_Check_obj->get_error();
+    $err = $User_Account_Check_obj->get_error();
+    if ($err === "Username Incorrect" && !empty($get_user_name)) {
+        try {
+            $lconn = (new DataBase())->get_data_base_connction();
+            $safeUName = addslashes($get_user_name);
+            $subChk = $lconn->query("SELECT status FROM `employee_form_submissions` WHERE `email` = '{$safeUName}' ORDER BY `id` DESC LIMIT 1");
+            if ($subChk && ($sRow = $subChk->fetch_assoc())) {
+                if ($sRow['status'] === 'pending') {
+                    $err = "Application-Pending-Approval";
+                } elseif ($sRow['status'] === 'rejected') {
+                    $err = "Application-Declined";
+                }
+            }
+        } catch (\Throwable $ex) {}
+    }
+    $state['error'] = $err;
     $json[] = $state;
 }
 
