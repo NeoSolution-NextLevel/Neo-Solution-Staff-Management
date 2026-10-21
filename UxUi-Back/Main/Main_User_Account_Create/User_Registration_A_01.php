@@ -1,12 +1,21 @@
     <div class="erp-container erp-container--registration">
         <div class="erp-registration-card">
-            <!-- Header Section: Displays company branding and employee registration title -->
+            <!-- Header Section: Displays company branding and admin registration title -->
             <div class="erp-registration-card__header">
                 <div class="erp-registration-card__logo" style="font-size: 32px; color: #93c5fd; margin-bottom: 8px;">
-                    <i class="fas fa-id-card-clip"></i>
+                    <i class="fas fa-user-shield"></i>
                 </div>
-                <h1 class="erp-registration-card__title">Employee Registration</h1>
-                <p class="erp-registration-card__subtitle">Create your staff account to access the <?php echo $company_obj->get_compnay_name() ?> Employee Portal</p>
+                <h1 class="erp-registration-card__title">Administrator Registration</h1>
+                <p class="erp-registration-card__subtitle">Create an authorized administrator account to manage the <?php echo $company_obj->get_compnay_name() ?> Portal</p>
+                <div style="margin-top: 12px; background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(147, 197, 253, 0.4); border-radius: 8px; padding: 10px 14px; font-size: 12.5px; text-align: left; color: #e2e8f0; line-height: 1.4; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                        <i class="fas fa-info-circle" style="color: #60a5fa; margin-right: 6px;"></i>
+                        <strong>Looking for Employee Registration?</strong> Complete the employee onboarding form to submit your application.
+                    </div>
+                    <a href="<?php echo $home_page ?>UxUi/Main/Employee-Registration-Form<?php echo $online_offline_extention ?>" style="padding: 5px 12px; background: #2563eb; color: #ffffff; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-id-card-clip"></i> Register as Employee
+                    </a>
+                </div>
             </div>
 
             <!-- Main Body: Contains the registration form -->
@@ -155,10 +164,10 @@
                                 <div class="erp-input-wrapper">
                                     <i class="fas fa-shield-halved erp-form__icon"></i>
                                     <select class="erp-form__control erp-form__control--with-icon" name="role" required aria-label="Account Role" id="User_Registration_A_01_val_05_select_obj">
-                                        <option value="2" selected>Employee (Staff Access)</option>
+                                        <option value="1" selected>Administrator (Portal Admin Access)</option>
                                     </select>
                                 </div>
-                                <span class="erp-form__hint">Standard staff &amp; employee portal permissions</span>
+                                <span class="erp-form__hint">Full administrative &amp; staff management privileges</span>
                             </div>
 
                             <div class="erp-form__group">
@@ -166,16 +175,15 @@
                                 <div class="erp-input-wrapper">
                                     <i class="fas fa-building erp-form__icon"></i>
                                     <select class="erp-form__control erp-form__control--with-icon" name="department" id="User_Registration_A_01_val_09" required aria-label="Department">
-                                        <option value="Engineering" selected>Engineering</option>
-                                        <option value="Operations">Operations</option>
+                                        <option value="Administration" selected>Administration</option>
+                                        <option value="Executive Management">Executive Management</option>
                                         <option value="Human Resources">Human Resources</option>
+                                        <option value="Engineering">Engineering</option>
+                                        <option value="Operations">Operations</option>
                                         <option value="Finance & Accounts">Finance &amp; Accounts</option>
-                                        <option value="Sales & Marketing">Sales &amp; Marketing</option>
-                                        <option value="Information Technology">Information Technology</option>
-                                        <option value="Administration">Administration</option>
                                     </select>
                                 </div>
-                                <span class="erp-form__hint">Select your primary work department</span>
+                                <span class="erp-form__hint">Select administrative department</span>
                             </div>
                         </div>
 
@@ -187,7 +195,8 @@
                                     type="text"
                                     class="erp-form__control erp-form__control--with-icon"
                                     name="job_title"
-                                    placeholder="e.g. Software Engineer, Operations Executive, Staff"
+                                    placeholder="e.g. System Administrator, HR Manager, Director"
+                                    value="Administrator"
                                     required
                                     id="User_Registration_A_01_val_06"
                                     aria-label="Job Title">
@@ -200,7 +209,7 @@
                         <div class="erp-terms">
                             <input type="checkbox" class="erp-terms__checkbox" id="User_Registration_A_01_val_07" name="terms" required>
                             <label for="User_Registration_A_01_val_07" class="erp-terms__label">
-                                I confirm that I am an employee of <strong><?php echo $company_obj->get_compnay_name() ?></strong> and agree to the <a href="#" class="erp-link">Terms of Service</a> and <a href="#" class="erp-link">Privacy Policy</a>.
+                                I confirm that I am an authorized administrator of <strong><?php echo $company_obj->get_compnay_name() ?></strong> and agree to the <a href="#" class="erp-link">Terms of Service</a> and <a href="#" class="erp-link">Privacy Policy</a>.
                                 <span style="color: var(--erp-accent-error);">*</span>
                             </label>
                         </div>
@@ -209,17 +218,21 @@
                     <!-- Submit Button -->
                     <div class="erp-form__group erp-mt-xl">
                         <button type="submit" class="erp-btn erp-btn--primary erp-btn--block" style="height: 48px; font-size: 15px;">
-                            <i class="fas fa-user-check"></i>
-                            <span>Register as Employee</span>
+                            <i class="fas fa-user-shield"></i>
+                            <span>Register as Administrator</span>
                         </button>
                     </div>
 
-                    <!-- Login Option: For existing users -->
+                    <!-- Login Option & Employee Registration: For other users -->
                     <div class="erp-text-center erp-mt-lg">
-                        <p class="erp-text-tertiary erp-text-sm erp-mb-sm">Already registered as an employee?</p>
-                        <a href="<?php echo $home_page ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention ?>" class="erp-btn erp-btn--secondary erp-btn--block" style="height: 44px;">
-                            <i class="fas fa-sign-in-alt"></i>
-                            <span>Sign In to Portal</span>
+                        <p class="erp-text-tertiary erp-text-sm erp-mb-sm">Need to register as an employee?</p>
+                        <a href="<?php echo $home_page ?>UxUi/Main/Employee-Registration-Form<?php echo $online_offline_extention ?>" class="erp-btn erp-btn--secondary erp-btn--block" style="height: 44px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+                            <i class="fas fa-id-card-clip"></i>
+                            <span>Register as Employee</span>
+                        </a>
+                        <p class="erp-text-tertiary erp-text-sm erp-mb-sm">Already have an account?</p>
+                        <a href="<?php echo $home_page ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention ?>" class="erp-link erp-text-sm" style="font-weight: 600;">
+                            <i class="fas fa-sign-in-alt"></i> Sign In to Portal
                         </a>
                     </div>
                 </form>
