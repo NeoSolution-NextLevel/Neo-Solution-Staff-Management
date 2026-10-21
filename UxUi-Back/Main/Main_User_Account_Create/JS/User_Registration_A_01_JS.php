@@ -37,11 +37,11 @@
             "&val_02=" + encodeURIComponent(val_02.value) +
             "&val_03=" + encodeURIComponent(val_03.value) +
             "&val_04=" + encodeURIComponent(val_04_child_01.value) +
-            "&val_05=" + encodeURIComponent(val_05 ? val_05.value : "2") +
+            "&val_05=" + encodeURIComponent(val_05 ? val_05.value : "1") +
             "&val_06=" + encodeURIComponent(val_06.value) +
             "&val_07=" + encodeURIComponent(val_01_child_01.value) +
             "&val_08=" + encodeURIComponent(val_01_child_02.value) +
-            "&val_09=" + encodeURIComponent(val_09 ? val_09.value : "Engineering");
+            "&val_09=" + encodeURIComponent(val_09 ? val_09.value : "Administration");
 
         $.ajax({
             url: "<?php echo $pth; ?>View-List/Main/Main_User_Login_Account_Create/New_Main_User_Login_Create.php",
@@ -87,8 +87,8 @@
         if (!container) return;
         container.innerHTML = "";
         var opt = document.createElement("option");
-        opt.value = "2";
-        opt.textContent = "Employee (Staff Access)";
+        opt.value = "1";
+        opt.textContent = "Administrator (Portal Admin Access)";
         opt.selected = true;
         container.appendChild(opt);
     }
