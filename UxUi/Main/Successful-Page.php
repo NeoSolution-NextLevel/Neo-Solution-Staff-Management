@@ -4,6 +4,13 @@ require_login();
 $is_auth_page = true;
 $is_admin = (isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin');
 $portal_type = $is_admin ? 'Admin Portal' : 'Staff Portal';
+
+$target_dashboard_url = get_dashboard_redirect_url();
+if (empty($target_dashboard_url)) {
+    $target_dashboard_url = $is_admin 
+        ? rtrim($home_page, '/') . '/UxUi/Admin_user_dashboard' . $online_offline_extention 
+        : rtrim($home_page, '/') . '/UxUi/Employee_user_dashboard' . $online_offline_extention;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +19,9 @@ $portal_type = $is_admin ? 'Admin Portal' : 'Staff Portal';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
+    <?php if (!empty($target_dashboard_url)): ?>
+    <meta http-equiv="refresh" content="3;url=<?php echo htmlspecialchars($target_dashboard_url); ?>">
+    <?php endif; ?>
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
     <title><?php echo $portal_type; ?> | Success - NEO Solution</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
