@@ -259,6 +259,32 @@
                 '<?php echo $home_page ?><?php echo $User_login_url ?>User-Registration<?php echo $online_offline_extention ?>'
             );
 
+        } else if (errorType === "Application-Pending-Approval") {
+            customizeError(
+                'Application Under Review',
+                'Pending Administrator Approval',
+                'Your employee registration form has been submitted and is currently waiting for administrator review. Once approved, you will receive an SMS and email notification to verify your account.',
+                'APP-PENDING',
+                'Candidate submission received. Awaiting review and approval by system administrator.',
+                'Check Status / Refresh',
+                'Back to Login',
+                'javascript:location.reload()',
+                loginUrl
+            );
+
+        } else if (errorType === "Application-Declined") {
+            customizeError(
+                'Application Declined',
+                'Registration Not Approved',
+                'Your employee registration form could not be approved by the administrator at this time. Please contact HR or Administration for further details.',
+                'APP-REJECTED',
+                'The administrator has declined this registration submission.',
+                'Contact Support',
+                'Back to Login',
+                'mailto:<?php echo $company_obj->get_compnay_default_sending_email() ?>',
+                loginUrl
+            );
+
         } else if (errorType === "Username-Incorrect") {
             customizeError(
                 'Login Failed',
