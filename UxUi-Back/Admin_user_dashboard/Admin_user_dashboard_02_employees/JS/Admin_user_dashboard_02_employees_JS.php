@@ -1459,8 +1459,591 @@
       if (daysInput) daysInput.value = daysStr;
     };
 
+    // ==========================================
+    // ONBOARDING FORMS & SUBMISSIONS MANAGEMENT
+    // ==========================================
+    let onboardingData = {
+      forms: [],
+      submissions: [],
+      stats: { total_forms: 0, total_submissions: 0, pending_count: 0, approved_count: 0, rejected_count: 0 }
+    };
+    let currentReviewSubmission = null;
+
+    function safeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // 1. Switch between "All Employees" and "Onboarding Submissions & Forms"
+    window.switchEmpSectionTab = function (tab) {
+      const allEmpSec = document.getElementById('sectionAllEmployees');
+      const onbSec = document.getElementById('sectionOnboardingForms');
+      const allEmpBtn = document.getElementById('tabAllEmployeesBtn');
+      const onbBtn = document.getElementById('tabOnboardingBtn');
+
+      if (tab === 'onboarding') {
+        if (allEmpSec) allEmpSec.style.display = 'none';
+        if (onbSec) onbSec.style.display = 'block';
+
+        if (allEmpBtn) {
+          allEmpBtn.classList.remove('active');
+          allEmpBtn.style.color = '#64748b';
+          allEmpBtn.style.borderBottomColor = 'transparent';
+          allEmpBtn.style.fontWeight = '600';
+        }
+        if (onbBtn) {
+          onbBtn.classList.add('active');
+          onbBtn.style.color = '#2563eb';
+          onbBtn.style.borderBottomColor = '#2563eb';
+          onbBtn.style.fontWeight = '700';
+        }
+        window.loadOnboardingData();
+      } else {
+        if (allEmpSec) allEmpSec.style.display = 'block';
+        if (onbSec) onbSec.style.display = 'none';
+
+        if (allEmpBtn) {
+          allEmpBtn.classList.add('active');
+          allEmpBtn.style.color = '#2563eb';
+          allEmpBtn.style.borderBottomColor = '#2563eb';
+          allEmpBtn.style.fontWeight = '700';
+        }
+        if (onbBtn) {
+          onbBtn.classList.remove('active');
+          onbBtn.style.color = '#64748b';
+          onbBtn.style.borderBottomColor = 'transparent';
+          onbBtn.style.fontWeight = '600';
+        }
+      }
+    };
+
+    // 2. Fetch Forms and Submissions
+    window.loadOnboardingData = function () {
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const subTbody = document.getElementById('submissionsTableBody');
+      const formsTbody = document.getElementById('formsTableBody');
+
+      if (subTbody) {
+        subTbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 25px; color:#64748b;"><i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i> Loading submissions...</td></tr>';
+      }
+
+      fetch(pth + 'UxUi-Back/Employee/forms/fetch_forms_and_submissions.php')
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success' && res.data) {
+            onboardingData = res.data;
+            renderOnboardingStats();
+            renderSubmissionsTable();
+            renderFormsTable();
+          } else {
+            if (subTbody) subTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#ef4444;">${safeHtml(res.message || 'Failed to load onboarding data.')}</td></tr>`;
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching onboarding data:', err);
+          if (subTbody) subTbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#ef4444;">Failed to connect to onboarding service.</td></tr>';
+        });
+    };
+
+    // Render Stats and Pending Badge
+    function renderOnboardingStats() {
+      const stats = onboardingData.stats || {};
+      const pendingEl = document.getElementById('statPendingApprovals');
+      const approvedEl = document.getElementById('statApprovedSubmissions');
+      const formsEl = document.getElementById('statActiveForms');
+      const badge = document.getElementById('pendingSubmissionsBadge');
+
+      const pending = Number(stats.pending_count || 0);
+      const approved = Number(stats.approved_count || 0);
+      const totalForms = Number(stats.total_forms || 0);
+
+      if (pendingEl) pendingEl.textContent = pending;
+      if (approvedEl) approvedEl.textContent = approved;
+      if (formsEl) formsEl.textContent = totalForms;
+
+      if (badge) {
+        if (pending > 0) {
+          badge.textContent = pending;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    }
+
+    // Render Submissions Table
+    function renderSubmissionsTable() {
+      const subTbody = document.getElementById('submissionsTableBody');
+      if (!subTbody) return;
+
+      const submissions = onboardingData.submissions || [];
+      if (submissions.length === 0) {
+        subTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:35px 20px; color:#64748b;">
+          <i class="fas fa-inbox" style="font-size:28px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
+          No employee form submissions found yet.<br>
+          <span style="font-size:12px;">Share an onboarding form link with prospective employees to receive submissions.</span>
+        </td></tr>`;
+        return;
+      }
+
+      subTbody.innerHTML = submissions.map(s => {
+        const fullName = `${s.first_name || ''} ${s.last_name || ''}`.trim() || 'Candidate';
+        const st = (s.status || 'pending').toLowerCase();
+        let badgeHtml = '';
+        if (st === 'approved') {
+          badgeHtml = `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:12px; font-size:11.5px; font-weight:700; background:#ecfdf5; color:#059669; border:1px solid #a7f3d0;"><i class="fas fa-check-circle"></i> Approved</span>`;
+        } else if (st === 'rejected') {
+          badgeHtml = `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:12px; font-size:11.5px; font-weight:700; background:#fef2f2; color:#dc2626; border:1px solid #fecaca;"><i class="fas fa-times-circle"></i> Rejected</span>`;
+        } else {
+          badgeHtml = `<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:12px; font-size:11.5px; font-weight:700; background:#fffbeb; color:#b45309; border:1px solid #fde68a;"><i class="fas fa-clock"></i> Pending Review</span>`;
+        }
+
+        const otpBadge = s.is_otp_verified == 1 
+          ? `<span style="font-size:10.5px; color:#10b981; font-weight:700; margin-left:4px;"><i class="fas fa-shield-check"></i> OTP Verified</span>`
+          : (st === 'approved' ? `<span style="font-size:10.5px; color:#f59e0b; font-weight:700; margin-left:4px;"><i class="fas fa-mobile-screen"></i> OTP Sent (Awaiting)</span>` : '');
+
+        let actionsHtml = '';
+        if (st === 'pending') {
+          actionsHtml = `
+            <button type="button" onclick="reviewSubmission(${s.id})" style="padding:6px 12px; border-radius:6px; border:none; background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#fff; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 1px 3px rgba(16,185,129,0.25);">
+              <i class="fas fa-clipboard-check"></i> Review &amp; Approve
+            </button>
+          `;
+        } else if (st === 'approved') {
+          actionsHtml = `
+            <div style="display:flex; align-items:center; justify-content:center; gap:6px;">
+              <button type="button" onclick="reviewSubmission(${s.id})" style="padding:5px 10px; border-radius:6px; border:1px solid #cbd5e1; background:#fff; color:#475569; font-size:11.5px; font-weight:600; cursor:pointer;">
+                <i class="fas fa-eye"></i> Details
+              </button>
+              <button type="button" onclick="resendSubmissionOtp(${s.id}, '${safeHtml(s.email)}')" title="Resend 6-Digit OTP SMS to ${safeHtml(s.phone_number)}" style="padding:5px 10px; border-radius:6px; border:1px solid #fed7aa; background:#fff7ed; color:#ea580c; font-size:11.5px; font-weight:700; cursor:pointer;">
+                <i class="fas fa-sms"></i> Resend OTP
+              </button>
+            </div>
+          `;
+        } else {
+          actionsHtml = `
+            <button type="button" onclick="reviewSubmission(${s.id})" style="padding:5px 10px; border-radius:6px; border:1px solid #cbd5e1; background:#fff; color:#475569; font-size:11.5px; font-weight:600; cursor:pointer;">
+              <i class="fas fa-eye"></i> View Application
+            </button>
+          `;
+        }
+
+        const dateStr = s.created_at ? s.created_at.substring(0, 16) : '—';
+
+        return `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color:#ffffff; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                  ${safeHtml(fullName.substring(0, 2).toUpperCase())}
+                </div>
+                <div>
+                  <div style="font-weight:700; color:#1e293b; font-size:13.5px;">${safeHtml(fullName)}</div>
+                  <div style="font-size:12px; color:#64748b;">${safeHtml(s.email)}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <i class="fas fa-phone-volume" style="color:#2563eb; font-size:12px;"></i>
+                <span style="font-weight:700; color:#1e293b; font-family:monospace; font-size:13px;">${safeHtml(s.phone_number)}</span>
+              </div>
+              <div>${otpBadge}</div>
+            </td>
+            <td>
+              <div style="font-weight:700; color:#14204d; font-size:13px;">${safeHtml(s.department)}</div>
+              <div style="font-size:12px; color:#64748b;">${safeHtml(s.job_title)}</div>
+            </td>
+            <td style="font-size:12px; color:#64748b;">${safeHtml(dateStr)}</td>
+            <td>${badgeHtml}</td>
+            <td style="text-align:center; vertical-align:middle;">${actionsHtml}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Render Forms Table
+    function renderFormsTable() {
+      const formsTbody = document.getElementById('formsTableBody');
+      if (!formsTbody) return;
+
+      const forms = onboardingData.forms || [];
+      if (forms.length === 0) {
+        formsTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px 20px; color:#64748b;">
+          No generated forms yet. Click <strong>"Create New Form"</strong> above to generate a shareable onboarding link.
+        </td></tr>`;
+        return;
+      }
+
+      formsTbody.innerHTML = forms.map(f => {
+        const dateStr = f.created_at ? f.created_at.substring(0, 10) : '—';
+        const targetEmail = f.target_email && f.target_email.trim() !== '' 
+          ? `<span style="color:#2563eb; font-weight:600;"><i class="fas fa-envelope" style="margin-right:4px;"></i>${safeHtml(f.target_email)}</span>` 
+          : `<span style="color:#94a3b8; font-style:italic;">Open Link (Any Candidate)</span>`;
+
+        return `
+          <tr>
+            <td>
+              <strong style="color:#14204d; font-size:13px;">${safeHtml(f.title)}</strong>
+              <div style="font-size:11px; color:#94a3b8; font-family:monospace;">Token: ${safeHtml(f.form_token)}</div>
+            </td>
+            <td><span style="font-weight:600; color:#334155;">${safeHtml(f.department)}</span></td>
+            <td>${safeHtml(f.job_title)}</td>
+            <td>${targetEmail}</td>
+            <td style="font-size:12px; color:#64748b;">${safeHtml(dateStr)}</td>
+            <td style="text-align:center;">
+              <div style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                <button type="button" onclick="copyFormLink('${safeHtml(f.form_url)}')" style="padding:5px 10px; border-radius:6px; border:1px solid #10b981; background:#ecfdf5; color:#059669; font-size:11.5px; font-weight:700; cursor:pointer;" title="Copy shareable link">
+                  <i class="fas fa-copy"></i> Copy Link
+                </button>
+                <a href="${safeHtml(f.form_url)}" target="_blank" style="padding:5px 10px; border-radius:6px; border:1px solid #cbd5e1; background:#f8fafc; color:#3b82f6; font-size:11.5px; font-weight:600; text-decoration:none;" title="Open and preview registration form">
+                  <i class="fas fa-arrow-up-right-from-square"></i> Open
+                </a>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 3. Modal controls for Create Form
+    window.openCreateEmpFormModal = function () {
+      const modal = document.getElementById('createEmpFormModal');
+      const resBox = document.getElementById('newFormResultBox');
+      if (resBox) resBox.style.display = 'none';
+      if (modal) modal.style.display = 'flex';
+    };
+
+    window.closeCreateEmpFormModal = function () {
+      const modal = document.getElementById('createEmpFormModal');
+      if (modal) modal.style.display = 'none';
+    };
+
+    // 4. Submit Create Form
+    window.submitCreateEmpForm = function (e) {
+      if (e) e.preventDefault();
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const formEl = document.getElementById('createEmpFormReal');
+      const btn = document.getElementById('btnSubmitCreateForm');
+      const resBox = document.getElementById('newFormResultBox');
+      const urlInput = document.getElementById('createdFormUrlInput');
+
+      if (!formEl) return;
+      const formData = new FormData(formEl);
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Generating Link...`;
+      }
+
+      fetch(pth + 'UxUi-Back/Employee/forms/create_form.php', {
+        method: 'POST',
+        body: formData
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-link"></i> Generate Form Link`;
+          }
+
+          if (res.status === 'success' && res.data) {
+            if (resBox && urlInput) {
+              urlInput.value = res.data.form_url || '';
+              resBox.style.display = 'block';
+            }
+            window.loadOnboardingData();
+            if (res.data.email_sent) {
+              alert('Registration form created successfully! An invitation email has been dispatched to ' + res.data.target_email);
+            }
+          } else {
+            alert(res.message || 'Error generating onboarding form.');
+          }
+        })
+        .catch(err => {
+          console.error('Error creating form:', err);
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-link"></i> Generate Form Link`;
+          }
+          alert('Network or server error while generating form.');
+        });
+    };
+
+    // Copy handlers
+    window.copyCreatedFormUrl = function () {
+      const urlInput = document.getElementById('createdFormUrlInput');
+      if (urlInput && urlInput.value) {
+        window.copyFormLink(urlInput.value);
+      }
+    };
+
+    window.copyFormLink = function (url) {
+      if (!url) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url)
+          .then(() => alert('Registration form URL copied to clipboard!'))
+          .catch(() => prompt('Copy registration form URL:', url));
+      } else {
+        prompt('Copy registration form URL:', url);
+      }
+    };
+
+    // 5. Review Application Modal
+    window.reviewSubmission = function (subId) {
+      const submissions = onboardingData.submissions || [];
+      const s = submissions.find(item => Number(item.id) === Number(subId));
+      if (!s) {
+        alert('Submission details not found. Please refresh.');
+        return;
+      }
+      currentReviewSubmission = s;
+
+      const modal = document.getElementById('reviewSubmissionModal');
+      const body = document.getElementById('reviewModalBody');
+      const actions = document.getElementById('reviewModalActionButtons');
+      if (!modal || !body) return;
+
+      const fullName = `${s.first_name || ''} ${s.last_name || ''}`.trim() || 'Candidate';
+      const st = (s.status || 'pending').toLowerCase();
+
+      body.innerHTML = `
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; display:flex; align-items:center; gap:12px;">
+          <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; font-weight:800; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            ${safeHtml(fullName.substring(0, 2).toUpperCase())}
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+              <h4 style="margin:0; font-size:16px; color:#14204d; font-weight:800;">${safeHtml(fullName)}</h4>
+              <span style="font-size:11px; padding:3px 10px; border-radius:12px; font-weight:700; ${st === 'approved' ? 'background:#ecfdf5; color:#059669;' : (st === 'rejected' ? 'background:#fef2f2; color:#dc2626;' : 'background:#fffbeb; color:#b45309;')} text-transform:uppercase;">
+                ${safeHtml(st)}
+              </span>
+            </div>
+            <div style="font-size:13px; color:#64748b; margin-top:2px;">
+              ${safeHtml(s.department)} &bull; ${safeHtml(s.job_title)}
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px;">
+            <span style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; display:block;">Email Address</span>
+            <span style="font-size:13px; font-weight:600; color:#1e293b;">${safeHtml(s.email)}</span>
+          </div>
+
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 12px;">
+            <span style="font-size:11px; color:#2563eb; font-weight:700; text-transform:uppercase; display:block;">
+              <i class="fas fa-comment-sms"></i> Contact Phone (OTP SMS)
+            </span>
+            <span style="font-size:13.5px; font-weight:800; color:#1d4ed8; font-family:monospace;">${safeHtml(s.phone_number)}</span>
+          </div>
+
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px;">
+            <span style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; display:block;">National ID (NIC)</span>
+            <span style="font-size:13px; font-weight:600; color:#1e293b;">${safeHtml(s.nic || '—')}</span>
+          </div>
+
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px;">
+            <span style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; display:block;">Date of Birth &amp; Gender</span>
+            <span style="font-size:13px; font-weight:600; color:#1e293b;">${safeHtml(s.dob || '—')} (${safeHtml(s.gender || 'Male')})</span>
+          </div>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px;">
+          <span style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; display:block;">Residential Address</span>
+          <span style="font-size:13px; color:#334155;">${safeHtml(s.address || '—')}</span>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px;">
+          <span style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; display:block;">Emergency Contact</span>
+          <span style="font-size:13px; color:#334155; font-weight:600;">
+            ${safeHtml(s.emergency_contact_name || '—')} ${s.emergency_contact_phone ? ' &bull; ' + safeHtml(s.emergency_contact_phone) : ''}
+          </span>
+        </div>
+
+        ${st === 'approved' ? `
+          <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:12px; font-size:12.5px; color:#166534;">
+            <div style="font-weight:700; display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+              <i class="fas fa-check-circle" style="color:#16a34a;"></i> Application Approved
+            </div>
+            <div>Account Provisioned (User ID: ${safeHtml(s.created_user_id || '—')}).</div>
+            <div style="margin-top:4px;">
+              OTP Code Status: <strong>${s.is_otp_verified == 1 ? 'Verified by Candidate' : 'Pending Verification by Candidate (Code: ' + safeHtml(s.otp_code || 'Sent via SMS') + ')'}</strong>
+            </div>
+          </div>
+        ` : (st === 'rejected' ? `
+          <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px; font-size:12.5px; color:#991b1b;">
+            <div style="font-weight:700; margin-bottom:4px;"><i class="fas fa-ban"></i> Application Declined</div>
+            <div>Reason: ${safeHtml(s.admin_notes || 'No specific notes recorded.')}</div>
+          </div>
+        ` : `
+          <div class="w3-form-group" style="margin-top:6px;">
+            <label style="font-size:12px; font-weight:700; color:#475569;">Admin Approval / Review Notes <span style="font-weight:400; color:#94a3b8;">(Optional)</span></label>
+            <textarea id="subAdminNotes" rows="2" placeholder="Add any onboarding notes or employee code instructions..." style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 10px; font-size:13px; box-sizing:border-box;"></textarea>
+          </div>
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 12px; font-size:12px; color:#1e40af; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-info-circle" style="font-size:14px; flex-shrink:0;"></i>
+            <span>Upon clicking <strong>Approve</strong>, an approval email will be sent to <strong>${safeHtml(s.email)}</strong> and a 6-digit OTP SMS will be dispatched to <strong>${safeHtml(s.phone_number)}</strong> for account verification.</span>
+          </div>
+        `)}
+      `;
+
+      if (actions) {
+        if (st === 'pending') {
+          actions.innerHTML = `
+            <button type="button" id="rejectSubBtn" onclick="rejectCurrentSubmission()" style="padding: 9px 16px; border-radius: 8px; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-weight: 700; font-size: 13px; cursor: pointer;">
+              <i class="fas fa-ban"></i> Reject
+            </button>
+            <button type="button" id="approveSubBtn" onclick="approveCurrentSubmission()" style="padding: 9px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);">
+              <i class="fas fa-check-circle"></i> Approve &amp; Dispatch OTP SMS
+            </button>
+          `;
+        } else if (st === 'approved') {
+          actions.innerHTML = `
+            <button type="button" onclick="resendSubmissionOtp(${s.id}, '${safeHtml(s.email)}')" style="padding: 9px 18px; border-radius: 8px; border: 1px solid #fed7aa; background: #fff7ed; color: #ea580c; font-weight: 700; font-size: 13px; cursor: pointer;">
+              <i class="fas fa-sms"></i> Resend OTP to Candidate
+            </button>
+          `;
+        } else {
+          actions.innerHTML = '';
+        }
+      }
+
+      modal.style.display = 'flex';
+    };
+
+    window.closeReviewSubmissionModal = function () {
+      const modal = document.getElementById('reviewSubmissionModal');
+      if (modal) modal.style.display = 'none';
+      currentReviewSubmission = null;
+    };
+
+    // 6. Approve Submission
+    window.approveCurrentSubmission = function () {
+      if (!currentReviewSubmission) return;
+      const subId = currentReviewSubmission.id;
+      const notes = document.getElementById('subAdminNotes')?.value?.trim() || '';
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const approveBtn = document.getElementById('approveSubBtn');
+      const rejectBtn = document.getElementById('rejectSubBtn');
+
+      if (!confirm(`Are you sure you want to approve ${currentReviewSubmission.first_name} ${currentReviewSubmission.last_name}?\n\nThis will provision their employee account, send an approval email, and dispatch the 6-digit OTP code to ${currentReviewSubmission.phone_number}.`)) {
+        return;
+      }
+
+      if (approveBtn) {
+        approveBtn.disabled = true;
+        approveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Approving & Dispatching OTP...`;
+      }
+      if (rejectBtn) rejectBtn.disabled = true;
+
+      const fd = new FormData();
+      fd.append('submission_id', subId);
+      fd.append('admin_notes', notes);
+
+      fetch(pth + 'UxUi-Back/Employee/forms/approve_submission.php', {
+        method: 'POST',
+        body: fd
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            alert(`Application approved successfully!\n\n${res.message || 'Approval email sent and OTP code dispatched via SMS.'}`);
+            window.closeReviewSubmissionModal();
+            window.loadOnboardingData();
+            if (typeof window.fetchAdminEmployees === 'function') {
+              window.fetchAdminEmployees();
+            }
+          } else {
+            alert(res.message || 'Error approving application.');
+            if (approveBtn) {
+              approveBtn.disabled = false;
+              approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Dispatch OTP SMS`;
+            }
+            if (rejectBtn) rejectBtn.disabled = false;
+          }
+        })
+        .catch(err => {
+          console.error('Error approving submission:', err);
+          alert('Network or server error while approving submission.');
+          if (approveBtn) {
+            approveBtn.disabled = false;
+            approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Dispatch OTP SMS`;
+          }
+          if (rejectBtn) rejectBtn.disabled = false;
+        });
+    };
+
+    // 7. Reject Submission
+    window.rejectCurrentSubmission = function () {
+      if (!currentReviewSubmission) return;
+      const subId = currentReviewSubmission.id;
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+
+      const reason = prompt('Please enter the reason for declining this application:', 'Application declined by administration.');
+      if (reason === null) return; // User cancelled
+
+      const fd = new FormData();
+      fd.append('submission_id', subId);
+      fd.append('reason', reason);
+
+      fetch(pth + 'UxUi-Back/Employee/forms/reject_submission.php', {
+        method: 'POST',
+        body: fd
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            alert('Application declined and candidate notified.');
+            window.closeReviewSubmissionModal();
+            window.loadOnboardingData();
+          } else {
+            alert(res.message || 'Error rejecting submission.');
+          }
+        })
+        .catch(err => {
+          console.error('Error rejecting submission:', err);
+          alert('Network or server error while rejecting submission.');
+        });
+    };
+
+    // 8. Resend OTP to Candidate
+    window.resendSubmissionOtp = function (subId, email) {
+      if (!confirm(`Resend a fresh 6-digit OTP verification code via SMS to this candidate?`)) {
+        return;
+      }
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const fd = new FormData();
+      fd.append('submission_id', subId);
+      if (email) fd.append('email', email);
+
+      fetch(pth + 'UxUi-Back/Employee/forms/resend_otp.php', {
+        method: 'POST',
+        body: fd
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            alert(`Success: ${res.message || 'New OTP sent via SMS to employee contact number.'}`);
+            window.loadOnboardingData();
+          } else {
+            alert(res.message || 'Failed to resend OTP.');
+          }
+        })
+        .catch(err => {
+          console.error('Error resending OTP:', err);
+          alert('Network or server error while resending OTP.');
+        });
+    };
+
     // Initial Load from Database
     window.fetchAdminEmployees();
+    window.loadOnboardingData();
   });
 })();
 </script>
