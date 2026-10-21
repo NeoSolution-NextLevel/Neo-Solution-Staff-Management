@@ -134,7 +134,13 @@ class User_Account_Check
                     break;
                 }
 
-                // 3. Match via decryption if format permits
+                // 3. Match via standard PHP password_verify (bcrypt/argon2)
+                if (password_verify($this->raw_password, $stored_pwd)) {
+                    $matched_row = $row;
+                    break;
+                }
+
+                // 4. Match via decryption if format permits
                 try {
                     $decrypted = $advance_security_check->get_data_decrypt($this->user_name, $stored_pwd);
                     if ($decrypted === $this->raw_password) {
