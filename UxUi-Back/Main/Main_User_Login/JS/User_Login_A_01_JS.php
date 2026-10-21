@@ -26,6 +26,10 @@
 
                     if (json[0].error === "0") {
 
+                        if (json[0].otp_verification_required === "1") {
+                            window.location.href = "<?php echo $home_page ?>UxUi/Main/Employee-Verify-OTP.php?email=" + encodeURIComponent(json[0].email || "");
+                            return;
+                        }
 
                         if (json[0].google_authentication === "1") {
                             var type = encodeURIComponent("Google-Authentication");
@@ -46,14 +50,21 @@
                     } else {
                         // alert(json[0].error);
 
-                        if (json[0].error === "Username Incorrect") {
+                        if (json[0].error === "Application-Pending-Approval") {
+                            var errorMsg = encodeURIComponent("Application-Pending-Approval");
+                            window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
+
+                        } else if (json[0].error === "Application-Declined") {
+                            var errorMsg = encodeURIComponent("Application-Declined");
+                            window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
+
+                        } else if (json[0].error === "Username Incorrect") {
                             var errorMsg = encodeURIComponent("Username-Incorrect");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
                         } else if (json[0].error === "Password Incorrect") {
                             var errorMsg = encodeURIComponent("Password-Incorrect");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
-
 
                         } else if (json[0].error === "temporary lock") {
                             var errorMsg = encodeURIComponent("Temporary-Lock");
@@ -64,7 +75,6 @@
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
                         } else {
-
                             var errorMsg = encodeURIComponent("Service-Error");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
                         }
