@@ -221,38 +221,46 @@
                             </div>
 
                             <div id="two-factor-auth-fields" style="display: none; padding-top: var(--erp-space-lg);">
+                                <div id="two-factor-alert-box" style="display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13.5px; font-weight: 500;"></div>
                                 <div class="erp-form__grid">
                                     <div class="erp-form__group">
-                                        <label class="erp-form__label">Phone Number for 2FA</label>
-                                        <div class="erp-input-wrapper">
-                                            <i class="fas fa-mobile-alt erp-form__icon"></i>
-                                            <input
-                                                type="tel"
-                                                class="erp-form__control erp-form__control--with-icon"
-                                                placeholder="Enter phone number"
-                                                id="two-factor-phone-number"
-                                                disabled
-                                                aria-label="Phone Number for Two-Factor Authentication">
+                                        <label class="erp-form__label">Phone Number for 2FA <span style="color: var(--erp-accent-error); font-size: 12px;">*</span></label>
+                                        <div class="erp-input-wrapper" style="display: flex; gap: 8px;">
+                                            <div style="position: relative; flex: 1;">
+                                                <i class="fas fa-mobile-alt erp-form__icon"></i>
+                                                <input
+                                                    type="tel"
+                                                    class="erp-form__control erp-form__control--with-icon"
+                                                    placeholder="e.g. 0771234567"
+                                                    id="two-factor-phone-number"
+                                                    aria-label="Phone Number for Two-Factor Authentication">
+                                            </div>
+                                            <button type="button" class="erp-btn erp-btn--secondary" id="two-factor-resend-btn" onclick="send_two_step_verification_sms()" style="white-space: nowrap; padding: 0 16px;">
+                                                <i class="fas fa-paper-plane"></i>
+                                                <span>Send OTP</span>
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="erp-form__group">
-                                        <label class="erp-form__label">Verification Code (OTP)</label>
+                                        <label class="erp-form__label">Verification Code (OTP) <span style="color: var(--erp-accent-error); font-size: 12px;">*</span></label>
                                         <div class="erp-input-wrapper">
                                             <i class="fas fa-key erp-form__icon"></i>
                                             <input
                                                 type="text"
                                                 class="erp-form__control erp-form__control--with-icon"
-                                                placeholder="Enter OTP"
+                                                placeholder="Enter 6-digit OTP"
                                                 id="two-factor-otp"
+                                                maxlength="6"
+                                                inputmode="numeric"
                                                 aria-label="One-Time Password">
                                         </div>
                                     </div>
 
                                 </div>
-                                <div class="erp-profile-actions" style="border-top: none; padding-top: 0;">
+                                <div class="erp-profile-actions" style="border-top: none; padding-top: 10px;">
                                     <button class="erp-btn erp-btn--primary" type="button" id="two-factor-verify-btn" onclick="send_two_step_verification_check_otp()">
                                         <i class="fas fa-check-circle"></i>
-                                        <span>Verify 2FA</span>
+                                        <span>Verify & Save 2FA</span>
                                     </button>
                                 </div>
                             </div>
