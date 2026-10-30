@@ -391,6 +391,11 @@
 <body>
     <?php
     include_once '../../UxUi-Back/Common/header.php';
+    $current_email = isset($_GET['email']) && !empty($_GET['email'])
+        ? trim($_GET['email'])
+        : (isset($_SESSION['temp_otp_email']) && !empty($_SESSION['temp_otp_email'])
+            ? trim($_SESSION['temp_otp_email'])
+            : (isset($_SESSION['user_name']) ? trim($_SESSION['user_name']) : ''));
     ?>
     <div class="erp-container erp-container--login">
         <div class="erp-login-card">
@@ -421,7 +426,9 @@
                             <span id="error-message">Error message will appear here</span>
                         </div> -->
 
-                        <span class="erp-form__hint">Enter the code sent to your registered email or mobile</span>
+                        <span class="erp-form__hint">
+                            Enter the 6-digit code sent to your registered email <?php echo !empty($current_email) ? '<strong style="color: #2563eb;">(' . htmlspecialchars($current_email) . ')</strong>' : ''; ?> or mobile.
+                        </span>
                     </div>
 
                     <div class="erp-form__group erp-mt-lg">
@@ -457,12 +464,12 @@
     <!-- JavaScript for dynamic year and basic OTP handling 123456-->
 
     <script>
+        const currentOtpEmail = "<?php echo htmlspecialchars($current_email); ?>";
+
         function OTP_Two_step_verification_config_functions(otp) {
 
             const params = new URLSearchParams(window.location.search);
             const Type = params.get("type");
-
-            alert("Type : " + Type);
 
             if (Type == "Google-Authentication") {
                 OTP_Two_step_Verification_A_01_from_01_SUMBIT(otp)
@@ -718,7 +725,10 @@
             $.ajax({
                 url: '../../UxUi-Back/Employee/forms/verify_employee_otp.php',
                 type: 'POST',
-                data: { otp_code: otp },
+                data: { 
+                    otp_code: otp,
+                    email: currentOtpEmail
+                },
                 success: function(res) {
                     try {
                         const json = typeof res === 'object' ? res : JSON.parse(res);
@@ -750,7 +760,9 @@
             $.ajax({
                 url: '../../UxUi-Back/Employee/forms/resend_otp.php',
                 type: 'POST',
-                data: {},
+                data: {
+                    email: currentOtpEmail
+                },
                 success: function(res) {
                     try {
                         const json = typeof res === 'object' ? res : JSON.parse(res);
