@@ -10,8 +10,8 @@ class Company_Info_Variable_List {
     private $company_name = "Neo Solution";
     private $company_web = "neosolution.lk";
     private $full_company_web = "https://www.neosolution.lk";
-    private $default_sending_email = "admin@neosolution.lk";
-    private $system_problem_sending_email = "admin@neosolution.lk";
+    private $default_sending_email = "devindi@neosolution.lk";
+    private $system_problem_sending_email = "devindi@neosolution.lk";
     private $company_short_name = "Neo Solution";
 //-----------------------------------------------------------------------------------------------------------   
     private $company_whatup_number = "";
