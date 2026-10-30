@@ -1,6 +1,13 @@
 <?php
 include_once '../../imports/need/session_setup.php';
-require_login();
+
+$public_messages = ['User-Registration-Successful', 'Admin-Registration-Pending-Approval', 'Account-Verified-Successfully', 'Password-Reset-Successful'];
+$current_msg = isset($_GET['message']) ? trim($_GET['message']) : '';
+
+if (!in_array($current_msg, $public_messages) && !is_logged_in()) {
+    require_login();
+}
+
 $is_auth_page = true;
 $is_admin = (isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin');
 $portal_type = $is_admin ? 'Admin Portal' : 'Staff Portal';
@@ -19,7 +26,7 @@ if (empty($target_dashboard_url)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <?php if (!empty($target_dashboard_url)): ?>
+    <?php if (!empty($target_dashboard_url) && is_logged_in() && $current_msg !== 'Admin-Registration-Pending-Approval'): ?>
     <meta http-equiv="refresh" content="3;url=<?php echo htmlspecialchars($target_dashboard_url); ?>">
     <?php endif; ?>
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
