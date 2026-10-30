@@ -151,7 +151,7 @@ if (!empty($prefill_email)) {
                         <div>
                             <strong>Application Approved!</strong>
                             <p style="margin: 4px 0 0; font-size: 13px;">
-                                Your application has been approved. A 6-digit OTP verification code was dispatched to your phone number <strong><?php echo htmlspecialchars($phone_masked); ?></strong>.
+                                Your application has been approved. A 6-digit OTP verification code was dispatched to your email address and phone number <?php echo !empty($phone_masked) ? '<strong>(' . htmlspecialchars($phone_masked) . ')</strong>' : ''; ?>.
                             </p>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ if (!empty($prefill_email)) {
                     <div class="status-alert status-alert--info">
                         <i class="fas fa-info-circle" style="font-size: 18px; color: #2563eb; margin-top: 2px;"></i>
                         <div>
-                            Enter the corporate email address you used in your registration form along with the 6-digit OTP code sent via SMS.
+                            Enter the corporate email address you used in your registration form along with the 6-digit OTP verification code sent to your email inbox and phone.
                         </div>
                     </div>
                 <?php endif; ?>
