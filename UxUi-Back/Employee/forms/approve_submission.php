@@ -203,13 +203,12 @@ try {
                 We are pleased to inform you that your Employee Registration Form for <strong>{$department}</strong> ({$job_title}) has been reviewed and <strong>approved</strong> by the Administration.
             </p>
 
-            <div style='background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 20px 0;'>
-                <p style='margin: 0 0 8px; font-size: 14px; color: #166534; font-weight: 700;'>
-                    <i class='fas fa-mobile-alt'></i> Verification OTP Dispatched:
-                </p>
-                <p style='margin: 0; font-size: 13.5px; color: #166534;'>
-                    A 6-digit OTP verification code has been sent via SMS to your contact number <strong>{$phone}</strong>.
-                    Please click the button below and enter your OTP to activate your account and access the staff dashboard.
+            <div style='background: #f8fafc; border: 2px dashed #2563eb; border-radius: 12px; padding: 22px 16px; text-align: center; margin: 22px 0;'>
+                <p style='margin: 0 0 8px; font-size: 13px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;'>Your 6-Digit Verification OTP Code</p>
+                <div style='font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #1e3a8a; font-family: monospace; background: #eef2ff; display: inline-block; padding: 8px 24px; border-radius: 8px; border: 1px solid #dbe4ff;'>{$otp_code}</div>
+                <p style='margin: 10px 0 0; font-size: 12.5px; color: #475569;'>
+                    Valid for 24 hours. Enter this OTP to activate your account.<br>
+                    <span style='color: #64748b;'>(Also dispatched via SMS to <strong>{$phone}</strong>)</span>
                 </p>
             </div>
 
