@@ -9,6 +9,8 @@ try {
     include_once __DIR__ . '/../../../imports/need/DB.php';
     include_once __DIR__ . '/../../../imports/need/auth_guard.php';
     include_once __DIR__ . '/../../../Controllers/Main/Cook_Managment/Cook_Createing.php';
+    include_once __DIR__ . '/../../../imports/security/encrypt_decrypt.php';
+    include_once __DIR__ . '/../../../imports/security/key_list.php';
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         ob_end_clean();
@@ -30,88 +32,122 @@ try {
         exit;
     }
 
-    if (empty($email) && $sub_id <= 0) {
-        ob_end_clean();
-        echo json_encode(['status' => 'error', 'message' => 'Email address or application reference is required.']);
-        exit;
-    }
-
     $db = new DataBase();
     $conn = $db->get_data_base_connction();
-
-    // Query submission
     $safe_email = addslashes($email);
+
+    $matched = false;
+    $u_id = 0;
+    $user_name = $email;
+    $full_name = '';
+    $user_role = 'Employee';
+    $ac_type = 'Employee';
+    $access_level_id = 2;
+    $department = 'Administration';
+    $job_title = 'Staff';
+    $phone_number = '';
+
+    // 1. Try employee_form_submissions
     $whereClause = $sub_id > 0 
         ? "`id` = {$sub_id}" 
-        : "`email` = '{$safe_email}' ORDER BY `id` DESC LIMIT 1";
+        : (!empty($safe_email) ? "`email` = '{$safe_email}' ORDER BY `id` DESC LIMIT 1" : "0");
 
-    $sub_res = $conn->query("SELECT * FROM `employee_form_submissions` WHERE {$whereClause}");
-    if (!$sub_res || $sub_res->num_rows === 0) {
-        ob_end_clean();
-        echo json_encode(['status' => 'error', 'message' => 'No registration submission found for this email address.']);
-        exit;
-    }
+    if ($whereClause !== "0") {
+        $sub_res = $conn->query("SELECT * FROM `employee_form_submissions` WHERE {$whereClause}");
+        if ($sub_res && $sub_res->num_rows > 0) {
+            $sub = $sub_res->fetch_assoc();
+            $stored_otp = trim((string)($sub['otp_code'] ?? ''));
 
-    $sub = $sub_res->fetch_assoc();
+            if (!empty($stored_otp) && $stored_otp === trim($otp_code)) {
+                // Check expiry
+                if (!empty($sub['otp_expires_at']) && strtotime($sub['otp_expires_at']) < time()) {
+                    ob_end_clean();
+                    echo json_encode(['status' => 'error', 'message' => 'This OTP verification code has expired. Please click "Resend OTP" to receive a new code.']);
+                    exit;
+                }
 
-    // Check status
-    if ($sub['status'] === 'pending') {
-        ob_end_clean();
-        echo json_encode(['status' => 'error', 'message' => 'Your application has not yet been approved by the Administration. Once approved, you will receive an OTP code to verify your account.']);
-        exit;
-    }
+                $matched = true;
+                $u_id = (int)($sub['created_user_id'] ?? 0);
+                $user_name = $sub['email'];
+                $full_name = trim(($sub['first_name'] ?? '') . ' ' . ($sub['last_name'] ?? ''));
+                $department = $sub['department'] ?? 'Administration';
+                $job_title = $sub['job_title'] ?? 'Staff';
+                $phone_number = $sub['phone_number'] ?? '';
 
-    if ($sub['status'] === 'rejected') {
-        ob_end_clean();
-        echo json_encode(['status' => 'error', 'message' => 'This application was not approved by administration.']);
-        exit;
-    }
-
-    if ((int)$sub['is_otp_verified'] === 1) {
-        // Already verified - allow immediate login
-        $u_id = (int)$sub['created_user_id'];
-        if ($u_id > 0) {
-            $conn->query("UPDATE `main_user_login` SET `account_active_state` = 1, `moible_verfiy` = 1, `ast` = 1 WHERE `id` = {$u_id}");
+                $sub_id_found = (int)$sub['id'];
+                $conn->query("UPDATE `employee_form_submissions` SET 
+                    `is_otp_verified` = 1, 
+                    `otp_verified_at` = NOW() 
+                WHERE `id` = {$sub_id_found}");
+            }
         }
+    }
 
+    // 2. Try main_user_login (direct OTP code or fallback)
+    if (!$matched) {
+        $userWhere = !empty($safe_email) ? "`user_name` = '{$safe_email}'" : ($u_id > 0 ? "`id` = {$u_id}" : "0");
+        if ($userWhere !== "0") {
+            $uQ = $conn->query("SELECT * FROM `main_user_login` WHERE {$userWhere} LIMIT 1");
+            if ($uQ && ($uRow = $uQ->fetch_assoc())) {
+                $stored_otp = trim((string)($uRow['otp_code'] ?? ''));
+                if (!empty($stored_otp) && $stored_otp === trim($otp_code)) {
+                    if (!empty($uRow['otp_expires_at']) && strtotime($uRow['otp_expires_at']) < time()) {
+                        ob_end_clean();
+                        echo json_encode(['status' => 'error', 'message' => 'This OTP verification code has expired. Please click "Resend OTP" to receive a new code.']);
+                        exit;
+                    }
+
+                    $matched = true;
+                    $u_id = (int)$uRow['id'];
+                    $user_name = $uRow['user_name'];
+                    $full_name = !empty($uRow['name_show']) ? $uRow['name_show'] : trim(($uRow['first_name'] ?? '') . ' ' . ($uRow['last_name'] ?? ''));
+                    $user_role = $uRow['ac_type'] ?? 'Employee';
+                    $ac_type = $user_role;
+                    $access_level_id = (int)($uRow['main_user_account_access_level_list_id'] ?? 2);
+                    $phone_number = $uRow['phone_number'] ?? '';
+                }
+            }
+        }
+    }
+
+    // 3. Try decrypting session OTP (2FA flow)
+    if (!$matched && !empty($_SESSION['otp_encrypt'])) {
+        try {
+            $Advance_Security_Key_List_obj = new Advance_Security_Key_List();
+            $Advance_Security_obj = new Advance_Security();
+            $decrypted_otp = $Advance_Security_obj->get_data_decrypt(
+                $Advance_Security_Key_List_obj->get_two_step_varification(),
+                $_SESSION['otp_encrypt']
+            );
+
+            if ((string)$decrypted_otp === (string)$otp_code) {
+                $matched = true;
+                $session_uid = (int)($_SESSION['temp_otp_user_id'] ?? ($_SESSION['user_id'] ?? 0));
+                if ($session_uid > 0) {
+                    $uQ = $conn->query("SELECT * FROM `main_user_login` WHERE `id` = {$session_uid} LIMIT 1");
+                    if ($uQ && ($uRow = $uQ->fetch_assoc())) {
+                        $u_id = (int)$uRow['id'];
+                        $user_name = $uRow['user_name'];
+                        $full_name = !empty($uRow['name_show']) ? $uRow['name_show'] : trim(($uRow['first_name'] ?? '') . ' ' . ($uRow['last_name'] ?? ''));
+                        $user_role = $uRow['ac_type'] ?? 'Employee';
+                        $ac_type = $user_role;
+                        $access_level_id = (int)($uRow['main_user_account_access_level_list_id'] ?? 2);
+                        $phone_number = $uRow['phone_number'] ?? '';
+                    }
+                }
+            }
+        } catch (\Throwable $e) {}
+    }
+
+    if (!$matched) {
         ob_end_clean();
-        echo json_encode([
-            'status' => 'success',
-            'message' => 'Your account is already verified! You can proceed to the login portal.',
-            'already_verified' => true,
-            'redirect_url' => rtrim($GLOBALS['home_page'], '/') . '/UxUi/Main/User-Login.php'
-        ]);
+        echo json_encode(['status' => 'error', 'message' => 'Invalid OTP verification code. Please check your email / SMS and enter the 6-digit code correctly.']);
         exit;
     }
 
-    // Verify OTP code
-    $stored_otp = trim((string)$sub['otp_code']);
-    $entered_otp = trim((string)$otp_code);
-
-    if ($stored_otp !== $entered_otp) {
-        ob_end_clean();
-        echo json_encode(['status' => 'error', 'message' => 'Invalid OTP verification code. Please check your SMS and enter the 6-digit code correctly.']);
-        exit;
-    }
-
-    // Check OTP expiration (if set)
-    if (!empty($sub['otp_expires_at']) && strtotime($sub['otp_expires_at']) < time()) {
-        ob_end_clean();
-        echo json_encode(['status' => 'error', 'message' => 'This OTP verification code has expired. Please click "Resend OTP" to receive a new code.']);
-        exit;
-    }
-
-    // Mark verified in employee_form_submissions
-    $sub_id_found = (int)$sub['id'];
-    $conn->query("UPDATE `employee_form_submissions` SET 
-        `is_otp_verified` = 1, 
-        `otp_verified_at` = NOW() 
-    WHERE `id` = {$sub_id_found}");
-
-    // Activate in main_user_login
-    $u_id = (int)$sub['created_user_id'];
-    if ($u_id <= 0) {
-        $chk_user = $conn->query("SELECT id FROM `main_user_login` WHERE `user_name` = '{$safe_email}' LIMIT 1");
+    // Activate user in main_user_login
+    if ($u_id <= 0 && !empty($user_name)) {
+        $chk_user = $conn->query("SELECT id FROM `main_user_login` WHERE `user_name` = '" . addslashes($user_name) . "' LIMIT 1");
         if ($chk_user && ($ur = $chk_user->fetch_assoc())) {
             $u_id = (int)$ur['id'];
         }
@@ -122,7 +158,9 @@ try {
             `account_active_state` = 1, 
             `moible_verfiy` = 1, 
             `email_verify` = 1, 
-            `ast` = 1 
+            `ast` = 1,
+            `otp_code` = NULL,
+            `otp_expires_at` = NULL
         WHERE `id` = {$u_id}");
 
         $conn->query("UPDATE `employee_profiles` SET `status` = 'active', `updated_at` = NOW() WHERE `user_id` = {$u_id}");
@@ -130,29 +168,19 @@ try {
 
         // Auto login session setup
         $_SESSION['user_id'] = $u_id;
-        $_SESSION['user_name'] = $sub['email'];
-        $_SESSION['name_show'] = trim($sub['first_name'] . ' ' . $sub['last_name']);
-        $_SESSION['full_name'] = trim($sub['first_name'] . ' ' . $sub['last_name']);
-        $_SESSION['first_name'] = $sub['first_name'];
-        $_SESSION['last_name'] = $sub['last_name'];
-        $_SESSION['user_role'] = 'Employee';
-        $_SESSION['ac_type'] = 'Employee';
-        $_SESSION['main_user_account_access_level_list_id'] = 2;
-        $_SESSION['phone_number'] = $sub['phone_number'];
-        $_SESSION['department'] = $sub['department'];
-        $_SESSION['job_title'] = $sub['job_title'];
-        $_SESSION['url_home'] = 'UxUi/Employee_user_dashboard.php';
+        $_SESSION['user_name'] = $user_name;
+        $_SESSION['name_show'] = $full_name;
+        $_SESSION['full_name'] = $full_name;
+        $_SESSION['user_role'] = $user_role;
+        $_SESSION['ac_type'] = $ac_type;
+        $_SESSION['main_user_account_access_level_list_id'] = $access_level_id;
+        $_SESSION['phone_number'] = $phone_number;
+        $_SESSION['department'] = $department;
+        $_SESSION['job_title'] = $job_title;
 
-        // Load profile extra details
-        $chkP = $conn->query("SELECT id, employee_id_code, profile_pic FROM `employee_profiles` WHERE `user_id` = {$u_id} LIMIT 1");
-        if ($chkP && ($pRow = $chkP->fetch_assoc())) {
-            $_SESSION['employee_profile_id'] = (int)$pRow['id'];
-            $_SESSION['employee_id_code'] = $pRow['employee_id_code'];
-            if (!empty($pRow['profile_pic'])) {
-                $_SESSION['profile_pic'] = $pRow['profile_pic'];
-                $_SESSION['image_url'] = $pRow['profile_pic'];
-            }
-        }
+        $isAdmin = (strtolower((string)$user_role) === 'admin' || $access_level_id === 1 || $u_id === 1);
+        $url_home = $isAdmin ? 'UxUi/Admin_user_dashboard.php' : 'UxUi/Employee_user_dashboard.php';
+        $_SESSION['url_home'] = $url_home;
 
         // Initialize persistent cook session
         try {
@@ -160,20 +188,21 @@ try {
             $_SESSION['user_main_cook_id'] = $cookObj->get_cook_id();
         } catch (\Throwable $cEx) {}
 
-        unset($_SESSION['otp_pending'], $_SESSION['temp_otp_user_id'], $_SESSION['temp_otp_email']);
+        unset($_SESSION['otp_pending'], $_SESSION['temp_otp_user_id'], $_SESSION['temp_otp_email'], $_SESSION['otp_encrypt']);
     }
 
-    $dashboard_url = rtrim($GLOBALS['home_page'], '/') . '/UxUi/Employee_user_dashboard.php';
+    $isAdmin = (strtolower((string)$user_role) === 'admin' || $access_level_id === 1 || $u_id === 1);
+    $dashboard_url = rtrim($GLOBALS['home_page'], '/') . '/' . ($isAdmin ? 'UxUi/Admin_user_dashboard.php' : 'UxUi/Employee_user_dashboard.php');
     $success_url = rtrim($GLOBALS['home_page'], '/') . '/UxUi/Main/Successful-Page.php?message=' . urlencode("Account-Verified-Successfully");
 
     ob_end_clean();
     echo json_encode([
         'status' => 'success',
-        'message' => 'Congratulations! Your mobile contact number has been verified and your account is now fully active.',
+        'message' => 'Congratulations! Your account has been verified and activated.',
         'data' => [
             'user_id' => $u_id,
-            'email' => $sub['email'],
-            'full_name' => trim($sub['first_name'] . ' ' . $sub['last_name']),
+            'email' => $user_name,
+            'full_name' => $full_name,
             'redirect_url' => $success_url,
             'dashboard_url' => $dashboard_url
         ]
