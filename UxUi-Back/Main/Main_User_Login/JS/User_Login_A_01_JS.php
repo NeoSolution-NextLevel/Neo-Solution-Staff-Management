@@ -13,7 +13,7 @@
         // alert(Sending_value);
 
         $.ajax({
-            url: "<?php echo $pth; ?>View-List/Main/User_Login_Check.php",
+            url: "<?php echo $home_page; ?>View-List/Main/User_Login_Check.php",
             type: "POST",
             data: Sending_value,
             success: function(res) {
@@ -50,7 +50,15 @@
                     } else {
                         // alert(json[0].error);
 
-                        if (json[0].error === "Application-Pending-Approval") {
+                        if (json[0].error === "Admin-Pending-Approval") {
+                            var errorMsg = encodeURIComponent("Admin-Pending-Approval");
+                            window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
+
+                        } else if (json[0].error === "Admin-Account-Blocked") {
+                            var errorMsg = encodeURIComponent("Admin-Account-Blocked");
+                            window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
+
+                        } else if (json[0].error === "Application-Pending-Approval") {
                             var errorMsg = encodeURIComponent("Application-Pending-Approval");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
@@ -86,6 +94,11 @@
                     var errorMsg = encodeURIComponent("Service-Error");
                     window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error("Login request failed:", status, error);
+                var errorMsg = encodeURIComponent("Service-Error");
+                window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
             }
         });
 
