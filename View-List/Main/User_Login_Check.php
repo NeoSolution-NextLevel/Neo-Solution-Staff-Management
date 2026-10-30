@@ -15,6 +15,7 @@ include_once '../../Controllers/Main/Cook_Managment/Cook_Createing.php';
 include_once '../../Controllers/Main/User_Accout_Check_Device.php';
 include_once '../../Controllers/Main/User_Accout_Check.php';
 include_once '../../imports/sms/SMS_Sending.php';
+include_once '../../imports/email/Email_Send.php';
 
 
 $get_user_name = isset($_POST['val_01']) ? $_POST['val_01'] : "";
@@ -89,14 +90,40 @@ if ($User_Account_Check_obj->check_user_name()) {
         );
 
         if ($isAdmin) {
+            // Super Admin approval check: Admin accounts must be approved by Super Admin
+            $chkAdmQ = (new DataBase())->get_data_base_connction()->query(
+                "SELECT id, account_active_state, email_verify, full_block FROM `main_user_login` WHERE `id` = " . (int)$User_Account_Check_obj->get_user_id() . " LIMIT 1"
+            );
+            if ($chkAdmQ && ($chkRow = $chkAdmQ->fetch_assoc())) {
+                // Root Super Admin (id=1) is permanently approved; non-root admins require approval if account_active_state == 0
+                if ((int)$chkRow['id'] !== 1) {
+                    if ((int)$chkRow['full_block'] === 1) {
+                        session_unset();
+                        $state['error'] = "Admin-Account-Blocked";
+                        $json[] = $state;
+                        echo json_encode($json);
+                        exit;
+                    }
+                    if ((int)$chkRow['account_active_state'] === 0) {
+                        session_unset();
+                        $state['error'] = "Admin-Pending-Approval";
+                        $json[] = $state;
+                        echo json_encode($json);
+                        exit;
+                    }
+                }
+            }
+
             $url_home = 'UxUi/Admin_user_dashboard.php';
             $user_role = 'admin';
-            $_SESSION['full_name'] = 'Admin';
-            $_SESSION['first_name'] = 'Admin';
-            $_SESSION['last_name'] = 'User';
-            $_SESSION['job_title'] = 'System Administrator';
+            $admName = !empty($_SESSION['name_show']) ? $_SESSION['name_show'] : trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+            if (empty($admName)) $admName = 'Admin';
+            $_SESSION['full_name'] = $admName;
+            $_SESSION['first_name'] = !empty($_SESSION['first_name']) ? $_SESSION['first_name'] : 'Admin';
+            $_SESSION['last_name'] = !empty($_SESSION['last_name']) ? $_SESSION['last_name'] : 'User';
+            $_SESSION['job_title'] = 'Administrator';
             $_SESSION['department'] = 'Administration';
-            $_SESSION['employee_id_code'] = 'ADM-001';
+            $_SESSION['employee_id_code'] = 'ADM-' . str_pad((string)$User_Account_Check_obj->get_user_id(), 3, '0', STR_PAD_LEFT);
             $_SESSION['user_role'] = 'admin';
             $_SESSION['ac_type'] = 'admin';
         } else {
@@ -248,16 +275,62 @@ if ($User_Account_Check_obj->check_user_name()) {
                                 WHERE `id` = {$subId}");
                         }
 
+                        // Also persist directly in main_user_login
+                        $lconn->query("UPDATE `main_user_login` SET 
+                            `otp_code` = '{$otp_code}', 
+                            `otp_expires_at` = DATE_ADD(NOW(), INTERVAL 24 HOUR) 
+                            WHERE `id` = {$safeUid}");
+
+                        if (empty($phone)) {
+                            $epQ = $lconn->query("SELECT phone FROM `employee_profiles` WHERE `user_id` = {$safeUid} AND `phone` != '' LIMIT 1");
+                            if ($epQ && ($epR = $epQ->fetch_assoc())) {
+                                $phone = trim($epR['phone']);
+                            }
+                        }
+                        if (empty($phone)) {
+                            $empQ = $lconn->query("SELECT phone_number FROM `employees` WHERE `main_user_login_id` = {$safeUid} AND `phone_number` != '' LIMIT 1");
+                            if ($empQ && ($empR = $empQ->fetch_assoc())) {
+                                $phone = trim($empR['phone_number']);
+                            }
+                        }
+                        if (!empty($phone) && empty($vRow['phone_number'])) {
+                            $lconn->query("UPDATE `main_user_login` SET `phone_number` = '" . addslashes($phone) . "' WHERE `id` = {$safeUid}");
+                        }
+
+                        $comp_info = new Company_Info_Variable_List();
+                        $c_name = $comp_info->get_compnay_name();
+
                         // Send fresh OTP via SMS to candidate phone
                         if (!empty($phone)) {
                             try {
-                                $comp_info = new Company_Info_Variable_List();
-                                $c_name = $comp_info->get_compnay_name();
                                 $sms_msg = "Your {$c_name} login OTP is: {$otp_code}. Valid for 15 minutes. Enter this code to verify your account.";
                                 $sms = new SMS_Sending($phone, $sms_msg);
                                 $sms->send_message();
                             } catch (\Throwable $sEx) {}
                         }
+
+                        // Send fresh OTP via Email to employee inbox
+                        try {
+                            $user_email = $User_Account_Check_obj->get_user_name();
+                            $mail_subj = "Your Login Verification OTP Code - {$c_name}";
+                            $mail_html = "
+                            <div style='font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;'>
+                                <div style='text-align: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #2563eb;'>
+                                    <h2 style='color: #14204d; margin: 0;'>{$c_name}</h2>
+                                    <p style='color: #64748b; font-size: 13px; margin: 4px 0 0;'>Staff Account Verification</p>
+                                </div>
+                                <p style='font-size: 15px; color: #1e293b;'>Hello,</p>
+                                <p style='font-size: 14px; color: #334155;'>Here is your login verification code to complete sign in and activate your employee portal session:</p>
+                                <div style='background: #f8fafc; border: 2px dashed #2563eb; border-radius: 10px; padding: 20px; text-align: center; margin: 20px 0;'>
+                                    <span style='font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;'>6-Digit OTP Code</span>
+                                    <div style='font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #1e3a8a; font-family: monospace; margin-top: 6px;'>{$otp_code}</div>
+                                    <p style='font-size: 12px; color: #64748b; margin: 8px 0 0;'>Valid for 15 minutes. Do not share this code.</p>
+                                </div>
+                                <p style='font-size: 12px; color: #94a3b8; text-align: center;'>© " . date('Y') . " {$c_name}. All rights reserved.</p>
+                            </div>";
+                            $m_sender = new Email_Send($user_email, $mail_subj, $mail_html, 'login_otp');
+                            $m_sender->send_email();
+                        } catch (\Throwable $emEx) {}
 
                         // Store temporary verification session
                         $_SESSION['temp_otp_user_id'] = $safeUid;
@@ -290,19 +363,59 @@ if ($User_Account_Check_obj->check_user_name()) {
 
             if ($User_Account_Check_obj->get_is_two_factor_auth_enable() == "1") {
                 $phone_number = $User_Account_Check_obj->get_phone_number();
+                $user_email = $User_Account_Check_obj->get_user_name();
+                $safeUid = (int)$User_Account_Check_obj->get_user_id();
 
                 $otp = random_int(100000, 999999);
-                $message = "Your OTP code is: $otp. Do not share this code.";
+                $comp_info = new Company_Info_Variable_List();
+                $c_name = $comp_info->get_compnay_name();
 
-                $sms_obj = new SMS_Sending($phone_number, $message);
-                $sms_obj->send_message();
+                // Persist OTP in main_user_login
+                try {
+                    $lconn = (new DataBase())->get_data_base_connction();
+                    $lconn->query("UPDATE `main_user_login` SET `otp_code` = '{$otp}', `otp_expires_at` = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE `id` = {$safeUid}");
+                } catch (\Throwable $dbEx) {}
+
+                // Send OTP via Email (reliable delivery)
+                try {
+                    $mail_subj = "Two-Factor Authentication OTP - {$c_name}";
+                    $mail_html = "
+                    <div style='font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;'>
+                        <div style='text-align: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #2563eb;'>
+                            <h2 style='color: #14204d; margin: 0;'>{$c_name}</h2>
+                            <p style='color: #64748b; font-size: 13px; margin: 4px 0 0;'>Two-Factor Authentication</p>
+                        </div>
+                        <p style='font-size: 15px; color: #1e293b;'>Hello,</p>
+                        <p style='font-size: 14px; color: #334155;'>Here is your Two-Factor Authentication login verification OTP code:</p>
+                        <div style='background: #f8fafc; border: 2px dashed #2563eb; border-radius: 10px; padding: 20px; text-align: center; margin: 20px 0;'>
+                            <span style='font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;'>6-Digit OTP Code</span>
+                            <div style='font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #1e3a8a; font-family: monospace; margin-top: 6px;'>{$otp}</div>
+                            <p style='font-size: 12px; color: #64748b; margin: 8px 0 0;'>Valid for 15 minutes. Do not share this code.</p>
+                        </div>
+                        <p style='font-size: 12px; color: #94a3b8; text-align: center;'>© " . date('Y') . " {$c_name}. All rights reserved.</p>
+                    </div>";
+                    $m_sender = new Email_Send($user_email, $mail_subj, $mail_html, '2fa_otp');
+                    $m_sender->send_email();
+                } catch (\Throwable $emEx) {}
+
+                // Send via SMS
+                if (!empty($phone_number)) {
+                    try {
+                        $message = "Your {$c_name} verification OTP is: $otp. Valid for 15 minutes.";
+                        $sms_obj = new SMS_Sending($phone_number, $message);
+                        $sms_obj->send_message();
+                    } catch (\Throwable $sEx) {}
+                }
 
                 $Advance_Security_Key_List_obj = new Advance_Security_Key_List();
                 $Advance_Security_obj = new Advance_Security();
                 $otp_encrypt = $Advance_Security_obj->get_data_encrypt($Advance_Security_Key_List_obj->get_two_step_varification(), $otp);
 
                 $_SESSION['otp_encrypt'] = $otp_encrypt;
+                $_SESSION['temp_otp_user_id'] = $safeUid;
+                $_SESSION['temp_otp_email'] = $user_email;
                 $state['is_two_factor_auth_enable'] = "1";
+                $state['email'] = $user_email;
             } else {
                 $state['is_two_factor_auth_enable'] = "0";
             }
@@ -323,12 +436,24 @@ if ($User_Account_Check_obj->check_user_name()) {
         try {
             $lconn = (new DataBase())->get_data_base_connction();
             $safeUName = addslashes($get_user_name);
-            $subChk = $lconn->query("SELECT status FROM `employee_form_submissions` WHERE `email` = '{$safeUName}' ORDER BY `id` DESC LIMIT 1");
-            if ($subChk && ($sRow = $subChk->fetch_assoc())) {
-                if ($sRow['status'] === 'pending') {
-                    $err = "Application-Pending-Approval";
-                } elseif ($sRow['status'] === 'rejected') {
-                    $err = "Application-Declined";
+            
+            // 1. Check if an administrator account exists that is pending Super Admin approval or blocked
+            $admChk = $lconn->query("SELECT id, account_active_state, email_verify, full_block, ast FROM `main_user_login` WHERE `user_name` = '{$safeUName}' LIMIT 1");
+            if ($admChk && ($aRow = $admChk->fetch_assoc())) {
+                if ((int)$aRow['full_block'] === 1) {
+                    $err = "Admin-Account-Blocked";
+                } elseif ((int)$aRow['account_active_state'] === 0) {
+                    $err = "Admin-Pending-Approval";
+                }
+            } else {
+                // 2. Check employee onboarding application state
+                $subChk = $lconn->query("SELECT status FROM `employee_form_submissions` WHERE `email` = '{$safeUName}' ORDER BY `id` DESC LIMIT 1");
+                if ($subChk && ($sRow = $subChk->fetch_assoc())) {
+                    if ($sRow['status'] === 'pending') {
+                        $err = "Application-Pending-Approval";
+                    } elseif ($sRow['status'] === 'rejected') {
+                        $err = "Application-Declined";
+                    }
                 }
             }
         } catch (\Throwable $ex) {}
