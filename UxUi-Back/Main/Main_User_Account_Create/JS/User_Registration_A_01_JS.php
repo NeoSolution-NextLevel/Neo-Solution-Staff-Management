@@ -44,7 +44,7 @@
             "&val_09=" + encodeURIComponent(val_09 ? val_09.value : "Administration");
 
         $.ajax({
-            url: "<?php echo $pth; ?>View-List/Main/Main_User_Login_Account_Create/New_Main_User_Login_Create.php",
+            url: "<?php echo $home_page; ?>View-List/Main/Main_User_Login_Account_Create/New_Main_User_Login_Create.php",
             type: "POST",
             data: Sending_value,
             success: function(res) {
@@ -54,10 +54,10 @@
                     var json = JSON.parse(res);
 
                     if (json[0].error === "0") {
-                        var sucessMsg = encodeURIComponent("User-Registration-Successful");
+                        var sucessMsg = (json[0].status === "pending_approval") 
+                            ? encodeURIComponent("Admin-Registration-Pending-Approval")
+                            : encodeURIComponent("User-Registration-Successful");
                         window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Successful-Page<?php echo $online_offline_extention ?>?message=" + sucessMsg;
-
-
                     } else {
 
                         if (json[0].error === "Already have this email") {
@@ -77,6 +77,11 @@
                     var errorMsg = encodeURIComponent("Service-Error");
                     window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error("Registration request failed:", status, error);
+                var errorMsg = encodeURIComponent("Service-Error");
+                window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
             }
         });
 
