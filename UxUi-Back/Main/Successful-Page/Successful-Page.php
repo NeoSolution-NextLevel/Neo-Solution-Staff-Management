@@ -251,7 +251,21 @@ $dashboard_btn_text = $is_admin ? 'Continue to Admin Dashboard' : 'Continue to E
 
           const params = new URLSearchParams(window.location.search);
           const sucessType = params.get("message");
-          if (sucessType === "User-Registration-Successful") {
+          if (sucessType === "Admin-Registration-Pending-Approval") {
+
+              customizeSuccess(
+                  'Registration Submitted',
+                  'Pending Super Administrator Approval',
+                  'Your administrator account has been created and submitted for review. An email request has been sent to the Super Admin. You will receive an email confirmation once approved.',
+                  'Return to Login',
+                  '<?php echo $home_page ?><?php echo $User_login_url ?>User-Login<?php echo $online_offline_extention ?>',
+                  0,
+                  true,
+                  'Portal Home',
+                  '<?php echo $home_page ?>'
+              );
+
+          } else if (sucessType === "User-Registration-Successful") {
 
               customizeSuccess(
                   'Registration Successful',
