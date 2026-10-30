@@ -69,6 +69,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $first_name,
             $last_name
         );
+        $main_user_login_ADD_UPDATE_obj->is_not_account_active_state();
+        $main_user_login_ADD_UPDATE_obj->is_not_email_verify();
 
         if (isset($_POST['id'])) {
             $get_id = $_POST['id'];
@@ -86,13 +88,119 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         } else {
             if ($main_user_login_ADD_UPDATE_obj->process_new_record()) {
-                $new_id = $main_user_login_ADD_UPDATE_obj->get_id();
+                $new_id = (int)$main_user_login_ADD_UPDATE_obj->get_id();
                 $state['error'] = "0";
                 $state['id'] = $new_id;
 
                 $db = new DataBase();
                 $conn = $db->get_data_base_connction();
-                $conn->query("UPDATE `main_user_login` SET `account_active_state` = 1, `email_verify` = 1, `moible_verfiy` = 1, `ast` = 1 WHERE `id` = {$new_id}");
+                
+                // Check if an active Super Admin already exists in the system
+                $chkAdminCount = $conn->query("SELECT id FROM `main_user_login` WHERE (`id` = 1 OR `ac_type` = 'Admin' OR `main_user_account_access_level_list_id` = 1) AND `account_active_state` = 1 AND `id` != {$new_id} LIMIT 1");
+                $superAdminExists = ($chkAdminCount && $chkAdminCount->num_rows > 0);
+
+                if (!$superAdminExists || $new_id === 1) {
+                    // FIRST / ROOT SUPER ADMIN:
+                    // Automatically activated so the system always has an active Super Admin to manage the portal!
+                    $conn->query("UPDATE `main_user_login` SET `account_active_state` = 1, `email_verify` = 1, `moible_verfiy` = 1, `ast` = 1, `ac_type` = 'Admin', `main_user_account_access_level_list_id` = 1 WHERE `id` = {$new_id}");
+                    $state['status'] = "super_admin_created";
+                    $state['message'] = "Super Administrator account created and activated successfully. You can log in immediately.";
+                } else {
+                    // SUBSEQUENT ADMIN REGISTRATIONS:
+                    // Require Super Admin approval before credentials can be used to log in.
+                    $conn->query("UPDATE `main_user_login` SET `account_active_state` = 0, `email_verify` = 0, `moible_verfiy` = 0, `ast` = 1 WHERE `id` = {$new_id}");
+                    $state['status'] = "pending_approval";
+                    $state['message'] = "Admin registration submitted. Pending Super Admin approval.";
+
+                    // Send Email Notification to Super Admin and Acknowledgment to Applicant
+                    include_once __DIR__ . '/../../../imports/email/Email_Send.php';
+                    include_once __DIR__ . '/../../../imports/need/SystemNotifications.php';
+
+                    $comp_info = new Company_Info_Variable_List();
+                    $company_name = $comp_info->get_compnay_name();
+                    $super_admin_email = Email_Send::resolve_admin_email();
+                    $base_url = isset($home_page) ? rtrim($home_page, '/') : '';
+                    $approval_url = $base_url . '/UxUi/Admin_user_dashboard.php';
+
+                    // 1. Dispatch Email to Super Admin
+                    $sa_subject = "Action Required: New Admin Registration Pending Approval - {$company_name}";
+                    $sa_html = "
+                    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;'>
+                        <div style='text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #2563eb;'>
+                            <h2 style='color: #14204d; margin: 0;'>{$company_name}</h2>
+                            <p style='color: #64748b; font-size: 13px; margin: 4px 0 0;'>Super Administrator Approval Alert</p>
+                        </div>
+                        <p style='font-size: 15px; color: #1e293b; font-weight: 700;'>New Administrator Account Registration Pending Review</p>
+                        <p style='font-size: 14px; color: #475569;'>A new user has registered for an Administrator account on the portal and requires your review and approval before they can access the system:</p>
+                        
+                        <table style='width: 100%; border-collapse: collapse; margin: 20px 0; background: #f8fafc; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;'>
+                            <tr><td style='padding: 10px 14px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; width: 35%;'>Full Name:</td><td style='padding: 10px 14px; font-weight: 700; color: #1e293b; border-bottom: 1px solid #e2e8f0;'>{$name_show}</td></tr>
+                            <tr><td style='padding: 10px 14px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0;'>Email Address:</td><td style='padding: 10px 14px; font-weight: 700; color: #2563eb; border-bottom: 1px solid #e2e8f0;'>{$user_name}</td></tr>
+                            <tr><td style='padding: 10px 14px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0;'>Department:</td><td style='padding: 10px 14px; color: #1e293b; border-bottom: 1px solid #e2e8f0;'>{$department}</td></tr>
+                            <tr><td style='padding: 10px 14px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0;'>Job Role / Title:</td><td style='padding: 10px 14px; color: #1e293b; border-bottom: 1px solid #e2e8f0;'>{$job_title}</td></tr>
+                            <tr><td style='padding: 10px 14px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0;'>Admin Ref ID:</td><td style='padding: 10px 14px; font-family: monospace; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e2e8f0;'>{$ref_key}</td></tr>
+                            <tr><td style='padding: 10px 14px; font-weight: 600; color: #64748b;'>Submitted At:</td><td style='padding: 10px 14px; color: #1e293b;'>" . date('Y-m-d H:i:s') . "</td></tr>
+                        </table>
+
+                        <div style='text-align: center; margin: 26px 0;'>
+                            <a href='{$approval_url}' style='display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 12px 28px; border-radius: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);'>
+                                Open Admin Portal to Review &amp; Approve
+                            </a>
+                        </div>
+                        
+                        <p style='font-size: 12px; color: #64748b; line-height: 1.5;'>
+                            <strong>Security Notice:</strong> The applicant's account is currently inactive (Pending Approval). They cannot log in until approved.
+                        </p>
+                        <p style='font-size: 12px; color: #94a3b8; text-align: center; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 12px;'>
+                            &copy; " . date('Y') . " {$company_name}. All rights reserved.
+                        </p>
+                    </div>";
+
+                    try {
+                        $sa_mailer = new Email_Send($super_admin_email, $sa_subject, $sa_html, 'admin_approval_request');
+                        $sa_mailer->send_email();
+                    } catch (\Throwable $e) {}
+
+                    // 2. Dispatch Acknowledgment Email to Applicant
+                    $app_subject = "Admin Registration Received - Pending Super Admin Approval - {$company_name}";
+                    $app_html = "
+                    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;'>
+                        <div style='text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #2563eb;'>
+                            <h2 style='color: #14204d; margin: 0;'>{$company_name}</h2>
+                            <p style='color: #64748b; font-size: 13px; margin: 4px 0 0;'>Administrator Account Registration</p>
+                        </div>
+                        <p style='font-size: 15px; color: #1e293b;'>Hello <strong>{$name_show}</strong>,</p>
+                        <p style='font-size: 14px; color: #475569;'>Thank you for registering an Administrator account with {$company_name}.</p>
+                        <div style='background: #fffbeb; border: 1px solid #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 16px; margin: 20px 0;'>
+                            <p style='margin: 0; font-size: 14px; font-weight: 700; color: #92400e;'>Account Pending Super Admin Approval</p>
+                            <p style='margin: 6px 0 0; font-size: 13px; color: #b45309;'>
+                                In accordance with company security policy, administrator accounts require verification and approval by the Super Administrator before access is granted. Auto-registration and auto-login are strictly disabled.
+                            </p>
+                        </div>
+                        <p style='font-size: 14px; color: #475569;'>
+                            An approval request has been dispatched to the Super Administrator. Once reviewed and approved, you will receive an email confirmation and will be able to log in to the portal.
+                        </p>
+                        <p style='font-size: 12px; color: #94a3b8; text-align: center; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 12px;'>
+                            &copy; " . date('Y') . " {$company_name}. All rights reserved.
+                        </p>
+                    </div>";
+
+                    try {
+                        $app_mailer = new Email_Send($user_name, $app_subject, $app_html, 'admin_registration_ack');
+                        $app_mailer->send_email();
+                    } catch (\Throwable $e) {}
+
+                    // 3. Log In-App System Notification for Super Admin
+                    try {
+                        SystemNotifications::create(
+                            "New Admin Pending Approval: {$name_show}",
+                            "Admin account registration for {$name_show} ({$user_name}) requires Super Admin review and approval.",
+                            "admin_approval",
+                            "admin",
+                            "Super Admin"
+                        );
+                    } catch (\Throwable $e) {}
+                }
 
                 // If Employee account, ensure employee_profiles, employees, and bank_details records exist
                 if ($ac_type === 'Employee') {
