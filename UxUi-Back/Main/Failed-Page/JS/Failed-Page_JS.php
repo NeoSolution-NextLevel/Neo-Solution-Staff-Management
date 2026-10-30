@@ -259,6 +259,32 @@
                 '<?php echo $home_page ?><?php echo $User_login_url ?>User-Registration<?php echo $online_offline_extention ?>'
             );
 
+        } else if (errorType === "Admin-Pending-Approval") {
+            customizeError(
+                'Administrator Account Pending Approval',
+                'Super Administrator Approval Required',
+                'Your administrator account has been created and is currently awaiting approval from the Super Administrator. In accordance with security policy, auto-registration and auto-login are disabled. You will receive an email confirmation once your account has been reviewed and approved.',
+                'AUTH-ADMIN-PENDING',
+                'Administrator account registration is pending review and manual activation by the Super Administrator.',
+                'Back to Login',
+                'Contact Super Admin',
+                loginUrl,
+                'mailto:<?php echo $company_obj->get_compnay_default_sending_email() ?>'
+            );
+
+        } else if (errorType === "Admin-Account-Blocked") {
+            customizeError(
+                'Administrator Account Suspended',
+                'Access Restricted by Super Administrator',
+                'This administrator account has been declined or suspended by the Super Administrator. Please contact corporate management if you believe this is an error.',
+                'AUTH-ADMIN-BLOCKED',
+                'Administrative privileges and portal access have been restricted for this account.',
+                'Back to Login',
+                'Contact Super Admin',
+                loginUrl,
+                'mailto:<?php echo $company_obj->get_compnay_default_sending_email() ?>'
+            );
+
         } else if (errorType === "Application-Pending-Approval") {
             customizeError(
                 'Application Under Review',
