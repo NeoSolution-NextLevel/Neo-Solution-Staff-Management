@@ -208,7 +208,7 @@ if (!empty($prefill_email)) {
                         <button type="button" id="resendOtpBtn" onclick="resendOtpCode();" style="background: none; border: none; color: #2563eb; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0;">
                             <i class="fas fa-rotate-right"></i> Resend OTP Code
                         </button>
-                        <a href="User-Login.php" class="erp-link">
+                        <a href="User-Login.php?relogin=1" class="erp-link">
                             <i class="fas fa-arrow-left"></i> Back to Login
                         </a>
                     </div>
