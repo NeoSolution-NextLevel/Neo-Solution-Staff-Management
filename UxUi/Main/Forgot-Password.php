@@ -444,7 +444,7 @@
 
                     <!-- Back to Login Link: Allows users to return to the login page -->
                     <div class="erp-text-center erp-mt-xl">
-                        <a href="login.html" class="erp-link erp-text-sm">Back to Login</a>
+                        <a href="User-Login.php?relogin=1" class="erp-link erp-text-sm">Back to Login</a>
                     </div>
                 </form>
             </div>
