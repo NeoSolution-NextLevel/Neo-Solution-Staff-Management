@@ -1,4 +1,7 @@
 <?php
+@ini_set('display_errors', '0');
+@ini_set('html_errors', '0');
+ob_start();
 
 include_once __DIR__ . '/../../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../../imports/need/DB.php';
@@ -268,4 +271,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $json[] = $state;
 }
 
+if (ob_get_length()) {
+    ob_clean();
+}
+header('Content-Type: application/json; charset=utf-8');
 echo json_encode($json);
+exit;
