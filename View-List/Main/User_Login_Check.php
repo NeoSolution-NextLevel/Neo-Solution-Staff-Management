@@ -1,21 +1,33 @@
 <?php
+@ini_set('display_errors', '0');
+@ini_set('html_errors', '0');
+ob_start();
 
-include_once '../../imports/need/session_setup.php';
-include_once '../../imports/need/DB.php';
-include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
+include_once __DIR__ . '/../../imports/need/session_setup.php';
+include_once __DIR__ . '/../../imports/need/DB.php';
+include_once __DIR__ . '/../../imports/Company_Info/Company_Info_Variable_List.php';
 
-include_once '../../imports/security/encrypt_decrypt.php';
-include_once '../../imports/security/key_list.php';
-include_once '../../Controllers/Main/main_user_login/main_user_login_LIST.php';
-include_once '../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
-include_once '../../Controllers/Main/main_user_login_device/main_user_login_device_ADD_UPDATE.php';
-include_once '../../Controllers/Main/main_user_login_device/main_user_login_device_LIST.php';
-include_once '../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_SINGLE_DATA.php';
-include_once '../../Controllers/Main/Cook_Managment/Cook_Createing.php';
-include_once '../../Controllers/Main/User_Accout_Check_Device.php';
-include_once '../../Controllers/Main/User_Accout_Check.php';
-include_once '../../imports/sms/SMS_Sending.php';
-include_once '../../imports/email/Email_Send.php';
+include_once __DIR__ . '/../../imports/security/encrypt_decrypt.php';
+include_once __DIR__ . '/../../imports/security/key_list.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login/main_user_login_LIST.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login_device/main_user_login_device_ADD_UPDATE.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_login_device/main_user_login_device_LIST.php';
+include_once __DIR__ . '/../../Controllers/Main/main_user_account_access_level_list/main_user_account_access_level_list_SINGLE_DATA.php';
+include_once __DIR__ . '/../../Controllers/Main/Cook_Managment/Cook_Createing.php';
+include_once __DIR__ . '/../../Controllers/Main/User_Accout_Check_Device.php';
+include_once __DIR__ . '/../../Controllers/Main/User_Accout_Check.php';
+include_once __DIR__ . '/../../imports/sms/SMS_Sending.php';
+include_once __DIR__ . '/../../imports/email/Email_Send.php';
+
+function send_json_exit($json_data) {
+    if (ob_get_length()) {
+        ob_clean();
+    }
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($json_data);
+    exit;
+}
 
 
 $get_user_name = isset($_POST['val_01']) ? $_POST['val_01'] : "";
@@ -54,8 +66,7 @@ if ($User_Account_Check_obj->check_user_name()) {
     if ($User_Account_Check_obj->check_temp_lock_state()) {
         $state['error'] = "temporary lock";
         $json[] = $state;
-        echo json_encode($json);
-        exit;
+        send_json_exit($json);
     }
 
     if ($User_Account_Check_obj->check_password()) {
@@ -101,15 +112,13 @@ if ($User_Account_Check_obj->check_user_name()) {
                         session_unset();
                         $state['error'] = "Admin-Account-Blocked";
                         $json[] = $state;
-                        echo json_encode($json);
-                        exit;
+                        send_json_exit($json);
                     }
                     if ((int)$chkRow['account_active_state'] === 0) {
                         session_unset();
                         $state['error'] = "Admin-Pending-Approval";
                         $json[] = $state;
-                        echo json_encode($json);
-                        exit;
+                        send_json_exit($json);
                     }
                 }
             }
@@ -346,8 +355,7 @@ if ($User_Account_Check_obj->check_user_name()) {
                         $state['email'] = $User_Account_Check_obj->get_user_name();
                         $state['phone_masked'] = $masked_phone;
                         $json[] = $state;
-                        echo json_encode($json);
-                        exit;
+                        send_json_exit($json);
                     }
                 }
             } catch (\Throwable $e) {}
@@ -447,12 +455,14 @@ if ($User_Account_Check_obj->check_user_name()) {
                 }
             } else {
                 // 2. Check employee onboarding application state
-                $subChk = $lconn->query("SELECT status FROM `employee_form_submissions` WHERE `email` = '{$safeUName}' ORDER BY `id` DESC LIMIT 1");
+                $subChk = $lconn->query("SELECT status, is_otp_verified FROM `employee_form_submissions` WHERE `email` = '{$safeUName}' ORDER BY `id` DESC LIMIT 1");
                 if ($subChk && ($sRow = $subChk->fetch_assoc())) {
                     if ($sRow['status'] === 'pending') {
                         $err = "Application-Pending-Approval";
                     } elseif ($sRow['status'] === 'rejected') {
                         $err = "Application-Declined";
+                    } elseif ($sRow['status'] === 'approved' && (int)$sRow['is_otp_verified'] === 0) {
+                        $err = "OTP-Verification-Pending";
                     }
                 }
             }
@@ -462,4 +472,4 @@ if ($User_Account_Check_obj->check_user_name()) {
     $json[] = $state;
 }
 
-echo json_encode($json);
+send_json_exit($json);
