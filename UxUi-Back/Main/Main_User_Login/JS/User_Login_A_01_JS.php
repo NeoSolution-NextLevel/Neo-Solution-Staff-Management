@@ -80,7 +80,8 @@
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
                         } else {
-                            var errorMsg = encodeURIComponent("Service-Error");
+                            var rawErr = json[0].error || "Login-Failed";
+                            var errorMsg = encodeURIComponent(String(rawErr).replace(/\s+/g, '-'));
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
                         }
 
