@@ -34,13 +34,13 @@
         var val_01 = val_01_child_01.value + " " + val_01_child_02.value;
 
         var Sending_value = "val_01=" + encodeURIComponent(val_01) +
-            "&val_02=" + encodeURIComponent(val_02.value) +
-            "&val_03=" + encodeURIComponent(val_03.value) +
-            "&val_04=" + encodeURIComponent(val_04_child_01.value) +
+            "&val_02=" + encodeURIComponent(val_02 ? val_02.value : "") +
+            "&val_03=" + encodeURIComponent(val_03 ? val_03.value : "") +
+            "&val_04=" + encodeURIComponent(val_04_child_01 ? val_04_child_01.value : "") +
             "&val_05=" + encodeURIComponent(val_05 ? val_05.value : "1") +
-            "&val_06=" + encodeURIComponent(val_06.value) +
-            "&val_07=" + encodeURIComponent(val_01_child_01.value) +
-            "&val_08=" + encodeURIComponent(val_01_child_02.value) +
+            "&val_06=" + encodeURIComponent(val_06 ? val_06.value : "Administrator") +
+            "&val_07=" + encodeURIComponent(val_01_child_01 ? val_01_child_01.value : "") +
+            "&val_08=" + encodeURIComponent(val_01_child_02 ? val_01_child_02.value : "") +
             "&val_09=" + encodeURIComponent(val_09 ? val_09.value : "Administration");
 
         $.ajax({
@@ -48,10 +48,10 @@
             type: "POST",
             data: Sending_value,
             success: function(res) {
-                console.log(res);
+                console.log("Registration response:", res);
 
                 try {
-                    var json = JSON.parse(res);
+                    var json = (typeof res === "object") ? res : JSON.parse(typeof res === "string" ? res.trim() : res);
 
                     if (json[0].error === "0") {
                         var sucessMsg = (json[0].status === "pending_approval") 
@@ -64,16 +64,18 @@
                             var errorMsg = encodeURIComponent("email-already-exist");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
+                        } else if (json[0].error === "Missing required fields") {
+                            alert("Please fill in all required fields (Name, Corporate Email, Password).");
                         } else {
-
-                            var errorMsg = encodeURIComponent("Service-Error");
+                            var rawErr = json[0].error || "Registration-Error";
+                            var errorMsg = encodeURIComponent(String(rawErr).replace(/\s+/g, '-'));
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
                         }
-
 
                     }
 
                 } catch (e) {
+                    console.error("Registration JSON parse error:", e, res);
                     var errorMsg = encodeURIComponent("Service-Error");
                     window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
                 }
