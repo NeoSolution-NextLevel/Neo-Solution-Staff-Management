@@ -449,7 +449,7 @@
 
                     <!-- Back to Login Option: In case of issues -->
                     <div class="erp-text-center erp-mt-xl">
-                        <a href="<?php echo $home_page; ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention; ?>" class="erp-link erp-text-sm">Back to Login</a>
+                        <a href="<?php echo $home_page; ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention; ?>?relogin=1" class="erp-link erp-text-sm">Back to Login</a>
                     </div>
                 </form>
             </div>
