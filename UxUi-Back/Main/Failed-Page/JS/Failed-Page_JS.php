@@ -298,6 +298,19 @@
                 loginUrl
             );
 
+        } else if (errorType === "OTP-Verification-Pending") {
+            customizeError(
+                'Account Verification Required',
+                'Application Approved - OTP Pending',
+                'Your employee registration has been approved by the Administrator! Please enter the 6-digit OTP code sent to your email to verify and activate your portal login.',
+                'AUTH-OTP-REQUIRED',
+                'Application approved. Candidate must complete 6-digit OTP verification before first login.',
+                'Enter OTP Code',
+                'Back to Login',
+                '<?php echo $home_page ?>UxUi/Main/Employee-Verify-OTP.php',
+                loginUrl
+            );
+
         } else if (errorType === "Application-Declined") {
             customizeError(
                 'Application Declined',
