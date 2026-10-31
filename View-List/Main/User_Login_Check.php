@@ -341,6 +341,17 @@ if ($User_Account_Check_obj->check_user_name()) {
                             $m_sender->send_email();
                         } catch (\Throwable $emEx) {}
 
+                        // Clear any authenticated session variables so user is NOT considered logged in!
+                        unset(
+                            $_SESSION['user'],
+                            $_SESSION['user_id'],
+                            $_SESSION['session_token'],
+                            $_SESSION['user_main_cook_id'],
+                            $_SESSION['main_user_account_access_level_list_id'],
+                            $_SESSION['url_home']
+                        );
+                        $_SESSION['otp_pending'] = true;
+
                         // Store temporary verification session
                         $_SESSION['temp_otp_user_id'] = $safeUid;
                         $_SESSION['temp_otp_email'] = $User_Account_Check_obj->get_user_name();
@@ -363,13 +374,26 @@ if ($User_Account_Check_obj->check_user_name()) {
 
         if ($User_Account_Check_obj->get_google_authentication()) {
             $_SESSION['otp_pending'] = true;
+            unset(
+                $_SESSION['user'],
+                $_SESSION['user_id'],
+                $_SESSION['session_token'],
+                $_SESSION['user_main_cook_id'],
+                $_SESSION['url_home']
+            );
             $state['google_authentication'] = "1";
             $state['is_two_factor_auth_enable'] = "0";
         } else {
-            $_SESSION['otp_pending'] = false;
-            $state['google_authentication'] = "0";
-
             if ($User_Account_Check_obj->get_is_two_factor_auth_enable() == "1") {
+                $_SESSION['otp_pending'] = true;
+                unset(
+                    $_SESSION['user'],
+                    $_SESSION['user_id'],
+                    $_SESSION['session_token'],
+                    $_SESSION['user_main_cook_id'],
+                    $_SESSION['url_home']
+                );
+                $state['google_authentication'] = "0";
                 $phone_number = $User_Account_Check_obj->get_phone_number();
                 $user_email = $User_Account_Check_obj->get_user_name();
                 $safeUid = (int)$User_Account_Check_obj->get_user_id();
@@ -425,20 +449,29 @@ if ($User_Account_Check_obj->check_user_name()) {
                 $state['is_two_factor_auth_enable'] = "1";
                 $state['email'] = $user_email;
             } else {
+                $_SESSION['otp_pending'] = false;
+                $state['error'] = "0";
+                $state['google_authentication'] = "0";
                 $state['is_two_factor_auth_enable'] = "0";
+
+                // Check cookies creating ONLY on successful complete login
+                $Cook_Createing = new Cook_Createing($User_Account_Check_obj->get_user_id());
+                $_SESSION['user_main_cook_id'] = $Cook_Createing->get_cook_id();
             }
         }
 
-        // Check cookies creating 
-        $Cook_Createing = new Cook_Createing($User_Account_Check_obj->get_user_id());
-        $_SESSION['user_main_cook_id'] = $Cook_Createing->get_cook_id();
+        if (!isset($state['error'])) {
+            $state['error'] = "0";
+        }
 
         $json[] = $state;
     } else {
+        session_unset();
         $state['error'] = $User_Account_Check_obj->get_error();
         $json[] = $state;
     }
 } else {
+    session_unset();
     $err = $User_Account_Check_obj->get_error();
     if ($err === "Username Incorrect" && !empty($get_user_name)) {
         try {
