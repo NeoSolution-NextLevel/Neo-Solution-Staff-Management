@@ -1,6 +1,33 @@
 <?php
 include_once '../../imports/need/session_setup.php';
 $is_auth_page = true;
+
+// Since this is a failure/alert page, any half-authenticated or failed session must be cleared
+unset(
+    $_SESSION['user'],
+    $_SESSION['user_id'],
+    $_SESSION['temp_user'],
+    $_SESSION['otp_pending'],
+    $_SESSION['otp_encrypt'],
+    $_SESSION['session_token'],
+    $_SESSION['user_main_cook_id'],
+    $_SESSION['main_user_account_access_level_list_id'],
+    $_SESSION['url_home'],
+    $_SESSION['user_role'],
+    $_SESSION['ac_type'],
+    $_SESSION['full_name'],
+    $_SESSION['first_name'],
+    $_SESSION['last_name'],
+    $_SESSION['name_show'],
+    $_SESSION['department'],
+    $_SESSION['job_title'],
+    $_SESSION['profile_pic'],
+    $_SESSION['employee_id_code'],
+    $_SESSION['employee_profile_id'],
+    $_SESSION['temp_otp_user_id'],
+    $_SESSION['temp_otp_email']
+);
+
 include_once '../../imports/Company_Info/Company_Info_Variable_List.php';
 
 $company_obj = new Company_Info_Variable_List();
