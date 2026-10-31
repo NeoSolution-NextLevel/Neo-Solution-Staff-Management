@@ -290,7 +290,7 @@
                     <i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i>
                     Enterprise Portal
                 </span>
-                <a href="mailto:admin@neosolution.lk" class="erp-header__portal-link" title="Contact Support">
+                <a href="mailto:devindi@neosolution.lk" class="erp-header__portal-link" title="Contact Support">
                     <i class="fa-solid fa-circle-question" style="margin-right: 5px;"></i>
                     Support
                 </a>
