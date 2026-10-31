@@ -217,7 +217,7 @@
 
         const params = new URLSearchParams(window.location.search);
         const errorType = params.get("error");
-        const loginUrl = '<?php echo $home_page ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention ?>';
+        const loginUrl = '<?php echo $home_page ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention ?>?relogin=1';
         const homeUrl = '<?php echo $home_page ?>';
 
         if (errorType === "Service-Error") {
