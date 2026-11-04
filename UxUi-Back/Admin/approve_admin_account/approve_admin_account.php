@@ -54,13 +54,37 @@ if ($admin_id === 1) {
 $db = new DataBase();
 $conn = $db->get_data_base_connction();
 
-$q = $conn->query("SELECT id, user_name, name_show, first_name, last_name, ref_key, account_active_state FROM `main_user_login` WHERE `id` = {$admin_id} LIMIT 1");
+$actor_id = (int)$_SESSION['user_id'];
+$actor_result = $conn->query("SELECT ac_type, account_active_state, ast, full_block FROM `main_user_login` WHERE `id` = {$actor_id} LIMIT 1");
+$actor = $actor_result ? $actor_result->fetch_assoc() : null;
+$is_super_admin = ($actor_id === 1 || (
+    $actor &&
+    strtolower(trim($actor['ac_type'])) === 'super admin' &&
+    (int)$actor['account_active_state'] === 1 &&
+    (int)$actor['ast'] === 1 &&
+    (int)$actor['full_block'] === 0
+));
+if (!$is_super_admin) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Super Administrator privileges required.']);
+    exit;
+}
+
+$q = $conn->query("SELECT id, user_name, name_show, first_name, last_name, ref_key, ac_type, main_user_account_access_level_list_id, account_active_state FROM `main_user_login` WHERE `id` = {$admin_id} LIMIT 1");
 if (!$q || $q->num_rows === 0) {
     echo json_encode(['status' => 'error', 'message' => 'Administrator account not found.']);
     exit;
 }
 
 $target_admin = $q->fetch_assoc();
+if (
+    strtolower(trim($target_admin['ac_type'])) !== 'admin' &&
+    strtolower(trim($target_admin['ac_type'])) !== 'super admin' &&
+    (int)$target_admin['main_user_account_access_level_list_id'] !== 1
+) {
+    echo json_encode(['status' => 'error', 'message' => 'The selected account is not an administrator.']);
+    exit;
+}
 $user_email = trim($target_admin['user_name']);
 $admin_name = !empty($target_admin['name_show']) ? $target_admin['name_show'] : trim($target_admin['first_name'] . ' ' . $target_admin['last_name']);
 if (empty($admin_name)) $admin_name = $user_email;
@@ -74,6 +98,7 @@ if ($action === 'approve') {
     $update = $conn->query("UPDATE `main_user_login` SET 
         `account_active_state` = 1, 
         `email_verify` = 1, 
+        `moible_verfiy` = 1,
         `ast` = 1, 
         `full_block` = 0 
         WHERE `id` = {$admin_id}");
@@ -192,4 +217,3 @@ if ($action === 'approve') {
     echo json_encode(['status' => 'error', 'message' => 'Invalid action specified. Must be "approve" or "reject".']);
     exit;
 }
-
