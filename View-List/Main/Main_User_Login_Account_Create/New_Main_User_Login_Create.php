@@ -44,10 +44,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $ref_key = 'ADM-' . strtoupper(substr(md5($user_name . time()), 0, 6));
     }
 
-    // Public registration is strictly for Administrators.
     // Employees can only register via Onboarding Forms created and issued by Super Admin.
     $main_user_account_access_level_list_id = 1;
-    $ac_type = 'Admin';
+    $requested_role = isset($_POST['val_05']) ? trim($_POST['val_05']) : 'Admin';
+    if ($requested_role === '1' || $requested_role === '') {
+        $requested_role = 'Admin';
+    }
+    if (!in_array($requested_role, ['Admin', 'Super Admin'], true)) {
+        $state['error'] = "Invalid account role";
+        $json[] = $state;
+        echo json_encode($json);
+        exit;
+    }
+    $ac_type = $requested_role;
 
     $main_user_login_ADD_UPDATE_obj = new main_user_login_ADD_UPDATE();
     $main_user_login_LIST_obj = new main_user_login_LIST();
@@ -98,22 +107,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $db = new DataBase();
                 $conn = $db->get_data_base_connction();
                 
-                // Check if an active Super Admin already exists in the system
-                $chkAdminCount = $conn->query("SELECT id FROM `main_user_login` WHERE (`id` = 1 OR `ac_type` = 'Admin' OR `main_user_account_access_level_list_id` = 1) AND `account_active_state` = 1 AND `id` != {$new_id} LIMIT 1");
-                $superAdminExists = ($chkAdminCount && $chkAdminCount->num_rows > 0);
+                // Bootstrap the first administrator as Super Admin; later registrations must be approved.
+                $chkAdminCount = $conn->query("SELECT id FROM `main_user_login` WHERE (`id` = 1 OR `ac_type` IN ('Admin', 'Super Admin') OR `main_user_account_access_level_list_id` = 1) AND `account_active_state` = 1 AND `id` != {$new_id} LIMIT 1");
+                $activeAdministratorExists = ($chkAdminCount && $chkAdminCount->num_rows > 0);
 
-                if (!$superAdminExists || $new_id === 1) {
-                    // FIRST / ROOT SUPER ADMIN:
-                    // Automatically activated so the system always has an active Super Admin to manage the portal!
-                    $conn->query("UPDATE `main_user_login` SET `account_active_state` = 1, `email_verify` = 1, `moible_verfiy` = 1, `ast` = 1, `ac_type` = 'Admin', `main_user_account_access_level_list_id` = 1 WHERE `id` = {$new_id}");
+                if (!$activeAdministratorExists || $new_id === 1) {
+                    $conn->query("UPDATE `main_user_login` SET `account_active_state` = 1, `email_verify` = 1, `moible_verfiy` = 1, `ast` = 1, `ac_type` = 'Super Admin', `main_user_account_access_level_list_id` = 1 WHERE `id` = {$new_id}");
                     $state['status'] = "super_admin_created";
                     $state['message'] = "Super Administrator account created and activated successfully. You can log in immediately.";
                 } else {
-                    // SUBSEQUENT ADMIN REGISTRATIONS:
-                    // Require Super Admin approval before credentials can be used to log in.
                     $conn->query("UPDATE `main_user_login` SET `account_active_state` = 0, `email_verify` = 0, `moible_verfiy` = 0, `ast` = 1 WHERE `id` = {$new_id}");
                     $state['status'] = "pending_approval";
-                    $state['message'] = "Admin registration submitted. Pending Super Admin approval.";
+                    $state['message'] = "{$ac_type} registration submitted. Pending Super Admin approval.";
 
                     // Send Email Notification to Super Admin and Acknowledgment to Applicant
                     include_once __DIR__ . '/../../../imports/email/Email_Send.php';
