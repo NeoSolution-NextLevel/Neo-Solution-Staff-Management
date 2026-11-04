@@ -160,7 +160,7 @@ if (!empty($token)) {
                     <!-- Notice on OTP process -->
                     <div class="form-notice-box">
                         <i class="fas fa-shield-halved"></i>
-                        <strong>Verification Workflow:</strong> Once you submit this form, your application will be routed to the <strong>Administrator for review and approval</strong>. Upon approval, an approval email will be sent and an <strong>OTP verification code</strong> will be dispatched to your contact number to activate your account.
+                        <strong>Verification Workflow:</strong> After you submit this form, active Admins and Super Admins are notified. One of them must approve your application. After approval, an <strong>OTP verification code</strong> is sent to your email and phone; verify it to activate your account and log in.
                     </div>
 
                     <!-- Submission Success Container -->
@@ -170,7 +170,7 @@ if (!empty($token)) {
                         </div>
                         <h2 style="font-size: 22px; font-weight: 800; color: #14204d; margin-bottom: 8px;">Application Submitted Successfully!</h2>
                         <p style="font-size: 14.5px; color: #475569; max-width: 520px; margin: 0 auto 20px; line-height: 1.6;">
-                            Your registration form has been transmitted to the Administrator for approval. A copy of your submission has been forwarded to the administration.
+                            Your registration form has been sent to active Admins and Super Admins for approval. One administrator must approve your application before you can verify and activate your account.
                         </p>
                         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin: 0 auto 24px; max-width: 500px; text-align: left;">
                             <div style="font-size: 13.5px; margin-bottom: 6px; color: #1e293b;">
@@ -179,8 +179,8 @@ if (!empty($token)) {
                             <div style="font-size: 13.5px; margin-bottom: 6px; color: #1e293b;">
                                 <strong>Contact Phone:</strong> <span id="resPhone" style="font-weight: 600;"></span>
                             </div>
-                            <div style="font-size: 12.5px; color: #16a34a; background: #dcfce7; padding: 6px 10px; border-radius: 6px; margin-top: 10px;">
-                                <i class="fas fa-info-circle"></i> Once approved, you will receive an approval email and an SMS with a 6-digit OTP code to verify your phone number.
+                            <div id="submissionNotice" style="font-size: 12.5px; color: #16a34a; background: #dcfce7; padding: 6px 10px; border-radius: 6px; margin-top: 10px;">
+                                <i class="fas fa-info-circle"></i> After an Admin or Super Admin approves your application, the same 6-digit OTP will be sent to this email and phone. Verify it before logging in.
                             </div>
                         </div>
 
@@ -383,7 +383,7 @@ if (!empty($token)) {
                             <div class="erp-terms">
                                 <input type="checkbox" class="erp-terms__checkbox" id="empTerms" required>
                                 <label for="empTerms" class="erp-terms__label">
-                                    I confirm that the details provided above are true and accurate. I understand that my registration requires administrator approval, after which an OTP will be dispatched to my contact number for mobile verification.
+                                    I confirm that the details provided above are true and accurate. I understand that an Admin or Super Admin must approve my registration, after which I must verify an OTP sent to my email and phone before logging in.
                                     <span style="color: var(--erp-accent-error);">*</span>
                                 </label>
                             </div>
@@ -486,6 +486,14 @@ if (!empty($token)) {
                             if (json.data) {
                                 document.getElementById('resEmail').textContent = json.data.email || '';
                                 document.getElementById('resPhone').textContent = json.data.phone || '';
+                                var notice = document.getElementById('submissionNotice');
+                                if (notice) {
+                                    notice.textContent = json.message || 'Your application is pending administrator approval.';
+                                    if (!json.data.admin_notified) {
+                                        notice.style.background = '#fef2f2';
+                                        notice.style.color = '#b91c1c';
+                                    }
+                                }
                                 var vBtn = document.getElementById('verifyNowBtn');
                                 if (vBtn) {
                                     vBtn.href = 'Employee-Verify-OTP.php?email=' + encodeURIComponent(json.data.email);
