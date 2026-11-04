@@ -49,6 +49,23 @@ if (!$is_super_admin) {
     exit;
 }
 
+$canonical_super_admin_result = $conn->query("SELECT id FROM `main_user_login` WHERE `id` = 1 OR LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super admin' ORDER BY CASE WHEN `id` = 1 THEN 0 ELSE 1 END, `id` ASC LIMIT 1");
+if (!$canonical_super_admin_result) {
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Could not verify the Super Administrator account.']);
+    exit;
+}
+$canonical_super_admin = $canonical_super_admin_result->fetch_assoc();
+if ($canonical_super_admin) {
+    $canonical_super_admin_id = (int)$canonical_super_admin['id'];
+    $deduplicate_super_admins = $conn->query("UPDATE `main_user_login` SET `ac_type` = 'Admin' WHERE LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super admin' AND `id` != {$canonical_super_admin_id}");
+    if (!$deduplicate_super_admins) {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Could not enforce the single Super Administrator account.']);
+        exit;
+    }
+}
+
 $sql = "SELECT 
             id, user_name, name_show, first_name, last_name, ref_key, ac_type,
             account_active_state, email_verify, full_block, ast, sdt, last_login, image_url
