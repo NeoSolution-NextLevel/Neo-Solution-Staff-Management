@@ -5,7 +5,7 @@
                 <div class="erp-registration-card__logo" style="font-size: 32px; color: #93c5fd; margin-bottom: 8px;">
                     <i class="fas fa-user-shield"></i>
                 </div>
-                <h1 class="erp-registration-card__title">Admin / Super Admin Registration</h1>
+                <h1 class="erp-registration-card__title">Administrator Registration</h1>
                 <p class="erp-registration-card__subtitle">Register for an administrator account to manage the <?php echo $company_obj->get_compnay_name() ?> Portal</p>
                 <div style="margin-top: 12px; background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(147, 197, 253, 0.4); border-radius: 8px; padding: 10px 14px; font-size: 12.5px; text-align: left; color: #e2e8f0; line-height: 1.4; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <div>
@@ -165,10 +165,9 @@
                                     <i class="fas fa-shield-halved erp-form__icon"></i>
                                     <select class="erp-form__control erp-form__control--with-icon" name="role" required aria-label="Account Role" id="User_Registration_A_01_val_05_select_obj">
                                         <option value="Admin" selected>Administrator</option>
-                                        <option value="Super Admin">Super Administrator</option>
                                     </select>
                                 </div>
-                                <span class="erp-form__hint">Super Administrator registrations require approval by an existing Super Administrator.</span>
+                                <span class="erp-form__hint">The first administrator account becomes the Super Administrator. All later accounts require approval.</span>
                             </div>
 
                             <div class="erp-form__group">
@@ -220,7 +219,7 @@
                     <div class="erp-form__group erp-mt-xl">
                         <button type="submit" class="erp-btn erp-btn--primary erp-btn--block" style="height: 48px; font-size: 15px;">
                             <i class="fas fa-user-shield"></i>
-                            <span>Register as Admin or Super Admin</span>
+                            <span>Register as Administrator</span>
                         </button>
                     </div>
 
