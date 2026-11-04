@@ -82,27 +82,37 @@ class User_Accout_Check_Device
 
     private function detectLocationByIP($ip)
     {
-        if ($ip === "127.0.0.1" || $ip === "::1") {
+        if (empty($ip) || $ip === "127.0.0.1" || $ip === "::1" || strpos($ip, "192.168.") === 0 || strpos($ip, "10.") === 0) {
             return "Localhost";
         }
 
-        $url = "http://ip-api.com/json/" . $ip;
-        $response = @file_get_contents($url);
+        try {
+            $ctx = stream_context_create([
+                'http' => [
+                    'timeout' => 1.0,
+                    'ignore_errors' => true
+                ]
+            ]);
+            $url = "http://ip-api.com/json/" . $ip;
+            $response = @file_get_contents($url, false, $ctx);
 
-        if ($response === false) {
+            if ($response === false) {
+                return "Unknown Location";
+            }
+
+            $data = json_decode($response, true);
+
+            if (!isset($data['status']) || $data['status'] !== 'success') {
+                return "Unknown Location";
+            }
+
+            $city = $data['city'] ?? '';
+            $country = $data['country'] ?? '';
+
+            return trim($city . ", " . $country, ", ");
+        } catch (\Throwable $e) {
             return "Unknown Location";
         }
-
-        $data = json_decode($response, true);
-
-        if (!isset($data['status']) || $data['status'] !== 'success') {
-            return "Unknown Location";
-        }
-
-        $city = $data['city'] ?? '';
-        $country = $data['country'] ?? '';
-
-        return trim($city . ", " . $country, ", ");
     }
 
 
