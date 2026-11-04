@@ -78,7 +78,7 @@ try {
     $email      = isset($_POST['email']) ? trim($_POST['email']) : '';
     $phone      = isset($_POST['phone_number']) ? trim($_POST['phone_number']) : '';
     $password   = isset($_POST['password']) ? trim($_POST['password']) : '';
-    $department = isset($_POST['department']) && trim($_POST['department']) !== '' ? trim($_POST['department']) : 'Engineering';
+    $department = isset($_POST['department']) && trim($_POST['department']) !== '' ? trim($_POST['department']) : 'Unassigned';
     $job_title  = isset($_POST['job_title']) && trim($_POST['job_title']) !== '' ? trim($_POST['job_title']) : 'Staff';
     $nic        = isset($_POST['nic']) ? trim($_POST['nic']) : '';
     $dob        = isset($_POST['dob']) && !empty($_POST['dob']) ? trim($_POST['dob']) : null;
@@ -140,43 +140,68 @@ try {
         exit;
     }
 
-    // Encrypt password
+    // Encrypt password using system security scheme
     $sec = new Advance_Security();
-    $enc_password = $sec->get_data_encrypt($email, $password);
+    $password_hash = $sec->get_data_encrypt($email, $password);
 
-    $safe_first   = addslashes($first_name);
-    $safe_last    = addslashes($last_name);
-    $safe_phone   = addslashes($phone);
-    $safe_enc_pwd = addslashes($enc_password);
-    $safe_dept    = addslashes($department);
-    $safe_job     = addslashes($job_title);
-    $safe_nic     = addslashes($nic);
-    $safe_dob     = $dob ? "'" . addslashes($dob) . "'" : "NULL";
-    $safe_gender  = addslashes($gender);
-    $safe_address = addslashes($address);
-    $safe_em_name = addslashes($em_name);
-    $safe_em_ph   = addslashes($em_phone);
-    $safe_ftoken  = addslashes($form_token);
+    // Escape all strings
+    $safe_token  = !empty($form_token) ? "'" . addslashes($form_token) . "'" : "NULL";
+    $safe_formid = $form_id > 0 ? $form_id : "NULL";
+    $safe_first  = addslashes($first_name);
+    $safe_last   = addslashes($last_name);
+    $safe_name   = addslashes(trim($first_name . ' ' . $last_name));
+    $safe_phone  = addslashes($phone);
+    $safe_pwd    = addslashes($password_hash);
+    $safe_dept   = addslashes($department);
+    $safe_job    = addslashes($job_title);
+    $safe_nic    = addslashes($nic);
+    $safe_dob    = !empty($dob) ? "'" . addslashes($dob) . "'" : "NULL";
+    $safe_gender = addslashes($gender);
+    $safe_addr   = addslashes($address);
+    $safe_em_n   = addslashes($em_name);
+    $safe_em_p   = addslashes($em_phone);
 
-    $ins_sql = "INSERT INTO `employee_form_submissions` (
-        `form_id`, `form_token`, `first_name`, `last_name`, `email`, `phone_number`, `password_hash`,
-        `department`, `job_title`, `nic`, `dob`, `gender`, `address`, `emergency_contact_name`,
-        `emergency_contact_phone`, `status`, `created_at`
+    // 1. Immediately create user in main_user_login (in pending approval state)
+    // Ref key temporary prefix pending Super Admin approval
+    $temp_ref = 'REG-' . strtoupper(substr(md5($email . time()), 0, 6));
+    $ins_user_sql = "INSERT INTO `main_user_login` (
+        `company_id`, `user_name`, `password`, `name_show`, `first_name`, `last_name`,
+        `phone_number`, `ref_key`, `main_user_account_access_level_list_id`, `ac_type`,
+        `account_active_state`, `email_verify`, `moible_verfiy`, `ast`, `sdt`
     ) VALUES (
-        {$form_id}, '{$safe_ftoken}', '{$safe_first}', '{$safe_last}', '{$safe_email}', '{$safe_phone}', '{$safe_enc_pwd}',
-        '{$safe_dept}', '{$safe_job}', '{$safe_nic}', {$safe_dob}, '{$safe_gender}', '{$safe_address}', '{$safe_em_name}',
-        '{$safe_em_ph}', 'pending', NOW()
+        1, '{$safe_email}', '{$safe_pwd}', '{$safe_name}', '{$safe_first}', '{$safe_last}',
+        '{$safe_phone}', '{$temp_ref}', 2, 'Employee',
+        0, 0, 0, 1, NOW()
     )";
 
-    if (!$conn->query($ins_sql)) {
+    if (!$conn->query($ins_user_sql)) {
         ob_end_clean();
-        echo json_encode(['status' => 'error', 'message' => 'Failed to save submission: ' . $conn->error]);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to create user account record: ' . $conn->error]);
+        exit;
+    }
+
+    $created_user_id = (int)$conn->insert_id;
+
+    // 2. Insert into employee_form_submissions linked to created_user_id
+    $sql = "INSERT INTO `employee_form_submissions` (
+        `form_id`, `form_token`, `first_name`, `last_name`, `email`, `phone_number`, `password_hash`,
+        `department`, `job_title`, `nic`, `dob`, `gender`, `address`, `emergency_contact_name`, `emergency_contact_phone`,
+        `status`, `created_user_id`, `created_at`
+    ) VALUES (
+        {$safe_formid}, {$safe_token}, '{$safe_first}', '{$safe_last}', '{$safe_email}', '{$safe_phone}', '{$safe_pwd}',
+        '{$safe_dept}', '{$safe_job}', '{$safe_nic}', {$safe_dob}, '{$safe_gender}', '{$safe_addr}', '{$safe_em_n}', '{$safe_em_p}',
+        'pending', {$created_user_id}, NOW()
+    )";
+
+    if (!$conn->query($sql)) {
+        ob_end_clean();
+        echo json_encode(['status' => 'error', 'message' => 'Failed to save registration submission: ' . $conn->error]);
         exit;
     }
 
     $submission_id = (int)$conn->insert_id;
 
-    // Notify every active administrator so either an Admin or Super Admin can review the application.
+    // Notify administrators of the new registration
     $comp_obj = new Company_Info_Variable_List();
     $admin_emails = [];
     $adm_res = $conn->query("
@@ -215,16 +240,16 @@ try {
     $admin_mail_errors = [];
 
     try {
-        $mail_subject = "[Action Required] New Employee Registration Form Submitted - {$full_name}";
+        $mail_subject = "[Action Required] New Staff Registration Submitted - {$full_name}";
         $mail_body = "
         <div style='font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;'>
             <div style='background: linear-gradient(135deg, #14204d 0%, #1c2b63 100%); padding: 20px; border-radius: 8px; text-align: center; color: #ffffff;'>
-                <h2 style='margin: 0 0 6px; font-size: 20px;'>New Employee Registration Form Submitted</h2>
-                <p style='margin: 0; font-size: 13.5px; opacity: 0.9;'>Pending Administrator Review &amp; Approval</p>
+                <h2 style='margin: 0 0 6px; font-size: 20px;'>New Staff Registration Submitted</h2>
+                <p style='margin: 0; font-size: 13.5px; opacity: 0.9;'>Pending Super Administrator Review &amp; Role/Department Assignment</p>
             </div>
             
             <p style='font-size: 15px; color: #1e293b; margin: 20px 0 14px;'>
-                An applicant has filled out and submitted their employee registration form. Please review the details below:
+                An applicant has registered as a staff member on the portal. Please review their submission and assign their role (Admin or Staff) and department:
             </p>
 
             <table style='width: 100%; border-collapse: collapse; margin-bottom: 24px;'>
@@ -242,7 +267,7 @@ try {
                 </tr>
                 <tr>
                     <td style='padding: 10px 14px; font-weight: bold; border: 1px solid #e2e8f0; color: #475569;'>Department</td>
-                    <td style='padding: 10px 14px; border: 1px solid #e2e8f0; color: #0f172a;'>{$department}</td>
+                    <td style='padding: 10px 14px; border: 1px solid #e2e8f0; color: #0f172a;'>{$department} (Pending Admin Assignment)</td>
                 </tr>
                 <tr style='background: #f8fafc;'>
                     <td style='padding: 10px 14px; font-weight: bold; border: 1px solid #e2e8f0; color: #475569;'>Job Title / Role</td>
@@ -268,13 +293,13 @@ try {
 
             <div style='background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;'>
                 <p style='margin: 0; font-size: 13.5px; color: #166534;'>
-                        <strong>Next Steps:</strong> An Admin or Super Admin can review and approve this submission. After approval, the employee will receive a secure 6-digit OTP by email and SMS. The employee must verify the OTP before logging in.
+                    <strong>Super Admin Action:</strong> Open the Admin Dashboard to review this application. You can assign the registrant as either an Administrator or Staff, select their department, and activate their portal account.
                 </p>
             </div>
 
             <div style='text-align: center; margin: 24px 0;'>
                 <a href='{$portal_url}' style='background: #2563eb; color: #ffffff; text-decoration: none; padding: 13px 26px; border-radius: 8px; font-weight: bold; font-size: 14.5px; display: inline-block;'>
-                    Go to Admin Portal to Approve
+                    Go to Admin Portal to Review &amp; Approve
                 </a>
             </div>
 
@@ -299,10 +324,11 @@ try {
     echo json_encode([
         'status' => 'success',
         'message' => $email_sent_to_admin
-            ? 'Employee registration submitted. Active Admins and Super Admins have been notified; one of them can approve it.'
-            : 'Employee registration submitted, but the approval notification could not be sent. Please contact an administrator.',
+            ? 'Staff registration submitted. Super Admin has been notified and will review your application and assign your role.'
+            : 'Staff registration submitted. Pending Super Admin review and approval.',
         'data' => [
             'submission_id' => $submission_id,
+            'user_id' => $created_user_id,
             'email' => $email,
             'phone' => $phone,
             'admin_notified' => $email_sent_to_admin,

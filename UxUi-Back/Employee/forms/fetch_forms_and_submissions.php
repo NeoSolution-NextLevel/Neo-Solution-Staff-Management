@@ -8,24 +8,25 @@ try {
     include_once __DIR__ . '/../../../imports/need/session_setup.php';
     include_once __DIR__ . '/../../../imports/need/DB.php';
 
+    // Verify Admin authentication
     if (empty($_SESSION['user_id']) || (int)$_SESSION['user_id'] === 0) {
         ob_end_clean();
         echo json_encode(['status' => 'error', 'message' => 'Authentication required.']);
         exit;
     }
 
-    $db = new DataBase();
-    $conn = $db->get_data_base_connction();
-    $user_role = strtolower(trim((string)($_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? '')));
-    $access_level = (int)($_SESSION['main_user_account_access_level_list_id'] ?? 0);
-    if (strpos($user_role, 'admin') === false && $access_level !== 1 && (int)$_SESSION['user_id'] !== 1) {
-        http_response_code(403);
+    $role = isset($_SESSION['user_role']) ? strtolower($_SESSION['user_role']) : '';
+    $ac_type = isset($_SESSION['ac_type']) ? strtolower($_SESSION['ac_type']) : '';
+    if (strpos($role, 'admin') === false && strpos($ac_type, 'admin') === false && strpos($role, 'super') === false) {
         ob_end_clean();
         echo json_encode(['status' => 'error', 'message' => 'Administrator privileges required.']);
         exit;
     }
 
-    // Ensure tables exist
+    $db = new DataBase();
+    $conn = $db->get_data_base_connction();
+
+    // Ensure employee registration tables exist
     $conn->query("CREATE TABLE IF NOT EXISTS `employee_registration_forms` (
       `id` int NOT NULL AUTO_INCREMENT,
       `form_token` varchar(64) NOT NULL,
@@ -96,9 +97,11 @@ try {
 
     $sub_res = $conn->query("SELECT 
         s.*, 
-        f.title AS form_title
+        f.title AS form_title,
+        u.ac_type AS assigned_role
     FROM `employee_form_submissions` s
     LEFT JOIN `employee_registration_forms` f ON s.form_id = f.id
+    LEFT JOIN `main_user_login` u ON s.created_user_id = u.id
     ORDER BY s.id DESC");
 
     if ($sub_res && $sub_res->num_rows > 0) {

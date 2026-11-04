@@ -104,21 +104,15 @@
                           <a href="#" class="erp-link erp-text-sm">Forgot your password?</a>
                       </div>
 
-                      <!-- Registration Options: Both Employee and Administrator -->
+                      <!-- Registration Option: Unified Staff Registration -->
                       <div class="erp-text-center erp-mt-xl">
-                          <p class="erp-text-tertiary erp-text-sm erp-mb-sm" style="font-weight: 600; color: #475569;">Don't have an account? Register below:</p>
+                          <p class="erp-text-tertiary erp-text-sm erp-mb-sm" style="font-weight: 600; color: #475569;">Don't have an account?</p>
                           <div style="display: flex; flex-direction: column; gap: 8px;">
                               <button class="erp-btn erp-btn--primary erp-btn--block" type="button"
                                   onclick="window.location.href='<?php echo $home_page ?>UxUi/Main/Employee-Registration-Form<?php echo $online_offline_extention ?>'"
                                   style="height: 44px; font-size: 14.5px; font-weight: 700; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
-                                  <i class="fas fa-id-card-clip"></i>
-                                  <span>Register as Employee</span>
-                              </button>
-                              <button class="erp-btn erp-btn--secondary erp-btn--block" type="button"
-                                  onclick="window.location.href='<?php echo $home_page ?><?php echo $User_login_url ?>User-Registration<?php echo $online_offline_extention ?>'"
-                                  style="height: 42px; font-size: 13.5px; font-weight: 600;">
-                                  <i class="fas fa-user-shield"></i>
-                                  <span>Register as Administrator</span>
+                                  <i class="fas fa-user-plus"></i>
+                                  <span>Register as Staff</span>
                               </button>
                           </div>
                           <div style="margin-top: 12px; font-size: 12px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;">

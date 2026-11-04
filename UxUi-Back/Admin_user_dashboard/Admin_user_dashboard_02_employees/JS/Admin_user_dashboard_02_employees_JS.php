@@ -1669,8 +1669,13 @@
               <div>${otpBadge}</div>
             </td>
             <td>
-              <div style="font-weight:700; color:#14204d; font-size:13px;">${safeHtml(s.department)}</div>
-              <div style="font-size:12px; color:#64748b;">${safeHtml(s.job_title)}</div>
+              <div style="font-weight:700; color:#14204d; font-size:13px;">
+                ${s.department && s.department !== 'Unassigned' ? safeHtml(s.department) : '<span style="color:#d97706; font-style:italic;">Pending Assignment</span>'}
+              </div>
+              <div style="font-size:12px; color:#64748b; display:flex; align-items:center; gap:4px; margin-top:2px;">
+                ${s.assigned_role === 'Admin' ? '<span style="background:#f3e8ff; color:#7e22ce; padding:1px 6px; border-radius:8px; font-size:10.5px; font-weight:700;">Admin</span>' : (s.assigned_role ? '<span style="background:#eff6ff; color:#2563eb; padding:1px 6px; border-radius:8px; font-size:10.5px; font-weight:700;">Staff</span>' : '')}
+                <span>${safeHtml(s.job_title || 'Staff')}</span>
+              </div>
             </td>
             <td style="font-size:12px; color:#64748b;">${safeHtml(dateStr)}</td>
             <td>${badgeHtml}</td>
@@ -1895,13 +1900,44 @@
             <div>Reason: ${safeHtml(s.admin_notes || 'No specific notes recorded.')}</div>
           </div>
         ` : `
-          <div class="w3-form-group" style="margin-top:6px;">
+          <div style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-top:8px;">
+            <div style="font-size:12px; font-weight:800; color:#1e293b; text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+              <i class="fas fa-user-gear" style="color:#2563eb;"></i> Super Admin Assignment Decisions
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px;">
+              <div>
+                <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Assign Role *</label>
+                <select id="subAssignRole" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:13px; font-weight:700; background:#fff;">
+                  <option value="Employee" selected>Staff (Employee Portal)</option>
+                  <option value="Admin">Administrator (Admin Portal)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Assign Department *</label>
+                <select id="subAssignDept" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:13px; font-weight:600; background:#fff;">
+                  <option value="Engineering" selected>Engineering</option>
+                  <option value="Human Resources">Human Resources</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Finance & Accounts">Finance & Accounts</option>
+                  <option value="Sales & Marketing">Sales & Marketing</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Administration">Administration</option>
+                  <option value="Executive Management">Executive Management</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Assign Job Title / Role *</label>
+              <input type="text" id="subAssignJobTitle" value="${safeHtml(s.job_title && s.job_title !== 'Staff' ? s.job_title : 'Software Engineer')}" placeholder="e.g. Software Engineer, HR Executive, Operations Associate" style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:7px 10px; font-size:13px; box-sizing:border-box;">
+            </div>
+          </div>
+          <div class="w3-form-group" style="margin-top:8px;">
             <label style="font-size:12px; font-weight:700; color:#475569;">Admin Approval / Review Notes <span style="font-weight:400; color:#94a3b8;">(Optional)</span></label>
             <textarea id="subAdminNotes" rows="2" placeholder="Add any onboarding notes or employee code instructions..." style="width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 10px; font-size:13px; box-sizing:border-box;"></textarea>
           </div>
           <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 12px; font-size:12px; color:#1e40af; display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-info-circle" style="font-size:14px; flex-shrink:0;"></i>
-            <span>Upon approval, a 6-digit OTP will be sent to <strong>${safeHtml(s.email)}</strong> and by SMS to <strong>${safeHtml(s.phone_number)}</strong>. The employee must verify this code before logging in.</span>
+            <i class="fas fa-check-double" style="font-size:14px; flex-shrink:0; color:#16a34a;"></i>
+            <span>Upon approval, the candidate's email and account will be <strong>fully verified and activated immediately</strong>. They can log in straight away without entering an OTP.</span>
           </div>
         `)}
       `;
@@ -1913,7 +1949,7 @@
               <i class="fas fa-ban"></i> Reject
             </button>
             <button type="button" id="approveSubBtn" onclick="approveCurrentSubmission()" style="padding: 9px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);">
-              <i class="fas fa-check-circle"></i> Approve &amp; Send OTP
+              <i class="fas fa-check-circle"></i> Approve &amp; Activate Account
             </button>
           `;
         } else if (st === 'approved') {
@@ -1941,23 +1977,31 @@
       if (!currentReviewSubmission) return;
       const subId = currentReviewSubmission.id;
       const notes = document.getElementById('subAdminNotes')?.value?.trim() || '';
+      const assignedRole = document.getElementById('subAssignRole')?.value || 'Employee';
+      const assignedDept = document.getElementById('subAssignDept')?.value || 'Engineering';
+      const assignedJob = document.getElementById('subAssignJobTitle')?.value?.trim() || (assignedRole === 'Admin' ? 'Administrator' : 'Staff');
+
       const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
       const approveBtn = document.getElementById('approveSubBtn');
       const rejectBtn = document.getElementById('rejectSubBtn');
 
-      if (!confirm(`Are you sure you want to approve ${currentReviewSubmission.first_name} ${currentReviewSubmission.last_name}?\n\nThis will provision their employee account and send a 6-digit verification OTP to ${currentReviewSubmission.email} and ${currentReviewSubmission.phone_number}. They must verify the code before logging in.`)) {
+      const roleDesc = assignedRole === 'Admin' ? 'Administrator' : 'Staff (Employee)';
+      if (!confirm(`Are you sure you want to approve ${currentReviewSubmission.first_name} ${currentReviewSubmission.last_name}?\n\nRole: ${roleDesc}\nDepartment: ${assignedDept}\nJob Title: ${assignedJob}\n\nTheir email and account will be verified and activated immediately.`)) {
         return;
       }
 
       if (approveBtn) {
         approveBtn.disabled = true;
-        approveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Approving & Dispatching OTP...`;
+        approveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Approving & Provisioning...`;
       }
       if (rejectBtn) rejectBtn.disabled = true;
 
       const fd = new FormData();
       fd.append('submission_id', subId);
       fd.append('admin_notes', notes);
+      fd.append('assigned_role', assignedRole);
+      fd.append('assigned_department', assignedDept);
+      fd.append('assigned_job_title', assignedJob);
 
       fetch(pth + 'UxUi-Back/Employee/forms/approve_submission.php', {
         method: 'POST',
@@ -1966,7 +2010,7 @@
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success') {
-            alert(`Application approved successfully!\n\n${res.message || 'OTP sent to the employee by email and SMS.'}`);
+            alert(`Application approved successfully!\n\n${res.message || 'Staff member account has been provisioned.'}`);
             window.closeReviewSubmissionModal();
             window.loadOnboardingData();
             if (typeof window.fetchAdminEmployees === 'function') {
@@ -1976,7 +2020,7 @@
             alert(res.message || 'Error approving application.');
             if (approveBtn) {
               approveBtn.disabled = false;
-              approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Send OTP`;
+              approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Activate Account`;
             }
             if (rejectBtn) rejectBtn.disabled = false;
           }
@@ -1986,7 +2030,7 @@
           alert('Network or server error while approving submission.');
           if (approveBtn) {
             approveBtn.disabled = false;
-            approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Send OTP`;
+            approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Activate Account`;
           }
           if (rejectBtn) rejectBtn.disabled = false;
         });
