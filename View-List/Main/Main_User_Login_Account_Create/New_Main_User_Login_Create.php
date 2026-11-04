@@ -50,13 +50,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($requested_role === '1' || $requested_role === '') {
         $requested_role = 'Admin';
     }
-    if (!in_array($requested_role, ['Admin', 'Super Admin'], true)) {
+    if ($requested_role !== 'Admin') {
         $state['error'] = "Invalid account role";
         $json[] = $state;
         echo json_encode($json);
         exit;
     }
-    $ac_type = $requested_role;
+    $ac_type = 'Admin';
 
     $main_user_login_ADD_UPDATE_obj = new main_user_login_ADD_UPDATE();
     $main_user_login_LIST_obj = new main_user_login_LIST();
@@ -99,27 +99,67 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $state['error'] = $main_user_login_ADD_UPDATE_obj->get_error();
             }
         } else {
-            if ($main_user_login_ADD_UPDATE_obj->process_new_record()) {
+            $db = new DataBase();
+            $conn = $db->get_data_base_connction();
+            $lock_res = $conn->query("SELECT GET_LOCK('neo_staff_super_admin_registration', 10) AS lock_acquired");
+            $lock_row = $lock_res ? $lock_res->fetch_assoc() : null;
+
+            if (!$lock_row || (int)$lock_row['lock_acquired'] !== 1) {
+                $state['error'] = "Could not safely create the administrator account. Please try again.";
+            } elseif ($main_user_login_ADD_UPDATE_obj->process_new_record()) {
                 $new_id = (int)$main_user_login_ADD_UPDATE_obj->get_id();
                 $state['error'] = "0";
                 $state['id'] = $new_id;
-
-                $db = new DataBase();
-                $conn = $db->get_data_base_connction();
                 
-                // Bootstrap the first administrator as Super Admin; later registrations must be approved.
-                $chkAdminCount = $conn->query("SELECT id FROM `main_user_login` WHERE (`id` = 1 OR `ac_type` IN ('Admin', 'Super Admin') OR `main_user_account_access_level_list_id` = 1) AND `account_active_state` = 1 AND `id` != {$new_id} LIMIT 1");
-                $activeAdministratorExists = ($chkAdminCount && $chkAdminCount->num_rows > 0);
+                // Keep the root account, or otherwise the oldest existing Super Admin, as the sole Super Admin.
+                $canonicalSuperAdminResult = $conn->query("SELECT id FROM `main_user_login` WHERE `id` = 1 OR LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super admin' ORDER BY CASE WHEN `id` = 1 THEN 0 ELSE 1 END, `id` ASC LIMIT 1");
+                if (!$canonicalSuperAdminResult) {
+                    $conn->query("SELECT RELEASE_LOCK('neo_staff_super_admin_registration')");
+                    $state['error'] = "Could not verify the Super Administrator account. Please try again.";
+                    $json[] = $state;
+                    echo json_encode($json);
+                    exit;
+                }
+                $canonicalSuperAdmin = $canonicalSuperAdminResult->fetch_assoc();
+                $canonicalSuperAdminId = $canonicalSuperAdmin ? (int)$canonicalSuperAdmin['id'] : 0;
+                if ($canonicalSuperAdminId > 0) {
+                    $deduplicateSuperAdmins = $conn->query("UPDATE `main_user_login` SET `ac_type` = 'Admin' WHERE LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super admin' AND `id` != {$canonicalSuperAdminId}");
+                    if (!$deduplicateSuperAdmins) {
+                        $conn->query("SELECT RELEASE_LOCK('neo_staff_super_admin_registration')");
+                        $state['error'] = "Could not enforce the single Super Administrator account. Please try again.";
+                        $json[] = $state;
+                        echo json_encode($json);
+                        exit;
+                    }
+                }
+                $superAdminExists = ($canonicalSuperAdminId > 0);
 
-                if (!$activeAdministratorExists || $new_id === 1) {
-                    $conn->query("UPDATE `main_user_login` SET `account_active_state` = 1, `email_verify` = 1, `moible_verfiy` = 1, `ast` = 1, `ac_type` = 'Super Admin', `main_user_account_access_level_list_id` = 1 WHERE `id` = {$new_id}");
+                if (!$superAdminExists) {
+                    $promote = $conn->query("UPDATE `main_user_login` SET `account_active_state` = 1, `email_verify` = 1, `moible_verfiy` = 1, `ast` = 1, `ac_type` = 'Super Admin', `main_user_account_access_level_list_id` = 1 WHERE `id` = {$new_id}");
+                    if (!$promote) {
+                        $conn->query("SELECT RELEASE_LOCK('neo_staff_super_admin_registration')");
+                        $state['error'] = "Failed to create the Super Administrator account.";
+                        $json[] = $state;
+                        echo json_encode($json);
+                        exit;
+                    }
                     $state['status'] = "super_admin_created";
-                    $state['message'] = "Super Administrator account created and activated successfully. You can log in immediately.";
+                    $state['message'] = "The first administrator has been set up as the Super Administrator. You can log in immediately.";
                 } else {
-                    $conn->query("UPDATE `main_user_login` SET `account_active_state` = 0, `email_verify` = 0, `moible_verfiy` = 0, `ast` = 1 WHERE `id` = {$new_id}");
+                    $pending = $conn->query("UPDATE `main_user_login` SET `account_active_state` = 0, `email_verify` = 0, `moible_verfiy` = 0, `ast` = 1, `ac_type` = 'Admin', `main_user_account_access_level_list_id` = 1 WHERE `id` = {$new_id}");
+                    if (!$pending) {
+                        $conn->query("SELECT RELEASE_LOCK('neo_staff_super_admin_registration')");
+                        $state['error'] = "Failed to save the administrator account for approval.";
+                        $json[] = $state;
+                        echo json_encode($json);
+                        exit;
+                    }
                     $state['status'] = "pending_approval";
-                    $state['message'] = "{$ac_type} registration submitted. Pending Super Admin approval.";
+                    $state['message'] = "Administrator registration submitted. Pending Super Admin approval.";
+                }
+                $conn->query("SELECT RELEASE_LOCK('neo_staff_super_admin_registration')");
 
+                if ($superAdminExists) {
                     // Send Email Notification to Super Admin and Acknowledgment to Applicant
                     include_once __DIR__ . '/../../../imports/email/Email_Send.php';
                     include_once __DIR__ . '/../../../imports/need/SystemNotifications.php';
@@ -263,6 +303,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     }
                 }
             } else {
+                $conn->query("SELECT RELEASE_LOCK('neo_staff_super_admin_registration')");
                 $state['error'] = $main_user_login_ADD_UPDATE_obj->get_error();
             }
         }
