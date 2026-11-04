@@ -176,16 +176,35 @@ try {
 
     $submission_id = (int)$conn->insert_id;
 
-    // Send notification email with submitted form details to Admin
+    // Notify every active administrator so either an Admin or Super Admin can review the application.
     $comp_obj = new Company_Info_Variable_List();
-    $admin_email = !empty($form_creator_email) && filter_var($form_creator_email, FILTER_VALIDATE_EMAIL)
-        ? $form_creator_email
-        : $comp_obj->get_default_sending_email();
-
-    if (empty($admin_email)) {
-        $adm_res = $conn->query("SELECT user_name FROM `main_user_login` WHERE `main_user_account_access_level_list_id` = 1 OR `ac_type` = 'Admin' ORDER BY `id` ASC LIMIT 1");
-        if ($adm_res && ($adm_r = $adm_res->fetch_assoc())) {
-            $admin_email = $adm_r['user_name'];
+    $admin_emails = [];
+    $adm_res = $conn->query("
+        SELECT DISTINCT `user_name`
+        FROM `main_user_login`
+        WHERE (
+            LOWER(TRIM(COALESCE(`ac_type`, ''))) IN ('admin', 'super admin')
+            OR `main_user_account_access_level_list_id` = 1
+        )
+        AND `account_active_state` = 1
+        AND `ast` = 1
+        AND `full_block` = 0
+    ");
+    if ($adm_res) {
+        while ($adm_r = $adm_res->fetch_assoc()) {
+            $recipient = trim((string)$adm_r['user_name']);
+            if (filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+                $admin_emails[strtolower($recipient)] = $recipient;
+            }
+        }
+    }
+    if (!$admin_emails && !empty($form_creator_email) && filter_var($form_creator_email, FILTER_VALIDATE_EMAIL)) {
+        $admin_emails[strtolower($form_creator_email)] = $form_creator_email;
+    }
+    if (!$admin_emails) {
+        $fallback_email = Email_Send::resolve_admin_email();
+        if (filter_var($fallback_email, FILTER_VALIDATE_EMAIL)) {
+            $admin_emails[strtolower($fallback_email)] = $fallback_email;
         }
     }
 
@@ -193,7 +212,7 @@ try {
     $portal_url = rtrim($GLOBALS['home_page'], '/') . '/UxUi/Admin_user_dashboard.php';
 
     $email_sent_to_admin = false;
-    $admin_mail_error = '';
+    $admin_mail_errors = [];
 
     try {
         $mail_subject = "[Action Required] New Employee Registration Form Submitted - {$full_name}";
@@ -249,7 +268,7 @@ try {
 
             <div style='background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;'>
                 <p style='margin: 0; font-size: 13.5px; color: #166534;'>
-                    <strong>Next Steps:</strong> Log in to the Admin Portal to review and approve this submission. Once approved, the system will send an approval email and dispatch a secure 6-digit OTP code to the employee's contact number <strong>{$phone}</strong> for account verification.
+                        <strong>Next Steps:</strong> An Admin or Super Admin can review and approve this submission. After approval, the employee will receive a secure 6-digit OTP by email and SMS. The employee must verify the OTP before logging in.
                 </p>
             </div>
 
@@ -264,25 +283,31 @@ try {
             </p>
         </div>";
 
-        $sender = new Email_Send($admin_email, $mail_subject, $mail_body, 'employee_form_submitted');
-        $email_sent_to_admin = $sender->send_email();
-        if (!$email_sent_to_admin) {
-            $admin_mail_error = $sender->get_last_error();
+        foreach ($admin_emails as $admin_email) {
+            $sender = new Email_Send($admin_email, $mail_subject, $mail_body, 'employee_form_submitted');
+            if ($sender->send_email()) {
+                $email_sent_to_admin = true;
+            } else {
+                $admin_mail_errors[] = $admin_email . ': ' . $sender->get_last_error();
+            }
         }
     } catch (\Throwable $mEx) {
-        $admin_mail_error = $mEx->getMessage();
+        $admin_mail_errors[] = $mEx->getMessage();
     }
 
     ob_end_clean();
     echo json_encode([
         'status' => 'success',
-        'message' => 'Employee registration form submitted successfully! Your application is now pending administrator approval.',
+        'message' => $email_sent_to_admin
+            ? 'Employee registration submitted. Active Admins and Super Admins have been notified; one of them can approve it.'
+            : 'Employee registration submitted, but the approval notification could not be sent. Please contact an administrator.',
         'data' => [
             'submission_id' => $submission_id,
             'email' => $email,
             'phone' => $phone,
             'admin_notified' => $email_sent_to_admin,
-            'admin_email_error' => $admin_mail_error
+            'admin_recipients_count' => count($admin_emails),
+            'admin_email_errors' => $admin_mail_errors
         ]
     ]);
     exit;
