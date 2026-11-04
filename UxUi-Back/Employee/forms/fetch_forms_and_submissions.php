@@ -16,6 +16,14 @@ try {
 
     $db = new DataBase();
     $conn = $db->get_data_base_connction();
+    $user_role = strtolower(trim((string)($_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? '')));
+    $access_level = (int)($_SESSION['main_user_account_access_level_list_id'] ?? 0);
+    if (strpos($user_role, 'admin') === false && $access_level !== 1 && (int)$_SESSION['user_id'] !== 1) {
+        http_response_code(403);
+        ob_end_clean();
+        echo json_encode(['status' => 'error', 'message' => 'Administrator privileges required.']);
+        exit;
+    }
 
     // Ensure tables exist
     $conn->query("CREATE TABLE IF NOT EXISTS `employee_registration_forms` (
