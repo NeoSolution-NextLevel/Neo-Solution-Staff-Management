@@ -1901,7 +1901,7 @@
           </div>
           <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 12px; font-size:12px; color:#1e40af; display:flex; align-items:center; gap:8px;">
             <i class="fas fa-info-circle" style="font-size:14px; flex-shrink:0;"></i>
-            <span>Upon clicking <strong>Approve</strong>, an approval email will be sent to <strong>${safeHtml(s.email)}</strong> and a 6-digit OTP SMS will be dispatched to <strong>${safeHtml(s.phone_number)}</strong> for account verification.</span>
+            <span>Upon approval, a 6-digit OTP will be sent to <strong>${safeHtml(s.email)}</strong> and by SMS to <strong>${safeHtml(s.phone_number)}</strong>. The employee must verify this code before logging in.</span>
           </div>
         `)}
       `;
@@ -1913,7 +1913,7 @@
               <i class="fas fa-ban"></i> Reject
             </button>
             <button type="button" id="approveSubBtn" onclick="approveCurrentSubmission()" style="padding: 9px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);">
-              <i class="fas fa-check-circle"></i> Approve &amp; Dispatch OTP SMS
+              <i class="fas fa-check-circle"></i> Approve &amp; Send OTP
             </button>
           `;
         } else if (st === 'approved') {
@@ -1945,7 +1945,7 @@
       const approveBtn = document.getElementById('approveSubBtn');
       const rejectBtn = document.getElementById('rejectSubBtn');
 
-      if (!confirm(`Are you sure you want to approve ${currentReviewSubmission.first_name} ${currentReviewSubmission.last_name}?\n\nThis will provision their employee account, send an approval email, and dispatch the 6-digit OTP code to ${currentReviewSubmission.phone_number}.`)) {
+      if (!confirm(`Are you sure you want to approve ${currentReviewSubmission.first_name} ${currentReviewSubmission.last_name}?\n\nThis will provision their employee account and send a 6-digit verification OTP to ${currentReviewSubmission.email} and ${currentReviewSubmission.phone_number}. They must verify the code before logging in.`)) {
         return;
       }
 
@@ -1966,7 +1966,7 @@
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success') {
-            alert(`Application approved successfully!\n\n${res.message || 'Approval email sent and OTP code dispatched via SMS.'}`);
+            alert(`Application approved successfully!\n\n${res.message || 'OTP sent to the employee by email and SMS.'}`);
             window.closeReviewSubmissionModal();
             window.loadOnboardingData();
             if (typeof window.fetchAdminEmployees === 'function') {
@@ -1976,7 +1976,7 @@
             alert(res.message || 'Error approving application.');
             if (approveBtn) {
               approveBtn.disabled = false;
-              approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Dispatch OTP SMS`;
+              approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Send OTP`;
             }
             if (rejectBtn) rejectBtn.disabled = false;
           }
@@ -1986,7 +1986,7 @@
           alert('Network or server error while approving submission.');
           if (approveBtn) {
             approveBtn.disabled = false;
-            approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Dispatch OTP SMS`;
+            approveBtn.innerHTML = `<i class="fas fa-check-circle"></i> Approve &amp; Send OTP`;
           }
           if (rejectBtn) rejectBtn.disabled = false;
         });
