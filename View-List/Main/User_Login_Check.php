@@ -266,12 +266,28 @@ if ($User_Account_Check_obj->check_user_name()) {
                 $chkVer = $lconn->query("SELECT account_active_state, moible_verfiy, phone_number FROM `main_user_login` WHERE `id` = {$safeUid} LIMIT 1");
                 if ($chkVer && ($vRow = $chkVer->fetch_assoc())) {
                     if ((int)$vRow['account_active_state'] === 0 || (int)$vRow['moible_verfiy'] === 0) {
+                        // Check if submission is still pending approval by admin
+                        $subQ = $lconn->query("SELECT id, phone_number, status FROM `employee_form_submissions` WHERE `email` = '{$safeEmail}' OR `created_user_id` = {$safeUid} ORDER BY `id` DESC LIMIT 1");
+                        if ($subQ && ($sRow = $subQ->fetch_assoc())) {
+                            if ($sRow['status'] === 'pending') {
+                                session_unset();
+                                $state['error'] = "Application-Pending-Approval";
+                                $json[] = $state;
+                                send_json_exit($json);
+                            }
+                            if ($sRow['status'] === 'rejected') {
+                                session_unset();
+                                $state['error'] = "Application-Declined";
+                                $json[] = $state;
+                                send_json_exit($json);
+                            }
+                        }
+
                         // Generate fresh 6-digit OTP for login mobile verification
                         $otp_code = str_pad((string)random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
                         $phone = !empty($vRow['phone_number']) ? trim($vRow['phone_number']) : '';
 
                         // Update or locate in employee_form_submissions
-                        $subQ = $lconn->query("SELECT id, phone_number FROM `employee_form_submissions` WHERE `email` = '{$safeEmail}' OR `created_user_id` = {$safeUid} ORDER BY `id` DESC LIMIT 1");
                         if ($subQ && ($sRow = $subQ->fetch_assoc())) {
                             $subId = (int)$sRow['id'];
                             if (empty($phone) && !empty($sRow['phone_number'])) {
