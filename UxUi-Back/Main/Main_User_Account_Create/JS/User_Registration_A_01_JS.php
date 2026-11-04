@@ -94,7 +94,6 @@
         if (!container) return;
         if (container.options.length === 0) {
             container.add(new Option("Administrator", "Admin"));
-            container.add(new Option("Super Administrator", "Super Admin"));
         }
     }
 </script>
