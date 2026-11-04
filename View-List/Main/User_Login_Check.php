@@ -94,9 +94,9 @@ if ($User_Account_Check_obj->check_user_name()) {
         }
 
         $isAdmin = (
-            strtolower((string)$user_role) === 'admin' ||
+            strpos(strtolower((string)$user_role), 'admin') !== false ||
             (int)$access_level_id === 1 ||
-            strtolower((string)$User_Account_Check_obj->get_ac_type()) === 'admin' ||
+            strpos(strtolower((string)$User_Account_Check_obj->get_ac_type()), 'admin') !== false ||
             (int)$User_Account_Check_obj->get_user_id() === 1
         );
 
@@ -134,7 +134,7 @@ if ($User_Account_Check_obj->check_user_name()) {
             $_SESSION['department'] = 'Administration';
             $_SESSION['employee_id_code'] = 'ADM-' . str_pad((string)$User_Account_Check_obj->get_user_id(), 3, '0', STR_PAD_LEFT);
             $_SESSION['user_role'] = 'admin';
-            $_SESSION['ac_type'] = 'admin';
+            $_SESSION['ac_type'] = $User_Account_Check_obj->get_ac_type() ?: 'Admin';
         } else {
             if (empty($url_home)) {
                 $url_home = 'UxUi/Employee_user_dashboard.php';
@@ -450,7 +450,6 @@ if ($User_Account_Check_obj->check_user_name()) {
                 $state['email'] = $user_email;
             } else {
                 $_SESSION['otp_pending'] = false;
-                $state['error'] = "0";
                 $state['google_authentication'] = "0";
                 $state['is_two_factor_auth_enable'] = "0";
 
@@ -458,10 +457,6 @@ if ($User_Account_Check_obj->check_user_name()) {
                 $Cook_Createing = new Cook_Createing($User_Account_Check_obj->get_user_id());
                 $_SESSION['user_main_cook_id'] = $Cook_Createing->get_cook_id();
             }
-        }
-
-        if (!isset($state['error'])) {
-            $state['error'] = "0";
         }
 
         $json[] = $state;
