@@ -92,11 +92,9 @@
     function User_Registration_A_01_main_user_account_access_level_list() {
         var container = document.getElementById("User_Registration_A_01_val_05_select_obj");
         if (!container) return;
-        container.innerHTML = "";
-        var opt = document.createElement("option");
-        opt.value = "1";
-        opt.textContent = "Administrator (Portal Admin Access)";
-        opt.selected = true;
-        container.appendChild(opt);
+        if (container.options.length === 0) {
+            container.add(new Option("Administrator", "Admin"));
+            container.add(new Option("Super Administrator", "Super Admin"));
+        }
     }
 </script>
