@@ -49,7 +49,7 @@ if (!empty($token)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Employee Registration Form | <?php echo htmlspecialchars($company_obj->get_compnay_name()); ?></title>
+    <title>Staff Registration | <?php echo htmlspecialchars($company_obj->get_compnay_name()); ?></title>
     <link rel="icon" type="image/png" href="https://www.svgrepo.com/show/373594/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -146,21 +146,21 @@ if (!empty($token)) {
                 </div>
 
             <?php else: ?>
-                <!-- Valid Employee Registration Form -->
+                <!-- Valid Staff Registration Form -->
                 <div class="erp-registration-card__header">
                     <div class="erp-registration-card__logo" style="font-size: 32px; color: #93c5fd; margin-bottom: 8px;">
                         <i class="fas fa-id-card-clip"></i>
                     </div>
-                    <h1 class="erp-registration-card__title"><?php echo htmlspecialchars($form_data['title'] ?: 'Employee Registration Form'); ?></h1>
-                    <p class="erp-registration-card__subtitle">Complete your details to submit your employee account application to <?php echo htmlspecialchars($company_obj->get_compnay_name()); ?></p>
+                    <h1 class="erp-registration-card__title">Staff Registration</h1>
+                    <p class="erp-registration-card__subtitle">Complete your registration to join <?php echo htmlspecialchars($company_obj->get_compnay_name()); ?>. The Super Administrator will assign your department and access role upon review.</p>
                 </div>
 
                 <div class="erp-registration-card__body">
                     
-                    <!-- Notice on OTP process -->
+                    <!-- Notice on Staff registration & approval process -->
                     <div class="form-notice-box">
                         <i class="fas fa-shield-halved"></i>
-                        <strong>Verification Workflow:</strong> After you submit this form, active Admins and Super Admins are notified. One of them must approve your application. After approval, an <strong>OTP verification code</strong> is sent to your email and phone; verify it to activate your account and log in.
+                        <strong>Staff Registration Notice:</strong> Enter your personal information and account credentials below. Upon submission, the <strong>Super Administrator</strong> reviews your profile, decides your access role (Staff or Administrator), and assigns your official department.
                     </div>
 
                     <!-- Submission Success Container -->
@@ -288,46 +288,14 @@ if (!empty($token)) {
                             </div>
                         </div>
 
-                        <!-- 2. Employment & Department -->
-                        <div class="erp-form__group erp-mt-lg">
-                            <h3 class="form-section-title">
-                                <i class="fas fa-briefcase" style="color: var(--erp-primary, #2563eb);"></i> 2. Department &amp; Position
-                            </h3>
-
-                            <div class="erp-form-grid">
-                                <div class="erp-form__group">
-                                    <label class="erp-form__label">Department <span style="color: var(--erp-accent-error);">*</span></label>
-                                    <div class="erp-input-wrapper">
-                                        <i class="fas fa-building erp-form__icon"></i>
-                                        <select class="erp-form__control erp-form__control--with-icon" name="department" required>
-                                            <?php 
-                                            $curr_dept = !empty($form_data['department']) ? $form_data['department'] : 'Engineering';
-                                            $depts = ['Engineering', 'Human Resources', 'Operations', 'Finance & Accounts', 'Sales & Marketing', 'Information Technology', 'Administration'];
-                                            if (!in_array($curr_dept, $depts)) { $depts[] = $curr_dept; }
-                                            foreach ($depts as $d): ?>
-                                                <option value="<?php echo htmlspecialchars($d); ?>" <?php echo $curr_dept === $d ? 'selected' : ''; ?>>
-                                                    <?php echo htmlspecialchars($d); ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="erp-form__group">
-                                    <label class="erp-form__label">Job Title / Designation <span style="color: var(--erp-accent-error);">*</span></label>
-                                    <div class="erp-input-wrapper">
-                                        <i class="fas fa-user-tag erp-form__icon"></i>
-                                        <input type="text" class="erp-form__control erp-form__control--with-icon" name="job_title" 
-                                               value="<?php echo htmlspecialchars($form_data['job_title'] ?: 'Staff'); ?>" required placeholder="e.g. Software Engineer">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Hidden department and job title defaults: assigned later by Super Admin -->
+                        <input type="hidden" name="department" value="Unassigned">
+                        <input type="hidden" name="job_title" value="Staff">
 
                         <!-- 3. Emergency Contact -->
                         <div class="erp-form__group erp-mt-lg">
                             <h3 class="form-section-title">
-                                <i class="fas fa-phone-volume" style="color: var(--erp-primary, #2563eb);"></i> 3. Emergency Contact Details
+                                <i class="fas fa-phone-volume" style="color: var(--erp-primary, #2563eb);"></i> 2. Emergency Contact Details
                             </h3>
 
                             <div class="erp-form-grid">
@@ -352,7 +320,7 @@ if (!empty($token)) {
                         <!-- 4. Account Security Password -->
                         <div class="erp-form__group erp-mt-lg">
                             <h3 class="form-section-title">
-                                <i class="fas fa-lock" style="color: var(--erp-primary, #2563eb);"></i> 4. Account Password
+                                <i class="fas fa-lock" style="color: var(--erp-primary, #2563eb);"></i> 3. Account Password
                             </h3>
 
                             <div class="erp-form-grid">
@@ -383,7 +351,7 @@ if (!empty($token)) {
                             <div class="erp-terms">
                                 <input type="checkbox" class="erp-terms__checkbox" id="empTerms" required>
                                 <label for="empTerms" class="erp-terms__label">
-                                    I confirm that the details provided above are true and accurate. I understand that an Admin or Super Admin must approve my registration, after which I must verify an OTP sent to my email and phone before logging in.
+                                    I confirm that the details provided above are true and accurate. I understand that my staff registration will be reviewed by the Super Administrator, who will decide my role (Administrator or Staff) and assign my department before activating portal access.
                                     <span style="color: var(--erp-accent-error);">*</span>
                                 </label>
                             </div>
@@ -393,19 +361,16 @@ if (!empty($token)) {
                         <div class="erp-form__group erp-mt-xl">
                             <button type="submit" id="submitFormBtn" class="erp-btn erp-btn--primary erp-btn--block" style="height: 48px; font-size: 15px;">
                                 <i class="fas fa-paper-plane"></i>
-                                <span>Submit Registration Form to Admin</span>
+                                <span>Submit Staff Registration</span>
                             </button>
                         </div>
 
                         <!-- Navigation links -->
                         <div class="erp-text-center erp-mt-lg" style="margin-top: 20px; text-align: center;">
-                            <p class="erp-text-tertiary erp-text-sm erp-mb-sm" style="font-size: 13px; color: #64748b; margin-bottom: 8px;">Already have an account, or registering as an Administrator?</p>
+                            <p class="erp-text-tertiary erp-text-sm erp-mb-sm" style="font-size: 13px; color: #64748b; margin-bottom: 8px;">Already have an account?</p>
                             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                                 <a href="User-Login.php" class="erp-btn erp-btn--secondary" style="height: 38px; padding: 0 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
                                     <i class="fas fa-sign-in-alt"></i> Sign In to Portal
-                                </a>
-                                <a href="User-Registration.php" class="erp-btn erp-btn--secondary" style="height: 38px; padding: 0 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
-                                    <i class="fas fa-user-shield"></i> Register as Administrator
                                 </a>
                             </div>
                         </div>
@@ -465,7 +430,7 @@ if (!empty($token)) {
             var btn = document.getElementById('submitFormBtn');
             var originalBtnHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting Form to Admin...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting Staff Registration...';
 
             var formData = new FormData(document.getElementById('employeeOnboardingForm'));
 
