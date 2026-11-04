@@ -122,13 +122,18 @@ try {
             '{$safe_phone}', '{$ref_key}', 2, 'Employee',
             0, 1, 0, 1, NOW()
         )";
-        if ($conn->query($ins_u)) {
-            $user_id = (int)$conn->insert_id;
+        if (!$conn->query($ins_u)) {
+            ob_end_clean();
+            echo json_encode(['status' => 'error', 'message' => 'Failed to create the employee login account: ' . $conn->error]);
+            exit;
         }
+        $user_id = (int)$conn->insert_id;
     }
 
     if ($user_id <= 0) {
-        $user_id = $submission_id;
+        ob_end_clean();
+        echo json_encode(['status' => 'error', 'message' => 'Could not provision an employee login account.']);
+        exit;
     }
 
     $emp_code = 'EMP-' . str_pad($user_id, 3, '0', STR_PAD_LEFT);
@@ -168,7 +173,7 @@ try {
 
     // 6. Update submission record with approved status and generated OTP
     $safe_notes = addslashes($admin_notes);
-    $conn->query("UPDATE `employee_form_submissions` SET 
+    if (!$conn->query("UPDATE `employee_form_submissions` SET
         `status` = 'approved',
         `reviewed_by` = {$admin_id},
         `reviewed_at` = NOW(),
@@ -177,7 +182,11 @@ try {
         `otp_expires_at` = DATE_ADD(NOW(), INTERVAL 24 HOUR),
         `is_otp_verified` = 0,
         `created_user_id` = {$user_id}
-    WHERE `id` = {$submission_id}");
+    WHERE `id` = {$submission_id} AND `status` = 'pending'")) {
+        ob_end_clean();
+        echo json_encode(['status' => 'error', 'message' => 'Failed to save the approval and verification code: ' . $conn->error]);
+        exit;
+    }
 
     // 7. Send Approval Email to Employee
     $comp_obj = new Company_Info_Variable_List();
@@ -244,16 +253,26 @@ try {
     try {
         $sms_msg = "Your {$comp_name} verification code is: {$otp_code}. Enter this OTP to verify and activate your employee account.";
         $sms_obj = new SMS_Sending($phone, $sms_msg);
-        $sms_resp = $sms_obj->send_message();
-        $sms_sent = true;
+        $sms_obj->send_message();
+        $sms_sent = ($sms_obj->get_last_http_code() === 200);
+        if (!$sms_sent) {
+            $sms_error = 'SMS provider did not confirm delivery (HTTP ' . (int)$sms_obj->get_last_http_code() . ').';
+        }
     } catch (\Throwable $sEx) {
         $sms_error = $sEx->getMessage();
     }
 
     ob_end_clean();
+    $delivery_message = $email_sent && $sms_sent
+        ? 'OTP sent to the employee by email and SMS.'
+        : ($email_sent
+            ? 'OTP email sent, but SMS delivery failed. The employee can verify using the emailed OTP.'
+            : ($sms_sent
+                ? 'OTP sent by SMS, but the email could not be delivered.'
+                : 'The application was approved, but OTP delivery failed on both channels. Use Resend OTP to try again.'));
     echo json_encode([
         'status' => 'success',
-        'message' => 'Employee registration approved successfully! Approval email sent and OTP dispatched to contact number.',
+        'message' => 'Employee application approved successfully. ' . $delivery_message,
         'data' => [
             'submission_id' => $submission_id,
             'user_id' => $user_id,
