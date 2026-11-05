@@ -1,0 +1,307 @@
+﻿<script>
+(function () {
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // ---- Mobile sidebar toggle ----
+    const menuBtn = document.getElementById('menuBtn');
+
+    function toggleMobileSidebar() {
+      if (typeof openAdminSidebar === 'function') {
+        openAdminSidebar();
+      } else {
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        sidebar?.classList.toggle('mobile-open');
+        overlay?.classList.toggle('active');
+      }
+    }
+
+    if (menuBtn) {
+      menuBtn.addEventListener('click', toggleMobileSidebar);
+    }
+
+    // ---- Donut / Pie chart dynamic rendering purely from database ----
+    function renderTaskStatusPieChart(taskStatusList, kpiData) {
+      const donut = document.getElementById('donutChart');
+      const totalEl = document.getElementById('donutTotalTasks');
+
+      let completed = 0;
+      let inProgress = 0;
+      let pending = 0;
+
+      if (Array.isArray(taskStatusList)) {
+        taskStatusList.forEach(ts => {
+          const lbl = (ts.label || '').toLowerCase();
+          const cnt = Number(ts.count) || 0;
+          if (lbl === 'completed' || lbl === 'done') completed = cnt;
+          else if (lbl.includes('progress')) inProgress = cnt;
+          else if (lbl === 'pending') pending = cnt;
+        });
+      } else if (kpiData) {
+        completed = Number(kpiData.completed_tasks) || 0;
+        inProgress = Number(kpiData.in_progress_tasks) || 0;
+        pending = Number(kpiData.pending_tasks) || 0;
+      }
+
+      const total = completed + inProgress + pending;
+      if (totalEl) totalEl.textContent = total;
+
+      // Update Legend Counts and Percentages
+      const setLegend = (idVal, idPct, count) => {
+        const elVal = document.getElementById(idVal);
+        const elPct = document.getElementById(idPct);
+        if (elVal) elVal.textContent = count;
+        if (elPct) {
+          const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+          elPct.textContent = `(${pct}%)`;
+        }
+      };
+
+      setLegend('legendCompleted', 'legendCompletedPct', completed);
+      setLegend('legendInProgress', 'legendInProgressPct', inProgress);
+      setLegend('legendPending', 'legendPendingPct', pending);
+
+      // Render Dynamic Conic Gradient Slices
+      if (donut) {
+        if (total === 0) {
+          donut.style.background = 'conic-gradient(#e2e8f0 0deg 360deg)';
+        } else {
+          const cDeg = (completed / total) * 360;
+          const ipDeg = cDeg + (inProgress / total) * 360;
+
+          donut.style.background = `conic-gradient(
+            var(--green) 0deg ${cDeg}deg,
+            var(--blue) ${cDeg}deg ${ipDeg}deg,
+            var(--amber) ${ipDeg}deg 360deg
+          )`;
+        }
+
+        donut.classList.remove('animate');
+        void donut.offsetWidth; // trigger DOM reflow
+        donut.classList.add('animate');
+      }
+    }
+
+    // ---- Department distribution (Strictly from Database) ----
+    const deptList = document.getElementById('deptList');
+    function renderDepartments(depts) {
+      if (!deptList) return;
+      if (!Array.isArray(depts) || depts.length === 0) {
+        deptList.innerHTML = '<div style="padding: 24px; text-align: center; color: #94a3b8; font-size: 13px; font-weight: 500;">No departments found in database.</div>';
+        return;
+      }
+
+      const maxDept = Math.max(...depts.map(d => d.count), 1);
+
+      deptList.innerHTML = '';
+      depts.forEach(({ name, count }) => {
+        const row = document.createElement('div');
+        row.className = 'dept-row';
+        row.innerHTML = `
+          <div class="dept-head">
+            <span>${escapeHtml(name)}</span>
+            <span class="dept-count-pill">${count} staff</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width:${(count / maxDept * 100)}%"></div>
+          </div>
+        `;
+        deptList.appendChild(row);
+      });
+    }
+
+    // ---- Recent Activities (Clickable Navigation to Relevant Tabs) ----
+    const activitiesList = document.getElementById('dashboardActivitiesList');
+    const activeMembersList = document.getElementById('activeMembersList');
+    const activeMembersDate = document.getElementById('activeMembersDate');
+    const dailyWorkPlansList = document.getElementById('dailyWorkPlansList');
+    const dailyWorkPlansMobileList = document.getElementById('dailyWorkPlansMobileList');
+
+    function renderActiveMembers(members) {
+      if (!activeMembersList) return;
+      if (!Array.isArray(members) || members.length === 0) {
+        activeMembersList.innerHTML = '<div style="padding:12px; color:#94a3b8; font-size:13px;">No employees have been active today.</div>';
+        return;
+      }
+      activeMembersList.innerHTML = members.map(member => {
+        const name = member.name || 'Employee';
+        const initials = name.split(/\s+/).map(word => word[0] || '').join('').slice(0, 2).toUpperCase();
+        const avatar = member.profile_pic ? `<img src="${escapeHtml((typeof window.pth !== 'undefined' ? window.pth : '../') + member.profile_pic)}" alt="">` : initials;
+        return `<div class="active-member-row">
+          <div class="active-member-avatar">${avatar}</div>
+          <div class="active-member-info"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(member.department || member.role || 'Employee')} • IP: ${escapeHtml(member.ip_address || 'Unavailable')}</span></div>
+          <button class="active-member-view" type="button" onclick="openDashboardEmployeeProfile(${Number(member.profile_id)})">Profile</button>
+        </div>`;
+      }).join('');
+    }
+
+    window.openDashboardEmployeeProfile = function (profileId) {
+      if (typeof Super_Admin_user_dashboard_02_OPEN === 'function') Super_Admin_user_dashboard_02_OPEN();
+      const employeesLoaded = typeof window.fetchAdminEmployees === 'function'
+        ? window.fetchAdminEmployees()
+        : Promise.resolve();
+      Promise.resolve(employeesLoaded).then(() => {
+        if (typeof window.viewEmp === 'function') window.viewEmp(profileId);
+      });
+    };
+
+    function renderDailyWorkPlans(plans) {
+      if (!dailyWorkPlansList) return;
+      if (!Array.isArray(plans) || plans.length === 0) {
+        dailyWorkPlansList.innerHTML = '<div style="padding:12px; color:#94a3b8; font-size:13px;">No daily work plans submitted today.</div>';
+        if (dailyWorkPlansMobileList) dailyWorkPlansMobileList.innerHTML = '<div style="padding:12px; color:#94a3b8; font-size:13px;">No daily work plans submitted today.</div>';
+        return;
+      }
+      dailyWorkPlansList.innerHTML = `<table class="daily-plans-table"><thead><tr><th>Employee</th><th>Daily Plan</th><th>Started</th><th>IP Address</th><th>Status</th></tr></thead><tbody>${plans.map(plan => {
+        const status = plan.started_at ? 'Active' : 'Submitted';
+        const started = plan.started_at ? escapeHtml(plan.started_at) : 'Not started';
+        return `<tr><td><div class="plan-name plan-name-link" role="button" tabindex="0" onclick="openDashboardEmployeeProfile(${Number(plan.profile_id)})" onkeydown="if(event.key === 'Enter' || event.key === ' ') openDashboardEmployeeProfile(${Number(plan.profile_id)})">${escapeHtml(plan.name)}</div><div class="plan-dept">${escapeHtml(plan.department || plan.role || '')}</div></td><td>${escapeHtml(plan.plan_text)}</td><td>${started}</td><td>${escapeHtml(plan.ip_address || 'Unavailable')}</td><td><span class="plan-status ${plan.started_at ? 'active' : ''}">${status}</span></td></tr>`;
+      }).join('')}</tbody></table>`;
+
+      if (dailyWorkPlansMobileList) {
+        dailyWorkPlansMobileList.innerHTML = plans.map(plan => {
+          const status = plan.started_at ? 'Active' : 'Submitted';
+          const started = plan.started_at ? escapeHtml(plan.started_at) : 'Not started';
+          return `<article class="daily-plan-mobile-card">
+            <div class="daily-plan-mobile-head">
+              <div style="min-width:0;">
+                <div class="daily-plan-mobile-title" role="button" tabindex="0" onclick="openDashboardEmployeeProfile(${Number(plan.profile_id)})" onkeydown="if(event.key === 'Enter' || event.key === ' ') openDashboardEmployeeProfile(${Number(plan.profile_id)})">${escapeHtml(plan.name)}</div>
+                <div class="daily-plan-mobile-dept">${escapeHtml(plan.department || plan.role || '')}</div>
+              </div>
+              <span class="plan-status ${plan.started_at ? 'active' : ''}">${status}</span>
+            </div>
+            <div>
+              <div class="daily-plan-mobile-label">Daily plan</div>
+              <div class="daily-plan-mobile-value" style="max-width:100%; text-align:left; margin-top:3px;">${escapeHtml(plan.plan_text)}</div>
+            </div>
+            <div class="daily-plan-mobile-row">
+              <span class="daily-plan-mobile-label">Started</span>
+              <span class="daily-plan-mobile-value">${started}</span>
+            </div>
+            <div class="daily-plan-mobile-row">
+              <span class="daily-plan-mobile-label">IP Address</span>
+              <span class="daily-plan-mobile-value">${escapeHtml(plan.ip_address || 'Unavailable')}</span>
+            </div>
+          </article>`;
+        }).join('');
+      }
+    }
+    function renderActivities(customActs) {
+      if (!activitiesList) return;
+      if (!customActs || customActs.length === 0) {
+        activitiesList.innerHTML = '<div style="padding: 24px; text-align: center; color: #94a3b8; font-size: 13px; font-weight: 500;">No recent system activities found in database.</div>';
+        return;
+      }
+      activitiesList.innerHTML = '';
+      customActs.forEach(act => {
+        const item = document.createElement('div');
+        item.className = 'activity-item';
+
+        const titleText = act.title || 'System Activity';
+        const titleLower = titleText.toLowerCase();
+        const typeLower = (act.type || '').toLowerCase();
+
+        // 1. Determine destination page
+        let navAction = "if(typeof Super_Admin_user_dashboard_09_OPEN==='function') Super_Admin_user_dashboard_09_OPEN();";
+        let iconClass = 'blue';
+        let iconHtml = '<i class="fa-solid fa-bell"></i>';
+
+        if (titleLower.includes('leave') || typeLower.includes('leave')) {
+          navAction = "if(typeof Super_Admin_user_dashboard_08_OPEN==='function') Super_Admin_user_dashboard_08_OPEN();";
+          iconClass = 'amber';
+          iconHtml = '<i class="fa-solid fa-calendar-check"></i>';
+        } else if (titleLower.includes('task') || typeLower.includes('task')) {
+          navAction = "if(typeof Super_Admin_user_dashboard_07_OPEN==='function') Super_Admin_user_dashboard_07_OPEN();";
+          iconClass = 'navy';
+          iconHtml = '<i class="fa-solid fa-list-check"></i>';
+        } else if (titleLower.includes('employee') || titleLower.includes('profile') || typeLower.includes('employee') || typeLower.includes('profile')) {
+          navAction = "if(typeof Super_Admin_user_dashboard_02_OPEN==='function') Super_Admin_user_dashboard_02_OPEN();";
+          iconClass = 'green';
+          iconHtml = '<i class="fa-solid fa-user-check"></i>';
+        } else if (titleLower.includes('department') || typeLower.includes('department')) {
+          navAction = "if(typeof Super_Admin_user_dashboard_05_OPEN==='function') Super_Admin_user_dashboard_05_OPEN();";
+          iconClass = 'blue';
+          iconHtml = '<i class="fa-solid fa-building"></i>';
+        }
+
+        item.setAttribute('onclick', navAction);
+        item.setAttribute('title', `Click to open ${titleText}`);
+
+        item.innerHTML = `
+          <div class="activity-icon ${iconClass}">
+            ${iconHtml}
+          </div>
+          <div class="activity-text">
+            <p style="font-weight:700; color:#1e293b; margin:0 0 2px; font-size:13px;">${escapeHtml(titleText)}</p>
+            <span style="font-size:11.5px; color:#64748b;">${escapeHtml(act.date)}</span>
+          </div>
+        `;
+        activitiesList.appendChild(item);
+      });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // ---- Fetch Live Data from Dashboard Controller Endpoint ----
+    window.fetchLiveDashboardData = function() {
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const endpoint = pth + 'View-List/Dashboard/dashboard_details_LIST.php';
+      fetch(endpoint)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(res => {
+          if (res && res.data) {
+            const d = res.data;
+            // Update KPI cards strictly from database
+            if (d.kpi) {
+              const kpi = d.kpi;
+              if (document.getElementById('kpiTotalEmployees')) document.getElementById('kpiTotalEmployees').textContent = kpi.total_employees;
+              if (document.getElementById('kpiActiveEmployees')) document.getElementById('kpiActiveEmployees').textContent = kpi.active_employees;
+              if (document.getElementById('kpiPendingTasks')) document.getElementById('kpiPendingTasks').textContent = kpi.pending_tasks;
+              if (document.getElementById('kpiCompletedTasks')) document.getElementById('kpiCompletedTasks').textContent = kpi.completed_tasks;
+              if (document.getElementById('kpiPendingLeaves')) document.getElementById('kpiPendingLeaves').textContent = kpi.pending_leaves;
+            }
+
+            renderActiveMembers(d.active_members);
+            renderDailyWorkPlans(d.daily_work_plans);
+            if (activeMembersDate) activeMembersDate.textContent = 'Today';
+
+            // Update Task Status Pie / Donut Chart purely from database
+            renderTaskStatusPieChart(d.task_status, d.kpi);
+
+            // Update Department Distribution purely from database
+            if (d.departments) {
+              renderDepartments(d.departments);
+            }
+
+            // Update Activities purely from database
+            if (d.activities) {
+              renderActivities(d.activities);
+            }
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching dashboard live data:', err);
+        });
+    };
+
+    window.fetchLiveDashboardData();
+
+    // Global playback function for tab switching
+    window.playDashboardChartAnimations = function() {
+      window.fetchLiveDashboardData();
+    };
+
+  });
+})();
+</script>
