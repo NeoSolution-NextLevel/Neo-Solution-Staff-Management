@@ -34,15 +34,20 @@ $db = new DataBase();
 $conn = $db->get_data_base_connction();
 
 $actor_id = (int)$_SESSION['user_id'];
-$actor_result = $conn->query("SELECT ac_type, account_active_state, ast, full_block FROM `main_user_login` WHERE `id` = {$actor_id} LIMIT 1");
+$actor_result = $conn->query("SELECT ac_type, account_active_state, ast, full_block, main_user_account_access_level_list_id FROM `main_user_login` WHERE `id` = {$actor_id} LIMIT 1");
 $actor = $actor_result ? $actor_result->fetch_assoc() : null;
-$is_super_admin = ($actor_id === 1 || (
-    $actor &&
-    strtolower(trim($actor['ac_type'])) === 'super admin' &&
-    (int)$actor['account_active_state'] === 1 &&
-    (int)$actor['ast'] === 1 &&
-    (int)$actor['full_block'] === 0
-));
+$actor_acl = $actor && isset($actor['main_user_account_access_level_list_id']) ? (int)$actor['main_user_account_access_level_list_id'] : 0;
+$actor_actype = $actor && isset($actor['ac_type']) ? strtolower(trim($actor['ac_type'])) : '';
+
+$is_super_admin = (
+    $actor_id === 1 || 
+    $actor_actype === 'super admin' || 
+    $actor_actype === 'admin' || 
+    $actor_acl === 1 || 
+    $actor_acl === 3 || 
+    strpos($user_role, 'admin') !== false ||
+    strpos($user_role, 'super') !== false
+);
 if (!$is_super_admin) {
     http_response_code(403);
     echo json_encode(['status' => 'error', 'message' => 'Super Administrator privileges required.']);
@@ -68,11 +73,14 @@ if ($canonical_super_admin) {
 
 $sql = "SELECT 
             id, user_name, name_show, first_name, last_name, ref_key, ac_type,
+            main_user_account_access_level_list_id,
             account_active_state, email_verify, full_block, ast, sdt, last_login, image_url
         FROM `main_user_login` 
         WHERE `ac_type` IN ('Admin', 'Super Admin')
            OR `main_user_account_access_level_list_id` = 1 
            OR `id` = 1
+           OR `account_active_state` = 0
+           OR `email_verify` = 0
         ORDER BY 
             CASE WHEN (account_active_state = 0 AND id != 1) THEN 0 ELSE 1 END ASC,
             id DESC";
@@ -86,14 +94,16 @@ if ($res && $res->num_rows > 0) {
     while ($row = $res->fetch_assoc()) {
         $id = (int)$row['id'];
         $isRoot = ($id === 1);
-        $isSuperAdmin = ($isRoot || strtolower(trim($row['ac_type'])) === 'super admin');
+        $acTypeRaw = trim($row['ac_type'] ?? '');
+        $isSuperAdmin = ($isRoot || strtolower($acTypeRaw) === 'super admin');
+        $isAdmin = (strtolower($acTypeRaw) === 'admin' || (int)$row['main_user_account_access_level_list_id'] === 1);
         $isActive = ((int)$row['account_active_state'] === 1 && (int)$row['email_verify'] === 1 && (int)$row['ast'] === 1 && (int)$row['full_block'] === 0);
         $isPending = (!$isRoot && ((int)$row['account_active_state'] === 0 || (int)$row['email_verify'] === 0) && (int)$row['full_block'] === 0);
         $isBlocked = ((int)$row['full_block'] === 1 || (int)$row['ast'] === 0);
 
         if ($isPending) {
             $pending_count++;
-            $status_label = 'Pending Approval';
+            $status_label = 'Pending Role / Approval';
             $status_class = 'status-pending';
         } elseif ($isBlocked) {
             $status_label = 'Declined / Suspended';
@@ -106,14 +116,17 @@ if ($res && $res->num_rows > 0) {
         $dispName = !empty($row['name_show']) ? $row['name_show'] : trim($row['first_name'] . ' ' . $row['last_name']);
         if (empty($dispName)) $dispName = $row['user_name'];
 
+        $roleDesc = $isRoot ? 'Super Administrator (Root)' : ($isSuperAdmin ? 'Super Administrator' : ($isAdmin ? 'Administrator' : ($acTypeRaw ?: 'Pending Role Assignment')));
+
         $admins[] = [
             'id' => $id,
             'user_name' => $row['user_name'],
             'name_show' => $dispName,
             'first_name' => $row['first_name'],
             'last_name' => $row['last_name'],
-            'ref_key' => $row['ref_key'] ?: ('ADM-' . str_pad((string)$id, 3, '0', STR_PAD_LEFT)),
-            'role' => $isRoot ? 'Super Administrator (Root)' : ($isSuperAdmin ? 'Super Administrator' : 'Administrator'),
+            'ref_key' => $row['ref_key'] ?: ('ACC-' . str_pad((string)$id, 3, '0', STR_PAD_LEFT)),
+            'role' => $roleDesc,
+            'ac_type' => $acTypeRaw,
             'is_root' => $isRoot,
             'is_super_admin' => $isSuperAdmin,
             'account_active_state' => (int)$row['account_active_state'],
