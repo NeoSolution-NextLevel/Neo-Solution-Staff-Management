@@ -35,7 +35,7 @@ class departments_SINGLE_DATA
             while ($result && $row = $result->fetch_assoc()) {
                 $this->id        = $row['id'];
                 $this->name      = $row['name'];
-                $this->head      = $row['head'];
+                $this->head      = isset($row['head_name']) ? $row['head_name'] : ($row['head'] ?? '');
                 $this->employees = $row['employees'];
                 $this->color     = $row['color'];
                 $this->ast       = $row['ast'];

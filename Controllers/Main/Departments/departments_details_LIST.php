@@ -24,13 +24,13 @@ class departments_details_LIST
 
     public function filter_by_head($get_head)
     {
-        $this->sql_search_data .= " AND head='" . $get_head . "'";
+        $this->sql_search_data .= " AND (head='" . $get_head . "' OR head_name='" . $get_head . "')";
     }
 
 
     public function filter_by_search($get_search)
     {
-        $this->sql_search_data .= " AND (name LIKE '%" . $get_search . "%' OR head LIKE '%" . $get_search . "%')";
+        $this->sql_search_data .= " AND (name LIKE '%" . $get_search . "%' OR head_name LIKE '%" . $get_search . "%')";
     }
 
     public function get_count_report()

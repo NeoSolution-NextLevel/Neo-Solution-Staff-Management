@@ -38,22 +38,23 @@ class departments_ADD_UPDATE
         $this->color = $get_color;
 
         $this->sql_update_query .=
-            ", name='" . $this->name . "'" .
-            ", head='" . $this->head . "'" .
-            ", employees='" . $this->employees . "'" .
-            ", color='" . $this->color . "'";
+            ", name='" . addslashes($this->name) . "'" .
+            ", head_name='" . addslashes($this->head) . "'" .
+            ", head='" . addslashes($this->head) . "'" .
+            ", employees='" . (int)$this->employees . "'" .
+            ", color='" . addslashes($this->color) . "'";
     }
 
     public function set_name($get_name)
     {
         $this->name = $get_name;
-        $this->sql_update_query .= ", name='" . $this->name . "'";
+        $this->sql_update_query .= ", name='" . addslashes($this->name) . "'";
     }
 
     public function set_head($get_head)
     {
         $this->head = $get_head;
-        $this->sql_update_query .= ", head='" . $this->head . "'";
+        $this->sql_update_query .= ", head_name='" . addslashes($this->head) . "', head='" . addslashes($this->head) . "'";
     }
 
     public function set_employees($get_employees)
@@ -96,23 +97,22 @@ class departments_ADD_UPDATE
     {
         $data_base_obj = new DataBase();
 
-        $get_sql_query = "
-            INSERT INTO departments (
-                ast, 
-                sdt, 
-                name, 
-                head, 
-                employees, 
-                color
-            )
-            VALUES (
-                '" . $this->ast . "',
-                '" . $this->sdt . "',
-                '" . $this->name . "',
-                '" . $this->head . "',
-                '" . $this->employees . "',
-                '" . $this->color . "'
-            )";
+        // Ensure both head and head_name columns are populated if present
+        $cols = "ast, sdt, name, employees, color";
+        $vals = "'" . $this->ast . "', '" . $this->sdt . "', '" . $this->name . "', '" . $this->employees . "', '" . $this->color . "'";
+
+        $chkHead = $data_base_obj->get_result("SHOW COLUMNS FROM departments LIKE 'head'");
+        if ($chkHead && $chkHead->num_rows > 0) {
+            $cols .= ", head";
+            $vals .= ", '" . addslashes($this->head) . "'";
+        }
+        $chkHeadName = $data_base_obj->get_result("SHOW COLUMNS FROM departments LIKE 'head_name'");
+        if ($chkHeadName && $chkHeadName->num_rows > 0) {
+            $cols .= ", head_name";
+            $vals .= ", '" . addslashes($this->head) . "'";
+        }
+
+        $get_sql_query = "INSERT INTO departments ($cols) VALUES ($vals)";
 
         $data_base_obj->get_result($get_sql_query);
 
@@ -125,9 +125,20 @@ class departments_ADD_UPDATE
     {
         $data_base_obj = new DataBase();
 
+        // Build safe update string checking column existence
+        $updates = "ast='" . $this->ast . "', name='" . addslashes($this->name) . "', employees='" . (int)$this->employees . "', color='" . addslashes($this->color) . "'";
+        $chkHead = $data_base_obj->get_result("SHOW COLUMNS FROM departments LIKE 'head'");
+        if ($chkHead && $chkHead->num_rows > 0) {
+            $updates .= ", head='" . addslashes($this->head) . "'";
+        }
+        $chkHeadName = $data_base_obj->get_result("SHOW COLUMNS FROM departments LIKE 'head_name'");
+        if ($chkHeadName && $chkHeadName->num_rows > 0) {
+            $updates .= ", head_name='" . addslashes($this->head) . "'";
+        }
+
         $get_sql_query = "
             UPDATE departments 
-            SET ast='" . $this->ast . "'" . $this->sql_update_query . " 
+            SET " . $updates . " 
             WHERE id='" . $this->id . "'";
 
         $data_base_obj->get_result($get_sql_query);
