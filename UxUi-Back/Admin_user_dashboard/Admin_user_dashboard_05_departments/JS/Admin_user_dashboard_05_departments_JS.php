@@ -188,6 +188,51 @@
         });
     };
 
+    // ---- Fetch Employees to Populate Department Head Dropdowns ----
+    let availableHeads = [];
+    function loadDepartmentHeadOptions() {
+      const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/fetch_employee/fetch_employee.php';
+      fetch(fetchUrl)
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success' && Array.isArray(res.data)) {
+            availableHeads = res.data.map(e => e.name).filter(Boolean);
+          } else {
+            availableHeads = [];
+          }
+          populateHeadSelects();
+        })
+        .catch(() => {
+          populateHeadSelects();
+        });
+    }
+
+    function populateHeadSelects(selectedEditHead = '') {
+      const addSelect = document.getElementById('addDeptHeadSelect');
+      const editSelect = document.getElementById('editDeptHead');
+
+      const optionsHtml = (selectedVal) => {
+        let opts = `<option value="">Select Department Head (Staff / Admin)...</option>`;
+        opts += `<option value="Unassigned" ${selectedVal === 'Unassigned' ? 'selected' : ''}>Unassigned</option>`;
+        const uniqueNames = Array.from(new Set(availableHeads));
+        uniqueNames.forEach(name => {
+          const isSel = (selectedVal && selectedVal.toLowerCase() === name.toLowerCase()) ? 'selected' : '';
+          opts += `<option value="${name}" ${isSel}>${name}</option>`;
+        });
+        if (selectedVal && selectedVal !== 'Unassigned' && !uniqueNames.some(n => n.toLowerCase() === selectedVal.toLowerCase())) {
+          opts += `<option value="${selectedVal}" selected>${selectedVal}</option>`;
+        }
+        return opts;
+      };
+
+      if (addSelect) {
+        addSelect.innerHTML = optionsHtml('Unassigned');
+      }
+      if (editSelect) {
+        editSelect.innerHTML = optionsHtml(selectedEditHead);
+      }
+    }
+
     // ---- Add Department Modal Logic ----
     const openAddDeptBtn = document.getElementById('openAddDeptBtn');
     const addDeptModal = document.getElementById('addDeptModal');
@@ -195,7 +240,10 @@
     const cancelAddDeptModal = document.getElementById('cancelAddDeptModal');
     const addDeptForm = document.getElementById('addDeptForm');
 
-    function openAddModal() { addDeptModal?.classList.add('active'); }
+    function openAddModal() { 
+      loadDepartmentHeadOptions();
+      addDeptModal?.classList.add('active'); 
+    }
     function closeAddModal() { addDeptModal?.classList.remove('active'); addDeptForm?.reset(); }
 
     if (openAddDeptBtn) openAddDeptBtn.addEventListener('click', openAddModal);
@@ -244,7 +292,8 @@
 
       document.getElementById('editDeptId').value = dept.id;
       document.getElementById('editDeptName').value = dept.name;
-      document.getElementById('editDeptHead').value = dept.head;
+      loadDepartmentHeadOptions();
+      populateHeadSelects(dept.head);
       document.getElementById('editDeptEmployees').value = dept.employees;
 
       editDeptModal?.classList.add('active');

@@ -31,17 +31,17 @@
       display: flex;
       width: 100%;
       max-width: 100%;
-      min-height: 100vh;
+      min-height: 0;
       box-sizing: border-box;
     }
 
     /* Main Content Area */
     .main-wrapper {
-      margin-left: 250px;
-      width: calc(100% - 250px);
-      max-width: calc(100% - 250px);
-      min-height: 100vh;
-      padding: 16px 20px 24px;
+      margin-left: 0;
+      width: 100%;
+      max-width: 100%;
+      min-height: 0;
+      padding: 0;
       box-sizing: border-box;
       transition: margin-left 0.3s ease, width 0.3s ease;
     }
@@ -493,7 +493,9 @@
           </div>
           <div class="w3-form-group">
             <label>Department Head</label>
-            <input type="text" name="head" required placeholder="e.g. Supun Perera">
+            <select name="head" id="addDeptHeadSelect" style="padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; color: #1e293b; outline: none; background-color: #ffffff;">
+              <option value="">Select Department Head (Staff / Admin)...</option>
+            </select>
           </div>
           <div class="w3-form-group">
             <label>Number of Employees</label>
@@ -524,7 +526,9 @@
           </div>
           <div class="w3-form-group">
             <label>Department Head</label>
-            <input type="text" name="head" id="editDeptHead" required placeholder="e.g. Amal Perera">
+            <select name="head" id="editDeptHead" style="padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; color: #1e293b; outline: none; background-color: #ffffff;">
+              <option value="">Select Department Head (Staff / Admin)...</option>
+            </select>
           </div>
           <div class="w3-form-group">
             <label>Number of Employees</label>
