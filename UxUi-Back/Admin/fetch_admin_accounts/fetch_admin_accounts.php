@@ -41,7 +41,7 @@ $actor_actype = $actor && isset($actor['ac_type']) ? strtolower(trim($actor['ac_
 
 $is_super_admin = (
     $actor_id === 1 || 
-    $actor_actype === 'super admin' || 
+    $actor_actype === 'super_admin' || 
     $actor_actype === 'admin' || 
     $actor_acl === 1 || 
     $actor_acl === 3 || 
@@ -54,7 +54,7 @@ if (!$is_super_admin) {
     exit;
 }
 
-$canonical_super_admin_result = $conn->query("SELECT id FROM `main_user_login` WHERE `id` = 1 OR LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super admin' ORDER BY CASE WHEN `id` = 1 THEN 0 ELSE 1 END, `id` ASC LIMIT 1");
+$canonical_super_admin_result = $conn->query("SELECT id FROM `main_user_login` WHERE `id` = 1 OR LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super_admin' ORDER BY CASE WHEN `id` = 1 THEN 0 ELSE 1 END, `id` ASC LIMIT 1");
 if (!$canonical_super_admin_result) {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Could not verify the Super Administrator account.']);
@@ -63,7 +63,7 @@ if (!$canonical_super_admin_result) {
 $canonical_super_admin = $canonical_super_admin_result->fetch_assoc();
 if ($canonical_super_admin) {
     $canonical_super_admin_id = (int)$canonical_super_admin['id'];
-    $deduplicate_super_admins = $conn->query("UPDATE `main_user_login` SET `ac_type` = 'Admin' WHERE LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super admin' AND `id` != {$canonical_super_admin_id}");
+    $deduplicate_super_admins = $conn->query("UPDATE `main_user_login` SET `ac_type` = 'Admin' WHERE LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super_admin' AND `id` != {$canonical_super_admin_id}");
     if (!$deduplicate_super_admins) {
         http_response_code(500);
         echo json_encode(['status' => 'error', 'message' => 'Could not enforce the single Super Administrator account.']);
@@ -76,11 +76,7 @@ $sql = "SELECT
             main_user_account_access_level_list_id,
             account_active_state, email_verify, full_block, ast, sdt, last_login, image_url
         FROM `main_user_login` 
-        WHERE `ac_type` IN ('Admin', 'Super Admin')
-           OR `main_user_account_access_level_list_id` = 1 
-           OR `id` = 1
-           OR `account_active_state` = 0
-           OR `email_verify` = 0
+        WHERE `ast` = 1 OR `account_active_state` = 0 OR `full_block` = 1
         ORDER BY 
             CASE WHEN (account_active_state = 0 AND id != 1) THEN 0 ELSE 1 END ASC,
             id DESC";
@@ -95,7 +91,7 @@ if ($res && $res->num_rows > 0) {
         $id = (int)$row['id'];
         $isRoot = ($id === 1);
         $acTypeRaw = trim($row['ac_type'] ?? '');
-        $isSuperAdmin = ($isRoot || strtolower($acTypeRaw) === 'super admin');
+        $isSuperAdmin = ($isRoot || strtolower($acTypeRaw) === 'super_admin');
         $isAdmin = (strtolower($acTypeRaw) === 'admin' || (int)$row['main_user_account_access_level_list_id'] === 1);
         $isActive = ((int)$row['account_active_state'] === 1 && (int)$row['email_verify'] === 1 && (int)$row['ast'] === 1 && (int)$row['full_block'] === 0);
         $isPending = (!$isRoot && ((int)$row['account_active_state'] === 0 || (int)$row['email_verify'] === 0) && (int)$row['full_block'] === 0);
@@ -116,7 +112,7 @@ if ($res && $res->num_rows > 0) {
         $dispName = !empty($row['name_show']) ? $row['name_show'] : trim($row['first_name'] . ' ' . $row['last_name']);
         if (empty($dispName)) $dispName = $row['user_name'];
 
-        $roleDesc = $isRoot ? 'Super Administrator (Root)' : ($isSuperAdmin ? 'Super Administrator' : ($isAdmin ? 'Administrator' : ($acTypeRaw ?: 'Pending Role Assignment')));
+        $roleDesc = $isRoot ? 'Super Administrator (Root)' : ($isSuperAdmin ? 'Super Administrator' : ($isAdmin ? 'Administrator' : ($acTypeRaw ?: 'Employee')));
 
         $admins[] = [
             'id' => $id,
@@ -127,6 +123,8 @@ if ($res && $res->num_rows > 0) {
             'ref_key' => $row['ref_key'] ?: ('ACC-' . str_pad((string)$id, 3, '0', STR_PAD_LEFT)),
             'role' => $roleDesc,
             'ac_type' => $acTypeRaw,
+            'is_admin' => $isAdmin,
+            'access_level_id' => (int)$row['main_user_account_access_level_list_id'],
             'is_root' => $isRoot,
             'is_super_admin' => $isSuperAdmin,
             'account_active_state' => (int)$row['account_active_state'],
