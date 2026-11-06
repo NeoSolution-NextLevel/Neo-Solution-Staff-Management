@@ -19,10 +19,7 @@ require_login(['superadmin', 'super admin', 'super_admin', 'admin']);
 </head>
 
 
-<body>
-
-
-<script type="text/javascript">
+<body><script type="text/javascript">
         window.pth = <?php echo json_encode(isset($pth) && $pth !== '' ? $pth : '../'); ?>;
         window.homePage = <?php echo json_encode(isset($home_page) ? rtrim($home_page, '/') . '/' : '../'); ?>;
         document.addEventListener("DOMContentLoaded", function() {
@@ -35,14 +32,8 @@ require_login(['superadmin', 'super admin', 'super_admin', 'admin']);
                 Admin_user_dashboard_01_OPEN();
             }
         });
-</script>
-
-<?php
+</script><?php
     include_once __DIR__ . '/../UxUi-Back/Super_Admin_user_dashboard/Super_Admin_user_dashboard_JS.php';
-?>
-    
-        
-<?php 
     include_once __DIR__ . '/../UxUi-Back/Includes/sidebar.php';
 ?>
         
