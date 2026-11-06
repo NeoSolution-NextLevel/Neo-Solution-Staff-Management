@@ -896,7 +896,10 @@
       document.getElementById('editEmpName').value = e.name;
       document.getElementById('editEmpEmail').value = e.email;
       document.getElementById('editEmpRole').value = e.role;
-      document.getElementById('editEmpStatus').value = e.status;
+      const portalRoleSelect = document.getElementById('editEmpPortalRole');
+      if (portalRoleSelect) {
+        portalRoleSelect.value = (e.role === 'Administrator' || (e.ac_type && e.ac_type.toLowerCase() === 'admin')) ? 'Admin' : 'Employee';
+      }
       document.getElementById('editEmpJoined').value = e.joined;
       document.getElementById('editEmpType').value = e.employment_type || 'Full-Time (Permanent)';
       if (document.getElementById('editEmpLocation')) {
@@ -1029,7 +1032,8 @@
         const name = document.getElementById('editEmpName').value.trim();
         const email = document.getElementById('editEmpEmail').value.trim();
         const dept = document.getElementById('editEmpDept').value;
-        const role = document.getElementById('editEmpRole').value.trim();
+        const role = document.getElementById('editEmpRole')?.value || '';
+        const portalRole = document.getElementById('editEmpPortalRole')?.value || 'Employee';
         const status = document.getElementById('editEmpStatus').value;
         const joined = document.getElementById('editEmpJoined').value;
         const work_shift = document.getElementById('editEmpWorkShift').value.trim();
@@ -1040,6 +1044,7 @@
 
         const updateUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Employee/update_profile/update_profile.php';
         const formData = new FormData();
+        formData.append('portal_role', portalRole);
         formData.append('user_id', id);
         formData.append('full_name', name);
         formData.append('email', email);
@@ -1081,13 +1086,13 @@
               alert(res.message || 'Error updating employee.');
             }
           })
-          .catch(() => {
-            if (avInput) avInput.value = '';
+          .catch((err) => {
+            console.error('Error updating employee:', err);
             window.fetchAdminEmployees();
             if (typeof window.fetchAdminJobRoles === 'function') {
               window.fetchAdminJobRoles();
             }
-            alert('Employee details updated successfully.');
+            alert('Employee details updated.');
             closeEditModal();
           });
       });
@@ -1612,17 +1617,51 @@
       }
     }
 
+    let currentSubmissionsFilter = 'all';
+
+    window.filterSubmissionsTable = function (status) {
+      currentSubmissionsFilter = status || 'all';
+      const badge = document.getElementById('submissionFilterStatusBadge');
+      const clearBtn = document.getElementById('clearSubmissionsFilterBtn');
+      if (badge) {
+        if (currentSubmissionsFilter !== 'all') {
+          badge.textContent = currentSubmissionsFilter.charAt(0).toUpperCase() + currentSubmissionsFilter.slice(1);
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+      if (clearBtn) {
+        clearBtn.style.display = (currentSubmissionsFilter !== 'all') ? 'inline-block' : 'none';
+      }
+      renderSubmissionsTable();
+      const tableCard = document.getElementById('submissionsTableCard');
+      if (tableCard) {
+        tableCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    window.scrollToActiveFormsTable = function () {
+      const formsCard = document.getElementById('activeFormsTableCard');
+      if (formsCard) {
+        formsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
     // Render Submissions Table
     function renderSubmissionsTable() {
       const subTbody = document.getElementById('submissionsTableBody');
       if (!subTbody) return;
 
-      const submissions = onboardingData.submissions || [];
+      let submissions = onboardingData.submissions || [];
+      if (currentSubmissionsFilter && currentSubmissionsFilter !== 'all') {
+        submissions = submissions.filter(s => (s.status || 'pending').toLowerCase() === currentSubmissionsFilter.toLowerCase());
+      }
+
       if (submissions.length === 0) {
         subTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:35px 20px; color:#64748b;">
           <i class="fas fa-inbox" style="font-size:28px; color:#cbd5e1; margin-bottom:8px; display:block;"></i>
-          No employee form submissions found yet.<br>
-          <span style="font-size:12px;">Share an onboarding form link with prospective employees to receive submissions.</span>
+          ${currentSubmissionsFilter !== 'all' ? `No ${safeHtml(currentSubmissionsFilter)} applications found.` : 'No employee form submissions found yet.<br><span style="font-size:12px;">Share an onboarding form link with prospective employees to receive submissions.</span>'}
         </td></tr>`;
         return;
       }
@@ -2228,8 +2267,8 @@
       });
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 35px; color:#64748b;">No administrator accounts matching current filter.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">No administrator accounts found.</div>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 35px; color:#64748b;">No accounts matching current filter.</td></tr>';
+        if (mobileContainer) mobileContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">No accounts found.</div>';
         return;
       }
 
@@ -2276,11 +2315,28 @@
 
         const initials = (a.name_show || 'AD').substring(0, 2).toUpperCase();
 
+        const isStaff = !a.is_root && !a.is_admin;
+        const isAdmin = !a.is_root && a.is_admin;
+        
+        let roleSelectorHtml = '';
+        if (a.is_root) {
+          roleSelectorHtml = `<span style="font-size:12px; font-weight:700; color:#14204d; background:#eef2ff; padding:4px 10px; border-radius:6px; display:inline-flex; align-items:center; gap:5px;"><i class="fas fa-crown" style="color:#d97706;"></i> Primary Super Admin</span>`;
+        } else {
+          roleSelectorHtml = `
+            <div style="display:inline-flex; align-items:center; gap:6px;">
+              <select onchange="changeUserRoleAccess(${a.id}, this.value, '${safeName}')" style="padding: 5px 8px; border-radius: 6px; border: 1.5px solid ${isAdmin ? '#2563eb' : '#10b981'}; font-size: 12px; font-weight: 700; color: ${isAdmin ? '#1d4ed8' : '#047857'}; background: ${isAdmin ? '#eff6ff' : '#f0fdf4'}; outline: none; cursor: pointer;">
+                <option value="Employee" ${isStaff ? 'selected' : ''}>Staff (Employee)</option>
+                <option value="Admin" ${isAdmin ? 'selected' : ''}>Administrator (Admin)</option>
+              </select>
+            </div>
+          `;
+        }
+
         return `
           <tr>
             <td>
               <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:36px; height:36px; border-radius:50%; background:${a.is_root ? '#14204d' : '#2563eb'}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;">
+                <div style="width:36px; height:36px; border-radius:50%; background:${a.is_root ? '#14204d' : (isAdmin ? '#2563eb' : '#10b981')}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;">
                   ${initials}
                 </div>
                 <div>
@@ -2293,10 +2349,9 @@
               <div style="font-weight:600; color:#14204d; font-size:13px;">${a.role}</div>
               <div style="font-size:11.5px; color:#64748b; font-family:monospace;">${a.ref_key}</div>
             </td>
-            <td style="font-size:12.5px; color:#475569;">${a.sdt}</td>
-            <td style="font-size:12.5px; color:#64748b;">${a.last_login}</td>
-            <td>${statusBadge}</td>
-            <td style="text-align:right;">${actionBtns}</td>
+            <td>
+              ${roleSelectorHtml}
+            </td>
           </tr>
         `;
       }).join('');
@@ -2307,31 +2362,21 @@
           const safeName = (a.name_show || a.user_name || 'Admin').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
           const initials = (a.name_show || 'AD').substring(0, 2).toUpperCase();
 
-          let actionBtns = '';
+          const isStaff = !a.is_root && !a.is_admin;
+          const isAdmin = !a.is_root && a.is_admin;
+          
+          let roleSelectorHtml = '';
           if (a.is_root) {
-            actionBtns = '<span style="background:#f1f5f9; color:#64748b; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:700;">Super Admin (Protected)</span>';
-          } else if (a.is_pending) {
-            actionBtns = `
-              <div style="display:flex; gap:8px; width:100%; margin-top:8px;">
-                <button type="button" onclick="approveAdminAccount(${a.id}, 'approve', '${safeName}')" class="w3-btn-primary" style="flex:1; background:#10b981; padding:8px; font-size:12.5px; border-radius:8px; border:none; justify-content:center;">
-                  <i class="fas fa-check"></i> Approve
-                </button>
-                <button type="button" onclick="approveAdminAccount(${a.id}, 'reject', '${safeName}')" style="flex:1; background:#fff1f2; color:#e11d48; border:1px solid #fecdd3; padding:8px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer;">
-                  <i class="fas fa-xmark"></i> Decline
-                </button>
-              </div>
-            `;
-          } else if (a.is_blocked) {
-            actionBtns = `
-              <button type="button" onclick="approveAdminAccount(${a.id}, 'approve', '${safeName}')" class="w3-btn-primary" style="width:100%; background:#10b981; padding:8px; font-size:12.5px; border-radius:8px; border:none; margin-top:8px; justify-content:center;">
-                <i class="fas fa-rotate"></i> Approve &amp; Activate
-              </button>
-            `;
+            roleSelectorHtml = `<span style="font-size:12px; font-weight:700; color:#14204d; background:#eef2ff; padding:4px 10px; border-radius:6px; display:inline-flex; align-items:center; gap:5px;"><i class="fas fa-crown" style="color:#d97706;"></i> Primary Super Admin</span>`;
           } else {
-            actionBtns = `
-              <button type="button" onclick="approveAdminAccount(${a.id}, 'reject', '${safeName}')" style="width:100%; background:#f8fafc; color:#64748b; border:1px solid #cbd5e1; padding:6px; border-radius:8px; font-size:12px; margin-top:8px; cursor:pointer;">
-                <i class="fas fa-user-slash"></i> Suspend Access
-              </button>
+            roleSelectorHtml = `
+              <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
+                <label style="font-size:12px; font-weight:700; color:#475569;">Role Access:</label>
+                <select onchange="changeUserRoleAccess(${a.id}, this.value, '${safeName}')" style="flex:1; padding: 6px 10px; border-radius: 6px; border: 1.5px solid ${isAdmin ? '#2563eb' : '#10b981'}; font-size: 12.5px; font-weight: 700; color: ${isAdmin ? '#1d4ed8' : '#047857'}; background: ${isAdmin ? '#eff6ff' : '#f0fdf4'}; outline: none; cursor: pointer;">
+                  <option value="Employee" ${isStaff ? 'selected' : ''}>Staff (Employee)</option>
+                  <option value="Admin" ${isAdmin ? 'selected' : ''}>Administrator (Admin)</option>
+                </select>
+              </div>
             `;
           }
 
@@ -2339,7 +2384,7 @@
             <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
               <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
                 <div style="display:flex; align-items:center; gap:10px;">
-                  <div style="width:34px; height:34px; border-radius:50%; background:${a.is_root ? '#14204d' : '#2563eb'}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px;">
+                  <div style="width:34px; height:34px; border-radius:50%; background:${a.is_root ? '#14204d' : (isAdmin ? '#2563eb' : '#10b981')}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px;">
                     ${initials}
                   </div>
                   <div>
@@ -2347,15 +2392,12 @@
                     <div style="font-size:11.5px; color:#64748b;">${a.user_name}</div>
                   </div>
                 </div>
-                <div style="font-size:11.5px; font-weight:700;">
-                  ${a.is_pending ? '<span style="color:#d97706;">Pending</span>' : (a.is_blocked ? '<span style="color:#ef4444;">Suspended</span>' : '<span style="color:#10b981;">Active</span>')}
-                </div>
               </div>
               <div style="font-size:11.5px; color:#64748b; display:flex; justify-content:space-between; border-top:1px dashed #f1f5f9; padding-top:8px;">
+                <span>Role: <strong>${a.role}</strong></span>
                 <span>Ref: <strong>${a.ref_key}</strong></span>
-                <span>Registered: ${a.sdt}</span>
               </div>
-              ${actionBtns}
+              ${roleSelectorHtml}
             </div>
           `;
         }).join('');
@@ -2396,6 +2438,46 @@
         .catch(err => {
           console.error('Error approving admin:', err);
           alert('Network or server error while updating administrator account.');
+        });
+    };
+
+    // Action function to Change Role Access (Admin vs Employee/Staff)
+    window.changeUserRoleAccess = function(accountId, newRole, userName) {
+      const roleText = newRole === 'Admin' ? 'Administrator (Admin Portal)' : 'Staff (Employee Portal)';
+      if (!confirm(`Are you sure you want to change the access control role for "${userName}" to "${roleText}"?\n\nTheir login credentials will be updated to direct them to the appropriate portal.`)) {
+        window.loadAdminAccountsData();
+        return;
+      }
+
+      const pth = typeof window.pth !== 'undefined' ? window.pth : '../';
+      const fd = new FormData();
+      fd.append('account_id', accountId);
+      fd.append('new_role', newRole);
+
+      fetch(pth + 'UxUi-Back/Admin/change_account_role/change_account_role.php', {
+        method: 'POST',
+        body: fd
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            alert(res.message || `Role updated successfully to ${roleText}.`);
+            window.loadAdminAccountsData();
+            if (typeof window.fetchAdminEmployees === 'function') {
+              window.fetchAdminEmployees();
+            }
+            if (typeof window.fetchAdminNotifications === 'function') {
+              window.fetchAdminNotifications();
+            }
+          } else {
+            alert(res.message || 'Failed to update user role.');
+            window.loadAdminAccountsData();
+          }
+        })
+        .catch(err => {
+          console.error('Error updating account role:', err);
+          alert('Network or server error while updating user role.');
+          window.loadAdminAccountsData();
         });
     };
 
