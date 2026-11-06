@@ -4,6 +4,27 @@ header('Content-Type: application/json; charset=utf-8');
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../Controllers/Main/Departments/departments_details_LIST.php';
 
+// Auto-heal table columns: ensure departments table has both `head` and `head_name` columns
+try {
+    $dbAuto = new DataBase();
+    $conn = $dbAuto->get_data_base_connction();
+    if ($conn) {
+        $colsExisting = [];
+        $resCols = @$conn->query("SHOW COLUMNS FROM `departments`");
+        if ($resCols) {
+            while ($c = $resCols->fetch_assoc()) {
+                $colsExisting[strtolower($c['Field'])] = true;
+            }
+        }
+        if (!isset($colsExisting['head'])) {
+            @$conn->query("ALTER TABLE `departments` ADD COLUMN `head` varchar(255) DEFAULT '' AFTER `name`");
+        }
+        if (!isset($colsExisting['head_name'])) {
+            @$conn->query("ALTER TABLE `departments` ADD COLUMN `head_name` varchar(255) DEFAULT '' AFTER `name`");
+        }
+    }
+} catch (\Throwable $e) {}
+
 $departments = [];
 
 $dept_list_obj = new departments_details_LIST();
@@ -70,7 +91,7 @@ if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $id        = (int)$row['id'];
         $name      = isset($row['name']) ? $row['name'] : '';
-        $head      = isset($row['head']) && !empty($row['head']) ? $row['head'] : 'Unassigned';
+        $head      = !empty($row['head_name']) ? $row['head_name'] : (!empty($row['head']) ? $row['head'] : 'Unassigned');
         $color     = isset($row['color']) && !empty($row['color']) ? $row['color'] : strtolower(substr($name, 0, 3));
         
         $dept_key = strtolower(trim($name));
