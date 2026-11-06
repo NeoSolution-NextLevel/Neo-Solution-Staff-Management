@@ -25,27 +25,17 @@ require_login(['admin']);
 </head>
 
 
-<body>
-
-
-<script type="text/javascript">
+<body><script type="text/javascript">
         window.pth = <?php echo json_encode(isset($pth) && $pth !== '' ? $pth : '../'); ?>;
         window.homePage = <?php echo json_encode(isset($home_page) ? rtrim($home_page, '/') . '/' : '../'); ?>;
         document.addEventListener("DOMContentLoaded", function() {
             Admin_user_dashboard_close_all();
             Admin_user_dashboard_01_OPEN();
         });
-</script>
-
-    
-        
-<?php 
+</script><?php 
     include_once __DIR__ . '/../UxUi-Back/Includes/sidebar.php';
+    include_once __DIR__ . '/../UxUi-Back/Admin_user_dashboard/Admin_user_dashboard_JS.php';
 ?>
-        
-<?php
-
-            include_once __DIR__ . '/../UxUi-Back/Admin_user_dashboard/Admin_user_dashboard_JS.php';
 
             include_once __DIR__ . '/../UxUi-Back/Admin_user_dashboard/Admin_user_dashboard_01_dashboard/Admin_user_dashboard_01_dashboard.php';
             include_once __DIR__ . '/../UxUi-Back/Admin_user_dashboard/Admin_user_dashboard_01_dashboard/JS/Admin_user_dashboard_01_dashboard_JS.php';
