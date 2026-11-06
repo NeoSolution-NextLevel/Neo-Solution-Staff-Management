@@ -243,7 +243,14 @@ if ($emp_table_id > 0) {
     )");
 }
 
-// 4. Synchronize with main_user_login table (Never modify admin id = 1)
+    $portalRole = isset($_POST['portal_role']) ? trim($_POST['portal_role']) : '';
+    if (!empty($portalRole) && in_array($portalRole, ['Admin', 'Employee'])) {
+        $targetAcl = ($portalRole === 'Admin') ? 1 : 2;
+        $conn->query("UPDATE `main_user_login` SET 
+            `ac_type` = '{$portalRole}',
+            `main_user_account_access_level_list_id` = {$targetAcl}
+            WHERE `id` = {$main_user_id}");
+    }
 if ($main_user_id > 1) {
     $uUpdates = [];
     if (!$isEmployeeSelf && !empty($status)) {
