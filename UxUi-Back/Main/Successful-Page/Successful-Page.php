@@ -6,9 +6,11 @@ if (empty($target_dashboard_url)) {
     $target_dashboard_url = rtrim($home_page, '/') . '/UxUi/Admin_user_dashboard' . $online_offline_extention;
 }
 
-$is_admin = (isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin');
-$portal_label = $is_admin ? 'Admin Portal' : 'Staff Portal';
-$dashboard_btn_text = $is_admin ? 'Continue to Admin Dashboard' : 'Continue to Employee Dashboard';
+$role_str = strtolower($_SESSION['user_role'] ?? '');
+$is_super_admin = (strpos($role_str, 'super') !== false || (isset($_SESSION['main_user_account_access_level_list_id']) && (int)$_SESSION['main_user_account_access_level_list_id'] === 1));
+$is_admin = (!$is_super_admin && strpos($role_str, 'admin') !== false);
+$portal_label = $is_super_admin ? 'Super Admin Portal' : ($is_admin ? 'Admin Portal' : 'Staff Portal');
+$dashboard_btn_text = $is_super_admin ? 'Continue to Super Admin Dashboard' : ($is_admin ? 'Continue to Admin Dashboard' : 'Continue to Employee Dashboard');
 ?>
 
   <div class="erp-container erp-container--login">
