@@ -1,6 +1,6 @@
 <?php 
 include_once __DIR__ . '/../imports/need/session_setup.php';
-require_login(['admin', 'super admin', 'superadmin']);
+require_login(['superadmin', 'super admin', 'super_admin', 'admin']);
 ?>
 
 <!DOCTYPE html>
@@ -37,6 +37,9 @@ require_login(['admin', 'super admin', 'superadmin']);
         });
 </script>
 
+<?php
+    include_once __DIR__ . '/../UxUi-Back/Super_Admin_user_dashboard/Super_Admin_user_dashboard_JS.php';
+?>
     
         
 <?php 
@@ -44,8 +47,6 @@ require_login(['admin', 'super admin', 'superadmin']);
 ?>
         
 <?php
-
-            include_once __DIR__ . '/../UxUi-Back/Super_Admin_user_dashboard/Super_Admin_user_dashboard_JS.php';
 
             include_once __DIR__ . '/../UxUi-Back/Super_Admin_user_dashboard/Super_Admin_user_dashboard_01_dashboard/Super_Admin_user_dashboard_01_dashboard.php';
             include_once __DIR__ . '/../UxUi-Back/Super_Admin_user_dashboard/Super_Admin_user_dashboard_01_dashboard/JS/Super_Admin_user_dashboard_01_dashboard_JS.php';

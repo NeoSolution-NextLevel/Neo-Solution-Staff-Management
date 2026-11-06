@@ -9,14 +9,20 @@ if (!in_array($current_msg, $public_messages) && !is_logged_in()) {
 }
 
 $is_auth_page = true;
-$is_admin = (isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin');
-$portal_type = $is_admin ? 'Admin Portal' : 'Staff Portal';
+$role_str = strtolower($_SESSION['user_role'] ?? '');
+$is_super_admin = (strpos($role_str, 'super') !== false || (isset($_SESSION['main_user_account_access_level_list_id']) && (int)$_SESSION['main_user_account_access_level_list_id'] === 1));
+$is_admin = (!$is_super_admin && strpos($role_str, 'admin') !== false);
+$portal_type = $is_super_admin ? 'Super Admin Portal' : ($is_admin ? 'Admin Portal' : 'Staff Portal');
 
 $target_dashboard_url = get_dashboard_redirect_url();
 if (empty($target_dashboard_url)) {
-    $target_dashboard_url = $is_admin 
-        ? rtrim($home_page, '/') . '/UxUi/Admin_user_dashboard' . $online_offline_extention 
-        : rtrim($home_page, '/') . '/UxUi/Employee_user_dashboard' . $online_offline_extention;
+    if ($is_super_admin) {
+        $target_dashboard_url = rtrim($home_page, '/') . '/UxUi/Super_Admin_user_dashboard' . $online_offline_extention;
+    } elseif ($is_admin) {
+        $target_dashboard_url = rtrim($home_page, '/') . '/UxUi/Admin_user_dashboard' . $online_offline_extention;
+    } else {
+        $target_dashboard_url = rtrim($home_page, '/') . '/UxUi/Employee_user_dashboard' . $online_offline_extention;
+    }
 }
 ?>
 <!DOCTYPE html>

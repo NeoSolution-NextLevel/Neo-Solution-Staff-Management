@@ -1,5 +1,11 @@
 <?php 
 include_once __DIR__ . '/../imports/need/session_setup.php';
+// If a super admin accesses Admin_user_dashboard directly, forward to Super_Admin_user_dashboard
+$roleVal = normalize_role_value(get_user_role_value());
+if (strpos($roleVal, 'super') !== false || (isset($_SESSION['main_user_account_access_level_list_id']) && (int)$_SESSION['main_user_account_access_level_list_id'] === 1)) {
+    header('Location: ' . rtrim($home_page, '/') . '/UxUi/Super_Admin_user_dashboard' . $online_offline_extention);
+    exit;
+}
 require_login(['admin']);
 ?>
 
