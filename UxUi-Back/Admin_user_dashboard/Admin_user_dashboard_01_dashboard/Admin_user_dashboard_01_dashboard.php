@@ -54,11 +54,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 0 16px 0;
-    padding: 0 0 12px 0;
-    border-bottom: 1px solid var(--border);
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
   }
 
   .topbar-left {
