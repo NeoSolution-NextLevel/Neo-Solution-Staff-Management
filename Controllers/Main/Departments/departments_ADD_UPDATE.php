@@ -96,23 +96,40 @@ class departments_ADD_UPDATE
     public function process_new_record()
     {
         $data_base_obj = new DataBase();
+        $conn = $data_base_obj->get_data_base_connction();
 
-        // Ensure both head and head_name columns are populated if present
-        $cols = "ast, sdt, name, employees, color";
-        $vals = "'" . $this->ast . "', '" . $this->sdt . "', '" . $this->name . "', '" . $this->employees . "', '" . $this->color . "'";
-
-        $chkHead = $data_base_obj->get_result("SHOW COLUMNS FROM departments LIKE 'head'");
-        if ($chkHead && $chkHead->num_rows > 0) {
-            $cols .= ", head";
-            $vals .= ", '" . addslashes($this->head) . "'";
-        }
-        $chkHeadName = $data_base_obj->get_result("SHOW COLUMNS FROM departments LIKE 'head_name'");
-        if ($chkHeadName && $chkHeadName->num_rows > 0) {
-            $cols .= ", head_name";
-            $vals .= ", '" . addslashes($this->head) . "'";
+        // Inspect actual columns from database
+        $existingCols = [];
+        $resCols = @$conn->query("SHOW COLUMNS FROM `departments`");
+        if ($resCols) {
+            while ($row = $resCols->fetch_assoc()) {
+                $existingCols[strtolower($row['Field'])] = true;
+            }
         }
 
-        $get_sql_query = "INSERT INTO departments ($cols) VALUES ($vals)";
+        $fields = ['ast', 'sdt', 'name'];
+        $values = ["'" . $this->ast . "'", "'" . $this->sdt . "'", "'" . addslashes($this->name) . "'"];
+
+        if (isset($existingCols['head'])) {
+            $fields[] = '`head`';
+            $values[] = "'" . addslashes($this->head) . "'";
+        }
+        if (isset($existingCols['head_name'])) {
+            $fields[] = '`head_name`';
+            $values[] = "'" . addslashes($this->head) . "'";
+        }
+        if (isset($existingCols['employees'])) {
+            $fields[] = '`employees`';
+            $values[] = "'" . (int)$this->employees . "'";
+        }
+        if (isset($existingCols['color'])) {
+            $fields[] = '`color`';
+            $values[] = "'" . addslashes($this->color) . "'";
+        }
+
+        $colsStr = implode(', ', $fields);
+        $valsStr = implode(', ', $values);
+        $get_sql_query = "INSERT INTO `departments` ($colsStr) VALUES ($valsStr)";
 
         $data_base_obj->get_result($get_sql_query);
 
@@ -124,22 +141,38 @@ class departments_ADD_UPDATE
     public function process_update()
     {
         $data_base_obj = new DataBase();
+        $conn = $data_base_obj->get_data_base_connction();
 
-        // Build safe update string checking column existence
-        $updates = "ast='" . $this->ast . "', name='" . addslashes($this->name) . "', employees='" . (int)$this->employees . "', color='" . addslashes($this->color) . "'";
-        $chkHead = $data_base_obj->get_result("SHOW COLUMNS FROM departments LIKE 'head'");
-        if ($chkHead && $chkHead->num_rows > 0) {
-            $updates .= ", head='" . addslashes($this->head) . "'";
-        }
-        $chkHeadName = $data_base_obj->get_result("SHOW COLUMNS FROM departments LIKE 'head_name'");
-        if ($chkHeadName && $chkHeadName->num_rows > 0) {
-            $updates .= ", head_name='" . addslashes($this->head) . "'";
+        $existingCols = [];
+        $resCols = @$conn->query("SHOW COLUMNS FROM `departments`");
+        if ($resCols) {
+            while ($row = $resCols->fetch_assoc()) {
+                $existingCols[strtolower($row['Field'])] = true;
+            }
         }
 
+        $updates = ["ast='" . $this->ast . "'"];
+        if (isset($existingCols['name'])) {
+            $updates[] = "`name`='" . addslashes($this->name) . "'";
+        }
+        if (isset($existingCols['head'])) {
+            $updates[] = "`head`='" . addslashes($this->head) . "'";
+        }
+        if (isset($existingCols['head_name'])) {
+            $updates[] = "`head_name`='" . addslashes($this->head) . "'";
+        }
+        if (isset($existingCols['employees'])) {
+            $updates[] = "`employees`='" . (int)$this->employees . "'";
+        }
+        if (isset($existingCols['color'])) {
+            $updates[] = "`color`='" . addslashes($this->color) . "'";
+        }
+
+        $updatesStr = implode(', ', $updates);
         $get_sql_query = "
-            UPDATE departments 
-            SET " . $updates . " 
-            WHERE id='" . $this->id . "'";
+            UPDATE `departments` 
+            SET " . $updatesStr . " 
+            WHERE id='" . (int)$this->id . "'";
 
         $data_base_obj->get_result($get_sql_query);
         $this->error_msg = $data_base_obj->get_error();
