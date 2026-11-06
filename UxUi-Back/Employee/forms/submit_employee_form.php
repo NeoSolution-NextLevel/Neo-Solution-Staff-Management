@@ -170,7 +170,7 @@ try {
         `account_active_state`, `email_verify`, `moible_verfiy`, `ast`, `sdt`
     ) VALUES (
         1, '{$safe_email}', '{$safe_pwd}', '{$safe_name}', '{$safe_first}', '{$safe_last}',
-        '{$safe_phone}', '{$temp_ref}', 2, 'Employee',
+        '{$safe_phone}', '{$temp_ref}', 3, 'Employee',
         0, 0, 0, 1, NOW()
     )";
 
@@ -208,7 +208,7 @@ try {
         SELECT DISTINCT `user_name`
         FROM `main_user_login`
         WHERE (
-            LOWER(TRIM(COALESCE(`ac_type`, ''))) IN ('admin', 'super admin')
+            LOWER(TRIM(COALESCE(`ac_type`, ''))) IN ('admin', 'super_admin')
             OR `main_user_account_access_level_list_id` = 1
         )
         AND `account_active_state` = 1
