@@ -1,4 +1,4 @@
-﻿<style>
+<style>
   :root{
     --navy: #14204d;
     --navy-2: #1c2b63;
@@ -28,17 +28,17 @@
 
   #Super_Admin_user_dashboard_04_bank_details {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
     overflow-x: hidden;
   }
 
   /* Main Container */
   .main{
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    max-width: calc(100% - 250px);
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
     min-height: auto;
-    padding: 16px 20px 24px;
+    padding: 0;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
   }
@@ -47,7 +47,9 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .topbar h2{ 
     font-size: 22px; 
@@ -704,9 +706,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
           <span class="dot"></span>
         </div>
-        <div class="admin-pill">
+        <div class="admin-pill" onclick="Super_Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
           <div class="avatar">AU</div>
-          <span>Admin</span>
+          <span>Super Admin</span>
         </div>
       </div>
     </div>
