@@ -1,4 +1,4 @@
-﻿<style>
+<style>
     :root {
       --primary: #235ae8;
       --primary-hover: #1b49c4;
@@ -28,7 +28,7 @@
       display: flex;
       width: 100%;
       max-width: 100%;
-      min-height: 100vh;
+      min-height: 0;
       box-sizing: border-box;
     }
 
@@ -661,7 +661,7 @@
           </button>
           <div class="profile-pill">
             <div class="avatar-sm">AU</div>
-            <span>Admin</span>
+            <span>Super Admin</span>
           </div>
         </div>
       </header>
