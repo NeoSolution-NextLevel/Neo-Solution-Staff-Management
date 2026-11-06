@@ -96,13 +96,15 @@ if ($User_Account_Check_obj->check_user_name()) {
         $isAdmin = (
             strpos(strtolower((string)$user_role), 'admin') !== false ||
             (int)$access_level_id === 1 ||
+            (int)$access_level_id === 2 ||
             strpos(strtolower((string)$User_Account_Check_obj->get_ac_type()), 'admin') !== false ||
             (int)$User_Account_Check_obj->get_user_id() === 1
         );
 
         if ($isAdmin) {
             // Super Admin approval check: Admin accounts must be approved by Super Admin
-            $chkAdmQ = (new DataBase())->get_data_base_connction()->query(
+            $dbInstance = new DataBase();
+            $chkAdmQ = $dbInstance->get_result(
                 "SELECT id, account_active_state, email_verify, full_block FROM `main_user_login` WHERE `id` = " . (int)$User_Account_Check_obj->get_user_id() . " LIMIT 1"
             );
             if ($chkAdmQ && ($chkRow = $chkAdmQ->fetch_assoc())) {
@@ -123,18 +125,33 @@ if ($User_Account_Check_obj->check_user_name()) {
                 }
             }
 
-            $url_home = 'UxUi/Admin_user_dashboard.php';
-            $user_role = 'admin';
+            // Determine correct dashboard & role based on access level ID / url_home
+            if (empty($url_home)) {
+                if ((int)$access_level_id === 1 || strpos(strtolower((string)$user_role), 'super_admin') !== false) {
+                    $url_home = 'UxUi/Super_Admin_user_dashboard.php';
+                    $user_role = 'super_admin';
+                } else {
+                    $url_home = 'UxUi/Admin_user_dashboard.php';
+                    $user_role = 'admin';
+                }
+            } else {
+                if (strpos(strtolower($url_home), 'super_admin') !== false || (int)$access_level_id === 1) {
+                    $user_role = 'super_admin';
+                } else {
+                    $user_role = 'admin';
+                }
+            }
+
             $admName = !empty($_SESSION['name_show']) ? $_SESSION['name_show'] : trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
-            if (empty($admName)) $admName = 'Admin';
+            if (empty($admName)) $admName = ((int)$access_level_id === 1) ? 'Super Admin' : 'Admin';
             $_SESSION['full_name'] = $admName;
             $_SESSION['first_name'] = !empty($_SESSION['first_name']) ? $_SESSION['first_name'] : 'Admin';
             $_SESSION['last_name'] = !empty($_SESSION['last_name']) ? $_SESSION['last_name'] : 'User';
-            $_SESSION['job_title'] = 'Administrator';
+            $_SESSION['job_title'] = ((int)$access_level_id === 1) ? 'Super Administrator' : 'Administrator';
             $_SESSION['department'] = 'Administration';
-            $_SESSION['employee_id_code'] = 'ADM-' . str_pad((string)$User_Account_Check_obj->get_user_id(), 3, '0', STR_PAD_LEFT);
-            $_SESSION['user_role'] = 'admin';
-            $_SESSION['ac_type'] = $User_Account_Check_obj->get_ac_type() ?: 'Admin';
+            $_SESSION['employee_id_code'] = (((int)$access_level_id === 1) ? 'SADM-' : 'ADM-') . str_pad((string)$User_Account_Check_obj->get_user_id(), 3, '0', STR_PAD_LEFT);
+            $_SESSION['user_role'] = $user_role;
+            $_SESSION['ac_type'] = $User_Account_Check_obj->get_ac_type() ?: $user_role;
         } else {
             if (empty($url_home)) {
                 $url_home = 'UxUi/Employee_user_dashboard.php';

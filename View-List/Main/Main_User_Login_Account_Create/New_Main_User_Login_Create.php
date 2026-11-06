@@ -112,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $state['id'] = $new_id;
                 
                 // Keep the root account, or otherwise the oldest existing Super Admin, as the sole Super Admin.
-                $canonicalSuperAdminResult = $conn->query("SELECT id FROM `main_user_login` WHERE `id` = 1 OR LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super admin' ORDER BY CASE WHEN `id` = 1 THEN 0 ELSE 1 END, `id` ASC LIMIT 1");
+                $canonicalSuperAdminResult = $conn->query("SELECT id FROM `main_user_login` WHERE `id` = 1 OR LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super_admin' ORDER BY CASE WHEN `id` = 1 THEN 0 ELSE 1 END, `id` ASC LIMIT 1");
                 if (!$canonicalSuperAdminResult) {
                     $conn->query("SELECT RELEASE_LOCK('neo_staff_super_admin_registration')");
                     $state['error'] = "Could not verify the Super Administrator account. Please try again.";
@@ -123,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $canonicalSuperAdmin = $canonicalSuperAdminResult->fetch_assoc();
                 $canonicalSuperAdminId = $canonicalSuperAdmin ? (int)$canonicalSuperAdmin['id'] : 0;
                 if ($canonicalSuperAdminId > 0) {
-                    $deduplicateSuperAdmins = $conn->query("UPDATE `main_user_login` SET `ac_type` = 'Admin' WHERE LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super admin' AND `id` != {$canonicalSuperAdminId}");
+                    $deduplicateSuperAdmins = $conn->query("UPDATE `main_user_login` SET `ac_type` = 'Admin' WHERE LOWER(TRIM(COALESCE(`ac_type`, ''))) = 'super_admin' AND `id` != {$canonicalSuperAdminId}");
                     if (!$deduplicateSuperAdmins) {
                         $conn->query("SELECT RELEASE_LOCK('neo_staff_super_admin_registration')");
                         $state['error'] = "Could not enforce the single Super Administrator account. Please try again.";
