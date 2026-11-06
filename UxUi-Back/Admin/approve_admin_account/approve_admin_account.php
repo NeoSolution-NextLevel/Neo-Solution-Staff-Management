@@ -62,7 +62,7 @@ $actor_actype = $actor && isset($actor['ac_type']) ? strtolower(trim($actor['ac_
 
 $is_super_admin = (
     $actor_id === 1 || 
-    $actor_actype === 'super admin' || 
+    $actor_actype === 'super_admin' || 
     $actor_actype === 'admin' || 
     $actor_acl === 1 || 
     $actor_acl === 3 || 
