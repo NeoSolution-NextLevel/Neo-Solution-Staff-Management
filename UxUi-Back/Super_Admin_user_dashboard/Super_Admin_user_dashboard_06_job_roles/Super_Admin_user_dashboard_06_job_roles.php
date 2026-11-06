@@ -1,4 +1,4 @@
-﻿<style>
+<style>
   :root {
     --primary: #235ae8;
     --primary-hover: #1b49c4;
@@ -26,15 +26,15 @@
 
   #Super_Admin_user_dashboard_06_job_roles {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
   }
 
   .main-wrapper {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    max-width: calc(100% - 250px);
-    min-height: 100vh;
-    padding: 16px 20px 24px;
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    padding: 0;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
   }
@@ -44,7 +44,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .topbar-left {
@@ -591,13 +593,13 @@
         <h2 class="page-breadcrumb">Job Roles</h2>
       </div>
       <div class="topbar-right">
-        <button class="icon-btn" aria-label="Notifications" onclick="Super_Admin_user_dashboard_09_OPEN();">
+        <button class="icon-btn" aria-label="Notifications" onclick="Super_Admin_user_dashboard_09_OPEN();" title="Notifications">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="notif-dot"></span>
         </button>
-        <div class="profile-pill">
-          <div class="avatar-sm">AU</div>
-          <span>Admin</span>
+        <div class="admin-pill" onclick="Super_Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
+          <div class="avatar">AU</div>
+          <span>Super Admin</span>
         </div>
       </div>
     </header>
