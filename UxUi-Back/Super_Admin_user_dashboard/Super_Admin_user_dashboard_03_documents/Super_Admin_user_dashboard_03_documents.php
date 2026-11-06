@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Super_Admin_user_dashboard_03_documents.php
 ?>
 <style>
@@ -30,16 +30,16 @@
 
   #Super_Admin_user_dashboard_03_documents {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
     overflow-x: hidden;
   }
 
   .main {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    max-width: calc(100% - 250px);
-    min-height: 100vh;
-    padding: 16px 20px 24px;
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    padding: 0;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
   }
@@ -48,7 +48,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .topbar-left {
     display: flex;
@@ -719,12 +721,13 @@
       overflow-y: visible !important;
     }
     #Super_Admin_user_dashboard_03_documents .topbar {
-      width: calc(100% + 20px) !important;
-      margin: 0 -10px 12px !important;
+      width: 100% !important;
+      margin: 0 0 12px !important;
       padding: 0 10px !important;
       height: 58px !important;
       min-height: 58px !important;
       max-height: 58px !important;
+      box-sizing: border-box !important;
     }
     .menu-btn { display: inline-flex !important; }
     #Super_Admin_user_dashboard_03_documents .topbar h2 { font-size: 18px !important; }
@@ -749,8 +752,8 @@
     .doc-toolbar {
       flex-direction: column;
       align-items: stretch;
-      gap: 8px;
-      padding: 10px;
+      gap: 10px;
+      padding: 12px;
       background: #ffffff;
       border-radius: 12px;
       border: 1px solid var(--border);
@@ -760,52 +763,67 @@
     .doc-toolbar-left {
       max-width: 100%;
       width: 100%;
-      flex-direction: column;
+      flex-direction: row !important;
       gap: 8px;
     }
     #docsFilterGroup,
     #reqsFilterGroup {
-      flex-direction: column !important;
-      align-items: stretch !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
       gap: 8px !important;
+      width: 100% !important;
     }
     .doc-search-box {
-      width: 100% !important;
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      width: auto !important;
     }
     .doc-search-input {
       width: 100% !important;
       box-sizing: border-box !important;
+      padding-right: 8px !important;
+      font-size: 12.5px !important;
     }
     .doc-select {
-      width: 100% !important;
+      flex: 0 0 130px !important;
+      width: 130px !important;
+      max-width: 42% !important;
       box-sizing: border-box !important;
+      font-size: 12px !important;
+      padding: 7.5px 8px !important;
     }
     .doc-toolbar-right {
-      flex-wrap: wrap;
-      justify-content: stretch;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
       width: 100%;
       gap: 8px;
     }
     .doc-subnav-tabs {
       display: flex;
-      flex: 1 1 100%;
       width: 100%;
-      gap: 3px;
+      gap: 4px;
+      padding: 3px;
+      box-sizing: border-box;
     }
     .doc-tab-pill {
       flex: 1 1 0;
       min-width: 0;
       justify-content: center;
-      padding: 7px 5px;
-      gap: 4px;
-      font-size: 11px;
+      padding: 8px 6px;
+      gap: 5px;
+      font-size: 11.5px;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .doc-tab-pill i { display: none; }
+    .doc-tab-pill i { display: inline-block; }
     #btnOpenReqModal {
       width: 100%;
       justify-content: center;
+      padding: 10px 14px !important;
+      font-size: 13px !important;
     }
 
     .doc-table-wrap { display: none !important; }
@@ -903,9 +921,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
           <span class="dot"></span>
         </div>
-        <div class="admin-pill">
+        <div class="admin-pill" onclick="Super_Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
           <div class="avatar">AU</div>
-          <span>Admin</span>
+          <span>Super Admin</span>
         </div>
       </div>
     </div>
