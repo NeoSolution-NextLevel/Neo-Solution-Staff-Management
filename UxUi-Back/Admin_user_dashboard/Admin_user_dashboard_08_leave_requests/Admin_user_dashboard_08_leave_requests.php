@@ -2,7 +2,7 @@
   /* Admin Leave Requests - Simple, Clean W3.CSS Based Styles */
   #Admin_user_dashboard_08_leave_requests {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
   }
 
   .leave-main-wrapper {
