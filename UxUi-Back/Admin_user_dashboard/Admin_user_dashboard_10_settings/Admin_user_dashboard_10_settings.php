@@ -34,7 +34,7 @@
       display: flex;
       width: 100%;
       max-width: 100%;
-      min-height: 100vh;
+      min-height: 0;
       box-sizing: border-box;
     }
 
