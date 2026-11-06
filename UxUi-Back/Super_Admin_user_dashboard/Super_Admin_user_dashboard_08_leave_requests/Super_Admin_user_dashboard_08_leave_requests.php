@@ -1,8 +1,8 @@
-﻿<style>
+<style>
   /* Admin Leave Requests - Simple, Clean W3.CSS Based Styles */
   #Super_Admin_user_dashboard_08_leave_requests {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
   }
 
   .leave-main-wrapper {
@@ -16,7 +16,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .topbar-left {
     display: flex;
@@ -582,7 +584,7 @@
       </div>
       <div class="admin-pill" onclick="Super_Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
         <div class="avatar">AU</div>
-        <span>Admin</span>
+        <span>Super Admin</span>
       </div>
     </div>
   </div>
