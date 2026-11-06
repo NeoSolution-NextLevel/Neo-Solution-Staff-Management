@@ -929,7 +929,7 @@
           </div>
           <div class="admin-pill" onclick="Super_Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
             <div class="avatar">AU</div>
-            <span>Admin</span>
+            <span>Super Admin</span>
           </div>
         </div>
     </div>
