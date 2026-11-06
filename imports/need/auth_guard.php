@@ -8,11 +8,20 @@ include_once __DIR__ . '/session_setup.php';
 
 function normalize_role_value($role)
 {
-    return trim(strtolower($role));
+    $val = trim(strtolower((string)$role));
+    return str_replace([' ', '-', '_'], '', $val);
 }
 
 function get_user_role_value()
 {
+    // If access level is 1 or user ID is 1, canonical role is superadmin
+    if (
+        (isset($_SESSION['main_user_account_access_level_list_id']) && (int)$_SESSION['main_user_account_access_level_list_id'] === 1) ||
+        (isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] === 1)
+    ) {
+        return 'superadmin';
+    }
+
     if (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== '') {
         return $_SESSION['user_role'];
     }
@@ -89,6 +98,9 @@ function get_dashboard_redirect_url()
             }
 
             $accessLevelTarget = normalize_role_value($accessLevelTarget);
+            if (strpos($accessLevelTarget, 'super') !== false) {
+                return rtrim($base, '/') . '/UxUi/Super_Admin_user_dashboard' . $ext;
+            }
             if (strpos($accessLevelTarget, 'admin') !== false) {
                 return rtrim($base, '/') . '/UxUi/Admin_user_dashboard' . $ext;
             }
@@ -100,7 +112,10 @@ function get_dashboard_redirect_url()
 
     $roleValue = normalize_role_value(get_user_role_value());
     if ($roleValue !== '') {
-        if (strpos($roleValue, 'admin') !== false || strpos($roleValue, 'manager') !== false || strpos($roleValue, 'super') !== false) {
+        if (strpos($roleValue, 'super') !== false) {
+            return rtrim($base, '/') . '/UxUi/Super_Admin_user_dashboard' . $ext;
+        }
+        if (strpos($roleValue, 'admin') !== false || strpos($roleValue, 'manager') !== false) {
             return rtrim($base, '/') . '/UxUi/Admin_user_dashboard' . $ext;
         }
         if (strpos($roleValue, 'employee') !== false || strpos($roleValue, 'user') !== false || strpos($roleValue, 'staff') !== false) {
@@ -135,14 +150,22 @@ function require_login($allowedRolePatterns = [])
         $roleValue = normalize_role_value(get_user_role_value());
         $matched = false;
         foreach ($allowedRolePatterns as $pattern) {
-            if (strpos($roleValue, normalize_role_value($pattern)) !== false) {
+            $normPattern = normalize_role_value($pattern);
+            if ($normPattern !== '' && strpos($roleValue, $normPattern) !== false) {
                 $matched = true;
                 break;
             }
         }
 
         if (!$matched) {
-            header('Location: ' . get_dashboard_redirect_url());
+            $targetUrl = get_dashboard_redirect_url();
+            // Prevent infinite redirection loop if target is current page
+            $currentScript = basename($_SERVER['PHP_SELF'] ?? '');
+            $targetScript = basename(parse_url($targetUrl, PHP_URL_PATH) ?? '');
+            if ($currentScript !== '' && $currentScript === $targetScript) {
+                return;
+            }
+            header('Location: ' . $targetUrl);
             exit;
         }
     }
