@@ -1,4 +1,4 @@
-﻿<style>
+<style>
   :root {
     --navy: #14204d;
     --navy-2: #1c2b63;
@@ -54,11 +54,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 0 16px 0;
-    padding: 0 0 12px 0;
-    border-bottom: 1px solid var(--border);
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
   }
 
   .topbar-left {
@@ -901,7 +899,7 @@
         </div>
         <div class="admin-pill" onclick="Super_Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
           <div class="avatar">AU</div>
-          <span>Admin</span>
+          <span>Super Admin</span>
         </div>
       </div>
     </div>
@@ -910,8 +908,8 @@
     <section class="banner">
       <div>
         <div class="date"><?php echo date('l, F j, Y'); ?></div>
-        <h3>Welcome back, Admin</h3>
-        <p>Manage your staff, monitor daily workloads & department operations.</p>
+        <h3>Welcome back,Super Admin</h3>
+        <p>Manage your Admins</p>
       </div>
       <div class="banner-badge">
         <i class="fa-solid fa-circle-check" style="color: #4ade80; margin-right: 6px;"></i>System Active
