@@ -4,6 +4,27 @@ header('Content-Type: application/json; charset=utf-8');
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../Controllers/Main/Departments/departments_ADD_UPDATE.php';
 
+// Auto-heal table columns: ensure departments table has both `head` and `head_name` columns
+try {
+    $dbInit = new DataBase();
+    $conn = $dbInit->get_data_base_connction();
+    if ($conn) {
+        $colsExisting = [];
+        $resCols = @$conn->query("SHOW COLUMNS FROM `departments`");
+        if ($resCols) {
+            while ($c = $resCols->fetch_assoc()) {
+                $colsExisting[strtolower($c['Field'])] = true;
+            }
+        }
+        if (!isset($colsExisting['head'])) {
+            @$conn->query("ALTER TABLE `departments` ADD COLUMN `head` varchar(255) DEFAULT '' AFTER `name`");
+        }
+        if (!isset($colsExisting['head_name'])) {
+            @$conn->query("ALTER TABLE `departments` ADD COLUMN `head_name` varchar(255) DEFAULT '' AFTER `name`");
+        }
+    }
+} catch (\Throwable $e) {}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
     exit;
