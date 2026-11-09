@@ -42,7 +42,7 @@ try {
     $full_name = '';
     $user_role = 'Employee';
     $ac_type = 'Employee';
-    $access_level_id = 2;
+    $access_level_id = 3;
     $department = 'Administration';
     $job_title = 'Staff';
     $phone_number = '';
@@ -103,7 +103,7 @@ try {
                     $full_name = !empty($uRow['name_show']) ? $uRow['name_show'] : trim(($uRow['first_name'] ?? '') . ' ' . ($uRow['last_name'] ?? ''));
                     $user_role = $uRow['ac_type'] ?? 'Employee';
                     $ac_type = $user_role;
-                    $access_level_id = (int)($uRow['main_user_account_access_level_list_id'] ?? 2);
+                    $access_level_id = (int)($uRow['main_user_account_access_level_list_id'] ?? 3);
                     $phone_number = $uRow['phone_number'] ?? '';
                 }
             }
@@ -131,7 +131,7 @@ try {
                         $full_name = !empty($uRow['name_show']) ? $uRow['name_show'] : trim(($uRow['first_name'] ?? '') . ' ' . ($uRow['last_name'] ?? ''));
                         $user_role = $uRow['ac_type'] ?? 'Employee';
                         $ac_type = $user_role;
-                        $access_level_id = (int)($uRow['main_user_account_access_level_list_id'] ?? 2);
+                        $access_level_id = (int)($uRow['main_user_account_access_level_list_id'] ?? 3);
                         $phone_number = $uRow['phone_number'] ?? '';
                     }
                 }
@@ -178,8 +178,8 @@ try {
         $_SESSION['department'] = $department;
         $_SESSION['job_title'] = $job_title;
 
-        $isAdmin = (strtolower((string)$user_role) === 'admin' || $access_level_id === 1 || $u_id === 1);
-        $url_home = $isAdmin ? 'UxUi/Admin_user_dashboard.php' : 'UxUi/Employee_user_dashboard.php';
+        $isAdmin = (strtolower((string)$user_role) === 'admin' || strtolower((string)$ac_type) === 'admin' || $access_level_id === 2 || $access_level_id === 1 || $u_id === 1);
+        $url_home = ($isAdmin && ($access_level_id === 1 || $u_id === 1)) ? 'UxUi/Super_Admin_user_dashboard.php' : ($isAdmin ? 'UxUi/Admin_user_dashboard.php' : 'UxUi/Employee_user_dashboard.php');
         $_SESSION['url_home'] = $url_home;
 
         // Initialize persistent cook session
@@ -191,8 +191,8 @@ try {
         unset($_SESSION['otp_pending'], $_SESSION['temp_otp_user_id'], $_SESSION['temp_otp_email'], $_SESSION['otp_encrypt']);
     }
 
-    $isAdmin = (strtolower((string)$user_role) === 'admin' || $access_level_id === 1 || $u_id === 1);
-    $dashboard_url = rtrim($GLOBALS['home_page'], '/') . '/' . ($isAdmin ? 'UxUi/Admin_user_dashboard.php' : 'UxUi/Employee_user_dashboard.php');
+    $isAdmin = (strtolower((string)$user_role) === 'admin' || strtolower((string)$ac_type) === 'admin' || $access_level_id === 2 || $access_level_id === 1 || $u_id === 1);
+    $dashboard_url = rtrim($GLOBALS['home_page'], '/') . '/' . (($isAdmin && ($access_level_id === 1 || $u_id === 1)) ? 'UxUi/Super_Admin_user_dashboard.php' : ($isAdmin ? 'UxUi/Admin_user_dashboard.php' : 'UxUi/Employee_user_dashboard.php'));
     $success_url = rtrim($GLOBALS['home_page'], '/') . '/UxUi/Main/Successful-Page.php?message=' . urlencode("Account-Verified-Successfully");
 
     ob_end_clean();
