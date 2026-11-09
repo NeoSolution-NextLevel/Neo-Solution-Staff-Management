@@ -107,7 +107,7 @@
           if (bannerTag) bannerTag.textContent = dept;
 
           var dashWelcome = document.getElementById('dashWelcomeTitle');
-          if (dashWelcome) dashWelcome.textContent = 'Welcome back, ' + firstName;
+          if (dashWelcome) dashWelcome.textContent = 'Welcome back, ' + (name || firstName || 'Employee');
           var dashSubtitle = document.getElementById('dashWelcomeSubtitle');
           if (dashSubtitle) dashSubtitle.textContent = "Here's your work overview for today in " + dept + ".";
           var dashDept = document.getElementById('dashEmpDept');
