@@ -94,7 +94,7 @@ $user_email  = trim($target_user['user_name']);
 $user_name   = !empty($target_user['name_show']) ? $target_user['name_show'] : trim($target_user['first_name'] . ' ' . $target_user['last_name']);
 if (empty($user_name)) $user_name = $user_email;
 
-$new_access_level_id = ($new_role === 'Admin') ? 1 : 2;
+$new_access_level_id = ($new_role === 'Admin') ? 2 : 3;
 $new_ac_type         = ($new_role === 'Admin') ? 'Admin' : 'Employee';
 
 // Update in main_user_login
