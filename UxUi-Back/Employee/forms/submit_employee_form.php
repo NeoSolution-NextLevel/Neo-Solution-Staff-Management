@@ -201,6 +201,42 @@ try {
 
     $submission_id = (int)$conn->insert_id;
 
+    // 3. Immediately provision an employee_profiles record so registered staff accounts go to employee profile
+    $empCodeVal = 'EMP-' . str_pad($created_user_id, 3, '0', STR_PAD_LEFT);
+    $default_roster = '{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}';
+    try {
+        $conn->query("INSERT INTO `employee_profiles` (
+            `user_id`, `full_name`, `email`, `phone`, `department`, `job_title`, `status`, `join_date`,
+            `nic`, `dob`, `gender`, `address`, `emergency_contact_name`, `emergency_contact_phone`,
+            `employee_id_code`, `employment_type`, `work_location`, `work_shift`, `working_days`, `weekly_roster`, `updated_at`
+        ) VALUES (
+            {$created_user_id}, '{$safe_name}', '{$safe_email}', '{$safe_phone}', '{$safe_dept}', '{$safe_job}', 'pending', CURDATE(),
+            '{$safe_nic}', {$safe_dob}, '{$safe_gender}', '{$safe_addr}', '{$safe_em_n}', '{$safe_em_p}',
+            '{$empCodeVal}', 'Full-Time (Permanent)', 'Colombo HQ', '08:30 AM – 05:30 PM', 'Mon,Tue,Wed,Thu,Fri', '" . addslashes($default_roster) . "', NOW()
+        ) ON DUPLICATE KEY UPDATE 
+            `full_name` = '{$safe_name}',
+            `phone` = '{$safe_phone}',
+            `department` = '{$safe_dept}',
+            `job_title` = '{$safe_job}',
+            `nic` = '{$safe_nic}',
+            `address` = '{$safe_addr}',
+            `emergency_contact_name` = '{$safe_em_n}',
+            `emergency_contact_phone` = '{$safe_em_p}',
+            `updated_at` = NOW()");
+    } catch (\Throwable $epEx) {}
+
+    // 4. Also insert into companion employees table if existing
+    try {
+        $chkEmpTable = $conn->query("SHOW TABLES LIKE 'employees'");
+        if ($chkEmpTable && $chkEmpTable->num_rows > 0) {
+            $conn->query("INSERT INTO `employees` (
+                `fullname`, `email_address`, `departments`, `job_roles`, `status`, `joined_date`, `main_user_login_id`
+            ) VALUES (
+                '{$safe_name}', '{$safe_email}', '{$safe_dept}', '{$safe_job}', 'pending', CURDATE(), {$created_user_id}
+            ) ON DUPLICATE KEY UPDATE `fullname` = '{$safe_name}', `departments` = '{$safe_dept}', `job_roles` = '{$safe_job}'");
+        }
+    } catch (\Throwable $eTableEx) {}
+
     // Notify administrators of the new registration
     $comp_obj = new Company_Info_Variable_List();
     $admin_emails = [];
