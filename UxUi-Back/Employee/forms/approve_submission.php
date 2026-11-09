@@ -87,7 +87,8 @@ try {
         : ($assigned_role === 'Admin' ? 'Administrator' : ($job_title !== 'Staff' ? $job_title : 'Staff'));
 
     $isAdminAccount = ($assigned_role === 'Admin');
-    $access_level_id = $isAdminAccount ? 1 : 2;
+    // access level: 2 is Admin, 3 is Employee (1 is Super Admin)
+    $access_level_id = $isAdminAccount ? 2 : 3;
     $ac_type_val = $isAdminAccount ? 'Admin' : 'Employee';
 
     $safe_email  = addslashes($email);
