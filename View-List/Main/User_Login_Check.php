@@ -93,11 +93,14 @@ if ($User_Account_Check_obj->check_user_name()) {
             $user_role = $User_Account_Check_obj->get_ac_type();
         }
 
-        $isAdmin = (
+        $user_ac_type = strtolower((string)$User_Account_Check_obj->get_ac_type());
+        $isEmployee = ($user_ac_type === 'employee' || (int)$access_level_id === 3);
+
+        $isAdmin = !$isEmployee && (
             strpos(strtolower((string)$user_role), 'admin') !== false ||
             (int)$access_level_id === 1 ||
             (int)$access_level_id === 2 ||
-            strpos(strtolower((string)$User_Account_Check_obj->get_ac_type()), 'admin') !== false ||
+            strpos($user_ac_type, 'admin') !== false ||
             (int)$User_Account_Check_obj->get_user_id() === 1
         );
 
