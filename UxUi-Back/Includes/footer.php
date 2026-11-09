@@ -11,6 +11,7 @@
         margin-left: 260px;
         width: calc(100% - 260px);
         margin-top: auto !important;
+        flex-shrink: 0 !important;
         min-height: 40px;
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         color: #94a3b8;
