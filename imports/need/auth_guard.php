@@ -14,12 +14,23 @@ function normalize_role_value($role)
 
 function get_user_role_value()
 {
-    // If access level is 1 or user ID is 1, canonical role is superadmin
-    if (
-        (isset($_SESSION['main_user_account_access_level_list_id']) && (int)$_SESSION['main_user_account_access_level_list_id'] === 1) ||
-        (isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] === 1)
-    ) {
+    $uid = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+    $acl = isset($_SESSION['main_user_account_access_level_list_id']) ? (int)$_SESSION['main_user_account_access_level_list_id'] : 0;
+    $role = isset($_SESSION['user_role']) ? strtolower((string)$_SESSION['user_role']) : '';
+    $acType = isset($_SESSION['ac_type']) ? strtolower((string)$_SESSION['ac_type']) : '';
+
+    // Prioritize employee check for non-root accounts
+    if ($uid !== 1 && ($role === 'employee' || $acType === 'employee' || $acl === 3)) {
+        return 'employee';
+    }
+
+    // Root user ID 1 or access level 1 is canonical superadmin
+    if ($acl === 1 || $uid === 1) {
         return 'superadmin';
+    }
+
+    if ($acl === 2 || $role === 'admin' || $acType === 'admin') {
+        return 'admin';
     }
 
     if (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== '') {
