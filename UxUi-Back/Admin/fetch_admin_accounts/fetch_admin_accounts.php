@@ -91,8 +91,8 @@ if ($res && $res->num_rows > 0) {
         $id = (int)$row['id'];
         $isRoot = ($id === 1);
         $acTypeRaw = trim($row['ac_type'] ?? '');
-        $isSuperAdmin = ($isRoot || strtolower($acTypeRaw) === 'super_admin');
-        $isAdmin = (strtolower($acTypeRaw) === 'admin' || (int)$row['main_user_account_access_level_list_id'] === 1);
+        $isSuperAdmin = ($isRoot || strtolower($acTypeRaw) === 'super_admin' || (int)$row['main_user_account_access_level_list_id'] === 1);
+        $isAdmin = (strtolower($acTypeRaw) === 'admin' || (int)$row['main_user_account_access_level_list_id'] === 2);
         $isActive = ((int)$row['account_active_state'] === 1 && (int)$row['email_verify'] === 1 && (int)$row['ast'] === 1 && (int)$row['full_block'] === 0);
         $isPending = (!$isRoot && ((int)$row['account_active_state'] === 0 || (int)$row['email_verify'] === 0) && (int)$row['full_block'] === 0);
         $isBlocked = ((int)$row['full_block'] === 1 || (int)$row['ast'] === 0);
