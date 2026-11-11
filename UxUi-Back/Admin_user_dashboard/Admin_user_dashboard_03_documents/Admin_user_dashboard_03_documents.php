@@ -170,9 +170,18 @@
     max-width: 540px;
   }
 
+  #docsFilterGroup,
+  #reqsFilterGroup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
   .doc-search-box {
     position: relative;
     flex: 1;
+    min-width: 220px;
   }
   .doc-search-box svg {
     position: absolute;
@@ -212,6 +221,11 @@
     outline: none;
     cursor: pointer;
     transition: border-color 0.15s ease;
+    width: 180px;
+    flex-shrink: 0;
+  }
+  #reqStatusFilter.doc-select {
+    width: 170px;
   }
   .doc-select:focus {
     border-color: var(--blue);
@@ -696,16 +710,17 @@
   }
 
   /* Phone & Mobile Media Queries */
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     #Admin_user_dashboard_03_documents {
-      min-height: 100vh !important;
+      min-height: calc(100vh - 40px) !important;
       height: auto !important;
       max-height: none !important;
       overflow-x: hidden !important;
       overflow-y: visible !important;
-      padding: 0 10px 72px !important;
+      padding: 0 12px 64px !important;
       width: 100% !important;
-      max-width: 100vw !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
     }
     #Admin_user_dashboard_03_documents .main {
       margin-left: 0 !important;
@@ -715,13 +730,12 @@
       min-width: 0 !important;
       height: auto !important;
       max-height: none !important;
-      overflow-x: hidden !important;
-      overflow-y: visible !important;
+      overflow: visible !important;
     }
     #Admin_user_dashboard_03_documents .topbar {
       width: 100% !important;
-      margin: 0 0 12px !important;
-      padding: 0 10px !important;
+      margin: 0 0 16px !important;
+      padding: 0 12px !important;
       height: 58px !important;
       min-height: 58px !important;
       max-height: 58px !important;
@@ -738,98 +752,151 @@
     #Admin_user_dashboard_03_documents .admin-pill span { display: none; }
     
     .doc-main-card {
-      border: none !important;
-      box-shadow: none !important;
-      background: transparent !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: var(--shadow-sm) !important;
+      background: #ffffff !important;
       padding: 0 !important;
-      border-radius: 0 !important;
+      border-radius: 14px !important;
       height: auto !important;
       max-height: none !important;
+      overflow: hidden !important;
+      width: 100% !important;
     }
 
     .doc-toolbar {
       flex-direction: column;
       align-items: stretch;
-      gap: 10px;
+      gap: 12px;
       padding: 12px;
       background: #ffffff;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border) !important;
+      border-radius: 14px 14px 0 0 !important;
+      margin-bottom: 0 !important;
     }
     .doc-toolbar-left {
       max-width: 100%;
       width: 100%;
-      flex-direction: row !important;
-      gap: 8px;
+      min-width: 0 !important;
     }
     #docsFilterGroup,
     #reqsFilterGroup {
       display: flex !important;
-      flex-direction: row !important;
-      align-items: center !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
       gap: 8px !important;
       width: 100% !important;
+      min-width: 0 !important;
     }
     .doc-search-box {
-      flex: 1 1 auto !important;
+      width: 100% !important;
       min-width: 0 !important;
-      width: auto !important;
+      flex: none !important;
     }
     .doc-search-input {
       width: 100% !important;
       box-sizing: border-box !important;
-      padding-right: 8px !important;
-      font-size: 12.5px !important;
+      padding-right: 12px !important;
+      font-size: 13px !important;
+      height: 40px !important;
     }
     .doc-select {
-      flex: 0 0 130px !important;
-      width: 130px !important;
-      max-width: 42% !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      flex: none !important;
       box-sizing: border-box !important;
-      font-size: 12px !important;
-      padding: 7.5px 8px !important;
+      font-size: 13px !important;
+      padding: 8px 12px !important;
+      height: 40px !important;
     }
     .doc-toolbar-right {
       display: flex !important;
       flex-direction: column !important;
       align-items: stretch !important;
-      width: 100%;
-      gap: 8px;
+      width: 100% !important;
+      gap: 8px !important;
     }
     .doc-subnav-tabs {
-      display: flex;
-      width: 100%;
-      gap: 4px;
-      padding: 3px;
-      box-sizing: border-box;
+      display: flex !important;
+      width: 100% !important;
+      gap: 4px !important;
+      padding: 4px !important;
+      box-sizing: border-box !important;
+      background: #f1f5f9 !important;
+      border-radius: 10px !important;
     }
     .doc-tab-pill {
-      flex: 1 1 0;
-      min-width: 0;
-      justify-content: center;
-      padding: 8px 6px;
-      gap: 5px;
-      font-size: 11.5px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+      justify-content: center !important;
+      padding: 8px 6px !important;
+      gap: 6px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      border-radius: 8px !important;
     }
     .doc-tab-pill i { display: inline-block; }
     #btnOpenReqModal {
-      width: 100%;
-      justify-content: center;
-      padding: 10px 14px !important;
+      width: 100% !important;
+      justify-content: center !important;
+      padding: 10px 16px !important;
       font-size: 13px !important;
+      font-weight: 700 !important;
+      border-radius: 8px !important;
     }
 
-    .doc-table-wrap { display: none !important; }
+    /* Full width table with no side scroll - all 5 columns displayed fitting 100% */
+    .doc-table-wrap {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+    table.doc-table {
+      min-width: 100% !important;
+      width: 100% !important;
+      table-layout: fixed !important;
+    }
+    table.doc-table thead th {
+      font-size: 8.5px !important;
+      padding: 8px 3px !important;
+      letter-spacing: 0 !important;
+      text-overflow: ellipsis !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+      line-height: 1.2 !important;
+    }
+    table.doc-table tbody td {
+      font-size: 10px !important;
+      padding: 7px 3px !important;
+      text-overflow: ellipsis !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+    }
+    /* Mobile column proportion displaying ALL columns (sum: 23 + 20 + 22 + 18 + 17 = 100%) */
+    table.doc-table .col-emp { width: 23% !important; }
+    table.doc-table .col-type { width: 20% !important; }
+    table.doc-table .col-file { width: 22% !important; }
+    table.doc-table .col-date { width: 18% !important; display: table-cell !important; }
+    table.doc-table .col-actions { width: 17% !important; display: table-cell !important; padding: 4px 1px !important; }
+    
+    .emp-avatar { width: 20px !important; height: 20px !important; font-size: 8.5px !important; }
+    .emp-name { font-size: 10px !important; }
+    .emp-id-badge { font-size: 8.5px !important; }
+    .doc-type-badge { font-size: 8.5px !important; padding: 1.5px 3px !important; }
+    .file-ext-icon { width: 18px !important; height: 18px !important; font-size: 9px !important; }
+    .file-name { font-size: 9.5px !important; }
+    .file-size { display: none !important; }
+    .action-btn { width: 22px !important; height: 22px !important; }
+    .action-btn svg { width: 11px !important; height: 11px !important; }
+    .row-actions { gap: 2px !important; }
+
     .mobile-doc-cards { 
-      display: flex !important; 
-      padding: 0 !important; 
-      background: transparent !important;
-      gap: 12px;
+      display: none !important;
     }
     .mobile-doc-card {
       width: 100%;
@@ -871,19 +938,45 @@
     .mobile-doc-actions { flex-wrap: wrap; gap: 6px; }
     .btn-mobile-action { min-width: 0; padding: 8px 6px; }
     #adminDocRequestsSection {
-      padding: 12px 0 !important;
-      overflow: visible !important;
+      padding: 12px 10px !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
     }
-    #adminDocRequestsSection > div:first-child h3 { font-size: 15px !important; }
+    #adminDocRequestsSection > div:first-child h3 { font-size: 14px !important; }
+    #reqTableWrap {
+      display: block !important;
+      width: 100% !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+    #reqTableWrap table.doc-table {
+      min-width: 100% !important;
+      width: 100% !important;
+      table-layout: fixed !important;
+    }
+    #reqTableWrap table.doc-table thead th {
+      font-size: 8.5px !important;
+      padding: 8px 3px !important;
+      letter-spacing: 0 !important;
+      text-overflow: ellipsis !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+    }
+    #reqTableWrap table.doc-table tbody td {
+      font-size: 10px !important;
+      padding: 7px 3px !important;
+      text-overflow: ellipsis !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+    }
+    #reqTableWrap table.doc-table th:nth-child(1), #reqTableWrap table.doc-table td:nth-child(1) { width: 22% !important; }
+    #reqTableWrap table.doc-table th:nth-child(2), #reqTableWrap table.doc-table td:nth-child(2) { width: 18% !important; }
+    #reqTableWrap table.doc-table th:nth-child(3), #reqTableWrap table.doc-table td:nth-child(3) { width: 17% !important; display: table-cell !important; }
+    #reqTableWrap table.doc-table th:nth-child(4), #reqTableWrap table.doc-table td:nth-child(4) { width: 15% !important; }
+    #reqTableWrap table.doc-table th:nth-child(5), #reqTableWrap table.doc-table td:nth-child(5) { width: 14% !important; }
+    #reqTableWrap table.doc-table th:nth-child(6), #reqTableWrap table.doc-table td:nth-child(6) { width: 14% !important; }
     #reqMobileCards {
-      display: flex !important;
-      width: 100%;
-      min-width: 0;
-    }
-    #reqMobileCards > div {
-      width: 100%;
-      min-width: 0;
-      overflow: hidden;
+      display: none !important;
     }
   }
 
@@ -934,13 +1027,13 @@
         <!-- 1. Left: Search + Filter Controls -->
         <div class="doc-toolbar-left" style="display:flex; align-items:center; gap:10px; flex:1; max-width:540px; min-width:0;">
           <!-- Documents Filters (shown when on All Documents) -->
-          <div id="docsFilterGroup" style="display:flex; align-items:center; gap:10px; width:100%;">
-            <div class="doc-search-box" style="flex:1; min-width:220px;">
+          <div id="docsFilterGroup">
+            <div class="doc-search-box">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
               <input type="text" id="docSearchInput" class="doc-search-input" placeholder="Search by employee, file name, or ID..." oninput="filterAdminDocs();">
             </div>
 
-            <select id="docTypeFilter" class="doc-select" onchange="filterAdminDocs();" style="width:180px; flex-shrink:0;">
+            <select id="docTypeFilter" class="doc-select" onchange="filterAdminDocs();">
               <option value="all">All Document Types</option>
               <option value="CV">CV</option>
               <option value="National ID">National ID</option>
@@ -953,13 +1046,13 @@
           </div>
 
           <!-- Requests Filters (shown when on Document Requests) -->
-          <div id="reqsFilterGroup" style="display:none; align-items:center; gap:10px; width:100%;">
-            <div class="doc-search-box" style="flex:1; min-width:220px;">
+          <div id="reqsFilterGroup" style="display:none;">
+            <div class="doc-search-box">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
               <input type="text" id="reqSearchInput" class="doc-search-input" placeholder="Search requests by employee, doc type..." oninput="filterDocRequests();">
             </div>
 
-            <select id="reqStatusFilter" class="doc-select" onchange="filterDocRequests();" style="width:170px; flex-shrink:0;">
+            <select id="reqStatusFilter" class="doc-select" onchange="filterDocRequests();">
               <option value="all">All Statuses</option>
               <option value="Pending">Pending</option>
               <option value="Uploaded">Uploaded (Ready)</option>
