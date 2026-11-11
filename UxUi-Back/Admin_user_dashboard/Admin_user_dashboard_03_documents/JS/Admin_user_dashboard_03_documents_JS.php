@@ -753,7 +753,6 @@ function reqActions(row, pth) {
 function renderDocumentRequests(data, pth) {
   var tbody = document.getElementById('reqTableBody');
   var mobileCards = document.getElementById('reqMobileCards');
-  var isMobile = window.innerWidth <= 768;
 
   if (!data || data.length === 0) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:48px; color:#64748b;"><div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><i class="fa-solid fa-inbox" style="font-size:28px; color:#cbd5e1;"></i><span>No document requests yet.</span></div></td></tr>';
@@ -761,7 +760,7 @@ function renderDocumentRequests(data, pth) {
     return;
   }
 
-  // Desktop
+  // Desktop & Mobile Table View
   if (tbody) {
     tbody.innerHTML = data.map(function(r) {
       var dl = r.deadline ? r.deadline.slice(0,10) : '—';
