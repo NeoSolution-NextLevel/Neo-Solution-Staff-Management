@@ -766,32 +766,64 @@
       flex-direction: row !important;
       gap: 8px;
     }
-    #docsFilterGroup,
-    #reqsFilterGroup {
+    #docsFilterGroup {
       display: flex !important;
       flex-direction: row !important;
       align-items: center !important;
+      flex-wrap: nowrap !important;
       gap: 8px !important;
       width: 100% !important;
+      min-width: 0 !important;
+    }
+    #reqsFilterGroup {
+      display: none;
+    }
+    #docsFilterGroup[style*="display: none"] {
+      display: none !important;
+    }
+    #reqsFilterGroup[style*="display: flex"] {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      flex-wrap: nowrap !important;
+      gap: 8px !important;
+      width: 100% !important;
+      min-width: 0 !important;
     }
     .doc-search-box {
-      flex: 1 1 auto !important;
+      flex: 1 1 50% !important;
+      width: 50% !important;
       min-width: 0 !important;
-      width: auto !important;
+      height: 38px !important;
+      padding: 0 10px !important;
+      display: flex !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
     }
     .doc-search-input {
       width: 100% !important;
+      min-width: 0 !important;
       box-sizing: border-box !important;
       padding-right: 8px !important;
-      font-size: 12.5px !important;
+      font-size: 12px !important;
+      height: 36px !important;
+      border: none !important;
+      outline: none !important;
+      background: transparent !important;
     }
     .doc-select {
-      flex: 0 0 130px !important;
-      width: 130px !important;
-      max-width: 42% !important;
+      flex: 1 1 50% !important;
+      width: 50% !important;
+      max-width: 50% !important;
+      min-width: 0 !important;
       box-sizing: border-box !important;
-      font-size: 12px !important;
-      padding: 7.5px 8px !important;
+      font-size: 11.5px !important;
+      padding: 0 8px !important;
+      height: 38px !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      display: flex !important;
+      align-items: center !important;
     }
     .doc-toolbar-right {
       display: flex !important;
