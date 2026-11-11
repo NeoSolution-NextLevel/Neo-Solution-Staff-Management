@@ -711,6 +711,57 @@ header.topbar p,
         width: 100% !important;
         table-layout: fixed !important;
     }
+
+    /* Global override: Job Roles toolbar search & team filter in one row on mobile (equal 50/50 size) */
+    [id^="Admin_user_dashboard_06_job_roles"] .roles-toolbar,
+    [id^="Super_Admin_user_dashboard_06_job_roles"] .roles-toolbar {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+        width: 100% !important;
+        margin-bottom: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    [id^="Admin_user_dashboard_06_job_roles"] .roles-search-box,
+    [id^="Super_Admin_user_dashboard_06_job_roles"] .roles-search-box {
+        flex: 1 1 50% !important;
+        width: 50% !important;
+        min-width: 0 !important;
+        height: 38px !important;
+        padding: 0 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        box-sizing: border-box !important;
+    }
+
+    [id^="Admin_user_dashboard_06_job_roles"] .roles-search-box input,
+    [id^="Super_Admin_user_dashboard_06_job_roles"] .roles-search-box input {
+        min-width: 0 !important;
+        width: 100% !important;
+        font-size: 12px !important;
+        border: none !important;
+        outline: none !important;
+        background: transparent !important;
+    }
+
+    [id^="Admin_user_dashboard_06_job_roles"] .team-filter-select,
+    [id^="Super_Admin_user_dashboard_06_job_roles"] .team-filter-select {
+        flex: 1 1 50% !important;
+        width: 50% !important;
+        max-width: 50% !important;
+        min-width: 0 !important;
+        height: 38px !important;
+        padding: 0 8px !important;
+        font-size: 11.5px !important;
+        box-sizing: border-box !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        display: flex !important;
+        align-items: center !important;
+    }
 }
 
 @media (max-width: 900px) {
