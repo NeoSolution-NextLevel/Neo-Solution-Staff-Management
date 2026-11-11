@@ -37,7 +37,8 @@ body {
 
 /* Base container reset */
 [id^="Admin_user_dashboard_"],
-[id^="Super_Admin_user_dashboard_"] {
+[id^="Super_Admin_user_dashboard_"],
+#Employee_user_dashboard_03_personal_details {
     flex: 1 0 auto;
     min-height: calc(100vh - 60px);
     margin-top: 0 !important;
@@ -45,9 +46,21 @@ body {
     box-sizing: border-box !important;
 }
 
+/* Eliminate W3.CSS pseudo-elements on dashboard containers that cause top gaps/spacing */
+[id^="Admin_user_dashboard_"]::before,
+[id^="Admin_user_dashboard_"]::after,
+[id^="Super_Admin_user_dashboard_"]::before,
+[id^="Super_Admin_user_dashboard_"]::after,
+#Employee_user_dashboard_03_personal_details::before,
+#Employee_user_dashboard_03_personal_details::after {
+    display: none !important;
+    content: none !important;
+}
+
 /* Prevent nested inner containers from duplicating margin or shrinking width, and eliminate top gap */
 [id^="Admin_user_dashboard_"]:not([style*="display: none"]):not([style*="display:none"]),
-[id^="Super_Admin_user_dashboard_"]:not([style*="display: none"]):not([style*="display:none"]) {
+[id^="Super_Admin_user_dashboard_"]:not([style*="display: none"]):not([style*="display:none"]),
+#Employee_user_dashboard_03_personal_details:not([style*="display: none"]):not([style*="display:none"]) {
     flex: 1 0 auto !important;
     display: flex !important;
     flex-direction: column !important;
@@ -56,6 +69,7 @@ body {
 
 [id^="Admin_user_dashboard_"],
 [id^="Super_Admin_user_dashboard_"],
+#Employee_user_dashboard_03_personal_details,
 [id^="Admin_user_dashboard_"] .main,
 [id^="Admin_user_dashboard_"] .main-wrapper,
 [id^="Admin_user_dashboard_"] .w3-main-content,
@@ -77,7 +91,8 @@ body {
 [id^="Super_Admin_user_dashboard_"] .leave-main-wrapper,
 [id^="Super_Admin_user_dashboard_"] .table-wrap,
 [id^="Super_Admin_user_dashboard_"] .table-card,
-[id^="Super_Admin_user_dashboard_"] .docs-container {
+[id^="Super_Admin_user_dashboard_"] .docs-container,
+#Employee_user_dashboard_03_personal_details .emp-pd-container {
     margin-top: 0 !important;
     padding-top: 0 !important;
     box-sizing: border-box !important;
@@ -165,7 +180,8 @@ body {
 .topbar,
 header.topbar,
 [id^="Admin_user_dashboard_"] .topbar,
-[id^="Super_Admin_user_dashboard_"] .topbar {
+[id^="Super_Admin_user_dashboard_"] .topbar,
+#Employee_user_dashboard_03_personal_details .topbar {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
@@ -180,6 +196,8 @@ header.topbar,
     position: sticky !important;
     top: 0 !important;
     margin-top: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     z-index: 99 !important;
 }
 
@@ -207,13 +225,16 @@ header.topbar,
     .topbar,
     header.topbar,
     [id^="Admin_user_dashboard_"] .topbar,
-    [id^="Super_Admin_user_dashboard_"] .topbar {
+    [id^="Super_Admin_user_dashboard_"] .topbar,
+    #Employee_user_dashboard_03_personal_details .topbar {
         height: 64px !important;
         min-height: 64px !important;
         max-height: 64px !important;
         padding: 0 20px !important;
         margin: 0 0 16px 0 !important;
         margin-top: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
         top: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
@@ -672,8 +693,8 @@ header.topbar p,
         -webkit-overflow-scrolling: touch !important;
     }
 
-    [id^="Admin_user_dashboard_"] table:not(.task-table),
-    [id^="Super_Admin_user_dashboard_"] table:not(.task-table) {
+    [id^="Admin_user_dashboard_"] table:not(.task-table):not(.doc-table),
+    [id^="Super_Admin_user_dashboard_"] table:not(.task-table):not(.doc-table) {
         min-width: 550px !important;
     }
 
@@ -681,6 +702,14 @@ header.topbar p,
     [id^="Super_Admin_user_dashboard_"] table.task-table {
         min-width: 100% !important;
         width: 100% !important;
+    }
+
+    /* doc-table must NOT get the 550px min-width — it's fixed 100% on mobile */
+    [id^="Admin_user_dashboard_"] table.doc-table,
+    [id^="Super_Admin_user_dashboard_"] table.doc-table {
+        min-width: 100% !important;
+        width: 100% !important;
+        table-layout: fixed !important;
     }
 }
 
@@ -895,6 +924,8 @@ body :is(
         max-width: 100% !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
+        margin-top: 0 !important;
+        top: 0 !important;
     }
 
     body.admin-sidebar-hidden :is(
