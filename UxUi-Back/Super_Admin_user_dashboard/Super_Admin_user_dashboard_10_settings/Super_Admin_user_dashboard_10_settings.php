@@ -204,12 +204,16 @@
     /* Top Navigation Header */
     .topbar {
       background: var(--sidebar-bg);
-      padding: 14px 28px;
+      padding: 0 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
       height: 64px;
+      margin: 0 0 16px 0;
+      top: 0;
+      position: sticky;
+      z-index: 99;
     }
 
     .topbar-left {
@@ -676,7 +680,13 @@
       }
 
       .topbar {
-        padding: 10px 14px;
+        padding: 0 12px !important;
+        height: 58px !important;
+        min-height: 58px !important;
+        max-height: 58px !important;
+        margin: 0 0 16px 0 !important;
+        top: 0 !important;
+        position: sticky !important;
       }
 
       .profile-pill span {
@@ -706,7 +716,12 @@
 
       #Super_Admin_user_dashboard_10_settings .topbar {
         height: 56px !important;
-        padding: 8px 10px !important;
+        min-height: 56px !important;
+        max-height: 56px !important;
+        padding: 0 10px !important;
+        margin: 0 0 14px 0 !important;
+        top: 0 !important;
+        position: sticky !important;
         gap: 8px !important;
       }
 
