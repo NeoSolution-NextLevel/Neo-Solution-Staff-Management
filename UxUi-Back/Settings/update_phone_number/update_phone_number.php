@@ -1,9 +1,10 @@
 <?php
 /**
  * update_phone_number.php
- * Updates phone number for the current logged-in user in both main_user_login and employee_profiles.
+ * Saves the logged-in user's phone number (main_user_login, plus employee_profiles / employees when present).
  */
 header('Content-Type: application/json; charset=utf-8');
+if (function_exists('mysqli_report')) { mysqli_report(MYSQLI_REPORT_OFF); }
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -25,32 +26,46 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$phone = trim($_POST['phone_number'] ?? '');
+// Normalise: drop spaces, dashes and brackets; keep digits and an optional leading +
+$phone = preg_replace('/[\s\-().]/', '', trim($_POST['phone_number'] ?? ''));
 if ($phone === '') {
     echo json_encode(['status' => 'error', 'message' => 'Phone number cannot be empty.']);
     exit;
+}
+if (!preg_match('/^\+?[0-9]{7,15}$/', $phone)) {
+    echo json_encode(['status' => 'error', 'message' => 'Enter a valid phone number (7-15 digits, optional + prefix), e.g. +94771234567.']);
+    exit;
+}
+
+function col_exists($conn, $table, $col) {
+    $r = $conn->query("SHOW COLUMNS FROM `{$table}` LIKE '" . $conn->real_escape_string($col) . "'");
+    return $r && $r->num_rows > 0;
 }
 
 try {
     $db = new DataBase();
     $conn = $db->get_data_base_connction();
     $uid = (int)$session_user_id;
-    $safePhone = mysqli_real_escape_string($conn, $phone);
+    $safePhone = $conn->real_escape_string($phone);
 
-    // Update main_user_login
-    $conn->query("UPDATE `main_user_login` SET `phone_number` = '{$safePhone}' WHERE `id` = {$uid}");
+    // Primary store - this one must succeed
+    if (!$conn->query("UPDATE `main_user_login` SET `phone_number` = '{$safePhone}' WHERE `id` = {$uid}")) {
+        throw new Exception('Could not save phone number (' . $conn->error . ').');
+    }
 
-    // Also update employee_profiles if exists
-    $conn->query("UPDATE `employee_profiles` SET `phone` = '{$safePhone}' WHERE `user_id` = {$uid}");
-
-    // Also update employees table if exists
-    $conn->query("UPDATE `employees` SET `phone_number` = '{$safePhone}' WHERE `user_id` = {$uid} OR `id` = {$uid}");
+    // Best-effort copies; a missing table/column must not fail the save
+    if (col_exists($conn, 'employee_profiles', 'phone')) {
+        $conn->query("UPDATE `employee_profiles` SET `phone` = '{$safePhone}' WHERE `user_id` = {$uid}");
+    }
+    if (col_exists($conn, 'employees', 'phone_number') && col_exists($conn, 'employees', 'main_user_login_id')) {
+        $conn->query("UPDATE `employees` SET `phone_number` = '{$safePhone}' WHERE `main_user_login_id` = {$uid}");
+    }
 
     $_SESSION['phone_number'] = $phone;
 
     echo json_encode([
         'status' => 'success',
-        'message' => 'Phone number updated successfully.',
+        'message' => 'Phone number saved successfully.',
         'phone_number' => $phone
     ]);
 } catch (\Throwable $e) {
