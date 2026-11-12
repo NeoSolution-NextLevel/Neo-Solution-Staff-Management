@@ -1,9 +1,12 @@
 <?php
 /**
  * toggle_two_factor.php
- * Handles turning 2FA ON or OFF directly from the Settings page.
+ * Turns 2FA OFF for the logged-in user.
+ * Turning it ON must go through OTP verification (View-List/Main/Two_Factor_Authentication/Two_Factor_Authentication.php),
+ * so 'enable' is refused here.
  */
 header('Content-Type: application/json; charset=utf-8');
+if (function_exists('mysqli_report')) { mysqli_report(MYSQLI_REPORT_OFF); }
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -25,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$action = trim($_POST['action'] ?? ''); // 'enable' or 'disable'
+$action = trim($_POST['action'] ?? '');
 $uid = (int)$session_user_id;
 
 try {
@@ -33,7 +36,9 @@ try {
     $conn = $db->get_data_base_connction();
 
     if ($action === 'disable') {
-        $conn->query("UPDATE `main_user_login` SET `is_two_factor_auth_enable` = 0 WHERE `id` = {$uid}");
+        if (!$conn->query("UPDATE `main_user_login` SET `is_two_factor_auth_enable` = 0 WHERE `id` = {$uid}")) {
+            throw new Exception('Could not disable Two-Factor Authentication (' . $conn->error . ').');
+        }
         echo json_encode([
             'status' => 'success',
             'message' => 'Two-Factor Authentication has been disabled.',
@@ -43,26 +48,9 @@ try {
     }
 
     if ($action === 'enable') {
-        // Check if phone number is available
-        $q = $conn->query("SELECT phone_number, user_name FROM `main_user_login` WHERE `id` = {$uid} LIMIT 1");
-        $phone = '';
-        if ($q && $r = $q->fetch_assoc()) {
-            $phone = trim($r['phone_number'] ?? '');
-        }
-        if (empty($phone)) {
-            echo json_encode([
-                'status' => 'error',
-                'require_phone' => true,
-                'message' => 'Please save your phone number before enabling Two-Factor Authentication.'
-            ]);
-            exit;
-        }
-
-        $conn->query("UPDATE `main_user_login` SET `is_two_factor_auth_enable` = 1 WHERE `id` = {$uid}");
         echo json_encode([
-            'status' => 'success',
-            'message' => 'Two-Factor Authentication has been enabled successfully.',
-            'is_two_factor_auth_enable' => true
+            'status' => 'error',
+            'message' => 'Two-Factor Authentication must be enabled by verifying a code sent to your phone/email.'
         ]);
         exit;
     }
