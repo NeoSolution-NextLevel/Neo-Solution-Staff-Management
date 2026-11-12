@@ -322,7 +322,7 @@
                     </div>
 
                     <!-- Notification Settings -->
-                    <div class="erp-form__section" style="display: none;">
+                    <!-- <div class="erp-form__section" style="display: none;">
                         <h3 class="erp-form__section-title">Notification Preferences</h3>
 
                         <div class="erp-notification-settings">
@@ -335,10 +335,10 @@
                                     <input type="checkbox" checked>
                                     <span class="erp-switch__slider"></span>
                                 </label>
-                            </div>
+                            </div> -->
 
 
-
+<!-- 
                             <div class="erp-notification-item">
                                 <div class="erp-notification-item__info">
                                     <i class="fas fa-comment-dots erp-profile-info__meta-icon"></i>
@@ -375,7 +375,7 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="erp-profile-actions">
+                    <!-- <div class="erp-profile-actions">
                         <button class="erp-btn erp-btn--secondary erp-btn--block-mobile" type="button">
                             <i class="fas fa-times"></i>
                             <span>Cancel</span>
@@ -389,7 +389,7 @@
 
             </div>
 
-        </div>
+        </div>  -->
 
         <!-- Footer: Displays copyright and version info -->
         <div class="erp-profile-card__footer">
