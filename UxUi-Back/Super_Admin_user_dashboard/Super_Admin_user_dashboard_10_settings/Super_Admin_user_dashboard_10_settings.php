@@ -1268,3 +1268,4 @@
   </div>
 
 </div>
+<?php include_once __DIR__ . '/../../Settings/security_settings_JS.php'; ?>
