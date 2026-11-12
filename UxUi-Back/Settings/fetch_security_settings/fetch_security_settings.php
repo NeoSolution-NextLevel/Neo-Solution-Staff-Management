@@ -1,9 +1,10 @@
 <?php
 /**
  * fetch_security_settings.php
- * Returns current user's phone number, 2FA status, and basic profile info.
+ * Returns the current user's phone number and 2FA status.
  */
 header('Content-Type: application/json; charset=utf-8');
+if (function_exists('mysqli_report')) { mysqli_report(MYSQLI_REPORT_OFF); }
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -22,31 +23,34 @@ if ($session_user_id === 0 || !empty($_SESSION['otp_pending'])) {
 try {
     $db = new DataBase();
     $conn = $db->get_data_base_connction();
-    $uid_esc = (int)$session_user_id;
+    $uid = (int)$session_user_id;
 
     $user_name = '';
     $phone_number = '';
     $is_two_factor_auth_enable = 0;
 
-    $q = $conn->query("SELECT id, user_name, phone_number, is_two_factor_auth_enable, first_name, last_name, name_show FROM `main_user_login` WHERE `id` = {$uid_esc} LIMIT 1");
-    if ($q && $r = $q->fetch_assoc()) {
+    $q = $conn->query("SELECT user_name, phone_number, is_two_factor_auth_enable FROM `main_user_login` WHERE `id` = {$uid} LIMIT 1");
+    if (!$q) {
+        throw new Exception('Could not read account settings (' . $conn->error . ').');
+    }
+    if ($r = $q->fetch_assoc()) {
         $user_name = $r['user_name'] ?? '';
-        $phone_number = $r['phone_number'] ?? '';
+        $phone_number = trim((string)($r['phone_number'] ?? ''));
         $is_two_factor_auth_enable = (int)($r['is_two_factor_auth_enable'] ?? 0);
     }
 
-    // Check employee_profiles for phone fallback
-    if (empty($phone_number)) {
-        $ep = $conn->query("SELECT phone, phone_number FROM `employee_profiles` WHERE `user_id` = {$uid_esc} LIMIT 1");
-        if ($ep && $epr = $ep->fetch_assoc()) {
-            $phone_number = !empty($epr['phone']) ? $epr['phone'] : (!empty($epr['phone_number']) ? $epr['phone_number'] : '');
+    // Fallback: phone stored on the employee profile (column is `phone`)
+    if ($phone_number === '') {
+        $ep = $conn->query("SELECT `phone` FROM `employee_profiles` WHERE `user_id` = {$uid} LIMIT 1");
+        if ($ep && ($epr = $ep->fetch_assoc()) && !empty($epr['phone'])) {
+            $phone_number = trim((string)$epr['phone']);
         }
     }
 
     echo json_encode([
         'status' => 'success',
         'data' => [
-            'user_id' => $session_user_id,
+            'user_id' => $uid,
             'user_name' => $user_name,
             'phone_number' => $phone_number,
             'is_two_factor_auth_enable' => $is_two_factor_auth_enable === 1
