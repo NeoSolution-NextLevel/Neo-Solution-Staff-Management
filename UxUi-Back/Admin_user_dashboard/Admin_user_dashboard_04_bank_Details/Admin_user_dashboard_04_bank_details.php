@@ -28,17 +28,17 @@
 
   #Admin_user_dashboard_04_bank_details {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
     overflow-x: hidden;
   }
 
   /* Main Container */
   .main{
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    max-width: calc(100% - 250px);
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
     min-height: auto;
-    padding: 16px 20px 24px;
+    padding: 0;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
   }

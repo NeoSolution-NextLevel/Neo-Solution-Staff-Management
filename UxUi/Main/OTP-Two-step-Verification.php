@@ -391,6 +391,11 @@
 <body>
     <?php
     include_once '../../UxUi-Back/Common/header.php';
+    $current_email = isset($_GET['email']) && !empty($_GET['email'])
+        ? trim($_GET['email'])
+        : (isset($_SESSION['temp_otp_email']) && !empty($_SESSION['temp_otp_email'])
+            ? trim($_SESSION['temp_otp_email'])
+            : (isset($_SESSION['user_name']) ? trim($_SESSION['user_name']) : ''));
     ?>
     <div class="erp-container erp-container--login">
         <div class="erp-login-card">
@@ -421,7 +426,9 @@
                             <span id="error-message">Error message will appear here</span>
                         </div> -->
 
-                        <span class="erp-form__hint">Enter the code sent to your registered email or mobile</span>
+                        <span class="erp-form__hint">
+                            Enter the 6-digit code sent to your registered email <?php echo !empty($current_email) ? '<strong style="color: #2563eb;">(' . htmlspecialchars($current_email) . ')</strong>' : ''; ?> or mobile.
+                        </span>
                     </div>
 
                     <div class="erp-form__group erp-mt-lg">
@@ -442,7 +449,7 @@
 
                     <!-- Back to Login Option: In case of issues -->
                     <div class="erp-text-center erp-mt-xl">
-                        <a href="<?php echo $home_page; ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention; ?>" class="erp-link erp-text-sm">Back to Login</a>
+                        <a href="<?php echo $home_page; ?><?php echo $User_login_url; ?>User-Login<?php echo $online_offline_extention; ?>?relogin=1" class="erp-link erp-text-sm">Back to Login</a>
                     </div>
                 </form>
             </div>
@@ -457,12 +464,12 @@
     <!-- JavaScript for dynamic year and basic OTP handling 123456-->
 
     <script>
+        const currentOtpEmail = "<?php echo htmlspecialchars($current_email); ?>";
+
         function OTP_Two_step_verification_config_functions(otp) {
 
             const params = new URLSearchParams(window.location.search);
             const Type = params.get("type");
-
-            alert("Type : " + Type);
 
             if (Type == "Google-Authentication") {
                 OTP_Two_step_Verification_A_01_from_01_SUMBIT(otp)
@@ -714,49 +721,73 @@
                 return;
             }
 
-            // Here you would typically send the OTP to your backend for verification
-            console.log('OTP submitted:', otp);
-
-            // Simulate verification - replace with actual API call
-            // For demo, show success
-            alert('OTP verified successfully! In a real app, this would redirect to dashboard.');
-            OTP_Two_step_verification_config_functions(otp);
-
-            // Example error:
-            // showError('Invalid verification code. Please try again.');
-            // showError('Verification code expired. Please request a new one.');
-
-            // On success, you would redirect or show success message
-            // window.location.href = '/dashboard.html';
+            // Send OTP to backend for verification
+            $.ajax({
+                url: '../../UxUi-Back/Employee/forms/verify_employee_otp.php',
+                type: 'POST',
+                data: { 
+                    otp_code: otp,
+                    email: currentOtpEmail
+                },
+                success: function(res) {
+                    try {
+                        const json = typeof res === 'object' ? res : JSON.parse(res);
+                        if (json.status === 'success') {
+                            window.location.href = json.data && json.data.redirect_url ? json.data.redirect_url : 'Successful-Page.php?message=Account-Verified-Successfully';
+                        } else {
+                            showError(json.message || 'Invalid verification code. Please try again.');
+                        }
+                    } catch (e) {
+                        showError('Invalid verification code. Please check your SMS and try again.');
+                    }
+                },
+                error: function() {
+                    showError('Network error during OTP verification.');
+                }
+            });
         });
 
         // Resend code handler
         resendBtn.addEventListener('click', function() {
-            // Here you would call your backend to resend the code
-            console.log('Resend code requested');
-
-            // Clear OTP inputs
-            otpInputs.forEach(input => {
-                input.value = '';
-            });
-
-            // Focus on first input
+            otpInputs.forEach(input => { input.value = ''; });
             otpInputs[0].focus();
-
-            // Hide any errors
             hideError();
 
-            // Show success message (temporary)
             const originalText = resendBtn.innerHTML;
-            const originalDisabled = resendBtn.disabled;
-            resendBtn.innerHTML = '<i class="fas fa-check"></i><span>Code Sent!</span>';
+            resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Sending...</span>';
             resendBtn.disabled = true;
 
-            // Reset button after 3 seconds
-            setTimeout(() => {
-                resendBtn.innerHTML = originalText;
-                resendBtn.disabled = originalDisabled;
-            }, 3000);
+            $.ajax({
+                url: '../../UxUi-Back/Employee/forms/resend_otp.php',
+                type: 'POST',
+                data: {
+                    email: currentOtpEmail
+                },
+                success: function(res) {
+                    try {
+                        const json = typeof res === 'object' ? res : JSON.parse(res);
+                        if (json.status === 'success') {
+                            resendBtn.innerHTML = '<i class="fas fa-check"></i><span>Code Sent!</span>';
+                        } else {
+                            showError(json.message || 'Could not resend code.');
+                            resendBtn.innerHTML = originalText;
+                            resendBtn.disabled = false;
+                            return;
+                        }
+                    } catch (e) {
+                        resendBtn.innerHTML = '<i class="fas fa-check"></i><span>Code Sent!</span>';
+                    }
+                    setTimeout(() => {
+                        resendBtn.innerHTML = originalText;
+                        resendBtn.disabled = false;
+                    }, 4000);
+                },
+                error: function() {
+                    showError('Network error while requesting code.');
+                    resendBtn.innerHTML = originalText;
+                    resendBtn.disabled = false;
+                }
+            });
         });
 
         // Optional: Auto-focus first OTP input on page load

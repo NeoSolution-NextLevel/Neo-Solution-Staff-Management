@@ -1,6 +1,39 @@
 <?php
 include_once '../../imports/need/session_setup.php';
-redirect_if_logged_in();
+
+// If explicitly requesting relogin or returning from an alert/verification page, clean the auth session
+if (isset($_GET['relogin']) || isset($_GET['logout']) || isset($_GET['action']) || !empty($_SESSION['otp_pending'])) {
+    unset(
+        $_SESSION['user'],
+        $_SESSION['user_id'],
+        $_SESSION['temp_user'],
+        $_SESSION['otp_pending'],
+        $_SESSION['otp_encrypt'],
+        $_SESSION['session_token'],
+        $_SESSION['user_main_cook_id'],
+        $_SESSION['main_user_account_access_level_list_id'],
+        $_SESSION['url_home'],
+        $_SESSION['user_role'],
+        $_SESSION['ac_type'],
+        $_SESSION['full_name'],
+        $_SESSION['first_name'],
+        $_SESSION['last_name'],
+        $_SESSION['name_show'],
+        $_SESSION['department'],
+        $_SESSION['job_title'],
+        $_SESSION['profile_pic'],
+        $_SESSION['employee_id_code'],
+        $_SESSION['employee_profile_id'],
+        $_SESSION['temp_otp_user_id'],
+        $_SESSION['temp_otp_email']
+    );
+    if (isset($_COOKIE['main_user_account_cook'])) {
+        setcookie('main_user_account_cook', '', time() - 3600, '/');
+    }
+} else {
+    redirect_if_logged_in();
+}
+$is_auth_page = true;
 ?>
 <!DOCTYPE html>
 <html lang="en">

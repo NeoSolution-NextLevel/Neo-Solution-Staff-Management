@@ -10,9 +10,9 @@
         var val_04_child_01 = document.getElementById("User_Registration_A_01_val_04_child_01"); // Password
         var val_04_child_02 = document.getElementById("User_Registration_A_01_val_04_child_02"); // confirm password 
 
-        var val_05 = document.getElementById("User_Registration_A_01_val_05_select_obj"); // Department
-        var val_06 = document.getElementById("User_Registration_A_01_val_06"); // Department
-
+        var val_05 = document.getElementById("User_Registration_A_01_val_05_select_obj"); // Role
+        var val_06 = document.getElementById("User_Registration_A_01_val_06"); // Job Title
+        var val_09 = document.getElementById("User_Registration_A_01_val_09"); // Department
 
         var agree_check_box = document.getElementById("User_Registration_A_01_val_07"); // Agree checkbox 
 
@@ -34,110 +34,66 @@
         var val_01 = val_01_child_01.value + " " + val_01_child_02.value;
 
         var Sending_value = "val_01=" + encodeURIComponent(val_01) +
-            "&val_02=" + encodeURIComponent(val_02.value) +
-            "&val_03=" + encodeURIComponent(val_03.value) +
-            "&val_04=" + encodeURIComponent(val_04_child_01.value) +
-            "&val_05=" + encodeURIComponent(val_05.value) +
-            "&val_06=" + encodeURIComponent(val_06.value) +
-            "&val_07=" + encodeURIComponent(val_01_child_01.value) +
-            "&val_08=" + encodeURIComponent(val_01_child_02.value);
+            "&val_02=" + encodeURIComponent(val_02 ? val_02.value : "") +
+            "&val_03=" + encodeURIComponent(val_03 ? val_03.value : "") +
+            "&val_04=" + encodeURIComponent(val_04_child_01 ? val_04_child_01.value : "") +
+            "&val_05=" + encodeURIComponent(val_05 ? val_05.value : "1") +
+            "&val_06=" + encodeURIComponent(val_06 ? val_06.value : "Administrator") +
+            "&val_07=" + encodeURIComponent(val_01_child_01 ? val_01_child_01.value : "") +
+            "&val_08=" + encodeURIComponent(val_01_child_02 ? val_01_child_02.value : "") +
+            "&val_09=" + encodeURIComponent(val_09 ? val_09.value : "Administration");
 
         $.ajax({
-            url: "<?php echo $pth; ?>View-List/Main/Main_User_Login_Account_Create/New_Main_User_Login_Create.php",
+            url: "<?php echo $home_page; ?>View-List/Main/Main_User_Login_Account_Create/New_Main_User_Login_Create.php",
             type: "POST",
             data: Sending_value,
             success: function(res) {
-                console.log(res);
+                console.log("Registration response:", res);
 
                 try {
-                    var json = JSON.parse(res);
+                    var json = (typeof res === "object") ? res : JSON.parse(typeof res === "string" ? res.trim() : res);
 
                     if (json[0].error === "0") {
-                        var sucessMsg = encodeURIComponent("User-Registration-Successful");
+                        var sucessMsg = (json[0].status === "pending_approval") 
+                            ? encodeURIComponent("Admin-Registration-Pending-Approval")
+                            : encodeURIComponent("User-Registration-Successful");
                         window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Successful-Page<?php echo $online_offline_extention ?>?message=" + sucessMsg;
-
-
                     } else {
 
                         if (json[0].error === "Already have this email") {
                             var errorMsg = encodeURIComponent("email-already-exist");
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
 
+                        } else if (json[0].error === "Missing required fields") {
+                            alert("Please fill in all required fields (Name, Corporate Email, Password).");
                         } else {
-
-                            var errorMsg = encodeURIComponent("Service-Error");
+                            var rawErr = json[0].error || "Registration-Error";
+                            var errorMsg = encodeURIComponent(String(rawErr).replace(/\s+/g, '-'));
                             window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
                         }
-
 
                     }
 
                 } catch (e) {
+                    console.error("Registration JSON parse error:", e, res);
                     var errorMsg = encodeURIComponent("Service-Error");
                     window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error("Registration request failed:", status, error);
+                var errorMsg = encodeURIComponent("Service-Error");
+                window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
             }
         });
 
     }
 
     function User_Registration_A_01_main_user_account_access_level_list() {
-
         var container = document.getElementById("User_Registration_A_01_val_05_select_obj");
-
-        // Clear existing options
-        container.innerHTML = "";
-
-        // Add default option
-        var defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.disabled = true;
-        defaultOption.text = "Select Account Role";
-        container.appendChild(defaultOption);
-
-        $.ajax({
-            url: "<?php echo $pth; ?>View-List/Main/main_user_account_access_level_list/main_user_account_access_level_list_LIST.php",
-            type: "POST",
-            success: function(response) {
-                try {
-                    var json_data = JSON.parse(response);
-                    if (json_data && json_data.length > 0) {
-                        for (var i = 0; i < json_data.length; i++) {
-                            User_Registration_A_01_main_user_account_access_level_list_SET_DATA(json_data[i]);
-                        }
-                    } else {
-                        addDefaultRoleOptions(container);
-                    }
-                } catch(e) {
-                    addDefaultRoleOptions(container);
-                }
-            },
-            error: function(xhr, status, error) {
-                addDefaultRoleOptions(container);
-            }
-        });
-    }
-
-    function addDefaultRoleOptions(container) {
-        var opt1 = document.createElement("option");
-        opt1.value = "2";
-        opt1.textContent = "Employee";
-        opt1.selected = true;
-        container.appendChild(opt1);
-    }
-
-    function User_Registration_A_01_main_user_account_access_level_list_SET_DATA(json) {
-        // Exclude Admin from public registration: only database admins are allowed
-        if (json.id == "1" || (json.type_of_access && json.type_of_access.toLowerCase() === 'admin')) {
-            return;
+        if (!container) return;
+        if (container.options.length === 0) {
+            container.add(new Option("Administrator", "Admin"));
         }
-        var select = document.getElementById("User_Registration_A_01_val_05_select_obj");
-        var option = document.createElement("option");
-        option.value = json.id;
-        option.textContent = json.type_of_access;
-        if (json.id == "2" || json.type_of_access.toLowerCase() === 'employee') {
-            option.selected = true;
-        }
-        select.appendChild(option);
     }
 </script>

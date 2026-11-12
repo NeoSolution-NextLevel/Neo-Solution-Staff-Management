@@ -1,11 +1,6 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<link rel="stylesheet" href="<?php echo isset($home_page) ? $home_page : '../'; ?>UxUi-Back/assets/css/portals/sidebar-admin.css">
-
-
 <aside class="admin-sidebar" id="adminSidebar">
 
     <!-- Brand Logo & Mobile Close Button -->
@@ -20,70 +15,70 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <!-- Navigation Links -->
     <nav class="sidebar-menu">
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_01_OPEN==='function'){ Admin_user_dashboard_01_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_01_OPEN==='function'){ Super_Admin_user_dashboard_01_OPEN(); } else if(typeof Admin_user_dashboard_01_OPEN==='function'){ Admin_user_dashboard_01_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="dashboard"
            class="sidebar-link active">
             <i class="fa-solid fa-gauge-high"></i>
             <span>Dashboard</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_02_OPEN==='function'){ Admin_user_dashboard_02_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_02_OPEN==='function'){ Super_Admin_user_dashboard_02_OPEN(); } else if(typeof Admin_user_dashboard_02_OPEN==='function'){ Admin_user_dashboard_02_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="employees"
            class="sidebar-link">
             <i class="fa-solid fa-users"></i>
             <span>Employees</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_03_OPEN==='function'){ Admin_user_dashboard_03_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_03_OPEN==='function'){ Super_Admin_user_dashboard_03_OPEN(); } else if(typeof Admin_user_dashboard_03_OPEN==='function'){ Admin_user_dashboard_03_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="documents"
            class="sidebar-link">
             <i class="fa-solid fa-folder-open"></i>
             <span>Documents</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_04_OPEN==='function'){ Admin_user_dashboard_04_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_04_OPEN==='function'){ Super_Admin_user_dashboard_04_OPEN(); } else if(typeof Admin_user_dashboard_04_OPEN==='function'){ Admin_user_dashboard_04_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="bank_details"
            class="sidebar-link">
             <i class="fa-solid fa-building-columns"></i>
             <span>Bank Details</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_05_OPEN==='function'){ Admin_user_dashboard_05_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_05_OPEN==='function'){ Super_Admin_user_dashboard_05_OPEN(); } else if(typeof Admin_user_dashboard_05_OPEN==='function'){ Admin_user_dashboard_05_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="departments"
            class="sidebar-link">
             <i class="fa-solid fa-sitemap"></i>
             <span>Departments</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_06_OPEN==='function'){ Admin_user_dashboard_06_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_06_OPEN==='function'){ Super_Admin_user_dashboard_06_OPEN(); } else if(typeof Admin_user_dashboard_06_OPEN==='function'){ Admin_user_dashboard_06_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="job_roles"
            class="sidebar-link">
             <i class="fa-solid fa-briefcase"></i>
             <span>Job Roles</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_07_OPEN==='function'){ Admin_user_dashboard_07_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_07_OPEN==='function'){ Super_Admin_user_dashboard_07_OPEN(); } else if(typeof Admin_user_dashboard_07_OPEN==='function'){ Admin_user_dashboard_07_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="task_management"
            class="sidebar-link">
             <i class="fa-solid fa-clipboard-check"></i>
             <span>Task Management</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_08_OPEN==='function'){ Admin_user_dashboard_08_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_08_OPEN==='function'){ Super_Admin_user_dashboard_08_OPEN(); } else if(typeof Admin_user_dashboard_08_OPEN==='function'){ Admin_user_dashboard_08_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="leave_requests"
            class="sidebar-link">
             <i class="fa-solid fa-calendar-check"></i>
             <span>Leave Requests</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_09_OPEN==='function'){ Admin_user_dashboard_09_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_09_OPEN==='function'){ Super_Admin_user_dashboard_09_OPEN(); } else if(typeof Admin_user_dashboard_09_OPEN==='function'){ Admin_user_dashboard_09_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="notifications"
            class="sidebar-link">
             <i class="fa-solid fa-bell"></i>
             <span>Notifications</span>
         </a>
 
-        <a role="button" tabindex="0" onclick="if(typeof Admin_user_dashboard_10_OPEN==='function'){ Admin_user_dashboard_10_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
+        <a role="button" tabindex="0" onclick="if(typeof Super_Admin_user_dashboard_10_OPEN==='function'){ Super_Admin_user_dashboard_10_OPEN(); } else if(typeof Admin_user_dashboard_10_OPEN==='function'){ Admin_user_dashboard_10_OPEN(); } if(typeof closeAdminSidebar==='function'){ closeAdminSidebar(); }"
            data-page="settings"
            class="sidebar-link">
             <i class="fa-solid fa-gear"></i>

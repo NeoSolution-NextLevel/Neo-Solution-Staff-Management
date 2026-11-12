@@ -26,15 +26,15 @@
 
   #Admin_user_dashboard_06_job_roles {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
   }
 
   .main-wrapper {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    max-width: calc(100% - 250px);
-    min-height: 100vh;
-    padding: 16px 20px 24px;
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    padding: 0;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
   }
@@ -435,7 +435,7 @@
   .w3-btn-save { padding: 9px 18px; border-radius: 8px; border: none; background-color: #3b5bdb; color: #ffffff; font-size: 13px; font-weight: 700; cursor: pointer; }
 
   /* Mobile Breakpoints */
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .main-wrapper {
       margin-left: 0 !important;
       width: 100% !important;
@@ -486,23 +486,46 @@
     }
 
     .roles-toolbar {
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) minmax(128px, .85fr);
-      align-items: stretch;
-      gap: 8px;
-      margin-bottom: 12px;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 8px !important;
+      margin-bottom: 12px !important;
+      width: 100% !important;
+      flex-wrap: nowrap !important;
+      box-sizing: border-box !important;
     }
     .roles-search-box {
-      grid-column: 1 / -1;
-      width: 100%;
-      min-width: 0;
-      padding: 9px 11px;
+      flex: 1 1 50% !important;
+      width: 50% !important;
+      min-width: 0 !important;
+      height: 38px !important;
+      padding: 0 10px !important;
+      display: flex !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
+    }
+    .roles-search-box input {
+      width: 100% !important;
+      min-width: 0 !important;
+      font-size: 12px !important;
+      border: none !important;
+      outline: none !important;
+      background: transparent !important;
     }
     .team-filter-select {
-      grid-column: 1 / -1;
-      width: 100%;
-      min-width: 0;
-      padding: 9px 10px;
+      flex: 1 1 50% !important;
+      width: 50% !important;
+      max-width: 50% !important;
+      min-width: 0 !important;
+      height: 38px !important;
+      padding: 0 8px !important;
+      font-size: 11.5px !important;
+      box-sizing: border-box !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      display: flex !important;
+      align-items: center !important;
     }
 
     #Admin_user_dashboard_06_job_roles .table-card { display: none !important; }

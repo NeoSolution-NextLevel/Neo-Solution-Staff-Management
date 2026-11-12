@@ -31,15 +31,15 @@
 
   #Admin_user_dashboard_02_employees {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
   }
 
   .main, .w3-main-content {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    max-width: calc(100% - 250px);
-    min-height: 100vh;
-    padding: 16px 20px 24px;
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    padding: 0;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
   }
@@ -49,13 +49,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .topbar h2 {
     font-size: 22px;
     font-weight: 800;
     color: var(--navy);
     letter-spacing: -0.3px;
+    margin: 0;
   }
 
   .topbar-left {
@@ -668,12 +671,13 @@
 
     .menu-btn { display: inline-flex !important; }
     #Admin_user_dashboard_02_employees .topbar {
-      width: calc(100% + 20px) !important;
-      margin: 0 -10px 12px !important;
+      width: 100% !important;
+      margin: 0 0 12px !important;
       padding: 0 10px !important;
       height: 58px !important;
       min-height: 58px !important;
       max-height: 58px !important;
+      box-sizing: border-box !important;
     }
     #Admin_user_dashboard_02_employees .topbar-left,
     #Admin_user_dashboard_02_employees .topbar-right {
@@ -692,64 +696,100 @@
       margin-bottom: 12px;
       gap: 8px;
     }
+    .w3-page-head > div:first-child {
+      display: flex;
+      align-items: center;
+    }
     .w3-btn-primary {
-      flex: 0 0 auto;
-      padding: 9px 12px;
-      font-size: 12px;
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 8px 10px;
+      font-size: 11.5px;
+      justify-content: center;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Sub-tabs horizontal scroll on mobile */
+    .emp-section-tabs-bar {
+      display: flex !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      white-space: nowrap !important;
+      gap: 4px !important;
+      padding: 4px 6px 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .emp-section-tabs-bar::-webkit-scrollbar {
+      display: none !important;
+    }
+    .emp-section-tabs-bar .emp-section-tab {
+      padding: 8px 10px !important;
+      font-size: 11.5px !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      gap: 5px !important;
     }
 
     .w3-toolbar {
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) minmax(128px, .85fr);
-      align-items: center;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
       gap: 8px !important;
-      margin-bottom: 12px;
+      margin-bottom: 12px !important;
     }
     .w3-toolbar > div:first-child {
-      display: contents !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+    .w3-toolbar-filter-row {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      width: 100% !important;
     }
     .w3-search-box {
-      grid-column: 1 / -1;
-      width: 100%;
-      min-width: 0;
-      padding: 9px 11px;
+      width: 100% !important;
+      min-width: 0 !important;
+      padding: 8px 11px !important;
+      box-sizing: border-box !important;
+    }
+    #empDepartmentFilter {
+      flex: 0 0 135px !important;
+      width: 135px !important;
+      max-width: 45% !important;
+      padding: 7px 8px !important;
+      font-size: 12px !important;
+      box-sizing: border-box !important;
     }
     .w3-filter-pills {
-      grid-column: 1;
-      display: flex;
-      width: 100%;
-      min-width: 0;
-      gap: 4px;
-      overflow: hidden;
-      padding-bottom: 0;
-      -webkit-overflow-scrolling: touch;
+      flex: 1 1 auto !important;
+      display: flex !important;
+      min-width: 0 !important;
+      gap: 3px !important;
+      overflow: hidden !important;
+      padding-bottom: 0 !important;
+      box-sizing: border-box !important;
     }
     .w3-filter-pills .w3-pill {
-      flex: 1 1 0;
-      min-width: 0;
-      padding: 8px 4px;
-      text-align: center;
-      font-size: 11.5px;
-    }
-    .quick-login-wrap {
-      grid-column: 2;
-      width: 100%;
-      min-width: 0;
-      padding: 3px 6px !important;
-      gap: 4px !important;
-    }
-    .quick-login-wrap > span {
-      display: none !important;
-    }
-    .quick-login-wrap select {
-      width: 100%;
-      min-width: 0;
-      max-width: none !important;
-      padding: 6px 5px !important;
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+      padding: 7px 4px !important;
+      text-align: center !important;
       font-size: 11.5px !important;
+      box-sizing: border-box !important;
     }
 
     .w3-table-card { display: none !important; }
+    #sectionAdminAccounts #mobileAdminCardsContainer { display: flex !important; }
     .mobile-emp-cards {
       display: flex !important;
       width: 100%;
@@ -803,23 +843,139 @@
       white-space: nowrap;
     }
 
+    /* Onboarding Stats Grid 3 in one row for mobile */
+    .onboarding-stats-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 6px !important;
+      margin-bottom: 14px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .onboarding-stat-card {
+      padding: 8px 4px !important;
+      gap: 5px !important;
+      border-radius: 10px !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .onboarding-stat-card .stat-icon-wrap {
+      width: 28px !important;
+      height: 28px !important;
+      font-size: 12px !important;
+      border-radius: 8px !important;
+      margin: 0 auto !important;
+    }
+
+    .onboarding-stat-card .stat-text-wrap {
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-width: 0 !important;
+    }
+
+    .onboarding-stat-card .stat-text-wrap > div:first-child {
+      font-size: 15px !important;
+      font-weight: 800 !important;
+      line-height: 1.1 !important;
+      text-align: center !important;
+    }
+
+    .onboarding-stat-card .stat-label-text {
+      font-size: 9px !important;
+      line-height: 1.15 !important;
+      white-space: normal !important;
+      text-align: center !important;
+      margin-top: 2px !important;
+      word-break: break-word !important;
+    }
+
     .w3-form-row { grid-template-columns: 1fr; gap: 8px; }
     .w3-emp-profile-details-grid { grid-template-columns: 1fr; gap: 8px; }
     .w3-modal-card { width: 100%; max-height: 92vh; }
 
-    /* Let the employee profile modal and its actions scroll as one page. */
+    /* Employee Profile Modal: Fit cleanly within mobile screen with internal scrolling */
     .w3-emp-profile-modal {
-      max-height: none !important;
-      overflow: visible !important;
-      margin: 12px 0 !important;
+      width: 95% !important;
+      max-width: 95% !important;
+      max-height: 90vh !important;
+      margin: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    #editEmpModal .w3-modal-card {
+      width: 95% !important;
+      max-width: 95% !important;
+      max-height: 90vh !important;
+      margin: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    #editEmpModal .w3-modal-body-scroll {
+      flex: 1 1 auto !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      max-height: 60vh !important;
+      padding: 14px 16px !important;
+    }
+    #editEmpModal .w3-modal-footer {
+      flex-shrink: 0 !important;
+      padding: 10px 16px !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-header {
+      height: 70px !important;
+      padding: 8px 12px !important;
+      flex-shrink: 0 !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-avatar-wrap {
+      bottom: -22px !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-avatar {
+      width: 52px !important;
+      height: 52px !important;
+      font-size: 17px !important;
+      border-width: 3px !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-name {
+      font-size: 17px !important;
+    }
+    .w3-emp-profile-modal .emp-profile-tab-nav {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      white-space: nowrap !important;
+      padding-bottom: 2px !important;
+    }
+    .w3-emp-profile-modal .emp-profile-tab-nav::-webkit-scrollbar {
+      display: none !important;
+    }
+    .w3-emp-profile-modal .emp-tab-btn {
+      padding: 7px 10px !important;
+      font-size: 11.5px !important;
+      flex-shrink: 0 !important;
     }
     .w3-emp-profile-modal .w3-emp-profile-body {
-      max-height: none !important;
-      overflow: visible !important;
-      flex: none !important;
+      max-height: 55vh !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      flex: 1 1 auto !important;
+      padding: 12px 14px 16px !important;
     }
     .w3-emp-profile-modal .w3-modal-footer {
-      flex-wrap: wrap;
+      flex-wrap: nowrap !important;
+      padding: 10px 14px !important;
+      flex-shrink: 0 !important;
     }
   }
 
@@ -858,7 +1014,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
           <span class="dot"></span>
         </div>
-        <div class="admin-pill">
+        <div class="admin-pill" onclick="Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
           <div class="avatar">AU</div>
           <span>Admin</span>
         </div>
@@ -869,51 +1025,263 @@
       <div>
         <p id="empCount">0 total employees</p>
       </div>
-      <button class="w3-btn-primary" id="openAddEmpBtn" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-        Add Employee
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="w3-btn-primary" id="openCreateFormBtn" type="button" onclick="openCreateEmpFormModal()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Create Employee Form
+        </button>
+        <button class="w3-btn-primary" id="openAddEmpBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+          Add Employee
+        </button>
+      </div>
+    </div>
+
+    <!-- Employee Section Sub-Tabs -->
+    <div class="emp-section-tabs-bar" style="display: flex; gap: 6px; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; background: #ffffff; padding: 6px 10px 0; border-radius: 12px 12px 0 0; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+      <button type="button" class="emp-section-tab active" id="tabAllEmployeesBtn" onclick="switchEmpSectionTab('employees')" style="padding: 10px 18px; border: none; background: transparent; font-size: 13.5px; font-weight: 700; color: #2563eb; border-bottom: 3px solid #2563eb; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-users"></i> All Employees
+      </button>
+      <button type="button" class="emp-section-tab" id="tabOnboardingBtn" onclick="switchEmpSectionTab('onboarding')" style="padding: 10px 18px; border: none; background: transparent; font-size: 13.5px; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-file-signature"></i> Onboarding Submissions &amp; Forms
+        <span id="pendingSubmissionsBadge" style="display: none; background: #ef4444; color: #ffffff; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 800;">0</span>
+      </button>
+      <button type="button" class="emp-section-tab" id="tabAdminAccountsBtn" onclick="switchEmpSectionTab('admins')" style="display: none; padding: 10px 18px; border: none; background: transparent; font-size: 13.5px; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; cursor: pointer; align-items: center; gap: 8px;">
+        <i class="fas fa-user-clock"></i> All accounts
+        <span id="pendingAdminsBadge" style="display: none; background: #ef4444; color: #ffffff; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 800;">0</span>
       </button>
     </div>
 
-    <div class="w3-toolbar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; flex:1; min-width:280px;">
-        <div class="w3-search-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="searchInput" placeholder="Search employees...">
-        </div>
-        <div class="w3-filter-pills" id="filterPills">
-          <div class="w3-pill active" data-filter="all">All</div>
-          <div class="w3-pill" data-filter="active">Active</div>
-          <div class="w3-pill" data-filter="inactive">Inactive</div>
+    <!-- 1. All Employees View -->
+    <div id="sectionAllEmployees">
+      <div class="w3-toolbar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; flex:1; min-width:280px;">
+          <div class="w3-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="searchInput" placeholder="Search employees...">
+          </div>
+          <div class="w3-toolbar-filter-row" style="display:flex; align-items:center; gap:10px; flex:1;">
+            <select id="empDepartmentFilter" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 999px; font-size: 13px; font-weight: 600; color: #1e293b; background: #ffffff; outline: none; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+              <option value="all">All Departments</option>
+            </select>
+            <div class="w3-filter-pills" id="filterPills">
+              <div class="w3-pill active" data-filter="all">All</div>
+              <div class="w3-pill" data-filter="active">Active</div>
+              <div class="w3-pill" data-filter="inactive">Inactive</div>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Desktop & Tablet Table -->
+      <div class="w3-table-card">
+        <div class="w3-table-wrap">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Job Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th style="text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="empTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile Phone Responsive Cards List -->
+      <div class="mobile-emp-cards" id="mobileEmpCardsContainer">
+        <div style="text-align:center; padding: 30px 16px; color: #64748b; background:#fff; border-radius:12px;">
+          Loading employees...
+        </div>
+      </div>
     </div>
 
-    <!-- 1. Desktop & Tablet Table -->
-    <div class="w3-table-card">
-      <div class="w3-table-wrap">
-        <table class="emp-table">
-          <thead>
-            <tr>
-              <th>Employee</th>
-              <th>Department</th>
-              <th>Job Role</th>
-              <th>Status</th>
-              <th>Joined</th>
-              <th style="text-align: center;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="empTableBody"></tbody>
-        </table>
+    <!-- 2. Onboarding Forms & Submissions View -->
+    <div id="sectionOnboardingForms" style="display: none;">
+      <!-- Stats summary cards -->
+      <div class="onboarding-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <div class="onboarding-stat-card" onclick="filterSubmissionsTable('pending')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease;">
+          <div class="stat-icon-wrap" style="width: 44px; height: 44px; border-radius: 10px; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+          <div class="stat-text-wrap" style="min-width: 0;">
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statPendingApprovals">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;" class="stat-label-text">Pending Approvals</div>
+          </div>
+        </div>
+        
+        <div class="onboarding-stat-card" onclick="filterSubmissionsTable('approved')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease;">
+          <div class="stat-icon-wrap" style="width: 44px; height: 44px; border-radius: 10px; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <div class="stat-text-wrap" style="min-width: 0;">
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statApprovedSubmissions">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;" class="stat-label-text">Approved Applications</div>
+          </div>
+        </div>
+
+        <div class="onboarding-stat-card" onclick="scrollToActiveFormsTable()" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease;">
+          <div class="stat-icon-wrap" style="width: 44px; height: 44px; border-radius: 10px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-link"></i>
+          </div>
+          <div class="stat-text-wrap" style="min-width: 0;">
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statActiveForms">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;" class="stat-label-text">Active Form Links</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submissions Table Card -->
+      <div class="w3-table-card" id="submissionsTableCard" style="margin-bottom: 24px;">
+        <div style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 15px; font-weight: 800; color: #14204d; margin: 0; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-file-signature" style="color: #2563eb;"></i> Employee Form Submissions
+              <span id="submissionFilterStatusBadge" style="display:none; font-size:11px; padding:2px 8px; border-radius:999px; background:#eff6ff; color:#2563eb; font-weight:700;"></span>
+            </h3>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Review employee applications. Approving an application sends an approval email &amp; dispatches an OTP code to the candidate's phone.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" id="clearSubmissionsFilterBtn" onclick="filterSubmissionsTable('all')" style="display: none; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; color: #475569; cursor: pointer; font-weight: 600;">
+              Show All
+            </button>
+            <button type="button" onclick="loadOnboardingData()" style="background: none; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; color: #475569; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+              <i class="fas fa-rotate"></i> Refresh
+            </button>
+          </div>
+        </div>
+        <div class="w3-table-wrap">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Contact Phone (OTP SMS)</th>
+                <th>Department &amp; Role</th>
+                <th>Submitted Date</th>
+                <th>Status</th>
+                <th style="text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="submissionsTableBody">
+              <tr><td colspan="6" style="text-align:center; padding: 20px; color:#64748b;">Loading submissions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Active Registration Forms Card -->
+      <div class="w3-table-card" id="activeFormsTableCard">
+        <div style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 15px; font-weight: 800; color: #14204d; margin: 0; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-share-nodes" style="color: #10b981;"></i> Generated Employee Registration Links
+            </h3>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Forms created by Super Admin for employee onboarding.</p>
+          </div>
+          <button type="button" onclick="openCreateEmpFormModal()" class="w3-btn-primary" style="padding: 7px 14px; font-size: 12.5px; background: #10b981;">
+            <i class="fas fa-plus"></i> Create New Form
+          </button>
+        </div>
+        <div class="w3-table-wrap">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Form Title</th>
+                <th>Department</th>
+                <th>Designated Role</th>
+                <th>Target Email</th>
+                <th>Created Date</th>
+                <th style="text-align: center;">Shareable Link</th>
+              </tr>
+            </thead>
+            <tbody id="formsTableBody">
+              <tr><td colspan="6" style="text-align:center; padding: 20px; color:#64748b;">Loading generated forms...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- 2. Mobile Phone Responsive Cards List -->
-    <div class="mobile-emp-cards" id="mobileEmpCardsContainer">
-      <div style="text-align:center; padding: 30px 16px; color: #64748b; background:#fff; border-radius:12px;">
-        Loading employees...
+    <!-- 3. All accounts still not assigned their role View -->
+    <div id="sectionAdminAccounts" style="display: none;">
+   
+
+      <!-- Stats summary cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fas fa-users-gear"></i>
+          </div>
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statTotalAdmins">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Total Managed Accounts</div>
+          </div>
+        </div>
+        
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #fffbeb; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #d97706;" id="statPendingAdmins">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Pending Role / Approval</div>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statActiveAdmins">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Approved / Active Accounts</div>
+          </div>
+        </div>
       </div>
+
+      <!-- Toolbar -->
+      <div class="w3-toolbar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; flex:1; min-width:280px;">
+          <div class="w3-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="adminSearchInput" placeholder="Search accounts by name or email..." oninput="renderAdminTable()">
+          </div>
+          <div class="w3-filter-pills" id="adminFilterPills">
+            <div class="w3-pill active" data-filter="all" onclick="filterAdminTable('all')">All</div>
+            <div class="w3-pill" data-filter="pending" onclick="filterAdminTable('pending')">Pending Approval</div>
+            <div class="w3-pill" data-filter="active" onclick="filterAdminTable('active')">Active</div>
+            <div class="w3-pill" data-filter="blocked" onclick="filterAdminTable('blocked')">Declined</div>
+          </div>
+        </div>
+        <button type="button" onclick="loadAdminAccountsData()" class="w3-btn-primary" style="padding: 8px 16px; font-size: 13px; background: #ffffff; color: #14204d; border: 1px solid #cbd5e1; box-shadow: none;">
+          <i class="fas fa-rotate"></i> Refresh List
+        </button>
+      </div>
+
+      <!-- Desktop Table Card -->
+      <div class="w3-table-card">
+        <div class="w3-table-wrap">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Account User</th>
+                <th>Role &amp; Ref ID</th>
+                <th>Role Access</th>
+              </tr>
+            </thead>
+            <tbody id="adminsTableBody">
+              <tr><td colspan="3" style="text-align:center; padding: 25px; color:#64748b;"><i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i> Loading accounts...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile Cards Container -->
+      <div id="mobileAdminCardsContainer" style="display: none; flex-direction: column; gap: 12px; margin-top: 12px;"></div>
     </div>
 
     <!-- Add Employee Modal -->
@@ -1290,8 +1658,15 @@
                 </select>
               </div>
             </div>
-            
+
             <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Portal Access &amp; Role Control</label>
+                <select name="portal_role" id="editEmpPortalRole" style="font-weight: 700; color: #1e3a8a; background: #eff6ff; border: 1.5px solid #93c5fd;">
+                  <option value="Employee">Staff (Employee Portal)</option>
+                  <option value="Admin">Administrator (Admin Portal)</option>
+                </select>
+              </div>
               <div class="w3-form-group">
                 <label>Status</label>
                 <select name="status" id="editEmpStatus">
@@ -1299,17 +1674,20 @@
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
+            </div>
+
+            <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Joined Date</label>
                 <input type="date" name="joined" id="editEmpJoined">
               </div>
-            </div>
-            
-            <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Work Location</label>
                 <input type="text" name="work_location" id="editEmpLocation" placeholder="e.g. Colombo HQ">
               </div>
+            </div>
+
+            <div class="w3-form-row">
               <div class="w3-form-group">
                 <label>Employment Type</label>
                 <select name="employment_type" id="editEmpType">
@@ -1522,8 +1900,122 @@
       <option value="Indian Overseas Bank">
       <option value="Habib Bank Ltd">
       <option value="MCB Bank Ltd">
-      <option value="Public Bank Berhad">
     </datalist>
+
+    <!-- Create Employee Registration Form Modal -->
+    <div class="w3-modal-overlay" id="createEmpFormModal" style="display: none;">
+      <div class="w3-modal-card" style="max-width: 540px;">
+        <div class="w3-modal-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff;">
+          <h3 style="color: #ffffff; font-size: 16px;"><i class="fas fa-file-circle-plus" style="margin-right: 6px;"></i> Create Employee Registration Form</h3>
+          <button type="button" class="w3-modal-close" onclick="closeCreateEmpFormModal()" style="color: #ffffff;">&times;</button>
+        </div>
+        <form id="createEmpFormReal" onsubmit="submitCreateEmpForm(event)">
+          <div class="w3-modal-body-scroll" style="padding: 18px 20px; gap: 12px;">
+            <div class="w3-form-group">
+              <label>Form Title <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="newFormTitle" name="title" value="Employee Onboarding Form" required placeholder="e.g. Software Engineer Onboarding Form">
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Department <span style="color: #ef4444;">*</span></label>
+                <select id="newFormDept" name="department" required>
+                  <option value="Engineering" selected>Engineering</option>
+                  <option value="Human Resources">Human Resources</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Finance & Accounts">Finance &amp; Accounts</option>
+                  <option value="Sales & Marketing">Sales &amp; Marketing</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Administration">Administration</option>
+                </select>
+              </div>
+
+              <div class="w3-form-group">
+                <label>Job Title / Role <span style="color: #ef4444;">*</span></label>
+                <input type="text" id="newFormRole" name="job_title" value="Staff" required placeholder="e.g. Software Engineer">
+              </div>
+            </div>
+
+            <div class="w3-form-group">
+              <label>Candidate Email Address <span style="font-size:11px; color:#64748b;">(Optional)</span></label>
+              <input type="email" id="newFormTargetEmail" name="target_email" placeholder="candidate@email.com">
+              <span style="font-size: 11px; color: #64748b;">Optional candidate email to personalize invitation link</span>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1e293b; cursor: pointer; margin: 0;">
+                <input type="checkbox" id="newFormSendEmail" name="send_email" value="1">
+                <span>Automatically dispatch invitation email with form link to candidate</span>
+              </label>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Link Expiry</label>
+                <select id="newFormExpiry" name="expiry_days">
+                  <option value="7">7 Days</option>
+                  <option value="14">14 Days</option>
+                  <option value="30" selected>30 Days</option>
+                  <option value="0">No Expiration</option>
+                </select>
+              </div>
+
+              <div class="w3-form-group">
+                <label>Allowed Submissions</label>
+                <select id="newFormMultiple" name="allow_multiple">
+                  <option value="1" selected>Multiple Submissions</option>
+                  <option value="0">Single Use Only</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Result Box after creation -->
+            <div id="newFormResultBox" style="display: none; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px; margin-top: 6px;">
+              <div style="font-weight: 700; color: #065f46; font-size: 13px; margin-bottom: 6px;">
+                <i class="fas fa-check-circle"></i> Registration Form Link Ready!
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <input type="text" id="createdFormUrlInput" readonly style="font-size: 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; flex: 1;">
+                <button type="button" onclick="copyCreatedFormUrl()" style="background: #10b981; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                  <i class="fas fa-copy"></i> Copy
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="w3-modal-footer">
+            <button type="button" class="w3-btn-cancel" onclick="closeCreateEmpFormModal()">Close</button>
+            <button type="submit" id="btnSubmitCreateForm" class="w3-btn-save" style="background: #10b981;">
+              <i class="fas fa-link"></i> Generate Form Link
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Review Submission Modal -->
+    <div class="w3-modal-overlay" id="reviewSubmissionModal" style="display: none;">
+      <div class="w3-modal-card" style="max-width: 620px;">
+        <div class="w3-modal-header" style="background: linear-gradient(135deg, #14204d 0%, #1c2b63 100%); color: #ffffff;">
+          <h3 style="color: #ffffff; font-size: 16px;"><i class="fas fa-clipboard-check" style="color: #60a5fa; margin-right: 6px;"></i> Review Employee Application</h3>
+          <button type="button" class="w3-modal-close" onclick="closeReviewSubmissionModal()" style="color: #ffffff;">&times;</button>
+        </div>
+        <div class="w3-modal-body-scroll" id="reviewModalBody" style="padding: 18px 20px; gap: 14px;">
+          <!-- Loaded dynamically -->
+        </div>
+        <div class="w3-modal-footer" style="padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <button type="button" class="w3-btn-cancel" onclick="closeReviewSubmissionModal()">Close</button>
+          <div style="display: flex; gap: 8px;" id="reviewModalActionButtons">
+            <button type="button" id="rejectSubBtn" onclick="rejectCurrentSubmission()" style="padding: 9px 16px; border-radius: 8px; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-weight: 700; font-size: 13px; cursor: pointer;">
+              <i class="fas fa-ban"></i> Reject
+            </button>
+            <button type="button" id="approveSubBtn" onclick="approveCurrentSubmission()" style="padding: 9px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);">
+              <i class="fas fa-check-circle"></i> Approve &amp; Dispatch OTP SMS
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 </div>
   </main>
 </div>

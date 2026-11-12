@@ -160,14 +160,13 @@
         }
         User_Profile_A_01_val_11_obj.value = json.user_name;
 
-        if (json.last_name != null) {
+        if (json.phone_number != null) {
             User_Profile_A_01_val_12_obj.value = json.phone_number;
             two_factor_phone_number_obj.value = json.phone_number;
-
-
-
-
         } else {
+            User_Profile_A_01_val_12_obj.value = "";
+            two_factor_phone_number_obj.value = "";
+        }
             User_Profile_A_01_val_12_obj.value = "+94 11 012 2130";
 
         }
@@ -412,77 +411,128 @@
     }
 
 
+    function showTwoFactorAlert(message, type) {
+        var alertBox = document.getElementById('two-factor-alert-box');
+        if (!alertBox) return;
+        alertBox.style.display = 'block';
+        if (type === 'error') {
+            alertBox.style.background = '#fef2f2';
+            alertBox.style.color = '#b91c1c';
+            alertBox.style.border = '1px solid #fecaca';
+        } else if (type === 'success') {
+            alertBox.style.background = '#f0fdf4';
+            alertBox.style.color = '#15803d';
+            alertBox.style.border = '1px solid #bbf7d0';
+        } else {
+            alertBox.style.background = '#eff6ff';
+            alertBox.style.color = '#1d4ed8';
+            alertBox.style.border = '1px solid #bfdbfe';
+        }
+        alertBox.innerHTML = message;
+    }
+
     function send_two_step_verification_sms() {
         var twoFactorFields = document.getElementById('two-factor-auth-fields');
         var statusBadge = document.getElementById('two-factor-auth-status');
-        var verify_btn = document.getElementById('two-factor-verify-btn');
-
-
-
-        twoFactorFields.style.display = 'block'; // Show the input fields
-        statusBadge.style.display = 'none';
-
-
-        var two_factor_phone_number_obj = document.getElementById("two-factor-phone-number").value;
+        var phoneInput = document.getElementById("two-factor-phone-number");
+        var resendBtn = document.getElementById("two-factor-resend-btn");
         var two_step_verify_enable = document.getElementById('User_Profile_A_01_val_18').value;
 
-        var toggleButton = document.getElementById('two-factor-auth-toggle');
+        twoFactorFields.style.display = 'block';
+        statusBadge.style.display = 'none';
 
-        var sending_value = "val_01=" + encodeURIComponent(two_factor_phone_number_obj);
+        var phoneVal = phoneInput ? phoneInput.value.trim() : '';
+        if (!phoneVal) {
+            var profilePhone = document.getElementById("User_Profile_A_01_val_12");
+            if (profilePhone && profilePhone.value.trim()) {
+                phoneVal = profilePhone.value.trim();
+                if (phoneInput) phoneInput.value = phoneVal;
+            }
+        }
 
+        if (!phoneVal) {
+            showTwoFactorAlert('<i class="fas fa-info-circle"></i> Please enter your mobile phone number, then click <strong>Send OTP</strong>.', 'info');
+            if (phoneInput) phoneInput.focus();
+            return;
+        }
+
+        if (resendBtn) {
+            resendBtn.disabled = true;
+            resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Sending...</span>';
+        }
+        showTwoFactorAlert('<i class="fas fa-spinner fa-spin"></i> Dispatching verification OTP to your phone and email...', 'info');
+
+        var sending_value = "val_01=" + encodeURIComponent(phoneVal);
         if (two_step_verify_enable == 1) {
             sending_value += "&want_disable=1";
         } else {
             sending_value += "&want_enable=1";
         }
-
         sending_value += "&setting_enable_disable_send_otp=1";
-        alert(sending_value);
 
         $.ajax({
             url: "<?php echo $pth; ?>View-List/Main/Two_Factor_Authentication/Two_Factor_Authentication.php",
             type: "POST",
             data: sending_value,
             success: function(response) {
-                // alert(response);
-
-                // console.log(response);
-
-                var json_data = JSON.parse(response);
-
-                if (json_data[0].error === "0") {
-
-
-
-                    document.getElementById("User_Profile_A_01_val_19_otp").value = json_data[0].otp;
-
-
-                } else {
-                    // alert(json_data[0].message);
-                    var errorMsg = encodeURIComponent(json_data[0].message);
-                    window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
-
+                if (resendBtn) {
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Resend OTP</span>';
                 }
+                try {
+                    var json_data = JSON.parse(response);
+                    if (json_data[0].error === "0") {
+                        document.getElementById("User_Profile_A_01_val_19_otp").value = json_data[0].otp;
+                        var msg = json_data[0].message || 'Verification OTP code dispatched! Check your phone and email.';
+                        showTwoFactorAlert('<i class="fas fa-check-circle"></i> ' + msg, 'success');
+                        var otpField = document.getElementById("two-factor-otp");
+                        if (otpField) otpField.focus();
+                    } else {
+                        showTwoFactorAlert('<i class="fas fa-exclamation-triangle"></i> ' + (json_data[0].message || 'Could not send OTP.'), 'error');
+                    }
+                } catch (e) {
+                    showTwoFactorAlert('<i class="fas fa-exclamation-triangle"></i> Unexpected response from verification server.', 'error');
+                }
+            },
+            error: function() {
+                if (resendBtn) {
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Resend OTP</span>';
+                }
+                showTwoFactorAlert('<i class="fas fa-times-circle"></i> Network connection error while sending OTP.', 'error');
             }
         });
     }
 
-
-
     function send_two_step_verification_check_otp() {
-        // alert("test");
-        var User_otp = document.getElementById("two-factor-otp").value; // Two factor phone number
+        var otpField = document.getElementById("two-factor-otp");
+        var User_otp = otpField ? otpField.value.trim() : '';
         var otp_encrypt = document.getElementById('User_Profile_A_01_val_19_otp').value;
         var two_step_verify_enable = document.getElementById('User_Profile_A_01_val_18').value;
         var user_email = document.getElementById('User_Profile_A_01_val_11').value;
         var statusBadge = document.getElementById('two-factor-auth-status');
         var toggleButton = document.getElementById('two-factor-auth-toggle');
         var twoFactorFields = document.getElementById('two-factor-auth-fields');
+        var verifyBtn = document.getElementById("two-factor-verify-btn");
+        var phoneInput = document.getElementById("two-factor-phone-number");
+        var phoneVal = phoneInput ? phoneInput.value.trim() : '';
         var actionType = "";
+
+        if (!User_otp) {
+            showTwoFactorAlert('<i class="fas fa-exclamation-circle"></i> Please enter the 6-digit OTP verification code.', 'error');
+            if (otpField) otpField.focus();
+            return;
+        }
+
+        if (verifyBtn) {
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Verifying...</span>';
+        }
 
         var sending_value = "val_01=" + encodeURIComponent(otp_encrypt) +
             "&val_02=" + encodeURIComponent(User_otp) +
-            "&val_03=" + encodeURIComponent(user_email);
+            "&val_03=" + encodeURIComponent(user_email) +
+            "&phone_number=" + encodeURIComponent(phoneVal);
 
         if (two_step_verify_enable == 1) {
             sending_value += "&want_disable=1";
@@ -490,62 +540,54 @@
         } else {
             sending_value += "&want_enable=1";
             actionType = "Enable";
-
         }
 
         sending_value += "&setting_enable_disable_otp_check=0&setting_enable_disable_main_user_login_update=0";
-
-        // alert(sending_value);
 
         $.ajax({
             url: "<?php echo $pth; ?>View-List/Main/Two_Factor_Authentication/Two_Factor_Authentication.php",
             type: "POST",
             data: sending_value,
             success: function(response) {
-                // alert(response);
-                User_otp.value = '';
-                // console.log(response);
-
-                var json_data = JSON.parse(response);
-
-                if (json_data[0].error === "0") {
-
-
-
-
-                    if (actionType == "Disable") {
-                        twoFactorFields.style.display = 'none';
-                        statusBadge.style.display = 'block';
-
-
-                        two_step_verify_enable = 0;
-                        statusBadge.textContent = 'Disabled';
-                        statusBadge.className = 'erp-status-badge erp-status-badge--disabled';
-                        toggleButton.innerHTML = '<i class="fas fa-shield-alt"></i><span>Enable</span>';
-
-
-                    } else if (actionType == "Enable") {
-                        twoFactorFields.style.display = 'none';
-                        statusBadge.style.display = 'block';
-                        two_step_verify_enable = 1;
-                        statusBadge.textContent = 'Enabled';
-                        statusBadge.className = 'erp-status-badge erp-status-badge--enabled';
-                        toggleButton.innerHTML = '<i class="fas fa-shield-alt"></i><span>Disable</span>';
-
-
-                    }
-
-
-                } else {
-                    var errorMsg = encodeURIComponent(json_data[0].message);
-                    window.location.href = "<?php echo $home_page ?><?php echo $User_login_url ?>Failed-Page<?php echo $online_offline_extention ?>?error=" + errorMsg;
+                if (verifyBtn) {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Verify & Save 2FA</span>';
                 }
-
+                try {
+                    var json_data = JSON.parse(response);
+                    if (json_data[0].error === "0") {
+                        if (actionType === "Disable") {
+                            twoFactorFields.style.display = 'none';
+                            statusBadge.style.display = 'block';
+                            document.getElementById('User_Profile_A_01_val_18').value = "0";
+                            statusBadge.textContent = 'Disabled';
+                            statusBadge.className = 'erp-status-badge erp-status-badge--disabled';
+                            toggleButton.innerHTML = '<i class="fas fa-shield-alt"></i><span>Enable</span>';
+                        } else {
+                            twoFactorFields.style.display = 'none';
+                            statusBadge.style.display = 'block';
+                            document.getElementById('User_Profile_A_01_val_18').value = "1";
+                            statusBadge.textContent = 'Enabled';
+                            statusBadge.className = 'erp-status-badge erp-status-badge--enabled';
+                            toggleButton.innerHTML = '<i class="fas fa-shield-alt"></i><span>Disable</span>';
+                        }
+                        if (otpField) otpField.value = '';
+                        alert("Two-Factor Authentication " + (actionType === "Enable" ? "Enabled" : "Disabled") + " successfully!");
+                    } else {
+                        showTwoFactorAlert('<i class="fas fa-times-circle"></i> ' + (json_data[0].message || 'Invalid or expired OTP code. Please try again.'), 'error');
+                    }
+                } catch (e) {
+                    showTwoFactorAlert('<i class="fas fa-times-circle"></i> Unexpected response from verification server.', 'error');
+                }
+            },
+            error: function() {
+                if (verifyBtn) {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Verify & Save 2FA</span>';
+                }
+                showTwoFactorAlert('<i class="fas fa-times-circle"></i> Connection error while verifying OTP.', 'error');
             }
-
-
         });
-
     }
 
 

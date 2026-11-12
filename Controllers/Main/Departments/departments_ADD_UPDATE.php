@@ -38,22 +38,23 @@ class departments_ADD_UPDATE
         $this->color = $get_color;
 
         $this->sql_update_query .=
-            ", name='" . $this->name . "'" .
-            ", head='" . $this->head . "'" .
-            ", employees='" . $this->employees . "'" .
-            ", color='" . $this->color . "'";
+            ", name='" . addslashes($this->name) . "'" .
+            ", head_name='" . addslashes($this->head) . "'" .
+            ", head='" . addslashes($this->head) . "'" .
+            ", employees='" . (int)$this->employees . "'" .
+            ", color='" . addslashes($this->color) . "'";
     }
 
     public function set_name($get_name)
     {
         $this->name = $get_name;
-        $this->sql_update_query .= ", name='" . $this->name . "'";
+        $this->sql_update_query .= ", name='" . addslashes($this->name) . "'";
     }
 
     public function set_head($get_head)
     {
         $this->head = $get_head;
-        $this->sql_update_query .= ", head='" . $this->head . "'";
+        $this->sql_update_query .= ", head_name='" . addslashes($this->head) . "', head='" . addslashes($this->head) . "'";
     }
 
     public function set_employees($get_employees)
@@ -95,24 +96,40 @@ class departments_ADD_UPDATE
     public function process_new_record()
     {
         $data_base_obj = new DataBase();
+        $conn = $data_base_obj->get_data_base_connction();
 
-        $get_sql_query = "
-            INSERT INTO departments (
-                ast, 
-                sdt, 
-                name, 
-                head, 
-                employees, 
-                color
-            )
-            VALUES (
-                '" . $this->ast . "',
-                '" . $this->sdt . "',
-                '" . $this->name . "',
-                '" . $this->head . "',
-                '" . $this->employees . "',
-                '" . $this->color . "'
-            )";
+        // Inspect actual columns from database
+        $existingCols = [];
+        $resCols = @$conn->query("SHOW COLUMNS FROM `departments`");
+        if ($resCols) {
+            while ($row = $resCols->fetch_assoc()) {
+                $existingCols[strtolower($row['Field'])] = true;
+            }
+        }
+
+        $fields = ['ast', 'sdt', 'name'];
+        $values = ["'" . $this->ast . "'", "'" . $this->sdt . "'", "'" . addslashes($this->name) . "'"];
+
+        if (isset($existingCols['head'])) {
+            $fields[] = '`head`';
+            $values[] = "'" . addslashes($this->head) . "'";
+        }
+        if (isset($existingCols['head_name'])) {
+            $fields[] = '`head_name`';
+            $values[] = "'" . addslashes($this->head) . "'";
+        }
+        if (isset($existingCols['employees'])) {
+            $fields[] = '`employees`';
+            $values[] = "'" . (int)$this->employees . "'";
+        }
+        if (isset($existingCols['color'])) {
+            $fields[] = '`color`';
+            $values[] = "'" . addslashes($this->color) . "'";
+        }
+
+        $colsStr = implode(', ', $fields);
+        $valsStr = implode(', ', $values);
+        $get_sql_query = "INSERT INTO `departments` ($colsStr) VALUES ($valsStr)";
 
         $data_base_obj->get_result($get_sql_query);
 
@@ -124,11 +141,38 @@ class departments_ADD_UPDATE
     public function process_update()
     {
         $data_base_obj = new DataBase();
+        $conn = $data_base_obj->get_data_base_connction();
 
+        $existingCols = [];
+        $resCols = @$conn->query("SHOW COLUMNS FROM `departments`");
+        if ($resCols) {
+            while ($row = $resCols->fetch_assoc()) {
+                $existingCols[strtolower($row['Field'])] = true;
+            }
+        }
+
+        $updates = ["ast='" . $this->ast . "'"];
+        if (isset($existingCols['name'])) {
+            $updates[] = "`name`='" . addslashes($this->name) . "'";
+        }
+        if (isset($existingCols['head'])) {
+            $updates[] = "`head`='" . addslashes($this->head) . "'";
+        }
+        if (isset($existingCols['head_name'])) {
+            $updates[] = "`head_name`='" . addslashes($this->head) . "'";
+        }
+        if (isset($existingCols['employees'])) {
+            $updates[] = "`employees`='" . (int)$this->employees . "'";
+        }
+        if (isset($existingCols['color'])) {
+            $updates[] = "`color`='" . addslashes($this->color) . "'";
+        }
+
+        $updatesStr = implode(', ', $updates);
         $get_sql_query = "
-            UPDATE departments 
-            SET ast='" . $this->ast . "'" . $this->sql_update_query . " 
-            WHERE id='" . $this->id . "'";
+            UPDATE `departments` 
+            SET " . $updatesStr . " 
+            WHERE id='" . (int)$this->id . "'";
 
         $data_base_obj->get_result($get_sql_query);
         $this->error_msg = $data_base_obj->get_error();

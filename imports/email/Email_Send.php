@@ -962,3 +962,7 @@ class Email {
     }
 }
 
+if (!class_exists('Email_Send')) {
+    class Email_Send extends Email {}
+}
+

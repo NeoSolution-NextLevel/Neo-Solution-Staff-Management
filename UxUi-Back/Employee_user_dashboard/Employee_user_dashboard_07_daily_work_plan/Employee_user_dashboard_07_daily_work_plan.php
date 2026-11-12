@@ -10,15 +10,25 @@
   }
 
   @media (min-width: 901px) {
-    #Employee_user_dashboard_07_daily_work_plan .workplan-step-container {
-      padding: 0 20px 36px 20px;
+    #Employee_user_dashboard_07_daily_work_plan .workplan-header-row,
+    #Employee_user_dashboard_07_daily_work_plan .workplan-filters,
+    #Employee_user_dashboard_07_daily_work_plan .workplan-tasks-grid,
+    #Employee_user_dashboard_07_daily_work_plan .workplan-step-container,
+    #Employee_user_dashboard_07_daily_work_plan .workplan-shift-title-row {
+      padding-left: 20px;
+      padding-right: 20px;
       box-sizing: border-box;
     }
   }
 
   @media (max-width: 900px) {
-    #Employee_user_dashboard_07_daily_work_plan .workplan-step-container {
-      padding: 0 0 36px 0 !important;
+    #Employee_user_dashboard_07_daily_work_plan .workplan-header-row,
+    #Employee_user_dashboard_07_daily_work_plan .workplan-filters,
+    #Employee_user_dashboard_07_daily_work_plan .workplan-tasks-grid,
+    #Employee_user_dashboard_07_daily_work_plan .workplan-step-container,
+    #Employee_user_dashboard_07_daily_work_plan .workplan-shift-title-row {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
       box-sizing: border-box;
     }
   }
@@ -188,6 +198,13 @@
 
   .search-pill-input:focus {
     border-color: #3b5bdb;
+  }
+
+  .filter-dropdowns-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
   }
 
   .filter-pill-select {
@@ -821,22 +838,42 @@
       line-height: 1.4;
     }
 
-    #Employee_user_dashboard_07_daily_work_plan .view-switcher {
-      flex: 0 0 auto;
-    }
-
     #Employee_user_dashboard_07_daily_work_plan .workplan-filters {
-      align-items: stretch;
-      gap: 8px;
-      margin-bottom: 16px;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 10px !important;
+      margin-bottom: 16px !important;
+      width: 100% !important;
     }
 
-    #Employee_user_dashboard_07_daily_work_plan .search-pill-wrap,
-    #Employee_user_dashboard_07_daily_work_plan .filter-pill-select {
-      width: 100%;
-      max-width: none;
-      min-width: 0;
-      box-sizing: border-box;
+    #Employee_user_dashboard_07_daily_work_plan .search-pill-wrap {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .filter-dropdowns-row {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 8px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    #Employee_user_dashboard_07_daily_work_plan .filter-dropdowns-row .filter-pill-select {
+      flex: 1 1 0 !important;
+      width: 50% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      box-sizing: border-box !important;
+      padding: 10px 28px 10px 14px !important;
+      font-size: 13px !important;
+      background-position: right 10px center !important;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     #Employee_user_dashboard_07_daily_work_plan .workplan-tasks-grid {
@@ -1319,6 +1356,55 @@
       </div>
     </div>
 
+    <!-- 1. My Assigned & Daily Tasks (Upper Section) -->
+    <div class="workplan-header-row">
+      <div class="workplan-head-left">
+        <h1>My Assigned & Daily Tasks</h1>
+        <p id="empActiveTasksCount">Loading tasks from database...</p>
+      </div>
+    </div>
+
+    <!-- Search Bar & Filters -->
+    <div class="workplan-filters">
+      <div class="search-pill-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="search-pill-input" id="workplanSearch" placeholder="Search tasks..." onkeyup="filterWorkplanTasks()">
+      </div>
+
+      <div class="filter-dropdowns-row">
+        <select class="filter-pill-select" id="workplanCategoryFilter" onchange="filterWorkplanTasks()">
+          <option value="all">All Modes</option>
+          <option value="Online">Online</option>
+          <option value="Onsite">Onsite</option>
+        </select>
+
+        <select class="filter-pill-select" id="workplanStatusFilter" onchange="filterWorkplanTasks()">
+          <option value="all">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tasks Grid / Cards List -->
+    <div class="workplan-tasks-grid" id="workplanTasksGrid">
+      <div style="text-align:center; padding: 40px 16px; color:#64748b; background:#fff; border-radius:16px; grid-column: 1 / -1; border:1px solid #e8eaf0;">
+        Loading your tasks...
+      </div>
+    </div>
+
+    <!-- 2. Daily Shift Steps (Lower Section) -->
+    <div class="workplan-shift-title-row" style="margin: 28px 0 16px; padding-top: 20px; border-top: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+      <div>
+        <h2 style="font-size: 18px; font-weight: 800; color: var(--navy, #14204d); margin: 0 0 4px 0;">Daily Shift Plan &amp; Execution</h2>
+        <p style="font-size: 13px; color: var(--muted, #64748b); margin: 0; font-weight: 500;">Plan your shift tasks in the morning and submit your completed update at end-of-shift</p>
+      </div>
+    </div>
+
     <div class="workplan-step-container">
       
       <section class="workplan-step-card step-1-card">
@@ -1455,63 +1541,6 @@
         <div id="shiftEndStatusMsg" class="shift-status-alert success" style="display: none;"></div>
       </section>
 
-    </div>
-
-    <div class="workplan-header-row">
-      <div class="workplan-head-left">
-        <h1>My Assigned & Daily Tasks</h1>
-        <p id="empActiveTasksCount">Loading tasks from database...</p>
-      </div>
-
-      <div class="view-switcher">
-        <button class="view-btn active" title="Grid view" onclick="setWorkplanView('grid', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"/>
-            <rect x="14" y="3" width="7" height="7"/>
-            <rect x="14" y="14" width="7" height="7"/>
-            <rect x="3" y="14" width="7" height="7"/>
-          </svg>
-        </button>
-        <button class="view-btn" title="List view" onclick="setWorkplanView('list', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="8" y1="6" x2="21" y2="6"/>
-            <line x1="8" y1="12" x2="21" y2="12"/>
-            <line x1="8" y1="18" x2="21" y2="18"/>
-            <line x1="3" y1="6" x2="3.01" y2="6"/>
-            <line x1="3" y1="12" x2="3.01" y2="12"/>
-            <line x1="3" y1="18" x2="3.01" y2="18"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="workplan-filters">
-      <div class="search-pill-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input type="text" class="search-pill-input" id="workplanSearch" placeholder="Search tasks..." onkeyup="filterWorkplanTasks()">
-      </div>
-
-      <select class="filter-pill-select" id="workplanCategoryFilter" onchange="filterWorkplanTasks()">
-        <option value="all">All Modes</option>
-        <option value="Online">Online</option>
-        <option value="Onsite">Onsite</option>
-      </select>
-
-      <select class="filter-pill-select" id="workplanStatusFilter" onchange="filterWorkplanTasks()">
-        <option value="all">All Statuses</option>
-        <option value="Pending">Pending</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
-      </select>
-    </div>
-
-    <div class="workplan-tasks-grid" id="workplanTasksGrid">
-      <div style="text-align:center; padding: 40px 16px; color:#64748b; background:#fff; border-radius:16px; grid-column: 1 / -1; border:1px solid #e8eaf0;">
-        Loading your tasks...
-      </div>
     </div>
 
   </div>

@@ -1,0 +1,11 @@
+# Block public download of Firebase private keys and other JSON secrets.
+<IfModule mod_authz_core.c>
+  <FilesMatch "\.(json)$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+  <FilesMatch "\.(json)$">
+    Deny from all
+  </FilesMatch>
+</IfModule>

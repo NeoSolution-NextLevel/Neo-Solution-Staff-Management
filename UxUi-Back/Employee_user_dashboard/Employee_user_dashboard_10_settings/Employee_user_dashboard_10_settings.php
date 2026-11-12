@@ -374,11 +374,11 @@
       </div>
 
       <!-- Box 1: Notification Preferences -->
-      <div class="settings-box-card w3-card w3-round-xlarge">
-        <h3>Notification Preferences</h3>
+      <!-- <div class="settings-box-card w3-card w3-round-xlarge">
+        <h3>Notification Preferences</h3> -->
 
         <!-- Toggle 1: Email Notifications -->
-        <div class="setting-toggle-item">
+        <!-- <div class="setting-toggle-item">
           <div class="setting-toggle-info">
             <strong>Email Notifications</strong>
             <span>Receive notifications via email</span>
@@ -387,10 +387,10 @@
             <input type="checkbox" id="settingEmailNotif" checked>
             <span class="switch-slider"></span>
           </label>
-        </div>
+        </div> -->
 
         <!-- Toggle 2: Task Updates -->
-        <div class="setting-toggle-item">
+        <!-- <div class="setting-toggle-item">
           <div class="setting-toggle-info">
             <strong>Task Updates</strong>
             <span>Get notified when tasks are assigned or updated</span>
@@ -399,10 +399,10 @@
             <input type="checkbox" id="settingTaskUpdates" checked>
             <span class="switch-slider"></span>
           </label>
-        </div>
+        </div> -->
 
         <!-- Toggle 3: Leave Status -->
-        <div class="setting-toggle-item">
+        <!-- <div class="setting-toggle-item">
           <div class="setting-toggle-info">
             <strong>Leave Status</strong>
             <span>Notifications for leave request status changes</span>
@@ -411,10 +411,10 @@
             <input type="checkbox" id="settingLeaveStatus" checked>
             <span class="switch-slider"></span>
           </label>
-        </div>
+        </div> -->
 
         <!-- Toggle 4: System Alerts -->
-        <div class="setting-toggle-item">
+        <!-- <div class="setting-toggle-item">
           <div class="setting-toggle-info">
             <strong>System Alerts</strong>
             <span>Important system maintenance and updates</span>
@@ -424,14 +424,14 @@
             <span class="switch-slider"></span>
           </label>
         </div>
-      </div>
+      </div> -->
 
       <!-- Box 2: Privacy Settings -->
-      <div class="settings-box-card w3-card w3-round-xlarge">
+      <!-- <div class="settings-box-card w3-card w3-round-xlarge">
         <h3>Privacy Settings</h3>
 
         <!-- Toggle 1: Profile Visibility -->
-        <div class="setting-toggle-item">
+        <!-- <div class="setting-toggle-item">
           <div class="setting-toggle-info">
             <strong>Profile Visibility</strong>
             <span>Allow other employees to view your profile</span>
@@ -440,10 +440,10 @@
             <input type="checkbox" id="settingProfileVisibility" checked>
             <span class="switch-slider"></span>
           </label>
-        </div>
+        </div> --> 
 
         <!-- Toggle 2: Activity Status -->
-        <div class="setting-toggle-item">
+        <!-- <div class="setting-toggle-item">
           <div class="setting-toggle-info">
             <strong>Activity Status</strong>
             <span>Show your online/active status to others</span>
@@ -452,6 +452,81 @@
             <input type="checkbox" id="settingActivityStatus">
             <span class="switch-slider"></span>
           </label>
+        </div>
+      </div> -->
+
+      <!-- Box: Security & Credentials -->
+      <div class="settings-box-card w3-card w3-round-xlarge" id="empSecuritySection">
+        <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 16px;">
+          <h3 style="margin: 0; padding-bottom: 0;">Security & Credentials</h3>
+          <p style="font-size: 12.5px; color: #64748b; margin-top: 3px;">Manage your password, verified phone number, and Two-Factor Authentication.</p>
+        </div>
+
+        <!-- Phone Number Setting -->
+        <div class="setting-toggle-item" style="border-bottom: 1px solid #f8fafc; padding-bottom: 14px; margin-bottom: 12px; align-items: flex-start;">
+          <div class="setting-toggle-info" style="flex: 1;">
+            <strong>Phone Number</strong>
+            <span>Used for system alerts, emergency verification, and Two-Factor SMS OTP</span>
+          </div>
+          <div style="display: flex; gap: 8px; max-width: 320px; width: 100%;">
+            <input type="tel" id="sec_phone_number" class="w3-input w3-border w3-round-large" placeholder="0771234567" style="flex: 1; padding: 8px 12px; font-size: 13.5px;">
+            <button type="button" class="w3-button w3-blue w3-round-large" id="btnSavePhone" style="white-space: nowrap; font-size: 13px; font-weight: 600; padding: 8px 14px;">
+              Save
+            </button>
+          </div>
+        </div>
+
+        <!-- Two-Factor Authentication Toggle -->
+        <div class="setting-toggle-item" style="border-bottom: 1px solid #f8fafc; padding-bottom: 14px; margin-bottom: 12px;">
+          <div class="setting-toggle-info">
+            <strong>Two-Factor Authentication (2FA)</strong>
+            <span>Enhance account security by requiring an OTP code during sign-in</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span id="two_factor_badge" style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: #fef2f2; color: #dc2626;">Disabled</span>
+            <label class="switch-pill" title="Enable or Disable Two-Factor Authentication">
+              <input type="checkbox" id="sec_two_factor_toggle">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 2FA OTP verification drawer -->
+        <div id="two_factor_verify_box" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+          <div id="two_factor_alert" style="display: none; padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 10px;"></div>
+          <div style="font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px;">Verify Phone Number with OTP:</div>
+          <div style="display: flex; gap: 8px; max-width: 360px; width: 100%;">
+            <input type="text" id="two_factor_otp_input" class="w3-input w3-border w3-round-large" placeholder="6-digit OTP" maxlength="6" style="letter-spacing: 2px; font-weight: 700; text-align: center; padding: 8px 12px; font-size: 13.5px;">
+            <button type="button" class="w3-button w3-blue w3-round-large" id="btnVerify2faOtp" style="white-space: nowrap; font-size: 13px; font-weight: 600; padding: 8px 14px;">Verify & Enable</button>
+            <button type="button" class="w3-button w3-light-grey w3-round-large" id="btnResend2faOtp" style="white-space: nowrap; font-size: 13px; font-weight: 600; padding: 8px 12px;">Resend</button>
+          </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9;">
+          <strong style="display: block; font-size: 14px; color: #0f172a; margin-bottom: 3px;">Change Account Password</strong>
+          <span style="display: block; font-size: 12.5px; color: #64748b; margin-bottom: 12px;">Ensure your password is at least 6 characters long</span>
+
+          <div id="change_password_alert" style="display: none; padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px;"></div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Current Password</label>
+              <input type="password" id="sec_current_password" class="w3-input w3-border w3-round-large" placeholder="••••••••" style="padding: 8px 12px; font-size: 13px;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">New Password</label>
+              <input type="password" id="sec_new_password" class="w3-input w3-border w3-round-large" placeholder="Min. 6 chars" style="padding: 8px 12px; font-size: 13px;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Confirm New Password</label>
+              <input type="password" id="sec_confirm_password" class="w3-input w3-border w3-round-large" placeholder="Repeat new" style="padding: 8px 12px; font-size: 13px;">
+            </div>
+          </div>
+
+          <button type="button" class="w3-button w3-blue w3-round-large" id="btnSubmitChangePassword" style="font-size: 13.5px; font-weight: 600; padding: 8px 18px;">
+            <i class="fa-solid fa-key" style="margin-right: 6px;"></i> Update Password
+          </button>
         </div>
       </div>
 
@@ -635,3 +710,4 @@
     fetchEmployeeSettings();
   }
 </script>
+<?php include_once __DIR__ . '/../../Settings/security_settings_JS.php'; ?>

@@ -1,0 +1,2020 @@
+<style>
+  /* =========================================================
+     ADMIN EMPLOYEES PAGE
+  ========================================================= */
+  :root {
+    --navy: #14204d;
+    --navy-2: #1c2b63;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --blue-lighter: #f0f7ff;
+    --green: #38a169;
+    --green-bg: #e3f9ee;
+    --amber: #dd6b20;
+    --amber-bg: #fdf1dc;
+    --red: #e53e3e;
+    --red-bg: #fde8ec;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(20,25,60,.04), 0 8px 24px rgba(20,25,60,.04);
+  }
+
+  * { box-sizing: 
+        border-box; 
+        margin: 0; 
+        padding: 0; 
+    }
+
+  #Super_Admin_user_dashboard_02_employees {
+    width: 100%;
+    min-height: 0;
+  }
+
+  .main, .w3-main-content {
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+  }
+
+  /* Topbar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .topbar h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+    margin: 0;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--blue-lighter);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+  }
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+    color: var(--navy);
+  }
+  .dot {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    border: 2px solid var(--card);
+  }
+
+  .admin-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-lighter);
+    padding: 5px 14px 5px 5px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .admin-pill .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 11.5px;
+    background: var(--navy);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .admin-pill span {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--blue-lighter);
+    border: none;
+    cursor: pointer;
+    color: var(--navy);
+    margin-right: 6px;
+  }
+  .menu-btn svg { width: 20px; height: 20px; }
+
+  /* Page Head */
+  .w3-page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+  .w3-page-head p {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .w3-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--blue);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(59,91,219,.25);
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    white-space: nowrap;
+  }
+  .w3-btn-primary:hover { background-color: #2f4ec7; transform: translateY(-1px); }
+  .w3-btn-primary svg { width: 16px; height: 16px; }
+
+  /* Toolbar: Search & Filter Pills */
+  .w3-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .w3-search-box {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    box-shadow: 0 1px 2px rgba(20,25,60,.03);
+  }
+  .w3-search-box svg {
+    width: 16px;
+    height: 16px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .w3-search-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 13.5px;
+    color: var(--ink);
+    background: transparent;
+    font-family: inherit;
+  }
+  .w3-search-box input::placeholder { color: #94a3b8; }
+
+  .w3-filter-pills {
+    display: flex;
+    gap: 8px;
+  }
+  .w3-pill {
+    padding: 9px 18px;
+    border-radius: 999px;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .w3-pill.active {
+    background-color: var(--navy);
+    color: #ffffff;
+    border-color: var(--navy);
+  }
+  .w3-pill:not(.active):hover { 
+    background-color: var(--blue-lighter); 
+    color: var(--blue); 
+  }
+
+  /* Desktop Table Layout */
+  .w3-table-card {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .w3-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table.emp-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+  }
+  table.emp-table thead th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-weight: 700;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background-color: #fafbfd;
+  }
+  table.emp-table tbody td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    font-size: 13.5px;
+    color: #334155;
+    white-space: nowrap;
+  }
+  table.emp-table tbody tr:last-child td { border-bottom: none; }
+  table.emp-table tbody tr:hover { background-color: #fafbfd; }
+  table.emp-table thead th:last-child,
+  table.emp-table tbody td:last-child {
+    text-align: center !important;
+  }
+
+  .emp-cell { display: flex; align-items: center; gap: 12px; }
+  .emp-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: var(--blue);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .emp-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .emp-email { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+  .status-badge.active { background-color: var(--green-bg); color: var(--green); }
+  .status-badge.inactive { background-color: var(--red-bg); color: var(--red); }
+
+  .row-actions { display: flex; align-items: center; justify-content: center; margin: 0 auto; gap: 6px; }
+  .action-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+  .action-btn svg { width: 16px; height: 16px; }
+  .action-btn.view { background-color: var(--blue-lighter); color: var(--blue); }
+  .action-btn:hover { filter: brightness(0.92); transform: translateY(-1px); }
+
+  /* Selectable Working Day Chips */
+  .day-chips-container {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .day-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    user-select: none;
+    transition: all 0.15s ease;
+  }
+  .day-chip:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+  .day-chip.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+  }
+
+  /* Mobile Phone Cards View */
+  .mobile-emp-cards {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .mobile-emp-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(20,25,60,.04);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mobile-emp-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mobile-emp-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid #eef2f6;
+  }
+
+  .mobile-emp-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .mobile-emp-info-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .mobile-emp-info-val {
+    font-size: 12.5px;
+    color: #1e293b;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-emp-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-mobile-emp-view {
+    flex: 1;
+    background: #eef2ff;
+    color: #3b5bdb;
+    font-size: 12.5px;
+    font-weight: 700;
+    border: 1px solid #dbe4ff;
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  .btn-mobile-emp-edit {
+    flex: 1;
+    background: #e6f4ea;
+    color: #12b76a;
+    font-size: 12.5px;
+    font-weight: 700;
+    border: 1px solid #cbf0d8;
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  .btn-mobile-emp-del {
+    background: #fde8ec;
+    color: #f0576a;
+    font-size: 12.5px;
+    font-weight: 700;
+    border: 1px solid #fecdd3;
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .w3-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  .w3-modal-overlay.active { display: flex; }
+
+  .w3-modal-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    margin: auto;
+    position: relative;
+  }
+
+  .emp-tab-btn {
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .emp-tab-btn:hover {
+    color: #1e293b;
+  }
+  .emp-tab-btn.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    background: rgba(37, 99, 235, 0.05);
+  }
+
+  .w3-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .w3-modal-header h3 { font-size: 16px; font-weight: 800; color: var(--navy); margin: 0; }
+  .w3-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+  }
+
+  .w3-modal-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .w3-modal-body-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .w3-form-group { display: flex; flex-direction: column; gap: 4px; }
+  .w3-form-group label { font-size: 12px; font-weight: 700; color: #475569; }
+  .w3-form-group input, .w3-form-group select {
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #1e293b;
+    outline: none;
+    background-color: #ffffff;
+  }
+  .w3-form-group input:focus, .w3-form-group select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.15);
+  }
+
+  .w3-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .w3-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 18px;
+    background: #ffffff;
+    border-top: 1px solid #f1f5f9;
+    flex-shrink: 0;
+  }
+  .w3-btn-cancel {
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .w3-btn-save {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--blue);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(59, 91, 219, 0.25);
+  }
+
+  .w3-emp-profile-modal { max-width: 460px; padding: 0; }
+  .w3-emp-profile-header {
+    position: relative;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+    height: 85px;
+    padding: 12px 16px;
+    flex-shrink: 0;
+  }
+  .w3-emp-profile-header .w3-modal-close { position: absolute; top: 10px; right: 14px; color: #ffffff; z-index: 10; font-size: 24px; }
+  .w3-emp-profile-avatar-wrap {
+    position: absolute; bottom: -24px; left: 18px; display: flex; align-items: flex-end; gap: 12px;
+  }
+  .w3-emp-profile-avatar {
+    width: 60px; height: 60px; border-radius: 50%;
+    background-color: var(--blue); color: #ffffff;
+    font-size: 19px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    border: 3px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .w3-emp-profile-body {
+    padding: 32px 18px 16px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .w3-emp-profile-name { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 2px; }
+  .w3-emp-profile-role { font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 2px; }
+  .w3-emp-profile-email { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+  .w3-emp-profile-details-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px;
+  }
+  .w3-detail-box { display: flex; flex-direction: column; gap: 2px; }
+  .w3-detail-label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+  .w3-detail-val { font-size: 13px; font-weight: 700; color: #1e293b; }
+  .w3-emp-profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+  .w3-p-stat { background-color: var(--blue-lighter); padding: 8px; border-radius: 8px; }
+  .w3-p-stat .num { display: block; font-size: 14px; font-weight: 800; color: var(--navy); }
+  .w3-p-stat .lbl { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+  @media (max-width: 768px) {
+    #Super_Admin_user_dashboard_02_employees {
+      width: 100% !important;
+      max-width: 100vw !important;
+      padding: 0 10px 72px !important;
+      overflow-x: hidden !important;
+    }
+    .main, .w3-main-content {
+      margin-left: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+      min-width: 0 !important;
+      overflow-x: hidden !important;
+    }
+
+    .menu-btn { display: inline-flex !important; }
+    #Super_Admin_user_dashboard_02_employees .topbar {
+      width: 100% !important;
+      margin: 0 0 12px !important;
+      padding: 0 10px !important;
+      height: 58px !important;
+      min-height: 58px !important;
+      max-height: 58px !important;
+      box-sizing: border-box !important;
+    }
+    #Super_Admin_user_dashboard_02_employees .topbar-left,
+    #Super_Admin_user_dashboard_02_employees .topbar-right {
+      min-width: 0;
+      gap: 6px;
+    }
+    #Super_Admin_user_dashboard_02_employees .topbar h2 { font-size: 18px !important; }
+    #Super_Admin_user_dashboard_02_employees .admin-pill {
+      padding: 4px;
+    }
+    #Super_Admin_user_dashboard_02_employees .admin-pill span {
+      display: none;
+    }
+    .w3-page-head {
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+    .w3-page-head > div:first-child {
+      display: flex;
+      align-items: center;
+    }
+    .w3-btn-primary {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 8px 10px;
+      font-size: 11.5px;
+      justify-content: center;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Sub-tabs horizontal scroll on mobile */
+    .emp-section-tabs-bar {
+      display: flex !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      white-space: nowrap !important;
+      gap: 4px !important;
+      padding: 4px 6px 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .emp-section-tabs-bar::-webkit-scrollbar {
+      display: none !important;
+    }
+    .emp-section-tabs-bar .emp-section-tab {
+      padding: 8px 10px !important;
+      font-size: 11.5px !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      gap: 5px !important;
+    }
+
+    .w3-toolbar {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
+      margin-bottom: 12px !important;
+    }
+    .w3-toolbar > div:first-child {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+    .w3-toolbar-filter-row {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      width: 100% !important;
+    }
+    .w3-search-box {
+      width: 100% !important;
+      min-width: 0 !important;
+      padding: 8px 11px !important;
+      box-sizing: border-box !important;
+    }
+    #empDepartmentFilter {
+      flex: 0 0 135px !important;
+      width: 135px !important;
+      max-width: 45% !important;
+      padding: 7px 8px !important;
+      font-size: 12px !important;
+      box-sizing: border-box !important;
+    }
+    .w3-filter-pills {
+      flex: 1 1 auto !important;
+      display: flex !important;
+      min-width: 0 !important;
+      gap: 3px !important;
+      overflow: hidden !important;
+      padding-bottom: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .w3-filter-pills .w3-pill {
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+      padding: 7px 4px !important;
+      text-align: center !important;
+      font-size: 11.5px !important;
+      box-sizing: border-box !important;
+    }
+
+    .w3-table-card { display: none !important; }
+    #sectionAdminAccounts #mobileAdminCardsContainer { display: flex !important; }
+    .mobile-emp-cards {
+      display: flex !important;
+      width: 100%;
+      min-width: 0;
+      gap: 10px;
+    }
+    .mobile-emp-card {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      gap: 10px;
+      border-radius: 13px;
+      overflow: hidden;
+    }
+    .mobile-emp-card-head {
+      min-width: 0;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .mobile-emp-card-head .emp-cell {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .mobile-emp-card-head .emp-cell > div:last-child {
+      min-width: 0;
+    }
+    .mobile-emp-card-head .emp-name,
+    .mobile-emp-card-head .emp-email {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .mobile-emp-info-grid {
+      min-width: 0;
+      padding: 9px 10px;
+      gap: 8px;
+    }
+    .mobile-emp-info-val {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .mobile-emp-card-actions {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .mobile-emp-card-actions > button {
+      flex: 1 1 calc(50% - 4px);
+      min-width: 0;
+      padding-left: 8px;
+      padding-right: 8px;
+      white-space: nowrap;
+    }
+
+    /* Onboarding Stats Grid 3 in one row for mobile */
+    .onboarding-stats-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 6px !important;
+      margin-bottom: 14px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .onboarding-stat-card {
+      padding: 8px 4px !important;
+      gap: 5px !important;
+      border-radius: 10px !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .onboarding-stat-card .stat-icon-wrap {
+      width: 28px !important;
+      height: 28px !important;
+      font-size: 12px !important;
+      border-radius: 8px !important;
+      margin: 0 auto !important;
+    }
+
+    .onboarding-stat-card .stat-text-wrap {
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-width: 0 !important;
+    }
+
+    .onboarding-stat-card .stat-text-wrap > div:first-child {
+      font-size: 15px !important;
+      font-weight: 800 !important;
+      line-height: 1.1 !important;
+      text-align: center !important;
+    }
+
+    .onboarding-stat-card .stat-label-text {
+      font-size: 9px !important;
+      line-height: 1.15 !important;
+      white-space: normal !important;
+      text-align: center !important;
+      margin-top: 2px !important;
+      word-break: break-word !important;
+    }
+
+    .w3-form-row { grid-template-columns: 1fr; gap: 8px; }
+    .w3-emp-profile-details-grid { grid-template-columns: 1fr; gap: 8px; }
+    .w3-modal-card { width: 100%; max-height: 92vh; }
+
+    /* Employee Profile Modal: Fit cleanly within mobile screen with internal scrolling */
+    .w3-emp-profile-modal {
+      width: 95% !important;
+      max-width: 95% !important;
+      max-height: 90vh !important;
+      margin: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    #editEmpModal .w3-modal-card {
+      width: 95% !important;
+      max-width: 95% !important;
+      max-height: 90vh !important;
+      margin: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    #editEmpModal .w3-modal-body-scroll {
+      flex: 1 1 auto !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      max-height: 60vh !important;
+      padding: 14px 16px !important;
+    }
+    #editEmpModal .w3-modal-footer {
+      flex-shrink: 0 !important;
+      padding: 10px 16px !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-header {
+      height: 70px !important;
+      padding: 8px 12px !important;
+      flex-shrink: 0 !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-avatar-wrap {
+      bottom: -22px !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-avatar {
+      width: 52px !important;
+      height: 52px !important;
+      font-size: 17px !important;
+      border-width: 3px !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-name {
+      font-size: 17px !important;
+    }
+    .w3-emp-profile-modal .emp-profile-tab-nav {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      white-space: nowrap !important;
+      padding-bottom: 2px !important;
+    }
+    .w3-emp-profile-modal .emp-profile-tab-nav::-webkit-scrollbar {
+      display: none !important;
+    }
+    .w3-emp-profile-modal .emp-tab-btn {
+      padding: 7px 10px !important;
+      font-size: 11.5px !important;
+      flex-shrink: 0 !important;
+    }
+    .w3-emp-profile-modal .w3-emp-profile-body {
+      max-height: 55vh !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      flex: 1 1 auto !important;
+      padding: 12px 14px 16px !important;
+    }
+    .w3-emp-profile-modal .w3-modal-footer {
+      flex-wrap: nowrap !important;
+      padding: 10px 14px !important;
+      flex-shrink: 0 !important;
+    }
+  }
+
+  @media (max-height: 520px) {
+    .w3-modal-card {
+      max-height: 94vh !important;
+    }
+    .w3-modal-header {
+      padding: 10px 14px !important;
+    }
+    .w3-modal-body-scroll {
+      padding: 10px 14px !important;
+      gap: 8px !important;
+    }
+    .w3-modal-footer {
+      padding: 8px 14px !important;
+    }
+  }
+</style>
+
+<div id="Super_Admin_user_dashboard_02_employees" class="w3-container" style="display:none; padding:0;">
+  <div class="overlay" id="overlay"></div>
+
+  <!-- MAIN -->
+  <main class="main w3-main-content">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" id="menuBtn_02" aria-label="Open menu" onclick="typeof openAdminSidebar === 'function' ? openAdminSidebar() : null">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg>
+        </button>
+        <h2>Employees</h2>
+      </div>
+      <div class="topbar-right">
+        <div class="icon-btn" onclick="Super_Admin_user_dashboard_09_OPEN();" title="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </div>
+        <div class="admin-pill" onclick="Super_Admin_user_dashboard_10_OPEN();" title="Profile & Settings">
+          <div class="avatar">AU</div>
+          <span>Super Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="w3-page-head">
+      <div>
+        <p id="empCount">0 total employees</p>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="w3-btn-primary" id="openCreateFormBtn" type="button" onclick="openCreateEmpFormModal()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Create Employee Form
+        </button>
+        <button class="w3-btn-primary" id="openAddEmpBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+          Add Employee
+        </button>
+      </div>
+    </div>
+
+    <!-- Employee Section Sub-Tabs -->
+    <div class="emp-section-tabs-bar" style="display: flex; gap: 6px; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; background: #ffffff; padding: 6px 10px 0; border-radius: 12px 12px 0 0; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+      <button type="button" class="emp-section-tab active" id="tabAllEmployeesBtn" onclick="switchEmpSectionTab('employees')" style="padding: 10px 18px; border: none; background: transparent; font-size: 13.5px; font-weight: 700; color: #2563eb; border-bottom: 3px solid #2563eb; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-users"></i> All Employees
+      </button>
+      <button type="button" class="emp-section-tab" id="tabOnboardingBtn" onclick="switchEmpSectionTab('onboarding')" style="padding: 10px 18px; border: none; background: transparent; font-size: 13.5px; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-file-signature"></i> Onboarding Submissions &amp; Forms
+        <span id="pendingSubmissionsBadge" style="display: none; background: #ef4444; color: #ffffff; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 800;">0</span>
+      </button>
+      <button type="button" class="emp-section-tab" id="tabAdminAccountsBtn" onclick="switchEmpSectionTab('admins')" style="padding: 10px 18px; border: none; background: transparent; font-size: 13.5px; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-user-clock"></i> All accounts
+        <span id="pendingAdminsBadge" style="display: none; background: #ef4444; color: #ffffff; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 800;">0</span>
+      </button>
+    </div>
+
+    <!-- 1. All Employees View -->
+    <div id="sectionAllEmployees">
+      <div class="w3-toolbar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; flex:1; min-width:280px;">
+          <div class="w3-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="searchInput" placeholder="Search employees...">
+          </div>
+          <div class="w3-toolbar-filter-row" style="display:flex; align-items:center; gap:10px; flex:1;">
+            <select id="empDepartmentFilter" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 999px; font-size: 13px; font-weight: 600; color: #1e293b; background: #ffffff; outline: none; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+              <option value="all">All Departments</option>
+            </select>
+            <div class="w3-filter-pills" id="filterPills">
+              <div class="w3-pill active" data-filter="all">All</div>
+              <div class="w3-pill" data-filter="active">Active</div>
+              <div class="w3-pill" data-filter="inactive">Inactive</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop & Tablet Table -->
+      <div class="w3-table-card">
+        <div class="w3-table-wrap">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Job Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th style="text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="empTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile Phone Responsive Cards List -->
+      <div class="mobile-emp-cards" id="mobileEmpCardsContainer">
+        <div style="text-align:center; padding: 30px 16px; color: #64748b; background:#fff; border-radius:12px;">
+          Loading employees...
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Onboarding Forms & Submissions View -->
+    <div id="sectionOnboardingForms" style="display: none;">
+      <!-- Stats summary cards -->
+      <div class="onboarding-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <div class="onboarding-stat-card" onclick="filterSubmissionsTable('pending')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease;">
+          <div class="stat-icon-wrap" style="width: 44px; height: 44px; border-radius: 10px; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+          <div class="stat-text-wrap" style="min-width: 0;">
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statPendingApprovals">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;" class="stat-label-text">Pending Approvals</div>
+          </div>
+        </div>
+        
+        <div class="onboarding-stat-card" onclick="filterSubmissionsTable('approved')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease;">
+          <div class="stat-icon-wrap" style="width: 44px; height: 44px; border-radius: 10px; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <div class="stat-text-wrap" style="min-width: 0;">
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statApprovedSubmissions">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;" class="stat-label-text">Approved Applications</div>
+          </div>
+        </div>
+
+        <div class="onboarding-stat-card" onclick="scrollToActiveFormsTable()" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease;">
+          <div class="stat-icon-wrap" style="width: 44px; height: 44px; border-radius: 10px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fas fa-link"></i>
+          </div>
+          <div class="stat-text-wrap" style="min-width: 0;">
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statActiveForms">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;" class="stat-label-text">Active Form Links</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submissions Table Card -->
+      <div class="w3-table-card" id="submissionsTableCard" style="margin-bottom: 24px;">
+        <div style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 15px; font-weight: 800; color: #14204d; margin: 0; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-file-signature" style="color: #2563eb;"></i> Employee Form Submissions
+              <span id="submissionFilterStatusBadge" style="display:none; font-size:11px; padding:2px 8px; border-radius:999px; background:#eff6ff; color:#2563eb; font-weight:700;"></span>
+            </h3>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Review employee applications. Approving an application sends an approval email &amp; dispatches an OTP code to the candidate's phone.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" id="clearSubmissionsFilterBtn" onclick="filterSubmissionsTable('all')" style="display: none; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; color: #475569; cursor: pointer; font-weight: 600;">
+              Show All
+            </button>
+            <button type="button" onclick="loadOnboardingData()" style="background: none; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; color: #475569; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+              <i class="fas fa-rotate"></i> Refresh
+            </button>
+          </div>
+        </div>
+        <div class="w3-table-wrap">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Contact Phone (OTP SMS)</th>
+                <th>Department &amp; Role</th>
+                <th>Submitted Date</th>
+                <th>Status</th>
+                <th style="text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="submissionsTableBody">
+              <tr><td colspan="6" style="text-align:center; padding: 20px; color:#64748b;">Loading submissions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Active Registration Forms Card -->
+      <div class="w3-table-card" id="activeFormsTableCard">
+        <div style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 15px; font-weight: 800; color: #14204d; margin: 0; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-share-nodes" style="color: #10b981;"></i> Generated Employee Registration Links
+            </h3>
+            <p style="margin: 2px 0 0; font-size: 12px; color: #64748b;">Forms created by Super Admin for employee onboarding.</p>
+          </div>
+          <button type="button" onclick="openCreateEmpFormModal()" class="w3-btn-primary" style="padding: 7px 14px; font-size: 12.5px; background: #10b981;">
+            <i class="fas fa-plus"></i> Create New Form
+          </button>
+        </div>
+        <div class="w3-table-wrap">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Form Title</th>
+                <th>Department</th>
+                <th>Designated Role</th>
+                <th>Target Email</th>
+                <th>Created Date</th>
+                <th style="text-align: center;">Shareable Link</th>
+              </tr>
+            </thead>
+            <tbody id="formsTableBody">
+              <tr><td colspan="6" style="text-align:center; padding: 20px; color:#64748b;">Loading generated forms...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. All accounts still not assigned their role View -->
+    <div id="sectionAdminAccounts" style="display: none;">
+
+      <!-- Stats summary cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fas fa-users-gear"></i>
+          </div>
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statTotalAdmins">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Total Managed Accounts</div>
+          </div>
+        </div>
+        
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #fffbeb; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #d97706;" id="statPendingAdmins">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Pending Role / Approval</div>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div>
+            <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statActiveAdmins">0</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">Approved / Active Accounts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="w3-toolbar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; flex:1; min-width:280px;">
+          <div class="w3-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="adminSearchInput" placeholder="Search accounts by name or email..." oninput="renderAdminTable()">
+          </div>
+          <div class="w3-filter-pills" id="adminFilterPills">
+            <div class="w3-pill active" data-filter="all" onclick="filterAdminTable('all')">All</div>
+            <div class="w3-pill" data-filter="pending" onclick="filterAdminTable('pending')">Pending Approval</div>
+            <div class="w3-pill" data-filter="active" onclick="filterAdminTable('active')">Active</div>
+            <div class="w3-pill" data-filter="blocked" onclick="filterAdminTable('blocked')">Declined</div>
+          </div>
+        </div>
+        <button type="button" onclick="loadAdminAccountsData()" class="w3-btn-primary" style="padding: 8px 16px; font-size: 13px; background: #ffffff; color: #14204d; border: 1px solid #cbd5e1; box-shadow: none;">
+          <i class="fas fa-rotate"></i> Refresh List
+        </button>
+      </div>
+
+      <!-- Desktop Table Card -->
+      <div class="w3-table-card">
+        <div class="w3-table-wrap">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th>Account User</th>
+                <th>Role &amp; Ref ID</th>
+                <th>Role Access</th>
+              </tr>
+            </thead>
+            <tbody id="adminsTableBody">
+              <tr><td colspan="3" style="text-align:center; padding: 25px; color:#64748b;"><i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i> Loading accounts...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile Cards Container -->
+      <div id="mobileAdminCardsContainer" style="display: none; flex-direction: column; gap: 12px; margin-top: 12px;"></div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div class="w3-modal-overlay" id="addEmpModal">
+      <div class="w3-modal-card">
+        <div class="w3-modal-header">
+          <h3>Add New Employee</h3>
+          <button type="button" class="w3-modal-close" id="closeAddEmpModal">&times;</button>
+        </div>
+        <form id="addEmpForm" class="w3-modal-form-wrapper">
+          <div class="w3-modal-body-scroll">
+            <div class="w3-form-group">
+              <label>Full Name</label>
+              <input type="text" name="name" required placeholder="e.g. Kasun Kalhara">
+            </div>
+            <div class="w3-form-group">
+              <label>Email Address</label>
+              <input type="email" name="email" required placeholder="e.g. kasun@office.com">
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Department</label>
+                <select name="dept" id="addEmpDept" required>
+                  <option value="">Select Department...</option>
+                </select>
+              </div>
+              <div class="w3-form-group">
+                <label>Job Role</label>
+                <select name="role" id="addJobRole" required>
+                  <option value="">Select Department first...</option>
+                </select>
+              </div>
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Status</label>
+                <select name="status">
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div class="w3-form-group">
+                <label>Joined Date</label>
+                <input type="date" name="joined" value="<?php echo date('Y-m-d'); ?>">
+              </div>
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Work Location</label>
+                <input type="text" name="work_location" id="addEmpLocation" placeholder="e.g. Colombo HQ" value="Colombo HQ">
+              </div>
+              <div class="w3-form-group">
+                <label>Employment Type</label>
+                <select name="employment_type" id="addEmpType">
+                  <option value="Full-Time (Permanent)">Full-Time (Permanent)</option>
+                  <option value="Part-Time">Part-Time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
+              </div>
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Emergency Contact Name</label>
+                <input type="text" name="emergency_contact_name" id="addEmpEmName" placeholder="e.g. Contact Name (Relationship)">
+              </div>
+              <div class="w3-form-group">
+                <label>Emergency Contact Phone</label>
+                <input type="text" name="emergency_contact_phone" id="addEmpEmPhone" placeholder="e.g. +94 77 123 4567">
+              </div>
+            </div>
+
+            <!-- Work Schedule Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px; border-top:1px solid #e2e8f0; padding-top:12px;">Work Schedule & Shift Timing</div>
+            
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Work Shift & Hours</label>
+                <select id="addEmpShiftSelect" onchange="onAddEmpShiftChange(this.value)">
+                  <option value="08:00 AM – 05:00 PM"selected>08:00 AM – 05:00 PM</option>
+                  <option value="08:30 AM – 05:30 PM">08:30 AM – 05:30 PM</option>
+                  <option value="09:00 AM – 06:00 PM">09:00 AM – 06:00 PM</option>
+                  <option value="custom">Custom Time Selection...</option>
+                </select>
+                <input type="hidden" name="work_shift" id="addEmpWorkShift" value="08:30 AM – 05:30 PM">
+              </div>
+              <div class="w3-form-group" id="addEmpCustomTimeGroup" style="display:none;">
+                <label>Custom Start & End Time</label>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <input type="time" id="addEmpCustomStart" value="08:30" onchange="onAddEmpCustomTimeChange()" style="flex:1;">
+                  <span style="font-weight:700; color:#64748b;">to</span>
+                  <input type="time" id="addEmpCustomEnd" value="17:30" onchange="onAddEmpCustomTimeChange()" style="flex:1;">
+                </div>
+              </div>
+            </div>
+
+            <div class="w3-form-group">
+              <label>Weekly Work Schedule (On-Site, WFH, Leave)</label>
+              <div style="font-size:11.5px; color:#64748b; margin-bottom:8px;">Choose On-Site, WFH, or Leave for each day:</div>
+              <input type="hidden" name="weekly_roster" id="addEmpWeeklyRoster" value='{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}'>
+              <input type="hidden" name="working_days" id="addEmpWorkingDays" value="Mon,Tue,Wed,Thu,Fri">
+              
+              <div class="roster-grid-admin" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap:6px;">
+                <!-- Mon -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Mon</span>
+                  <select id="addRoster_Mon" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Tue -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Tue</span>
+                  <select id="addRoster_Tue" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Wed -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Wed</span>
+                  <select id="addRoster_Wed" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Thu -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Thu</span>
+                  <select id="addRoster_Thu" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Fri -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Fri</span>
+                  <select id="addRoster_Fri" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Sat -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sat</span>
+                  <select id="addRoster_Sat" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
+                <!-- Sun -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sun</span>
+                  <select id="addRoster_Sun" onchange="syncAdminRoster('add')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w3-modal-footer">
+            <button type="button" class="w3-btn-cancel" id="cancelAddEmpModal">Cancel</button>
+            <button type="submit" class="w3-btn-save">Save Employee</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- View Employee Profile Details Card Modal -->
+    <!-- View Employee Full Account Details Modal -->
+    <div class="w3-modal-overlay" id="viewEmpModal">
+      <div class="w3-modal-card w3-emp-profile-modal" style="max-width: 760px; width: 95%;">
+        <div class="w3-emp-profile-header" style="height: 100px; background: linear-gradient(135deg, #14204d 0%, #1c2b63 50%, #2e4cad 100%);">
+          <button type="button" class="w3-modal-close" id="closeViewEmpModal" style="top:12px; right:16px;">&times;</button>
+          <div class="w3-emp-profile-avatar-wrap" style="bottom:-32px; position:relative;">
+            <div class="w3-emp-profile-avatar" id="viewEmpAvatar" style="width:72px; height:72px; font-size:24px; border:4px solid #ffffff; overflow:hidden;">--</div>
+          </div>
+        </div>
+
+        <div style="padding: 38px 22px 0; background: #ffffff;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <h2 class="w3-emp-profile-name" id="viewEmpName" style="font-size:22px; font-weight:800; color:#14204d; margin:0 0 2px;">Loading...</h2>
+              <p class="w3-emp-profile-role" style="font-size:13.5px; font-weight:700; color:#2563eb; margin:0;"><span id="viewEmpRole">—</span> • <span id="viewEmpDept">—</span></p>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <span class="status-badge active" id="viewEmpStatus" style="font-size:12px; padding:4px 12px;">Active</span>
+              <span class="status-badge" id="viewEmpTodayMode" style="background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:12px; padding:4px 12px; font-weight:700;">On-Site</span>
+              <span class="status-badge" id="viewEmpCode" style="background:#eff6ff; color:#2563eb; font-size:12px; padding:4px 12px;">EMP-001</span>
+            </div>
+          </div>
+
+          <!-- Tab Navigation -->
+          <div class="emp-profile-tab-nav" style="display:flex; gap:6px; border-bottom:1px solid #e2e8f0; overflow-x:auto;">
+            <button type="button" class="emp-tab-btn active" id="btnTabOverview" onclick="switchEmpTab('tabOverview', this)">
+              <i class="fa-solid fa-user"></i> Overview
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabWorkPlan" onclick="switchEmpTab('tabWorkPlan', this)">
+              <i class="fa-solid fa-list-check"></i> Work Plan
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabBank" onclick="switchEmpTab('tabBank', this)">
+              <i class="fa-solid fa-building-columns"></i> Bank Account
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabDocs" onclick="switchEmpTab('tabDocs', this)">
+              <i class="fa-solid fa-folder-open"></i> Documents
+            </button>
+            <button type="button" class="emp-tab-btn" id="btnTabTasks" onclick="switchEmpTab('tabTasks', this)">
+              <i class="fa-solid fa-clipboard-check"></i> Tasks & Leaves
+            </button>
+          </div>
+        </div>
+
+        <div class="w3-emp-profile-body" style="padding: 16px 22px 18px; max-height: 60vh; overflow-y: auto;">
+          
+          <!-- TAB 1: OVERVIEW -->
+          <div class="emp-tab-pane active" id="tabOverview">
+            <!-- Section 1: Contact & Communication -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:8px 0 8px;">Contact & Residence</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Email Address</span>
+                <strong class="w3-detail-val" id="viewEmpEmail" style="color:#2563eb;">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Phone Number</span>
+                <strong class="w3-detail-val" id="viewEmpPhone">—</strong>
+              </div>
+              <div class="w3-detail-box" style="grid-column: 1 / -1;">
+                <span class="w3-detail-label">Residential Address</span>
+                <strong class="w3-detail-val" id="viewEmpAddress">—</strong>
+              </div>
+            </div>
+
+            <!-- Section 2: Identity & Demographics -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Identity & Personal Information</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">NIC / Passport Number</span>
+                <strong class="w3-detail-val" id="viewEmpNic">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Date of Birth</span>
+                <strong class="w3-detail-val" id="viewEmpDob">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Gender</span>
+                <strong class="w3-detail-val" id="viewEmpGender">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Work Location</span>
+                <strong class="w3-detail-val" id="viewEmpLocation">—</strong>
+              </div>
+            </div>
+
+            <!-- Section 3: Emergency Contacts -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Emergency Contacts</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 14px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Emergency Contact Name</span>
+                <strong class="w3-detail-val" id="viewEmpEmName">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Emergency Contact Phone</span>
+                <strong class="w3-detail-val" id="viewEmpEmPhone">—</strong>
+              </div>
+            </div>
+
+            <!-- Section 4: Work Schedule -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Work Schedule & Duty Arrangement</div>
+            <div class="w3-emp-profile-details-grid" style="margin-bottom: 10px;">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Work Shift</span>
+                <strong class="w3-detail-val" id="viewEmpWorkShift">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Working Days</span>
+                <strong class="w3-detail-val" id="viewEmpWorkingDays">—</strong>
+              </div>
+            </div>
+            <div id="viewEmpRosterWrap" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;"></div>
+
+            <!-- Section 5: Employment Information -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:14px 0 8px;">Employment Snapshot</div>
+            <div class="w3-emp-profile-details-grid">
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Date Joined</span>
+                <strong class="w3-detail-val" id="viewEmpJoined">—</strong>
+              </div>
+              <div class="w3-detail-box">
+                <span class="w3-detail-label">Employment Type</span>
+                <strong class="w3-detail-val" id="viewEmpType">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: DAILY WORK PLAN -->
+          <div class="emp-tab-pane" id="tabWorkPlan" style="display:none;">
+            <div id="viewEmpWorkPlanContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading work plans...</div>
+            </div>
+          </div>
+
+          <!-- TAB 3: BANK ACCOUNT -->
+          <div class="emp-tab-pane" id="tabBank" style="display:none;">
+            <div id="viewEmpBankContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading bank details...</div>
+            </div>
+          </div>
+
+          <!-- TAB 4: DOCUMENTS -->
+          <div class="emp-tab-pane" id="tabDocs" style="display:none;">
+            <div id="viewEmpDocsContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading documents...</div>
+            </div>
+          </div>
+
+          <!-- TAB 5: TASKS & LEAVES -->
+          <div class="emp-tab-pane" id="tabTasks" style="display:none;">
+            <div id="viewEmpTasksContent">
+              <div style="text-align:center; padding:30px; color:#94a3b8;">Loading tasks and leaves...</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="w3-modal-footer">
+          <button type="button" class="w3-btn-cancel" id="cancelViewEmpModal">Close</button>
+          <button type="button" class="w3-btn-save" id="btnEditFromViewModal" onclick="editCurrentEmpFromView()">Edit Employee</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Employee Modal -->
+    <div class="w3-modal-overlay" id="editEmpModal">
+      <div class="w3-modal-card">
+        <div class="w3-modal-header">
+          <h3>Edit Employee Profile</h3>
+          <button type="button" class="w3-modal-close" id="closeEditEmpModal">&times;</button>
+        </div>
+        <form id="editEmpForm" class="w3-modal-form-wrapper">
+          <input type="hidden" name="id" id="editEmpId">
+          <div class="w3-modal-body-scroll">
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" id="editEmpName" placeholder="e.g. Kasun Kalhara">
+              </div>
+              <div class="w3-form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" id="editEmpEmail" placeholder="e.g. kasun@office.com">
+              </div>
+            </div>
+            
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Department</label>
+                <select name="dept" id="editEmpDept">
+                  <option value=""></option>
+                </select>
+              </div>
+
+              <div class="w3-form-group">
+                <label>Job Role</label>
+                <select name="role" id="editEmpRole">
+                  <option value=""></option>
+                </select>
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Portal Access &amp; Role Control</label>
+                <select name="portal_role" id="editEmpPortalRole" style="font-weight: 700; color: #1e3a8a; background: #eff6ff; border: 1.5px solid #93c5fd;">
+                  <option value="Employee">Staff (Employee Portal)</option>
+                  <option value="Admin">Administrator (Admin Portal)</option>
+                </select>
+              </div>
+              <div class="w3-form-group">
+                <label>Status</label>
+                <select name="status" id="editEmpStatus">
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Joined Date</label>
+                <input type="date" name="joined" id="editEmpJoined">
+              </div>
+              <div class="w3-form-group">
+                <label>Work Location</label>
+                <input type="text" name="work_location" id="editEmpLocation" placeholder="e.g. Colombo HQ">
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Employment Type</label>
+                <select name="employment_type" id="editEmpType">
+                  <option value="Full-Time (Permanent)">Full-Time (Permanent)</option>
+                  <option value="Part-Time">Part-Time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
+              </div>
+            </div>
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Emergency Contact Name</label>
+                <input type="text" name="emergency_contact_name" id="editEmpEmName" placeholder="e.g. Contact Name (Relationship)">
+              </div>
+              <div class="w3-form-group">
+                <label>Emergency Contact Phone</label>
+                <input type="text" name="emergency_contact_phone" id="editEmpEmPhone" placeholder="e.g. +94 77 123 4567">
+              </div>
+            </div>
+            <!-- Work Schedule Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px;">Work Schedule & Shift Timing</div>
+            
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Work Shift & Hours</label>
+                <select id="editEmpShiftSelect" onchange="onEditEmpShiftChange(this.value)">
+                  <option value="08:00 AM – 05:00 PM" selected>08:00 AM – 05:00 PM</option>
+                  <option value="08:30 AM – 05:30 PM">08:30 AM – 05:30 PM</option>
+                  <option value="09:00 AM – 06:00 PM">09:00 AM – 06:00 PM</option>
+                  <option value="custom">Custom Time Selection...</option>
+                </select>
+                <input type="hidden" name="work_shift" id="editEmpWorkShift" value="08:30 AM – 05:30 PM">
+              </div>
+              <div class="w3-form-group" id="editEmpCustomTimeGroup" style="display:none;">
+                <label>Custom Start & End Time</label>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <input type="time" id="editEmpCustomStart" value="08:30" onchange="onEditEmpCustomTimeChange()" style="flex:1;">
+                  <span style="font-weight:700; color:#64748b;">to</span>
+                  <input type="time" id="editEmpCustomEnd" value="17:30" onchange="onEditEmpCustomTimeChange()" style="flex:1;">
+                </div>
+              </div>
+            </div>
+
+            <div class="w3-form-group">
+              <label>Weekly Work Schedule (On-Site, WFH, Leave)</label>
+              <div style="font-size:11.5px; color:#64748b; margin-bottom:8px;">Choose On-Site, WFH, or Leave for each day:</div>
+              <input type="hidden" name="weekly_roster" id="editEmpWeeklyRoster" value='{"Mon":"onsite","Tue":"onsite","Wed":"onsite","Thu":"onsite","Fri":"onsite","Sat":"leave","Sun":"leave"}'>
+              <input type="hidden" name="working_days" id="editEmpWorkingDays" value="Mon,Tue,Wed,Thu,Fri">
+              
+              <div class="roster-grid-admin" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap:6px;">
+                <!-- Mon -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Mon</span>
+                  <select id="editRoster_Mon" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Tue -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Tue</span>
+                  <select id="editRoster_Tue" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Wed -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Wed</span>
+                  <select id="editRoster_Wed" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Thu -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Thu</span>
+                  <select id="editRoster_Thu" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Fri -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Fri</span>
+                  <select id="editRoster_Fri" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite" selected>On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave">Leave</option>
+                  </select>
+                </div>
+                <!-- Sat -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sat</span>
+                  <select id="editRoster_Sat" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
+                <!-- Sun -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; text-align:center;">
+                  <span style="font-weight:700; font-size:11.5px; color:#1e293b; display:block; margin-bottom:4px;">Sun</span>
+                  <select id="editRoster_Sun" onchange="syncAdminRoster('edit')" style="width:100%; font-size:11px; padding:4px 2px; border-radius:6px; border:1px solid #cbd5e1; font-weight:600;">
+                    <option value="onsite">On-Site</option>
+                    <option value="wfh">WFH</option>
+                    <option value="leave" selected>Leave</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Bank & Compensation Section -->
+            <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 6px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+              <span><i class="fa-solid fa-building-columns" style="color:#2563eb; margin-right:4px;"></i> Employee Bank Account</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; padding:2px 10px; border-radius:12px; border:1px solid #fde68a; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-lock"></i> Read-Only (Managed by Employee)</span>
+                <span style="font-size:11px; font-weight:600; color:#10b981; text-transform:none;"><i class="fa-solid fa-shield-halved"></i> AES-256</span>
+              </div>
+            </div>
+            <div style="font-size:11.5px; color:#64748b; margin-bottom:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:7px 12px; display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-circle-info" style="color:#3b82f6; font-size:13px;"></i>
+              <span>Employee bank details are managed directly by each employee in their portal profile. Admin can view but cannot edit them.</span>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Account Holder Name <span style="font-size:10px; color:#94a3b8; font-weight:600;">(Read-Only)</span></label>
+                <input type="text" id="editEmpHolderName" placeholder="Not entered by employee yet" readonly style="background:#f8fafc; color:#475569; border:1px solid #cbd5e1; cursor:not-allowed;" title="Managed by employee">
+              </div>
+              <div class="w3-form-group">
+                <label>Bank Name <span style="font-size:10px; color:#94a3b8; font-weight:600;">(Read-Only)</span></label>
+                <input type="text" id="editEmpBankName" placeholder="Not entered by employee yet" readonly style="background:#f8fafc; color:#475569; border:1px solid #cbd5e1; cursor:not-allowed;" title="Managed by employee">
+              </div>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Branch Name <span style="font-size:10px; color:#94a3b8; font-weight:600;">(Read-Only)</span></label>
+                <input type="text" id="editEmpBranch" placeholder="Not entered by employee yet" readonly style="background:#f8fafc; color:#475569; border:1px solid #cbd5e1; cursor:not-allowed;" title="Managed by employee">
+              </div>
+              <div class="w3-form-group">
+                <label>Account Number <span style="font-size:10px; color:#94a3b8; font-weight:600;">(Read-Only)</span></label>
+                <div style="position:relative; display:flex; align-items:center;">
+                  <input type="text" id="editEmpAccNumber" placeholder="Not entered by employee yet" readonly style="width:100%; font-family:monospace; padding-right:38px; background:#f8fafc; color:#475569; border:1px solid #cbd5e1; cursor:not-allowed;" title="Managed by employee">
+                  <button type="button" onclick="toggleAccVisibility('editEmpAccNumber', this)" style="position:absolute; right:8px; background:none; border:none; color:#64748b; cursor:pointer; font-size:14px;" title="Show/Hide">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div style="font-size:12px; font-weight:800; color:#1e293b; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; border-top:1px solid #e2e8f0; padding-top:14px; display:flex; align-items:center; justify-content:space-between;">
+              <span><i class="fa-solid fa-coins" style="color:#f59e0b; margin-right:4px;"></i> Salary & Compensation</span>
+              <span style="font-size:11px; font-weight:700; color:#1d4ed8; background:#eff6ff; padding:2px 10px; border-radius:12px; border:1px solid #bfdbfe; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-pen"></i> Editable by Admin</span>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Basic Salary (LKR) <span style="font-size:10px; color:#2563eb; font-weight:700;">(Editable)</span></label>
+                <input type="number" step="0.01" name="basic_salary" id="editEmpBasicSalary" placeholder="0.00" style="font-weight:600; color:#0f172a; border:1.5px solid #93c5fd; background:#ffffff;">
+              </div>
+              <div class="w3-form-group">
+                <label>Net Salary (LKR) <span style="font-size:10px; color:#2563eb; font-weight:700;">(Editable)</span></label>
+                <input type="number" step="0.01" name="net_salary" id="editEmpNetSalary" placeholder="0.00" style="font-weight:600; color:#0f172a; border:1.5px solid #93c5fd; background:#ffffff;">
+              </div>
+            </div>
+
+          </div>
+          <div class="w3-modal-footer">
+            <button type="button" class="w3-btn-cancel" id="cancelEditEmpModal">Cancel</button>
+            <button type="submit" class="w3-btn-save">Update Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <datalist id="sriLankaBanksList">
+      <option value="Commercial Bank of Ceylon">
+      <option value="Bank of Ceylon (BOC)">
+      <option value="People's Bank">
+      <option value="Sampath Bank">
+      <option value="Hatton National Bank (HNB)">
+      <option value="Nations Trust Bank (NTB)">
+      <option value="Seylan Bank">
+      <option value="National Development Bank (NDB)">
+      <option value="DFCC Bank">
+      <option value="Pan Asia Banking Corporation (Pan Asia Bank)">
+      <option value="Union Bank of Colombo">
+      <option value="Amana Bank">
+      <option value="Cargills Bank">
+      <option value="National Savings Bank (NSB)">
+      <option value="Regional Development Bank (RDB)">
+      <option value="Sanasa Development Bank (SDB bank)">
+      <option value="HDFC Bank of Sri Lanka">
+      <option value="State Mortgage & Investment Bank (SMIB)">
+      <option value="Sri Lanka Savings Bank">
+      <option value="HSBC Sri Lanka (Hongkong and Shanghai Banking Corp)">
+      <option value="Standard Chartered Bank">
+      <option value="Citibank N.A.">
+      <option value="Deutsche Bank AG">
+      <option value="State Bank of India (SBI)">
+      <option value="Indian Bank">
+      <option value="Indian Overseas Bank">
+      <option value="Habib Bank Ltd">
+      <option value="MCB Bank Ltd">
+    </datalist>
+
+    <!-- Create Employee Registration Form Modal -->
+    <div class="w3-modal-overlay" id="createEmpFormModal" style="display: none;">
+      <div class="w3-modal-card" style="max-width: 540px;">
+        <div class="w3-modal-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff;">
+          <h3 style="color: #ffffff; font-size: 16px;"><i class="fas fa-file-circle-plus" style="margin-right: 6px;"></i> Create Employee Registration Form</h3>
+          <button type="button" class="w3-modal-close" onclick="closeCreateEmpFormModal()" style="color: #ffffff;">&times;</button>
+        </div>
+        <form id="createEmpFormReal" onsubmit="submitCreateEmpForm(event)">
+          <div class="w3-modal-body-scroll" style="padding: 18px 20px; gap: 12px;">
+            <div class="w3-form-group">
+              <label>Form Title <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="newFormTitle" name="title" value="Employee Onboarding Form" required placeholder="e.g. Software Engineer Onboarding Form">
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Department <span style="color: #ef4444;">*</span></label>
+                <select id="newFormDept" name="department" required>
+                  <option value="Engineering" selected>Engineering</option>
+                  <option value="Human Resources">Human Resources</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Finance & Accounts">Finance &amp; Accounts</option>
+                  <option value="Sales & Marketing">Sales &amp; Marketing</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Administration">Administration</option>
+                </select>
+              </div>
+
+              <div class="w3-form-group">
+                <label>Job Title / Role <span style="color: #ef4444;">*</span></label>
+                <input type="text" id="newFormRole" name="job_title" value="Staff" required placeholder="e.g. Software Engineer">
+              </div>
+            </div>
+
+            <div class="w3-form-group">
+              <label>Candidate Email Address <span style="font-size:11px; color:#64748b;">(Optional)</span></label>
+              <input type="email" id="newFormTargetEmail" name="target_email" placeholder="candidate@email.com">
+              <span style="font-size: 11px; color: #64748b;">Optional candidate email to personalize invitation link</span>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1e293b; cursor: pointer; margin: 0;">
+                <input type="checkbox" id="newFormSendEmail" name="send_email" value="1">
+                <span>Automatically dispatch invitation email with form link to candidate</span>
+              </label>
+            </div>
+
+            <div class="w3-form-row">
+              <div class="w3-form-group">
+                <label>Link Expiry</label>
+                <select id="newFormExpiry" name="expiry_days">
+                  <option value="7">7 Days</option>
+                  <option value="14">14 Days</option>
+                  <option value="30" selected>30 Days</option>
+                  <option value="0">No Expiration</option>
+                </select>
+              </div>
+
+              <div class="w3-form-group">
+                <label>Allowed Submissions</label>
+                <select id="newFormMultiple" name="allow_multiple">
+                  <option value="1" selected>Multiple Submissions</option>
+                  <option value="0">Single Use Only</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Result Box after creation -->
+            <div id="newFormResultBox" style="display: none; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px; margin-top: 6px;">
+              <div style="font-weight: 700; color: #065f46; font-size: 13px; margin-bottom: 6px;">
+                <i class="fas fa-check-circle"></i> Registration Form Link Ready!
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <input type="text" id="createdFormUrlInput" readonly style="font-size: 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; flex: 1;">
+                <button type="button" onclick="copyCreatedFormUrl()" style="background: #10b981; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                  <i class="fas fa-copy"></i> Copy
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="w3-modal-footer">
+            <button type="button" class="w3-btn-cancel" onclick="closeCreateEmpFormModal()">Close</button>
+            <button type="submit" id="btnSubmitCreateForm" class="w3-btn-save" style="background: #10b981;">
+              <i class="fas fa-link"></i> Generate Form Link
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Review Submission Modal -->
+    <div class="w3-modal-overlay" id="reviewSubmissionModal" style="display: none;">
+      <div class="w3-modal-card" style="max-width: 620px;">
+        <div class="w3-modal-header" style="background: linear-gradient(135deg, #14204d 0%, #1c2b63 100%); color: #ffffff;">
+          <h3 style="color: #ffffff; font-size: 16px;"><i class="fas fa-clipboard-check" style="color: #60a5fa; margin-right: 6px;"></i> Review Employee Application</h3>
+          <button type="button" class="w3-modal-close" onclick="closeReviewSubmissionModal()" style="color: #ffffff;">&times;</button>
+        </div>
+        <div class="w3-modal-body-scroll" id="reviewModalBody" style="padding: 18px 20px; gap: 14px;">
+          <!-- Loaded dynamically -->
+        </div>
+        <div class="w3-modal-footer" style="padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <button type="button" class="w3-btn-cancel" onclick="closeReviewSubmissionModal()">Close</button>
+          <div style="display: flex; gap: 8px;" id="reviewModalActionButtons">
+            <button type="button" id="rejectSubBtn" onclick="rejectCurrentSubmission()" style="padding: 9px 16px; border-radius: 8px; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-weight: 700; font-size: 13px; cursor: pointer;">
+              <i class="fas fa-ban"></i> Reject
+            </button>
+            <button type="button" id="approveSubBtn" onclick="approveCurrentSubmission()" style="padding: 9px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);">
+              <i class="fas fa-check-circle"></i> Approve &amp; Dispatch OTP SMS
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
+  </main>
+</div>

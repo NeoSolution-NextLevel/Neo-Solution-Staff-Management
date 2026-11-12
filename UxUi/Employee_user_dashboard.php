@@ -33,7 +33,13 @@ require_login();
 
         document.addEventListener("DOMContentLoaded", function() {
             Employee_user_dashboard_close_all();
-            Employee_user_dashboard_01_OPEN();
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetSection = urlParams.get('page') || urlParams.get('section');
+            if (targetSection === 'profile' || targetSection === 'my_profile' || targetSection === '02') {
+                Employee_user_dashboard_02_OPEN();
+            } else {
+                Employee_user_dashboard_01_OPEN();
+            }
         });
     </script>
 

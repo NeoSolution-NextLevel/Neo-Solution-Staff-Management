@@ -11,6 +11,14 @@ try {
     $db = new DataBase();
     $conn = $db->get_data_base_connction();
 
+    // Ensure departments table has head column or head_name compatibility
+    try {
+        $chkHeadCol = $db->get_result("SHOW COLUMNS FROM `departments` LIKE 'head'");
+        if (!$chkHeadCol || $chkHeadCol->num_rows === 0) {
+            $db->get_result("ALTER TABLE `departments` ADD COLUMN `head` varchar(255) DEFAULT '' AFTER `name`");
+        }
+    } catch (\Throwable $e) {}
+
     // 0. Ensure employee_profiles table exists on the database
     $db->get_result("CREATE TABLE IF NOT EXISTS `employee_profiles` (
         `id` int NOT NULL AUTO_INCREMENT,

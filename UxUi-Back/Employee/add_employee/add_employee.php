@@ -52,7 +52,7 @@ if ($res) {
 
     $login_user_id = 0;
     $safeEmail = addslashes($email);
-    $chkUser = $conn->query("SELECT id FROM `main_user_login` WHERE `user_name` = '{$safeEmail}' AND `main_user_account_access_level_list_id` = 2 LIMIT 1");
+    $chkUser = $conn->query("SELECT id FROM `main_user_login` WHERE `user_name` = '{$safeEmail}' AND `main_user_account_access_level_list_id` = 3 LIMIT 1");
     if ($chkUser && ($u = $chkUser->fetch_assoc())) {
         $login_user_id = (int)$u['id'];
     } else {
@@ -73,7 +73,7 @@ if ($res) {
             `account_active_state`, `email_verify`, `sdt`
         ) VALUES (
             1, '{$safeEmail}', '{$safePass}', '{$safeName}', '{$safeFirst}', '{$safeLast}',
-            2, 'Employee', 1, 1, 1, NOW()
+            3, 'Employee', 1, 1, 1, NOW()
         )";
         if ($conn->query($insUserSql)) {
             $login_user_id = (int)$db->get_id();

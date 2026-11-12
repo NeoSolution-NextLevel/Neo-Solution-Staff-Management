@@ -3,7 +3,7 @@
               <!-- Header Section: Displays company branding and login title -->
               <div class="erp-login-card__header">
                   <h1 class="erp-login-card__title"><?php echo $company_obj->get_compnay_name() ?></h1>
-                  <p class="erp-login-card__subtitle">Enterprise Resource Planning System</p>
+                  <p class="erp-login-card__subtitle">Staff Management &amp; Enterprise Portal</p>
               </div>
 
               <!-- Main Body: Contains the login form and options -->
@@ -104,21 +104,29 @@
                           <a href="#" class="erp-link erp-text-sm">Forgot your password?</a>
                       </div>
 
-                      <!-- Registration Option: For new employees -->
+                      <!-- Registration Option: Unified Staff Registration -->
                       <div class="erp-text-center erp-mt-xl">
-                          <p class="erp-text-tertiary erp-text-sm erp-mb-sm">Don't have an account?</p>
-                          <button class="erp-btn erp-btn--secondary erp-btn--block" type="button"
-                              onclick="window.location.href='<?php echo $home_page ?><?php echo $User_login_url ?>User-Registration<?php echo $online_offline_extention ?>'">
-                              <i class="fas fa-user-plus"></i>
-                              <span>Register as Employee</span>
-                          </button>
+                          <p class="erp-text-tertiary erp-text-sm erp-mb-sm" style="font-weight: 600; color: #475569;">Don't have an account?</p>
+                          <div style="display: flex; flex-direction: column; gap: 8px;">
+                              <button class="erp-btn erp-btn--primary erp-btn--block" type="button"
+                                  onclick="window.location.href='<?php echo $home_page ?>UxUi/Main/Employee-Registration-Form<?php echo $online_offline_extention ?>'"
+                                  style="height: 44px; font-size: 14.5px; font-weight: 700; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
+                                  <i class="fas fa-user-plus"></i>
+                                  <span>Register as Staff</span>
+                              </button>
+                          </div>
+                          <div style="margin-top: 12px; font-size: 12px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;">
+                              <i class="fas fa-mobile-screen" style="color: #2563eb; margin-right: 4px;"></i>
+                              <span>Already applied for onboarding? </span>
+                              <a href="<?php echo $home_page ?>UxUi/Main/Employee-Verify-OTP<?php echo $online_offline_extention ?>" class="erp-link" style="color: #2563eb; font-weight: 700; text-decoration: underline;">Verify with OTP</a>
+                          </div>
                       </div>
                   </form>
               </div>
 
               <!-- Footer: Displays copyright and version info -->
               <div class="erp-login-card__footer">
-                  <p class="erp-footer__copyright" id="copyright">© <span id="current-year"></span> Enterprise Resource Planning System v4.2.1</p>
+                  <p class="erp-footer__copyright" id="copyright">© <span id="current-year"></span> NEO Solution. All rights reserved.</p>
               </div>
           </div>
       </div>

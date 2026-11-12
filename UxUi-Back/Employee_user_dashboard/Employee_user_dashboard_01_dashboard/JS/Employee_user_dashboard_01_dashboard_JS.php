@@ -43,7 +43,8 @@
             const el = id => document.getElementById(id);
             if (el('dashEmpDept')) el('dashEmpDept').textContent = dept;
             if (el('dashEmpCode')) el('dashEmpCode').textContent = empCode;
-            if (el('dashWelcomeTitle')) el('dashWelcomeTitle').textContent = `Welcome back, ${firstName}`;
+            const displayName = fullName || firstName || 'Employee';
+            if (el('dashWelcomeTitle')) el('dashWelcomeTitle').textContent = `Welcome back, ${displayName}`;
             if (el('dashWelcomeSubtitle')) el('dashWelcomeSubtitle').textContent = `Here's your work overview for today in ${dept}.`;
             if (el('dashTopEmpName')) el('dashTopEmpName').textContent = firstName;
 

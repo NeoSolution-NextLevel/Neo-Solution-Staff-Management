@@ -8,8 +8,10 @@
        ========================================================= */
     .erp-footer {
         position: relative;
-        margin-left: 250px;
-        width: calc(100% - 250px);
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        margin-top: auto !important;
+        flex-shrink: 0 !important;
         min-height: 40px;
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         color: #94a3b8;
@@ -24,6 +26,11 @@
         box-sizing: border-box;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         transition: margin-left 0.3s ease, width 0.3s ease;
+    }
+
+    body.admin-sidebar-hidden .erp-footer {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
 
     .erp-footer__left {

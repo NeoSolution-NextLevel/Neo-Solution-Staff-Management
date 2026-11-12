@@ -551,7 +551,7 @@
         </div>
       </div>
 
-      <h3 id="dashWelcomeTitle" style="margin:0 0 4px 0;">Welcome back, <?php echo htmlspecialchars(!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' ? $logged_user_first_name : 'Employee'); ?></h3>
+      <h3 id="dashWelcomeTitle" style="margin:0 0 4px 0;">Welcome back, <?php echo htmlspecialchars(!empty($logged_user_name) && $logged_user_name !== 'Guest' && $logged_user_name !== 'Employee' ? $logged_user_name : (!empty($logged_user_first_name) && $logged_user_first_name !== 'Guest' && $logged_user_first_name !== 'Employee' ? $logged_user_first_name : 'Employee')); ?></h3>
       <p id="dashWelcomeSubtitle" style="margin:0;">Here's your work overview for today<?php echo !empty($logged_user_dept) ? ' in ' . htmlspecialchars($logged_user_dept) : ''; ?>.</p>
 
       <!-- Work Schedule & Shift Strip for Employee Visibility -->

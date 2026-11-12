@@ -124,7 +124,7 @@ class Email_Sender {
         $user   = trim($smtp_cfg['smtp_user']);
         $pass   = str_replace(' ', '', trim($smtp_cfg['smtp_pass']));
 
-        $timeout = 8;
+        $timeout = 3;
         $context = stream_context_create([
             'ssl' => [
                 'verify_peer'       => false,

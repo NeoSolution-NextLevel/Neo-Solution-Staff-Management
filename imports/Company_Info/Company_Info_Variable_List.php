@@ -10,8 +10,8 @@ class Company_Info_Variable_List {
     private $company_name = "Neo Solution";
     private $company_web = "neosolution.lk";
     private $full_company_web = "https://www.neosolution.lk";
-    private $default_sending_email = "admin@neosolution.lk";
-    private $system_problem_sending_email = "admin@neosolution.lk";
+    private $default_sending_email = "devindi@neosolution.lk";
+    private $system_problem_sending_email = "devindi@neosolution.lk";
     private $company_short_name = "Neo Solution";
 //-----------------------------------------------------------------------------------------------------------   
     private $company_whatup_number = "";
@@ -47,6 +47,10 @@ class Company_Info_Variable_List {
     private $API_data_neosolution_lk = "SytZd3ZycVRFRWlOOGMydFdWMkNMZz09";
     private $app_URL = "https://www.neosolution.lk/";
     private $finanace_admin_email_for_notification = "finance@neosolution.lk";
+
+     private $firebase_project_id = "ems-app-ea702";
+    private $fcmAllTopic = 'ems_all';
+    private $fcmSubscriptionTopicPrefix = 'ems_sub_';
 
   public function get_API_SEO_KEY()
     {
@@ -246,6 +250,19 @@ class Company_Info_Variable_List {
 
     public function get_app_URL() {
         return $this->app_URL;
+    }
+
+     public function get_firebase_project_id()
+    {
+        return $this->firebase_project_id;
+    }
+    public function get_fcm_all_topic()
+    {
+        return $this->fcmAllTopic;
+    }
+    public function get_fcm_subscription_topic_prefix()
+    {
+        return $this->fcmSubscriptionTopicPrefix;
     }
 
   

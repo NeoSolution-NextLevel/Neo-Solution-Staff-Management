@@ -107,7 +107,7 @@
           if (bannerTag) bannerTag.textContent = dept;
 
           var dashWelcome = document.getElementById('dashWelcomeTitle');
-          if (dashWelcome) dashWelcome.textContent = 'Welcome back, ' + firstName;
+          if (dashWelcome) dashWelcome.textContent = 'Welcome back, ' + (name || firstName || 'Employee');
           var dashSubtitle = document.getElementById('dashWelcomeSubtitle');
           if (dashSubtitle) dashSubtitle.textContent = "Here's your work overview for today in " + dept + ".";
           var dashDept = document.getElementById('dashEmpDept');
@@ -156,14 +156,7 @@
   }
 
   function Employee_user_dashboard_03_OPEN() {
-    Employee_user_dashboard_close_all();
-    var el = document.getElementById("Employee_user_dashboard_03_personal_details");
-    if (el) el.style.display = "";
-    setEmployeeSidebarActive('personal_details');
-    window.syncGlobalEmployeeData();
-    if (typeof window.fetchPersonalDetails === 'function') {
-      window.fetchPersonalDetails();
-    }
+    Employee_user_dashboard_02_OPEN();
   }
 
   function Employee_user_dashboard_04_OPEN() {
@@ -189,14 +182,7 @@
   }
 
   function Employee_user_dashboard_06_OPEN() {
-    Employee_user_dashboard_close_all();
-    var el = document.getElementById("Employee_user_dashboard_06_job_information");
-    if (el) el.style.display = "";
-    setEmployeeSidebarActive('job_information');
-    window.syncGlobalEmployeeData();
-    if (typeof window.fetchJobInformation === 'function') {
-      window.fetchJobInformation();
-    }
+    Employee_user_dashboard_02_OPEN();
   }
 
   function Employee_user_dashboard_07_OPEN() {

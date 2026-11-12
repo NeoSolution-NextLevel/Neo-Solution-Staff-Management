@@ -118,7 +118,13 @@ function get_current_logged_user_info()
     $userRole = isset($_SESSION['user_role']) ? $_SESSION['user_role'] : (isset($_SESSION['ac_type']) ? $_SESSION['ac_type'] : 'Staff');
 
     // Admin detection: system administrators must NEVER resolve to employee records
-    $isAdmin = (
+    $isEmployee = (
+        (isset($_SESSION['main_user_account_access_level_list_id']) && (int)$_SESSION['main_user_account_access_level_list_id'] === 3) ||
+        (strtolower((string)$userRole) === 'employee') ||
+        (isset($_SESSION['ac_type']) && strtolower((string)$_SESSION['ac_type']) === 'employee')
+    ) && $uid !== 1;
+
+    $isAdmin = !$isEmployee && (
         (strtolower((string)$userRole) === 'admin') ||
         (isset($_SESSION['ac_type']) && strtolower((string)$_SESSION['ac_type']) === 'admin') ||
         (isset($_SESSION['main_user_account_access_level_list_id']) && (int)$_SESSION['main_user_account_access_level_list_id'] === 1) ||
@@ -151,7 +157,7 @@ function get_current_logged_user_info()
         return $cached;
     }
 
-    $fullName = isset($_SESSION['full_name']) && !empty($_SESSION['full_name']) ? $_SESSION['full_name'] : '';
+    $fullName = isset($_SESSION['full_name']) && !empty($_SESSION['full_name']) && strtolower(trim((string)$_SESSION['full_name'])) !== 'employee' && strtolower(trim((string)$_SESSION['full_name'])) !== 'guest' ? $_SESSION['full_name'] : '';
     $role = isset($_SESSION['job_title']) && !empty($_SESSION['job_title']) ? $_SESSION['job_title'] : $userRole;
     $dept = isset($_SESSION['department']) && !empty($_SESSION['department']) ? $_SESSION['department'] : '';
     $pic = isset($_SESSION['profile_pic']) && !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : '';
@@ -165,7 +171,7 @@ function get_current_logged_user_info()
             $safeEmail = addslashes($uemail);
 
             // 1. employee_profiles (exclude admin user id 1)
-            $chk1 = $conn->query("SELECT * FROM `employee_profiles` WHERE (`email` != '' AND `email` = '{$safeEmail}') OR (`user_id` = '{$uid}' AND `user_id` > 1" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ") LIMIT 1");
+            $chk1 = $conn->query("SELECT * FROM `employee_profiles` WHERE (`email` != '' AND `email` = '{$safeEmail}') OR (`user_id` = '{$uid}' AND `user_id` > 1" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ") ORDER BY `id` DESC LIMIT 1");
             if ($chk1 && $r1 = $chk1->fetch_assoc()) {
                 $fullName = !empty($r1['full_name']) ? $r1['full_name'] : '';
                 if (!empty($r1['job_title'])) $role = $r1['job_title'];
@@ -176,7 +182,7 @@ function get_current_logged_user_info()
 
             // 2. employees (exclude admin user id 1)
             if (empty($fullName)) {
-                $chk2 = $conn->query("SELECT * FROM `employees` WHERE (`email_address` != '' AND `email_address` = '{$safeEmail}') OR (`main_user_login_id` = '{$uid}' AND `main_user_login_id` > 1" . (!empty($safeEmail) ? " AND (`email_address` = '' OR `email_address` IS NULL OR `email_address` = '{$safeEmail}')" : "") . ") LIMIT 1");
+                $chk2 = $conn->query("SELECT * FROM `employees` WHERE (`email_address` != '' AND `email_address` = '{$safeEmail}') OR (`main_user_login_id` = '{$uid}' AND `main_user_login_id` > 1" . (!empty($safeEmail) ? " AND (`email_address` = '' OR `email_address` IS NULL OR `email_address` = '{$safeEmail}')" : "") . ") ORDER BY `id` DESC LIMIT 1");
                 if ($chk2 && $r2 = $chk2->fetch_assoc()) {
                     $fullName = !empty($r2['fullname']) ? $r2['fullname'] : '';
                     if (!empty($r2['job_roles'])) $role = $r2['job_roles'];

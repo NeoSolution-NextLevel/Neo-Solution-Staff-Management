@@ -6,37 +6,39 @@ include_once '../../Controllers/Main/Cook_Managment/Cook_Managing.php';
 $json = [];
 $state = [];
 
+if ($_SERVER["REQUEST_METHOD"] === "POST" || $_SERVER["REQUEST_METHOD"] === "GET") {
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    if ($user_main_cook_id !== null) {
-
-        $Cook_Management_obj = new Cook_Management($user_main_cook_id);
-
-        if ($Cook_Management_obj->main_user_login_logout($user_id)) {
-
-            unset(
-                $_SESSION['user'],
-                $_SESSION['user_id'],
-                $_SESSION['temp_user'],
-                $_SESSION['otp_pending'],
-                $_SESSION['otp_encrypt']
-            );
-
-            session_destroy();
-
-            $state['error'] = "0";
-        } else {
-            $state['error'] = "DB_LOGOUT_FAILED";
-        }
-    } else {
-        $state['error'] = "INVALID_SESSION";
+    if (!empty($user_main_cook_id)) {
+        try {
+            $Cook_Management_obj = new Cook_Management($user_main_cook_id);
+            $Cook_Management_obj->main_user_login_logout($user_id);
+        } catch (\Throwable $e) {}
     }
+
+    // Always clear the auth cookie
+    if (isset($_COOKIE['main_user_account_cook'])) {
+        setcookie('main_user_account_cook', '', time() - 86400, '/');
+    }
+
+    // Clear all session variables
+    $_SESSION = [];
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_unset();
+        session_destroy();
+    }
+
+    $state['error'] = "0";
 } else {
     $state['error'] = "INVALID_REQUEST";
 }
 
 $json[] = $state;
+
+if ($_SERVER["REQUEST_METHOD"] === "GET") {
+    $loginUrl = rtrim($GLOBALS['home_page'] ?? '/', '/') . '/UxUi/Main/User-Login.php?logout=1';
+    header('Location: ' . $loginUrl);
+    exit;
+}
 
 header('Content-Type: application/json');
 echo json_encode($json);

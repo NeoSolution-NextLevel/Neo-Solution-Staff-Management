@@ -254,7 +254,7 @@
     $current_script_name = basename($_SERVER['PHP_SELF'] ?? '');
     $is_auth_screen = (isset($is_auth_page) && $is_auth_page)
         || (isset($page_is_auth) && $page_is_auth)
-        || in_array($current_script_name, ['User-Login.php', 'Successful-Page.php', 'User_Login_A_01.php', 'Forgot-Password.php', 'Reset-Password.php']);
+        || in_array($current_script_name, ['User-Login.php', 'Successful-Page.php', 'Failed-Page.php', 'OTP-Two-step-Verification.php', 'User-Registration.php', 'User_Login_A_01.php', 'Forgot-Password.php', 'Reset-Password.php']);
     ?>
 
     <header class="erp-header">
@@ -290,7 +290,7 @@
                     <i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i>
                     Enterprise Portal
                 </span>
-                <a href="mailto:admin@neosolution.lk" class="erp-header__portal-link" title="Contact Support">
+                <a href="mailto:devindi@neosolution.lk" class="erp-header__portal-link" title="Contact Support">
                     <i class="fa-solid fa-circle-question" style="margin-right: 5px;"></i>
                     Support
                 </a>
