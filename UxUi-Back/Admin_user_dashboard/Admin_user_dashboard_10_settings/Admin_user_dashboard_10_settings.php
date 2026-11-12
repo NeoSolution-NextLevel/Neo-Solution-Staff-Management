@@ -928,11 +928,11 @@
           <p>Manage your account preferences</p>
         </div>
 
-        <form id="settingsForm">
+        <!-- <form id="settingsForm"> -->
           <!-- Section 1: Notification Preferences -->
-          <section class="settings-card">
-            <h3>Notification Preferences</h3>
-            
+          <!-- <section class="settings-card">
+            <h3>Notification Preferences</h3> -->
+<!--             
             <div class="setting-item">
               <div class="setting-info">
                 <h4>Email Notifications</h4>
@@ -942,9 +942,9 @@
                 <input type="checkbox" id="setting_email_notifications" name="email_notifications" checked>
                 <span class="slider"></span>
               </label>
-            </div>
+            </div> -->
 
-            <div class="setting-item">
+            <!-- <div class="setting-item">
               <div class="setting-info">
                 <h4>Task Updates</h4>
                 <p>Get notified when tasks are assigned or updated</p>
@@ -964,9 +964,9 @@
                 <input type="checkbox" id="setting_leave_status" name="leave_status" checked>
                 <span class="slider"></span>
               </label>
-            </div>
+            </div> -->
 
-            <div class="setting-item">
+            <!-- <div class="setting-item">
               <div class="setting-info">
                 <h4>System Alerts</h4>
                 <p>Important system maintenance and updates</p>
@@ -976,7 +976,7 @@
                 <span class="slider"></span>
               </label>
             </div>
-          </section>
+          </section> -->
 
           <!-- Section 2: Leave Email & SMTP Setup -->
           <section class="settings-card" id="smtpSettingsSection">
@@ -1061,7 +1061,7 @@
           </section>
 
           <!-- Section 3: Privacy Settings -->
-          <section class="settings-card">
+          <!-- <section class="settings-card">
             <h3>Privacy Settings</h3>
 
             <div class="setting-item">
@@ -1073,9 +1073,9 @@
                 <input type="checkbox" id="setting_profile_visibility" name="profile_visibility" checked>
                 <span class="slider"></span>
               </label>
-            </div>
+            </div> -->
 
-            <div class="setting-item">
+            <!-- <div class="setting-item">
               <div class="setting-info">
                 <h4>Activity Status</h4>
                 <p>Show your online/active status to others</p>
@@ -1085,9 +1085,87 @@
                 <span class="slider"></span>
               </label>
             </div>
+          </section> -->
+
+          <!-- Section 3: Security & Credentials -->
+          <section class="settings-card" id="securitySettingsSection">
+            <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 16px;">
+              <h3 style="margin: 0; border-bottom: none; padding-bottom: 0;">Security & Credentials</h3>
+              <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 3px;">Manage your account password, verified phone number, and Two-Factor Authentication.</p>
+            </div>
+
+            <!-- Phone Number Setting -->
+            <div class="setting-item" style="border-bottom: 1px solid #f8fafc; padding-bottom: 16px;">
+              <div class="setting-info">
+                <h4>Phone Number</h4>
+                <p>Used for system alerts, emergency verification, and Two-Factor SMS OTP</p>
+              </div>
+              <div style="display: flex; gap: 8px; max-width: 340px; width: 100%;">
+                <input type="tel" id="sec_phone_number" class="smtp-input" placeholder="e.g. 0771234567" style="flex: 1;">
+                <button type="button" class="btn-smtp-save" id="btnSavePhone" style="white-space: nowrap; padding: 10px 16px;">
+                  Save Phone
+                </button>
+              </div>
+            </div>
+
+            <!-- Two-Factor Authentication Toggle & Setup -->
+            <div class="setting-item" style="border-bottom: 1px solid #f8fafc; padding-bottom: 16px;">
+              <div class="setting-info">
+                <h4>Two-Factor Authentication (2FA)</h4>
+                <p>Enhance account security by requiring an OTP code during sign-in</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span id="two_factor_badge" style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: #fef2f2; color: #dc2626;">Disabled</span>
+                <label class="switch" title="Enable or Disable Two-Factor Authentication">
+                  <input type="checkbox" id="sec_two_factor_toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 2FA OTP verification drawer (hidden by default) -->
+            <div id="two_factor_verify_box" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px;">
+              <div id="two_factor_alert" style="display: none; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 12px;"></div>
+              <div style="font-size: 13.5px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Verify Phone Number with OTP:</div>
+              <div style="display: flex; gap: 8px; max-width: 360px; width: 100%;">
+                <input type="text" id="two_factor_otp_input" class="smtp-input" placeholder="Enter 6-digit OTP" maxlength="6" style="letter-spacing: 2px; font-weight: 700; text-align: center;">
+                <button type="button" class="btn-smtp-save" id="btnVerify2faOtp" style="white-space: nowrap;">Verify & Enable</button>
+                <button type="button" class="btn-smtp-test" id="btnResend2faOtp" style="white-space: nowrap;">Resend</button>
+              </div>
+            </div>
+
+            <!-- Change Password Section -->
+            <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #f1f5f9;">
+              <h4 style="font-size: 14.5px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Change Account Password</h4>
+              <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Ensure your account uses a secure password with a minimum of 6 characters.</p>
+
+              <div id="change_password_alert" style="display: none; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 14px;"></div>
+
+              <div class="smtp-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="smtp-field">
+                  <label>Current Password</label>
+                  <input type="password" id="sec_current_password" class="smtp-input" placeholder="••••••••">
+                </div>
+                <div class="smtp-field">
+                  <label>New Password</label>
+                  <input type="password" id="sec_new_password" class="smtp-input" placeholder="Min. 6 characters">
+                </div>
+                <div class="smtp-field">
+                  <label>Confirm New Password</label>
+                  <input type="password" id="sec_confirm_password" class="smtp-input" placeholder="Repeat new password">
+                </div>
+              </div>
+
+              <div style="margin-top: 14px;">
+                <button type="button" class="btn-smtp-save" id="btnSubmitChangePassword">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                  Update Password
+                </button>
+              </div>
+            </div>
           </section>
 
-          <!-- Section 3: Account Information -->
+          <!-- Section 4: Account Information -->
           <?php
           $admin_init_type = $_SESSION['user_role'] ?? $_SESSION['ac_type'] ?? 'Administrator';
           $admin_init_status = 'Active';
