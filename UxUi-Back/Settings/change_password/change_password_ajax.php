@@ -4,6 +4,7 @@
  * Handles changing the current user's password directly from the Settings page.
  */
 header('Content-Type: application/json; charset=utf-8');
+if (function_exists('mysqli_report')) { mysqli_report(MYSQLI_REPORT_OFF); }
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -11,8 +12,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 include_once __DIR__ . '/../../../imports/need/session_setup.php';
 include_once __DIR__ . '/../../../imports/need/DB.php';
-include_once __DIR__ . '/../../../Controllers/Main/main_user_login/main_user_login_ADD_UPDATE.php';
-include_once __DIR__ . '/../../../Controllers/Main/main_user_login/main_user_login_SINGLE_DATA_By_Email.php';
 include_once __DIR__ . '/../../../imports/security/encrypt_decrypt.php';
 include_once __DIR__ . '/../../../imports/security/key_list.php';
 
@@ -74,18 +73,18 @@ try {
         exit;
     }
 
+    if ($current_password === $new_password) {
+        echo json_encode(['status' => 'error', 'message' => 'New password must be different from the current password.']);
+        exit;
+    }
+
     $encrypted_new = $advance_security_check->get_data_encrypt($user_name, $new_password);
 
-    $updater = new main_user_login_ADD_UPDATE();
-    $updater->set_id($uid);
-    $updater->set_password($encrypted_new);
-
-    if ($updater->process_update()) {
-        echo json_encode(['status' => 'success', 'message' => 'Password changed successfully!']);
-    } else {
-        $conn->query("UPDATE `main_user_login` SET `password` = '" . mysqli_real_escape_string($conn, $encrypted_new) . "' WHERE `id` = {$uid}");
-        echo json_encode(['status' => 'success', 'message' => 'Password changed successfully!']);
+    $ok = $conn->query("UPDATE `main_user_login` SET `password` = '" . $conn->real_escape_string($encrypted_new) . "' WHERE `id` = {$uid}");
+    if (!$ok) {
+        throw new Exception('Could not update password (' . $conn->error . ').');
     }
+    echo json_encode(['status' => 'success', 'message' => 'Password changed successfully!']);
 } catch (\Throwable $e) {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
