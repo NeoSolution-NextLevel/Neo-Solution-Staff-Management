@@ -57,6 +57,13 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    margin-top: 0;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(20, 25, 60, .03);
   }
 
   .topbar-left {
@@ -747,6 +754,9 @@
       height: 58px !important;
       min-height: 58px !important;
       max-height: 58px !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 99 !important;
     }
     #Super_Admin_user_dashboard_01 .topbar-left,
     #Super_Admin_user_dashboard_01 .topbar-right {
