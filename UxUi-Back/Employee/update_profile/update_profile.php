@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
+if (function_exists('mysqli_report')) { mysqli_report(MYSQLI_REPORT_OFF); }
 
 include_once __DIR__ . '/../../../imports/need/DB.php';
 include_once __DIR__ . '/../../../imports/need/SystemNotifications.php';
@@ -89,6 +90,7 @@ if ($main_user_id <= 0 && $userId > 1) {
 
 // Resolve employees table row
 $emp_table_id = 0;
+$emp_row_exists = false;
 $empQ = "SELECT * FROM `employees` WHERE 1=0";
 if (!empty($email)) $empQ .= " OR `email_address` = '{$safeEmail}'";
 if ($main_user_id > 0) $empQ .= " OR `main_user_login_id` = '{$main_user_id}'";
@@ -97,6 +99,7 @@ if (!empty($fullName)) $empQ .= " OR `fullname` = '{$safeFullName}'";
 $eChk = $conn->query($empQ . " LIMIT 1");
 if ($eChk && ($e = $eChk->fetch_assoc())) {
     $targetEmp = $e;
+    $emp_row_exists = true;
     $emp_table_id = (int)$e['id'];
     if ($main_user_id <= 0 && !empty($e['main_user_login_id'])) {
         $main_user_id = (int)$e['main_user_login_id'];
@@ -230,8 +233,8 @@ if ($emp_table_id > 0) {
     if (!empty($emp_updates)) {
         $conn->query("UPDATE `employees` SET " . implode(", ", $emp_updates) . " WHERE `id` = '{$emp_table_id}'");
     }
-} else {
-    // Insert new row into employees table
+} elseif (!$emp_row_exists) {
+    // Insert new row into employees table (only if no matching row exists at all)
     $insEmpDept = !empty($dept) ? $dept : 'Engineering';
     $insEmpRole = !empty($role) ? $role : 'Staff';
     $insEmpStatus = !empty($status) ? strtolower($status) : 'active';
@@ -284,7 +287,10 @@ sync_job_role_employee_counts($conn);
 // Admin can only set salary compensation (basic_salary, net_salary).
 // Bank account details are self-managed exclusively by employees ($isEmployeeSelf).
 if ($isEmployeeSelf || isset($_POST['basic_salary']) || isset($_POST['net_salary'])) {
-    include_once __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
+    $bsPath = file_exists(__DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php')
+        ? __DIR__ . '/../../../Controllers/Main/Bank_details/Bank_Security.php'
+        : __DIR__ . '/../../../Controllers/Main/Bank_Details/Bank_Security.php';
+    include_once $bsPath;
     $bTargetUserId = $main_user_id > 0 ? $main_user_id : $userId;
     $bCheck = $conn->query("SELECT id, bank_account_number, account_number, holder_name, bank_name, branch FROM `bank_details` 
         WHERE `user_id` = '{$bTargetUserId}' OR `employee_id` = '" . addslashes($empCode) . "' OR `employee_name` = '{$safeFullName}' OR `holder_name` = '{$safeFullName}' 
