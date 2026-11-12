@@ -286,13 +286,314 @@
       });
     }
 
+    // ========================================================
+    // Security Settings (Phone, 2FA, Change Password)
+    // ========================================================
+    const secPhoneInput = document.getElementById('sec_phone_number');
+    const btnSavePhone = document.getElementById('btnSavePhone');
+    const twoFactorToggle = document.getElementById('sec_two_factor_toggle');
+    const twoFactorBadge = document.getElementById('two_factor_badge');
+    const twoFactorVerifyBox = document.getElementById('two_factor_verify_box');
+    const twoFactorAlert = document.getElementById('two_factor_alert');
+    const twoFactorOtpInput = document.getElementById('two_factor_otp_input');
+    const btnVerify2faOtp = document.getElementById('btnVerify2faOtp');
+    const btnResend2faOtp = document.getElementById('btnResend2faOtp');
+
+    const secCurrentPass = document.getElementById('sec_current_password');
+    const secNewPass = document.getElementById('sec_new_password');
+    const secConfirmPass = document.getElementById('sec_confirm_password');
+    const btnSubmitChangePass = document.getElementById('btnSubmitChangePassword');
+    const changePassAlert = document.getElementById('change_password_alert');
+
+    function fetchSecuritySettings() {
+      const fetchUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/fetch_security_settings/fetch_security_settings.php';
+      fetch(fetchUrl)
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success' && res.data) {
+            const d = res.data;
+            if (secPhoneInput && d.phone_number) {
+              secPhoneInput.value = d.phone_number;
+            }
+            if (twoFactorToggle) {
+              twoFactorToggle.checked = !!d.is_two_factor_auth_enable;
+            }
+            updateTwoFactorBadge(!!d.is_two_factor_auth_enable);
+          }
+        })
+        .catch(() => {});
+    }
+
+    function updateTwoFactorBadge(isEnabled) {
+      if (!twoFactorBadge) return;
+      if (isEnabled) {
+        twoFactorBadge.textContent = 'Active';
+        twoFactorBadge.style.background = '#ecfdf5';
+        twoFactorBadge.style.color = '#059669';
+      } else {
+        twoFactorBadge.textContent = 'Disabled';
+        twoFactorBadge.style.background = '#fef2f2';
+        twoFactorBadge.style.color = '#dc2626';
+      }
+    }
+
+    // Save Phone Number
+    if (btnSavePhone) {
+      btnSavePhone.addEventListener('click', () => {
+        const phone = (secPhoneInput?.value || '').trim();
+        if (!phone) {
+          alert('Please enter a valid phone number.');
+          return;
+        }
+
+        btnSavePhone.disabled = true;
+        const origText = btnSavePhone.textContent;
+        btnSavePhone.textContent = 'Saving...';
+
+        const saveUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/update_phone_number/update_phone_number.php';
+        const fd = new FormData();
+        fd.append('phone_number', phone);
+
+        fetch(saveUrl, { method: 'POST', body: fd })
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === 'success') {
+              alert(res.message || 'Phone number saved successfully.');
+            } else {
+              alert(res.message || 'Could not save phone number.');
+            }
+          })
+          .catch(err => alert('Save phone failed: ' + err.message))
+          .finally(() => {
+            btnSavePhone.disabled = false;
+            btnSavePhone.textContent = origText;
+          });
+      });
+    }
+
+    // Two-Factor Toggle Listener
+    if (twoFactorToggle) {
+      twoFactorToggle.addEventListener('change', () => {
+        const wantEnable = twoFactorToggle.checked;
+        const phone = (secPhoneInput?.value || '').trim();
+
+        if (wantEnable) {
+          // If phone is empty, prompt user
+          if (!phone) {
+            alert('Please enter and save your phone number before enabling Two-Factor Authentication.');
+            twoFactorToggle.checked = false;
+            secPhoneInput?.focus();
+            return;
+          }
+
+          // Trigger OTP send
+          sendTwoFactorOtp();
+        } else {
+          // Disable 2FA
+          if (!confirm('Are you sure you want to disable Two-Factor Authentication?')) {
+            twoFactorToggle.checked = true;
+            return;
+          }
+
+          const disableUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/toggle_two_factor/toggle_two_factor.php';
+          const fd = new FormData();
+          fd.append('action', 'disable');
+
+          fetch(disableUrl, { method: 'POST', body: fd })
+            .then(res => res.json())
+            .then(res => {
+              if (res.status === 'success') {
+                updateTwoFactorBadge(false);
+                if (twoFactorVerifyBox) twoFactorVerifyBox.style.display = 'none';
+                alert('Two-Factor Authentication disabled.');
+              } else {
+                alert(res.message || 'Could not disable 2FA.');
+                twoFactorToggle.checked = true;
+              }
+            })
+            .catch(() => {
+              twoFactorToggle.checked = true;
+            });
+        }
+      });
+    }
+
+    function sendTwoFactorOtp() {
+      const phone = (secPhoneInput?.value || '').trim();
+      if (!phone) {
+        alert('Please provide a phone number.');
+        return;
+      }
+
+      if (twoFactorVerifyBox) twoFactorVerifyBox.style.display = 'block';
+      if (twoFactorAlert) {
+        twoFactorAlert.style.display = 'block';
+        twoFactorAlert.style.background = '#eff6ff';
+        twoFactorAlert.style.color = '#1e40af';
+        twoFactorAlert.textContent = 'Sending OTP to ' + phone + '...';
+      }
+
+      const otpUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'View-List/Main/Two_Factor_Authentication/Two_Factor_Authentication.php';
+      const fd = new FormData();
+      fd.append('setting_enable_disable_send_otp', '1');
+      fd.append('val_01', phone);
+
+      fetch(otpUrl, { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(res => {
+          const item = Array.isArray(res) ? res[0] : res;
+          if (item && item.error === '0') {
+            if (twoFactorAlert) {
+              twoFactorAlert.style.background = '#ecfdf5';
+              twoFactorAlert.style.color = '#065f46';
+              twoFactorAlert.textContent = item.message || 'OTP sent successfully. Please enter code.';
+            }
+          } else {
+            if (twoFactorAlert) {
+              twoFactorAlert.style.background = '#fef2f2';
+              twoFactorAlert.style.color = '#991b1b';
+              twoFactorAlert.textContent = (item && item.message) || 'Could not send OTP.';
+            }
+          }
+        })
+        .catch(err => {
+          if (twoFactorAlert) {
+            twoFactorAlert.style.background = '#fef2f2';
+            twoFactorAlert.style.color = '#991b1b';
+            twoFactorAlert.textContent = 'Failed to request OTP: ' + err.message;
+          }
+        });
+    }
+
+    if (btnResend2faOtp) {
+      btnResend2faOtp.addEventListener('click', sendTwoFactorOtp);
+    }
+
+    if (btnVerify2faOtp) {
+      btnVerify2faOtp.addEventListener('click', () => {
+        const otp = (twoFactorOtpInput?.value || '').trim();
+        const phone = (secPhoneInput?.value || '').trim();
+
+        if (!otp || otp.length < 4) {
+          alert('Please enter the verification code.');
+          return;
+        }
+
+        btnVerify2faOtp.disabled = true;
+        btnVerify2faOtp.textContent = 'Verifying...';
+
+        const verifyUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'View-List/Main/Two_Factor_Authentication/Two_Factor_Authentication.php';
+        const fd = new FormData();
+        fd.append('setting_enable_disable_otp_check', '1');
+        fd.append('val_02', otp);
+        fd.append('phone_number', phone);
+        fd.append('want_enable', '1');
+
+        fetch(verifyUrl, { method: 'POST', body: fd })
+          .then(res => res.json())
+          .then(res => {
+            const item = Array.isArray(res) ? res[0] : res;
+            if (item && item.error === '0') {
+              if (twoFactorVerifyBox) twoFactorVerifyBox.style.display = 'none';
+              updateTwoFactorBadge(true);
+              if (twoFactorToggle) twoFactorToggle.checked = true;
+              alert('Two-Factor Authentication successfully enabled!');
+            } else {
+              if (twoFactorAlert) {
+                twoFactorAlert.style.display = 'block';
+                twoFactorAlert.style.background = '#fef2f2';
+                twoFactorAlert.style.color = '#991b1b';
+                twoFactorAlert.textContent = (item && item.message) || 'Invalid OTP code.';
+              }
+              alert((item && item.message) || 'Invalid OTP code.');
+            }
+          })
+          .catch(err => alert('Verification failed: ' + err.message))
+          .finally(() => {
+            btnVerify2faOtp.disabled = false;
+            btnVerify2faOtp.textContent = 'Verify & Enable';
+          });
+      });
+    }
+
+    // Change Password
+    if (btnSubmitChangePass) {
+      btnSubmitChangePass.addEventListener('click', () => {
+        const curr = (secCurrentPass?.value || '').trim();
+        const nw = (secNewPass?.value || '').trim();
+        const conf = (secConfirmPass?.value || '').trim();
+
+        if (!curr || !nw || !conf) {
+          showPasswordAlert('Please fill in all password fields.', 'error');
+          return;
+        }
+
+        if (nw.length < 6) {
+          showPasswordAlert('New password must be at least 6 characters.', 'error');
+          return;
+        }
+
+        if (nw !== conf) {
+          showPasswordAlert('New password and confirmation do not match.', 'error');
+          return;
+        }
+
+        btnSubmitChangePass.disabled = true;
+        const origText = btnSubmitChangePass.textContent;
+        btnSubmitChangePass.textContent = 'Updating...';
+
+        const changeUrl = (typeof window.pth !== 'undefined' ? window.pth : '../') + 'UxUi-Back/Settings/change_password/change_password_ajax.php';
+        const fd = new FormData();
+        fd.append('current_password', curr);
+        fd.append('new_password', nw);
+        fd.append('confirm_password', conf);
+
+        fetch(changeUrl, { method: 'POST', body: fd })
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === 'success') {
+              showPasswordAlert(res.message || 'Password changed successfully!', 'success');
+              if (secCurrentPass) secCurrentPass.value = '';
+              if (secNewPass) secNewPass.value = '';
+              if (secConfirmPass) secConfirmPass.value = '';
+            } else {
+              showPasswordAlert(res.message || 'Could not change password.', 'error');
+            }
+          })
+          .catch(err => {
+            showPasswordAlert('Password update failed: ' + err.message, 'error');
+          })
+          .finally(() => {
+            btnSubmitChangePass.disabled = false;
+            btnSubmitChangePass.textContent = origText;
+          });
+      });
+    }
+
+    function showPasswordAlert(msg, type) {
+      if (!changePassAlert) return;
+      changePassAlert.style.display = 'block';
+      if (type === 'success') {
+        changePassAlert.style.background = '#ecfdf5';
+        changePassAlert.style.color = '#065f46';
+        changePassAlert.style.border = '1px solid #a7f3d0';
+      } else {
+        changePassAlert.style.background = '#fef2f2';
+        changePassAlert.style.color = '#991b1b';
+        changePassAlert.style.border = '1px solid #fecaca';
+      }
+      changePassAlert.textContent = msg;
+    }
+
     // Expose for external calls
     window.fetchAdminSettings = fetchSettings;
     window.fetchSmtpSettings = fetchSmtpSettings;
+    window.fetchSecuritySettings = fetchSecuritySettings;
 
     // Initial Load
     fetchSettings();
     fetchSmtpSettings();
+    fetchSecuritySettings();
   };
 
   if (document.readyState === 'loading') {
