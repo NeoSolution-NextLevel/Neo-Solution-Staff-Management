@@ -56,12 +56,20 @@
     fetch(fetchUrl)
       .then(res => res.json())
       .then(res => {
-        if (res.status === 'success' && res.data) {
+        if (res && res.status === 'success' && res.data) {
           userProfileData = res.data;
+          window.userProfileData = res.data;
           renderProfileData(res.data);
+        } else if (window.userProfileData) {
+          renderProfileData(window.userProfileData);
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.warn('Fetch profile error:', err);
+        if (window.userProfileData) {
+          renderProfileData(window.userProfileData);
+        }
+      });
   };
 
   function renderProfileData(p) {
@@ -365,7 +373,7 @@
     const saveUrl = baseUrl + 'UxUi-Back/Employee/update_profile/update_profile.php';
     const form = document.getElementById('editProfileForm');
     const formData = new FormData(form);
-    const userId = userProfileData.id || userProfileData.user_id || 1;
+    const userId = (userProfileData && (userProfileData.id || userProfileData.user_id)) ? (userProfileData.id || userProfileData.user_id) : (window.empSessionUserId || 0);
     formData.append('user_id', userId);
     formData.append('source', 'employee_self');
 
@@ -377,7 +385,7 @@
       .then(res => {
         if (btn) btn.disabled = false;
         if (res.status === 'success') {
-          showProfileToast('Profile & job details updated successfully!', 'success');
+          showProfileToast('Profile details updated successfully!', 'success');
           window.closeEditProfileModal();
           window.fetchEmployeeProfileData();
           if (typeof window.syncGlobalEmployeeData === 'function') window.syncGlobalEmployeeData();
@@ -389,9 +397,7 @@
       .catch((err) => {
         if (btn) btn.disabled = false;
         console.error('Save profile error:', err);
-        showProfileToast('Profile details updated successfully.', 'success');
-        window.closeEditProfileModal();
-        window.fetchEmployeeProfileData();
+        showProfileToast('Failed to save profile details. Please try again.', 'error');
       });
   };
 
