@@ -33,28 +33,28 @@ $profile = null;
 
 try {
     // 1. Try to find in employee_profiles table
-    $whereClauses = [];
-    if (!empty($safeEmail)) {
-        $whereClauses[] = "(`email` != '' AND `email` = '{$safeEmail}')";
-    }
+    // Priority order: exact profile id, exact user_id, exact email, exact employee code
+    $p = null;
     if ($empProfileId > 0) {
-        $whereClauses[] = "`id` = '{$empProfileId}'";
+        $c = $conn->query("SELECT * FROM `employee_profiles` WHERE `id` = '{$empProfileId}' LIMIT 1");
+        if ($c && $c->num_rows > 0) $p = $c->fetch_assoc();
     }
-    if (!empty($_SESSION['employee_id_code'])) {
+    if (!$p && ($mainUserId > 0 || $userId > 0)) {
+        $uTarget = $mainUserId > 0 ? $mainUserId : $userId;
+        $c = $conn->query("SELECT * FROM `employee_profiles` WHERE `user_id` = '{$uTarget}' ORDER BY `id` DESC LIMIT 1");
+        if ($c && $c->num_rows > 0) $p = $c->fetch_assoc();
+    }
+    if (!$p && !empty($safeEmail)) {
+        $c = $conn->query("SELECT * FROM `employee_profiles` WHERE `email` = '{$safeEmail}' ORDER BY `id` DESC LIMIT 1");
+        if ($c && $c->num_rows > 0) $p = $c->fetch_assoc();
+    }
+    if (!$p && !empty($_SESSION['employee_id_code'])) {
         $safeCode = addslashes((string)$_SESSION['employee_id_code']);
-        $whereClauses[] = "`employee_id_code` = '{$safeCode}'";
-    }
-    if ($mainUserId > 0) {
-        $whereClauses[] = "(`user_id` = '{$mainUserId}'" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ")";
-    } elseif ($userId > 0) {
-        $whereClauses[] = "(`user_id` = '{$userId}'" . (!empty($safeEmail) ? " AND (`email` = '' OR `email` IS NULL OR `email` = '{$safeEmail}')" : "") . ")";
+        $c = $conn->query("SELECT * FROM `employee_profiles` WHERE `employee_id_code` = '{$safeCode}' ORDER BY `id` DESC LIMIT 1");
+        if ($c && $c->num_rows > 0) $p = $c->fetch_assoc();
     }
 
-    if (!empty($whereClauses)) {
-        $whereSql = implode(' OR ', $whereClauses);
-    $check = $conn->query("SELECT * FROM `employee_profiles` WHERE {$whereSql} ORDER BY `id` ASC LIMIT 1");
-    if ($check && $check->num_rows > 0) {
-        $p = $check->fetch_assoc();
+    if ($p) {
         $name = !empty($p['full_name']) ? $p['full_name'] : '';
 
         // Dynamic Daily Work Mode Calculation for Today
@@ -154,7 +154,6 @@ try {
             } catch (\Throwable $e) {
                 $profile['activity_status'] = 1;
             }
-        }
     }
 
     // 2. Fallback to employees table
