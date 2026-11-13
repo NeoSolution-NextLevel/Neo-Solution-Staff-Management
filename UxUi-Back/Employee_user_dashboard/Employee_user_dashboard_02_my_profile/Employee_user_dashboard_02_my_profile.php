@@ -34,35 +34,33 @@
     box-sizing: border-box;
   }
 
-  /* Topbar */
-  .emp-prof-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 12px;
+  /* Standardized Topbar */
+  #Employee_user_dashboard_02_my_profile .topbar {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin: 0 0 16px 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
   }
-
-  .emp-prof-topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  #Employee_user_dashboard_02_my_profile .topbar-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
   }
-
-  .emp-prof-topbar h2 {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--navy);
-    letter-spacing: -0.3px;
-    margin: 0;
+  #Employee_user_dashboard_02_my_profile .topbar-left h2 {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: var(--navy) !important;
+    letter-spacing: -0.3px !important;
+    margin: 0 !important;
   }
-
-  .emp-prof-topbar p {
-    font-size: 13px;
-    color: var(--muted);
-    margin: 2px 0 0 0;
-    font-weight: 500;
+  #Employee_user_dashboard_02_my_profile .topbar-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
   }
 
   /* 1. Hero Profile Header Card */
