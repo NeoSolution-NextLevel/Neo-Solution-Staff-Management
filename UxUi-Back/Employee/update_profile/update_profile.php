@@ -10,11 +10,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $db = new DataBase();
 $conn = $db->get_data_base_connction();
 
-$userId = isset($_POST['user_id']) ? (int)$_POST['user_id'] : 1;
-if ($userId <= 0) $userId = 1;
+$sessionUid = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+$sessionMainId = isset($_SESSION['main_user_login_id']) ? (int)$_SESSION['main_user_login_id'] : $sessionUid;
+$sessionProfileId = isset($_SESSION['employee_profile_id']) ? (int)$_SESSION['employee_profile_id'] : 0;
+$sessionEmail = isset($_SESSION['user_name']) ? trim((string)$_SESSION['user_name']) : '';
+
+$userId = isset($_POST['user_id']) ? (int)$_POST['user_id'] : 0;
+if ($userId <= 0 && $sessionProfileId > 0) {
+    $userId = $sessionProfileId;
+} elseif ($userId <= 0 && $sessionUid > 0) {
+    $userId = $sessionUid;
+} elseif ($userId <= 0) {
+    $userId = 1;
+}
 
 $fullName   = isset($_POST['full_name']) ? trim($_POST['full_name']) : (isset($_POST['name']) ? trim($_POST['name']) : '');
 $email      = isset($_POST['email']) ? trim($_POST['email']) : (isset($_POST['email_address']) ? trim($_POST['email_address']) : '');
@@ -61,27 +76,41 @@ $targetUser = null;
 
 $safeEmail    = addslashes($email);
 $safeFullName = addslashes($fullName);
+$safeSessEmail = addslashes($sessionEmail);
 
-// Check employee_profiles
+// Check employee_profiles: prioritized resolution
 $profQ = "SELECT * FROM `employee_profiles` WHERE 1=0";
+if ($sessionProfileId > 0) $profQ .= " OR `id` = '{$sessionProfileId}'";
+if (!empty($sessionEmail)) $profQ .= " OR `email` = '{$safeSessEmail}'";
+if ($sessionUid > 0) $profQ .= " OR `user_id` = '{$sessionUid}'";
 if ($userId > 0) $profQ .= " OR `id` = '$userId' OR `user_id` = '$userId'";
 if (!empty($email)) $profQ .= " OR `email` = '{$safeEmail}'";
-$prof_check = $conn->query($profQ . " LIMIT 1");
+$prof_check = $conn->query($profQ . " ORDER BY `id` ASC LIMIT 1");
 if ($prof_check && ($p = $prof_check->fetch_assoc())) {
     $targetProf = $p;
 }
 
-// Resolve main_user_login id (for employee accounts)
+// Resolve main_user_login id (for employee accounts, access level 2 or 3)
 $main_user_id = (int)($targetProf['user_id'] ?? 0);
+if ($main_user_id <= 0 && $sessionUid > 0) {
+    $main_user_id = $sessionUid;
+}
 if ($main_user_id <= 0 && !empty($email)) {
-    $uQ = $conn->query("SELECT id, name_show, first_name, last_name, user_name FROM `main_user_login` WHERE `user_name` = '{$safeEmail}' AND `main_user_account_access_level_list_id` = 2 LIMIT 1");
+    $uQ = $conn->query("SELECT id, name_show, first_name, last_name, user_name FROM `main_user_login` WHERE `user_name` = '{$safeEmail}' LIMIT 1");
+    if ($uQ && ($u = $uQ->fetch_assoc())) {
+        $main_user_id = (int)$u['id'];
+        $targetUser = $u;
+    }
+}
+if ($main_user_id <= 0 && !empty($sessionEmail)) {
+    $uQ = $conn->query("SELECT id, name_show, first_name, last_name, user_name FROM `main_user_login` WHERE `user_name` = '{$safeSessEmail}' LIMIT 1");
     if ($uQ && ($u = $uQ->fetch_assoc())) {
         $main_user_id = (int)$u['id'];
         $targetUser = $u;
     }
 }
 if ($main_user_id <= 0 && $userId > 1) {
-    $uQ = $conn->query("SELECT id, name_show, first_name, last_name, user_name FROM `main_user_login` WHERE `id` = '$userId' AND `main_user_account_access_level_list_id` = 2 LIMIT 1");
+    $uQ = $conn->query("SELECT id, name_show, first_name, last_name, user_name FROM `main_user_login` WHERE `id` = '$userId' LIMIT 1");
     if ($uQ && ($u = $uQ->fetch_assoc())) {
         $main_user_id = (int)$u['id'];
         $targetUser = $u;
@@ -92,8 +121,9 @@ if ($main_user_id <= 0 && $userId > 1) {
 $emp_table_id = 0;
 $emp_row_exists = false;
 $empQ = "SELECT * FROM `employees` WHERE 1=0";
-if (!empty($email)) $empQ .= " OR `email_address` = '{$safeEmail}'";
 if ($main_user_id > 0) $empQ .= " OR `main_user_login_id` = '{$main_user_id}'";
+if (!empty($email)) $empQ .= " OR `email_address` = '{$safeEmail}'";
+if (!empty($sessionEmail)) $empQ .= " OR `email_address` = '{$safeSessEmail}'";
 if ($userId > 0) $empQ .= " OR `id` = '$userId'";
 if (!empty($fullName)) $empQ .= " OR `fullname` = '{$safeFullName}'";
 $eChk = $conn->query($empQ . " LIMIT 1");
@@ -122,17 +152,19 @@ if ($prof_id > 0) {
     $updates = [];
     if (!empty($fullName))  $updates[] = "`full_name` = '{$safeFullName}'";
     if (!$isEmployeeSelf && !empty($email)) $updates[] = "`email` = '{$safeEmail}'";
-    if (!empty($phone))     $updates[] = "`phone` = '" . addslashes($phone) . "'";
-    if (!empty($nic))       $updates[] = "`nic` = '" . addslashes($nic) . "'";
-    if (!empty($dob))       $updates[] = "`dob` = '" . addslashes($dob) . "'";
-    if (!empty($gender))    $updates[] = "`gender` = '" . addslashes($gender) . "'";
+    if (isset($_POST['phone']))     $updates[] = "`phone` = '" . addslashes($phone) . "'";
+    if (isset($_POST['nic']))       $updates[] = "`nic` = '" . addslashes($nic) . "'";
+    if (isset($_POST['dob'])) {
+        $updates[] = !empty($dob) ? "`dob` = '" . addslashes($dob) . "'" : "`dob` = NULL";
+    }
+    if (isset($_POST['gender']) && !empty($gender)) $updates[] = "`gender` = '" . addslashes($gender) . "'";
     if (isset($_POST['address'])) $updates[] = "`address` = '" . addslashes($address) . "'";
     
     // Emergency contact (editable by both admin and employee)
-    if (isset($_POST['emergency_contact_name']) && $_POST['emergency_contact_name'] !== '') {
+    if (isset($_POST['emergency_contact_name'])) {
         $updates[] = "`emergency_contact_name` = '" . addslashes($emName) . "'";
     }
-    if (isset($_POST['emergency_contact_phone']) && $_POST['emergency_contact_phone'] !== '') {
+    if (isset($_POST['emergency_contact_phone'])) {
         $updates[] = "`emergency_contact_phone` = '" . addslashes($emPhone) . "'";
     }
 
@@ -273,6 +305,9 @@ if ($main_user_id > 1) {
         if (!empty($firstN)) $uUpdates[] = "`first_name` = '" . addslashes($firstN) . "'";
         if (!empty($lastN))  $uUpdates[] = "`last_name` = '" . addslashes($lastN) . "'";
     }
+    if (isset($_POST['phone'])) {
+        $uUpdates[] = "`phone_number` = '" . addslashes($phone) . "'";
+    }
     if (!empty($uUpdates)) {
         $conn->query("UPDATE `main_user_login` SET " . implode(", ", $uUpdates) . " WHERE `id` = '{$main_user_id}'");
     }
@@ -337,7 +372,24 @@ if ($isEmployeeSelf || isset($_POST['basic_salary']) || isset($_POST['net_salary
     }
 }
 
-// 4. Trigger Notification
+// 4. Update current session so changes reflect immediately across the entire portal
+if (session_status() === PHP_SESSION_ACTIVE) {
+    if (!empty($fullName)) {
+        $_SESSION['full_name'] = $fullName;
+        $_SESSION['name_show'] = $fullName;
+        $nameParts = explode(' ', $fullName);
+        $_SESSION['first_name'] = array_shift($nameParts) ?: $fullName;
+        $_SESSION['last_name']  = implode(' ', $nameParts);
+    }
+    if (!empty($phone)) {
+        $_SESSION['phone_number'] = $phone;
+    }
+    if ($prof_id > 0) {
+        $_SESSION['employee_profile_id'] = $prof_id;
+    }
+}
+
+// 5. Trigger Notification
 $targetName = !empty($fullName) ? $fullName : 'Employee';
 SystemNotifications::create(
     "Profile Updated",
